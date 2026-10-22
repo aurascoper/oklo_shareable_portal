@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: oklo-4d-shareable-portal
+    runtime: static
+    buildCommand: echo "Static portal verified"
+    staticPublishPath: .
+    autoDeploy: true
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=300

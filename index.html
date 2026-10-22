@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oklo 4D Spatiotemporal &amp; TECDOC-643 Neutron Walk Shareable Index</title>
+  <style>
+    :root {
+      --bg: #080d14;
+      --panel: #0f1824;
+      --panel-alt: #132030;
+      --border: #22364d;
+      --text: #e6f0f8;
+      --muted: #8ca5bc;
+      --accent: #38bdf8;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.5;
+    }
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    header p {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--panel-alt);
+    }
+    .badge.green { color: #86efac; border-color: #166534; background: #052e16; }
+    .badge.amber { color: #fcd34d; border-color: #92400e; background: #451a03; }
+    .badge.blue { color: #7dd3fc; border-color: #0369a1; background: #082f49; }
+    .wrap {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 18px 24px 40px;
+    }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .tabs button {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .tabs button.active {
+      background: var(--accent);
+      color: #041019;
+      border-color: var(--accent);
+    }
+    .banner {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--amber);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .viewer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .viewer-grid.split {
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 1100px) {
+      .viewer-grid.split { grid-template-columns: 1fr; }
+    }
+    .frame-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .frame-head {
+      padding: 10px 14px;
+      background: var(--panel-alt);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .frame-head a {
+      color: var(--accent);
+      text-decoration: none;
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+    .frame-head a:hover { text-decoration: underline; }
+    iframe {
+      width: 100%;
+      height: 760px;
+      border: 0;
+      background: #050a0f;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 18px;
+    }
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    code, .mono {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #bae6fd;
+    }
+    a { color: var(--accent); }
+    pre {
+      background: #060b11;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Oklo Scientific Visualization Index &amp; Embedded 4D / Neutron Walk Portal</h1>
+      <p>Companion portal preserving frozen Revision-0 fixture integrity while indexing R10 4D Spatiotemporal Geochemistry and TECDOC-643 Neutron Walk</p>
+    </div>
+    <div>
+      <span class="badge green">R10 4D Slice: MERGED (942e3f8)</span>
+      <span class="badge amber">TECDOC-643: Reference Audit Only (PR #11)</span>
+      <span class="badge blue">R0 Fixture: Frozen Unmodified (8dac3ae9)</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="tabs" role="tablist">
+      <button id="tab4d" class="active" onclick="setView('4d')">1. 4D Spatiotemporal Geochemistry Viewer (R10 Shareable)</button>
+      <button id="tabNw" onclick="setView('nw')">2. TECDOC-643 Neutron Walk (10 MW MTR Reference)</button>
+      <button id="tabSplit" onclick="setView('split')">3. Side-by-Side 4D Geochemistry + Neutron Walk</button>
+      <button id="tabR0" onclick="setView('r0')">4. Frozen Revision-0 Oklo Fixture (Read-Only)</button>
+      <button id="tabAudit" onclick="setView('audit')">5. Deep-Research UO2-Clay-Fracture &amp; Precision Audit</button>
+    </div>
+
+    <div id="bannerTxt" class="banner">
+      <strong>Epistemic Status (R10 Stage 0/1):</strong> Prescribed analytical 3D Gaussian advection-diffusion-decay tracer pulse across 5 discrete time states (t = 0 s to 1000 s, +k vertical up-axis). Local workstation verification passed; Stage 2 transient PDE solver is not authorized.
+    </div>
+
+    <div id="viewerGrid" class="viewer-grid">
+      <div id="card4d" class="frame-card">
+        <div class="frame-head">
+          <div>
+            <strong>R10 4D Spatiotemporal Explorer (Single-File Shareable HTML)</strong>
+            <span class="badge green">100% Offline Self-Contained</span>
+          </div>
+          <div>
+            <a href="spacetime_explorer_4d_shareable.html" target="_blank" rel="noopener">Open Standalone 4D HTML</a> |
+            <a href="https://github.com/aurascoper/oklo_pool_mobile/pull/10" target="_blank" rel="noopener">PR #10 (942e3f8)</a>
+          </div>
+        </div>
+        <iframe id="iframe4d" src="spacetime_explorer_4d_shareable.html" title="4D Spatiotemporal Geochemistry Explorer"></iframe>
+      </div>
+
+      <div id="cardNw" class="frame-card" style="display:none">
+        <div class="frame-head">
+          <div>
+            <strong>TECDOC-643 Neutron Walk (10 MW MTR Design &amp; Data Reference)</strong>
+            <span class="badge amber">Pre-Oct 19 Materials / Playback Only</span>
+          </div>
+          <div>
+            <a href="https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md" target="_blank" rel="noopener">Claude Artifact Link (KcgJyGkRmxzpEFSc8Y12md)</a> |
+            <a href="tecdoc643_neutron_walk.html" target="_blank" rel="noopener">Standalone Neutron Walk HTML</a> |
+            <a href="https://github.com/aurascoper/oklo_pool_mobile/pull/11" target="_blank" rel="noopener">PR #11 Spec</a>
+          </div>
+        </div>
+        <iframe id="iframeNw" src="tecdoc643_neutron_walk.html" title="TECDOC-643 Neutron Walk Reference"></iframe>
+      </div>
+
+      <div id="cardR0" class="frame-card" style="display:none">
+        <div class="frame-head">
+          <div>
+            <strong>Oklo Revision-0 Conformance Fixture (Frozen Baseline)</strong>
+            <span class="badge blue">SHA-256: 8dac3ae9... (Unmodified)</span>
+          </div>
+          <div>
+            <a href="oklo_r0_fixture_readonly.html" target="_blank" rel="noopener">Open Frozen R0 Fixture</a> |
+            <a href="https://github.com/aurascoper/oklo_pool_mobile/pull/12" target="_blank" rel="noopener">Draft PR #12</a>
+          </div>
+        </div>
+        <iframe id="iframeR0" src="oklo_r0_fixture_readonly.html" title="Frozen Revision-0 Oklo Conformance Fixture"></iframe>
+      </div>
+    </div>
+
+    <div id="auditSection" class="card">
+      <h2>Indexed Shareable Artifacts, Provenance Hashes, and Embed Links</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Artifact ID</th>
+            <th>Title &amp; Role</th>
+            <th>Shareable / Local Link</th>
+            <th>SHA-256 &amp; Size</th>
+            <th>Epistemic Qualification</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">R10-4D-SHAREABLE</td>
+            <td><strong>4D Spatiotemporal Geochemistry Viewer</strong><br>Standalone single-file HTML with inlined JS + 5-state Float32LE bundle</td>
+            <td>
+              <a href="spacetime_explorer_4d_shareable.html">spacetime_explorer_4d_shareable.html</a><br>
+              <a href="https://github.com/aurascoper/oklo_pool_mobile/pull/10">GitHub PR #10 (Merged: 942e3f8)</a>
+            </td>
+            <td class="mono">f9ca39ea37503f0e...<br>(132,358 bytes)</td>
+            <td><span class="badge green">Technical PASS</span><br>Prescribed analytical Gaussian pulse; local verification; Stage 2 PDE solver not authorized.</td>
+          </tr>
+          <tr>
+            <td class="mono">REF-NW-HTML-01</td>
+            <td><strong>TECDOC-643 Neutron Walk</strong><br>10 MW MTR 3D core + 2D slice + OpenMC 0.15.3 playback design reference</td>
+            <td>
+              <a href="https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md" target="_blank" rel="noopener">https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md</a><br>
+              <a href="tecdoc643_neutron_walk.html" target="_blank" rel="noopener">Hosted Copy (.html)</a> |
+              <a href="https://github.com/aurascoper/oklo_pool_mobile/pull/11" target="_blank" rel="noopener">GitHub PR #11</a>
+            </td>
+            <td class="mono">dc15eb934fe6cd32...<br>(937,606 bytes)</td>
+            <td><span class="badge amber">Reference Audit Only</span><br>"Real OpenMC" is 500-track playback (pre-Oct 19 materials); burnup is a 1-mat/element laptop demo (340.26 d vs ~298 d cluster).</td>
+          </tr>
+          <tr>
+            <td class="mono">REF-NW-JL-FIX</td>
+            <td><strong>Quarantined TECDOC-643 Julia Fixture</strong><br>Transcribed blade sweep &amp; burnup reactivity algebra test hook</td>
+            <td>
+              <a href="tecdoc643_reference_fixture.jl" target="_blank" rel="noopener">tecdoc643_reference_fixture.jl</a>
+            </td>
+            <td class="mono">813c9e9fb33e47d9...<br>(5,951 bytes)</td>
+            <td><span class="badge amber">Quarantined Test Fixture</span><br>Verifies generic rho = (k-1)/k algebra; does not transfer rectangular MTR results to annular MURR core.</td>
+          </tr>
+          <tr>
+            <td class="mono">OKLO-R0-FIXTURE</td>
+            <td><strong>Oklo Revision-0 GUI Conformance Fixture</strong><br>Frozen 6-field 32x32x32 analytic benchmark</td>
+            <td>
+              <a href="oklo_r0_fixture_readonly.html" target="_blank" rel="noopener">oklo_r0_fixture_readonly.html</a><br>
+              <a href="CONFORMANCE_FIXTURE_SPEC.md" target="_blank" rel="noopener">CONFORMANCE_FIXTURE_SPEC.md</a>
+            </td>
+            <td class="mono">8dac3ae9b8268a47...<br>(77,117 bytes)</td>
+            <td><span class="badge blue">Frozen Revision 0</span><br>Kept byte-identical per CONFORMANCE_FIXTURE_SPEC.md Section 2; never overwritten in place.</td>
+          </tr>
+          <tr>
+            <td class="mono">PR12-GEYSER-V0</td>
+            <td><strong>Quarantined Oklo Geyser Prototype Export</strong><br>Guarded wrapper + preserved prototype.html + manifest + 10-part research program</td>
+            <td>
+              <a href="https://github.com/aurascoper/oklo_pool_mobile/pull/12" target="_blank" rel="noopener">GitHub Draft PR #12 (9e6bcf4)</a><br>
+              <a href="proto_biofilms_geyser_fission_research_program.md" target="_blank" rel="noopener">10-Part Research Program (.md)</a>
+            </td>
+            <td class="mono">c1b9acc3b03b2b6d...<br>(77,116 bytes)</td>
+            <td><span class="badge amber">Quarantined Draft</span><br>Separate from PR #11 and frozen R0 fixture; not authorized for merge or physical solver claims.</td>
+          </tr>
+          <tr>
+            <td class="mono">INDEX-XML-01</td>
+            <td><strong>Machine-Readable XML Artifact Manifest</strong><br>Structured XML index of all URLs, file URIs, SHAs, and gates</td>
+            <td>
+              <a href="artifact_index.xml">artifact_index.xml</a>
+            </td>
+            <td class="mono">XML 1.0 UTF-8</td>
+            <td><span class="badge green">Schema-Clean Index</span><br>Zero en-dashes, zero em-dashes.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 style="margin-top:20px">Precision-Aware Audit &amp; UO2-Clay-Fracture Evidence Gates</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Audit Item</th>
+            <th>Recomputed from Displayed Rounded Inputs</th>
+            <th>Stored / Claimed Value</th>
+            <th>Engineering &amp; Scientific Gate Disposition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>TECDOC-643 Blade Worth (k = 0.97943 to 1.19810)</strong></td>
+            <td class="mono">18,634.714 pcm (+/- 120.375 pcm)</td>
+            <td class="mono">18,635.3 pcm (+/- 120.0 pcm)</td>
+            <td>Preserve full unrounded source precision in Stage 2; compute derived values in code rather than hard-coding rounded strings.</td>
+          </tr>
+          <tr>
+            <td><strong>Two-Point (2M) vs. Sweep (800k) Worth</strong></td>
+            <td class="mono">18,384.14 +/- 84.19 pcm vs. 18,635.3 +/- 120.0 pcm</td>
+            <td class="mono">251.16 pcm difference (1.71 sigma)</td>
+            <td>Retain explicitly as an unresolved discrepancy until fixed-endpoint vs. rebuilt-per-position OpenMC inputs are audited in Stage 3.</td>
+          </tr>
+          <tr>
+            <td><strong>Linear k_eff = 1 Burnup Crossing (Day 300 to 350)</strong></td>
+            <td class="mono">Day 340.254042</td>
+            <td class="mono">Day 340.261085 (Cluster: ~Day 298)</td>
+            <td>Label #burndata as a 294 K reduced-chain laptop demo, not validated paper data.</td>
+          </tr>
+          <tr>
+            <td><strong>Day 0 to Day 5 Net Reactivity Drop</strong></td>
+            <td class="mono">-3,214.224 pcm (k = 1.19676 to 1.15243)</td>
+            <td class="mono">-3,214 pcm</td>
+            <td>Report as total core reactivity change; do not attribute solely to Xe-135 + Sm-149 without isotopic worth decomposition, and do not multiply MTR equilibrium Xe-135 by a MURR shutdown factor (11.82x).</td>
+          </tr>
+          <tr>
+            <td><strong>UO2-Clay-Fracture Coupled Framework &amp; Polymer Gate</strong></td>
+            <td class="mono">Re, Pe, Da, Bi, Ra regimes; OpenMC / PFLOTRAN / MOOSE</td>
+            <td class="mono">Field 4 Polymer Index in arbitrary units</td>
+            <td>Do not modify frozen oklo_gui_scratch/index.html; require empirical Gates E1 (G-value yield), E2 (kinetics), and E3 (measured attenuation) before modeling polymer-mediated radiation shielding.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 style="margin-top:20px">Shareable Embed Snippets (HTML &amp; Markdown)</h2>
+      <pre>&lt;!-- Embed the Self-Contained 4D Spatiotemporal Geochemistry Viewer --&gt;
+&lt;iframe src="https://aurascoper.github.io/oklo_shareable_portal/spacetime_explorer_4d_shareable.html" width="100%" height="760" style="border:1px solid #22364d;border-radius:8px;"&gt;&lt;/iframe&gt;
+
+&lt;!-- Reference Link to TECDOC-643 Neutron Walk Claude Artifact --&gt;
+&lt;a href="https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md" target="_blank" rel="noopener"&gt;TECDOC-643 Neutron Walk (10 MW MTR Reference Artifact)&lt;/a&gt;</pre>
+    </div>
+  </div>
+
+  <script>
+    function setView(mode) {
+      const grid = document.getElementById('viewerGrid');
+      const c4d = document.getElementById('card4d');
+      const cNw = document.getElementById('cardNw');
+      const cR0 = document.getElementById('cardR0');
+      const banner = document.getElementById('bannerTxt');
+      ['tab4d','tabNw','tabSplit','tabR0','tabAudit'].forEach(id => document.getElementById(id).classList.remove('active'));
+
+      grid.classList.remove('split');
+      c4d.style.display = 'none';
+      cNw.style.display = 'none';
+      cR0.style.display = 'none';
+
+      if (mode === '4d') {
+        document.getElementById('tab4d').classList.add('active');
+        c4d.style.display = 'flex';
+        banner.innerHTML = '<strong>Epistemic Status (R10 Stage 0/1):</strong> Prescribed analytical 3D Gaussian advection-diffusion-decay tracer pulse across 5 discrete time states (t = 0 s to 1000 s, +k vertical up-axis). Local workstation verification passed; Stage 2 transient PDE solver is not authorized.';
+      } else if (mode === 'nw') {
+        document.getElementById('tabNw').classList.add('active');
+        cNw.style.display = 'flex';
+        banner.innerHTML = '<strong>Epistemic Status (TECDOC-643 Neutron Walk Reference):</strong> Design and data-structure reference (<a href="https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md" target="_blank" rel="noopener">claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md</a>). "Real OpenMC" replays 500 recorded histories from pre-Oct 19 materials; burnup is a laptop demo (crossing k = 1 at day 340.26 vs. ~day 298 on cluster).';
+      } else if (mode === 'split') {
+        document.getElementById('tabSplit').classList.add('active');
+        grid.classList.add('split');
+        c4d.style.display = 'flex';
+        cNw.style.display = 'flex';
+        banner.innerHTML = '<strong>Side-by-Side Comparison:</strong> Left: R10 4D Spatiotemporal Geochemistry Viewer (continuum voxel contract). Right: TECDOC-643 Neutron Walk (discrete Monte Carlo particle tracks &amp; lattice tallies). Shared epistemic provenance discipline; separate physical models and schemas.';
+      } else if (mode === 'r0') {
+        document.getElementById('tabR0').classList.add('active');
+        cR0.style.display = 'flex';
+        banner.innerHTML = '<strong>Frozen Revision-0 Conformance Fixture:</strong> Loaded read-only from <code>oklo_gui_scratch/index.html</code> (SHA-256: <code>8dac3ae9b8268a476b791f8c2293130e899d5c86c7fab09ce27345de2333544d</code>). Preserved unmodified per CONFORMANCE_FIXTURE_SPEC.md.';
+      } else if (mode === 'audit') {
+        document.getElementById('tabAudit').classList.add('active');
+        banner.innerHTML = '<strong>Deep-Research UO2-Clay-Fracture &amp; TECDOC-643 Audit Summary:</strong> Review the artifact SHA-256 registry, precision-aware recomputations, and E1-E3 polymer evidence gates below.';
+      }
+    }
+  </script>
+</body>
+</html>

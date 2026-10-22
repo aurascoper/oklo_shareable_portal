@@ -1,0 +1,3477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oklo 4D Spatiotemporal Geochemistry Explorer (spacetime_geochemistry_v0)</title>
+  <style>
+    /* Planetary Explorer v2 compatible dark palette & offline system typography */
+    /* Strictly zero em-dashes and zero en-dashes */
+    :root {
+      --bg-primary: #0b0f14;
+      --bg-secondary: #121820;
+      --bg-tertiary: #1a222d;
+      --surface-card: #151d27;
+      --surface-hover: #1e2937;
+      --fg-primary: #e6edf3;
+      --fg-secondary: #9da7b3;
+      --fg-muted: #6e7681;
+      --border-color: #2a3746;
+      --border-focus: #388bfd;
+
+      --emerald: #10b981;
+      --emerald-soft: rgba(16, 185, 129, 0.16);
+      --crimson: #ef4444;
+      --crimson-soft: rgba(239, 68, 68, 0.16);
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.18);
+      --indigo: #4f46e5;
+      --indigo-soft: rgba(79, 70, 229, 0.22);
+      --cyan: #38bdf8;
+
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, "SF Mono", "Menlo", "Consolas", "Liberation Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--fg-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.4;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Provenance & Epistemic Header */
+    .top-header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 8px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .header-row-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: nowrap;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: nowrap;
+    }
+
+    .brand-title h1 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--fg-primary);
+      white-space: nowrap;
+    }
+
+    .badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: nowrap;
+    }
+
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .badge-synth {
+      background: var(--indigo-soft);
+      color: #a5b4fc;
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+
+    .badge-schematic {
+      background: rgba(56, 189, 248, 0.14);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    .badge-verified {
+      background: var(--emerald-soft);
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.5);
+    }
+
+    .badge-interpolated {
+      background: var(--amber-soft);
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.65);
+    }
+
+    .disclaimer-bar {
+      background: rgba(79, 70, 229, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      color: #c7d2fe;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .disclaimer-bar.interp-active {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--amber);
+      color: #fde68a;
+    }
+
+    .disclaimer-bar.error-active {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: var(--crimson);
+      color: #fecaca;
+    }
+
+    /* Main 3-Column Grid */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 530px minmax(0, 1fr) 485px;
+      gap: 10px;
+      padding: 10px 16px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .panel-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 6px;
+      gap: 8px;
+    }
+
+    .panel-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--fg-primary);
+      white-space: nowrap;
+    }
+
+    .panel-subtitle {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-secondary);
+      white-space: nowrap;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      background: #080b10;
+      border: 1px solid #1f2937;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    .projection-controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      background: var(--bg-secondary);
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .control-group label {
+      font-size: 10.5px;
+      color: var(--fg-secondary);
+      font-family: var(--font-mono);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--emerald);
+      cursor: pointer;
+    }
+
+    .btn {
+      background: var(--bg-tertiary);
+      color: var(--fg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: background 120ms ease;
+    }
+
+    .btn:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-focus);
+    }
+
+    .btn-primary {
+      background: #1f6feb;
+      border-color: #388bfd;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .btn-active {
+      background: var(--emerald-soft);
+      border-color: var(--emerald);
+      color: #34d399;
+      font-weight: 600;
+    }
+
+    /* Center Column: Slices + Diff */
+    .slices-top-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .slice-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .slice-box-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--fg-secondary);
+    }
+
+    .diff-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .diff-box.highlight-diff {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35);
+    }
+
+    /* Right Column: Provenance & Receipt Table */
+    .meta-table {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 11px;
+      overflow-y: hidden;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2.5px 6px;
+      background: var(--bg-secondary);
+      border-radius: 3px;
+      border: 1px solid rgba(42, 55, 70, 0.6);
+      gap: 6px;
+    }
+
+    .meta-key {
+      color: var(--fg-secondary);
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .meta-val {
+      color: var(--fg-primary);
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sha-box {
+      background: #080b10;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 5px 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #34d399;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+
+    .sha-box.unverified {
+      color: #fbbf24;
+      border-color: var(--amber);
+    }
+
+    .ledger-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+    }
+
+    .ledger-cell {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 4px 7px;
+    }
+
+    .ledger-cell .lbl {
+      font-size: 10px;
+      color: var(--fg-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .ledger-cell .val {
+      font-size: 11.5px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--fg-primary);
+    }
+
+    .event-banner {
+      background: rgba(16, 185, 129, 0.1);
+      border-left: 3px solid var(--emerald);
+      padding: 5px 8px;
+      font-size: 10.5px;
+      color: var(--fg-primary);
+      border-radius: 2px;
+    }
+
+    .event-banner.interp-event-banner {
+      background: var(--amber-soft);
+      border-left-color: var(--amber);
+      color: #fde68a;
+    }
+
+    .pruned-banner {
+      background: var(--crimson-soft);
+      border-left: 3px solid var(--crimson);
+      padding: 5px 8px;
+      font-size: 10.5px;
+      color: #fca5a5;
+      border-radius: 2px;
+    }
+
+    /* Bottom Dock: Timeline Scrubber & Selected-Point Time Series */
+    .bottom-dock {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding: 8px 16px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 810px;
+      gap: 12px;
+      height: 225px;
+      flex-shrink: 0;
+    }
+
+    .timeline-controls {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .scrubber-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-card);
+      padding: 6px 10px;
+      border-radius: 5px;
+      border: 1px solid var(--border-color);
+    }
+
+    .state-buttons {
+      display: flex;
+      gap: 5px;
+    }
+
+    .dual-and-probe-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .sub-control-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      padding: 6px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .sub-control-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+
+    select {
+      background: var(--bg-tertiary);
+      color: var(--fg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 3px;
+      padding: 2px 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .interp-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface-card);
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      padding: 5px 8px;
+      font-size: 10px;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .interp-toggle-row label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      color: var(--fg-primary);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .legend-inline {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .swatch-solid-green {
+      width: 18px;
+      height: 3px;
+      background: var(--emerald);
+      display: inline-block;
+    }
+
+    .swatch-dashed-red {
+      width: 18px;
+      height: 0;
+      border-top: 3px dashed var(--crimson);
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Epistemic & Provenance Header -->
+  <header class="top-header">
+    <div class="header-row-main">
+      <div class="brand-title">
+        <h1>OKLO 4D SPATIOTEMPORAL GEOCHEMISTRY EXPLORER</h1>
+        <span class="badge badge-synth" id="badge-evidence-class">EVIDENCE CLASS: NUMERICALLY_VERIFIED_SYNTHETIC_MODEL</span>
+        <span class="badge badge-schematic" id="badge-geometry">GEOMETRY: SCHEMATIC 16m CUBE (+k UP)</span>
+        <span class="badge badge-schematic" id="badge-4d-axis">4D AXIS: w = t (s)</span>
+      </div>
+      <div class="badge-row">
+        <span class="badge badge-verified" id="badge-state-derivation">DERIVATION: PRESCRIBED_ANALYTICALLY</span>
+        <span class="badge badge-verified" id="badge-criterial-status">CRITERIAL: VERIFIED_ACCEPTED</span>
+        <button class="btn" id="btn-export-png" title="Export 1920x1080 High-Resolution PNG">Export 1920x1080 PNG</button>
+      </div>
+    </div>
+    <div class="disclaimer-bar" id="top-disclaimer-bar">
+      <span id="disclaimer-text">
+        <strong>STAGE 0/1 SYNTHETIC PROOF:</strong> Analytical 3D Gaussian advection-diffusion-decay tracer on [0, 16 m]^3; NOT a calibrated geological, hydrothermal, or radiation-transport simulation.
+      </span>
+      <span style="font-family: var(--font-mono); font-size: 11px;" id="active-time-readout">
+        STATE 0 / 4 | t = 0.0 s
+      </span>
+    </div>
+  </header>
+
+  <!-- Main 3-Column Spatiotemporal Workspace -->
+  <main class="workspace-grid">
+    <!-- Left Column: 4D Spatiotemporal Volume & Trajectory Projection -->
+    <section class="panel-card">
+      <div class="panel-header">
+        <span class="panel-title">1. 4D Spatiotemporal Projection (+k Up, w = t)</span>
+        <span class="panel-subtitle" id="proj-com-readout">z_cm(t) = 4.530 m (+k up)</span>
+      </div>
+      <div class="canvas-wrap" style="flex: 1;">
+        <canvas id="canvas-4d-projection" width="538" height="390"></canvas>
+      </div>
+      <div class="projection-controls">
+        <div class="control-group">
+          <label><span>X-t Plane:</span><span id="lbl-angle-xt">0.32 rad</span></label>
+          <input type="range" id="slider-angle-xt" min="-1.2" max="1.2" step="0.02" value="0.32" />
+        </div>
+        <div class="control-group">
+          <label><span>Z-t (+k-t):</span><span id="lbl-angle-zt">0.22 rad</span></label>
+          <input type="range" id="slider-angle-zt" min="-1.2" max="1.2" step="0.02" value="0.22" />
+        </div>
+        <div class="control-group">
+          <label><span>3D Yaw:</span><span id="lbl-yaw">-0.62 rad</span></label>
+          <input type="range" id="slider-yaw" min="-3.14" max="3.14" step="0.04" value="-0.62" />
+        </div>
+        <button class="btn" id="btn-reset-camera">Reset 4D View</button>
+      </div>
+    </section>
+
+    <!-- Center Column: Orthogonal Cross-Section Slices & Dual-Time Comparison -->
+    <section class="panel-card">
+      <div class="panel-header">
+        <span class="panel-title">2. Orthogonal Slice Inspector &amp; Dual-Time Comparison (t_A vs t_B)</span>
+        <span class="panel-subtitle" id="slice-probe-readout">Probe (8, 8, 5) = 7.9336 mol_m3_synthetic_tracer</span>
+      </div>
+      <div class="slices-top-row">
+        <div class="slice-box">
+          <div class="slice-box-header">
+            <span id="lbl-slice-xy">Plan Slice X-Y (k = 5, z = 5.5 m)</span>
+            <span>mol_m3_synthetic_tracer</span>
+          </div>
+          <canvas id="canvas-slice-xy" width="265" height="225"></canvas>
+        </div>
+        <div class="slice-box">
+          <div class="slice-box-header">
+            <span id="lbl-slice-xz">Vertical Section X-k (j = 8, +k Up)</span>
+            <span>+k Vertical Up</span>
+          </div>
+          <canvas id="canvas-slice-xz" width="265" height="225"></canvas>
+        </div>
+      </div>
+      <div class="diff-box" id="diff-card">
+        <div class="slice-box-header">
+          <span id="lbl-diff-title" style="color: var(--cyan); font-weight: 700;">
+            Dual-Time Difference dF(x; t_A=0s, t_B=750s) = F(t_B) - F(t_A) [Section X-k at j=8]
+          </span>
+          <span id="lbl-diff-norms">||dF||_2 = 58.78 | dz_cm = +4.835 m</span>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="canvas-slice-diff" width="560" height="175"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Provenance, Per-Frame Checksum & Analytical Bookkeeping -->
+    <section class="panel-card">
+      <div class="panel-header">
+        <span class="panel-title">3. State Provenance &amp; Frame Checksum</span>
+        <span class="panel-subtitle" id="meta-schema-ver">spacetime_4d_v0</span>
+      </div>
+
+      <div class="meta-table">
+        <div class="meta-row">
+          <span class="meta-key">model_id / version</span>
+          <span class="meta-val" id="meta-model-id">spacetime_geochemistry_v0 (0.1.0)</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">run_id</span>
+          <span class="meta-val" id="meta-run-id">synth_adv_diff_decay_16x16x16_5state_v0</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">baseline_commit (main)</span>
+          <span class="meta-val" id="meta-baseline-commit">636b7d7bb41999b80278d90046da893ee1044f20</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">source_provenance (R10)</span>
+          <span class="meta-val" id="meta-source-provenance">spacetime_geochemistry_v0_gen_0.2.0 (d8a78d21351d)</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">coordinate_system</span>
+          <span class="meta-val" id="meta-coord-sys">cartesian_local_16m_cube (+k up)</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">field_name / units</span>
+          <span class="meta-val" id="meta-field-units">synthetic_tracer_concentration (mol_m3_synthetic_tracer)</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">state_index / time</span>
+          <span class="meta-val" id="meta-state-time">0 (t = 0.0 s)</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">state_derivation</span>
+          <span class="meta-val" id="meta-state-derivation">prescribed_analytically (simulated=true)</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">run_receipt</span>
+          <span class="meta-val" id="meta-run-receipt">receipts/spacetime_geochemistry_v0_2026-10-20.md#state_0</span>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 10.5px; font-family: var(--font-mono); color: var(--fg-secondary); margin-bottom: 3px;">
+          Active Frame Float32LE SHA-256 Checksum (Verified Live Against Bundle Metadata):
+        </div>
+        <div class="sha-box" id="meta-sha256-box">
+          906e083f513e4d63d0e1ce2771439f15a4e1747c23f68469b5ad90d9e854290e
+        </div>
+      </div>
+
+      <div class="ledger-grid">
+        <div class="ledger-cell">
+          <div class="lbl">Discrete Voxel Sum M_ret (mol)</div>
+          <div class="val" id="ledger-retained">913.303</div>
+        </div>
+        <div class="ledger-cell">
+          <div class="lbl">Analytical Decay Ref (mol)</div>
+          <div class="val" id="ledger-decayed">0.000</div>
+        </div>
+        <div class="ledger-cell">
+          <div class="lbl">Center of Mass (x, y, z) m</div>
+          <div class="val" id="ledger-com">(8.00, 8.00, 4.53)</div>
+        </div>
+        <div class="ledger-cell">
+          <div class="lbl">Bookkeeping / Tail Gap</div>
+          <div class="val" id="ledger-residual" style="color: var(--cyan);">ALGEBRAIC (GAP 0.00%)</div>
+        </div>
+      </div>
+
+      <div class="event-banner" id="meta-event-banner">
+        <strong>Active Event Marker:</strong> t0_injection_pulse: Initial 3D Gaussian tracer pulse centered at z = 4.50 m (+k upward axis).
+      </div>
+
+      <div class="pruned-banner" id="meta-pruned-banner">
+        <strong>Criterial-Pruned Control (Red Dashed):</strong> synthetic_amplitude_drift_control rejected (+38% artificial drift &gt; analytical envelope 1.0e-4; visual criterial test only, not finite-volume conservation).
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Dock: Timeline Scrubber & Selected-Voxel Time Series -->
+  <footer class="bottom-dock">
+    <div class="timeline-controls">
+      <div class="scrubber-bar">
+        <button class="btn btn-primary" id="btn-play-pause">Play</button>
+        <button class="btn" id="btn-step-prev" title="Previous Discrete State">Step -1</button>
+        <button class="btn" id="btn-step-next" title="Next Discrete State">Step +1</button>
+        <input type="range" id="slider-timeline" min="0" max="4" step="1" value="0" style="flex: 1;" />
+        <div class="state-buttons">
+          <button class="btn btn-active" data-state-btn="0">t0 (0s)</button>
+          <button class="btn" data-state-btn="1">t1 (250s)</button>
+          <button class="btn" data-state-btn="2">t2 (500s)</button>
+          <button class="btn" data-state-btn="3">t3 (750s)</button>
+          <button class="btn" data-state-btn="4">t4 (1000s)</button>
+        </div>
+      </div>
+
+      <div class="dual-and-probe-row">
+        <div class="sub-control-card">
+          <div class="sub-control-row">
+            <span><strong>Dual-Time Comparison:</strong></span>
+            <span>
+              t_A:
+              <select id="select-ta">
+                <option value="0" selected>State 0 (0.0 s)</option>
+                <option value="1">State 1 (250.0 s)</option>
+                <option value="2">State 2 (500.0 s)</option>
+                <option value="3">State 3 (750.0 s)</option>
+                <option value="4">State 4 (1000.0 s)</option>
+              </select>
+              vs t_B:
+              <select id="select-tb">
+                <option value="0">State 0 (0.0 s)</option>
+                <option value="1">State 1 (250.0 s)</option>
+                <option value="2">State 2 (500.0 s)</option>
+                <option value="3" selected>State 3 (750.0 s)</option>
+                <option value="4">State 4 (1000.0 s)</option>
+              </select>
+            </span>
+          </div>
+          <div class="sub-control-row" style="color: var(--fg-secondary);">
+            <span>Max Increase: <strong id="diff-max-inc" style="color: #fb923c;">+3.593</strong></span>
+            <span>Max Depletion: <strong id="diff-max-dec" style="color: #38bdf8;">-9.019</strong></span>
+          </div>
+        </div>
+
+        <div class="sub-control-card">
+          <div class="sub-control-row">
+            <span><strong>Voxel Probe &amp; Slice (i, j, k):</strong></span>
+            <span>
+              <button class="btn" id="btn-probe-lower" style="padding: 2px 6px; font-size: 10px;">(8,8,5) Lower</button>
+              <button class="btn" id="btn-probe-upper" style="padding: 2px 6px; font-size: 10px;">(8,8,11) Upper</button>
+            </span>
+          </div>
+          <div class="sub-control-row">
+            <label>i:<input type="range" id="slider-probe-i" min="0" max="15" step="1" value="8" style="width: 65px;" /></label>
+            <label>j:<input type="range" id="slider-probe-j" min="0" max="15" step="1" value="8" style="width: 65px;" /></label>
+            <label>k(+up):<input type="range" id="slider-probe-k" min="0" max="15" step="1" value="5" style="width: 65px;" /></label>
+            <span id="lbl-probe-ijk">(8, 8, 5)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="interp-toggle-row">
+        <label>
+          <input type="checkbox" id="chk-display-interp" />
+          Allow Display Interpolation (Visual Only: Labels frames "interpolated_for_display", run_receipt = null)
+        </label>
+        <span style="font-family: var(--font-mono); font-size: 9.5px; color: var(--fg-secondary); white-space: nowrap;" id="lbl-policy-mode">
+          Policy: fail_closed_no_invented_states | Discrete Verified Mode
+        </span>
+      </div>
+    </div>
+
+    <!-- Selected-Voxel Time-Series Plot -->
+    <div class="panel-card" style="padding: 8px 10px;">
+      <div class="panel-header" style="padding-bottom: 4px;">
+        <span class="panel-title" id="timeseries-title">4. Selected-Voxel Time Series F(8, 8, 5, t)</span>
+        <div class="legend-inline">
+          <span class="legend-item"><span class="swatch-solid-green"></span> Verified Accepted (Green)</span>
+          <span class="legend-item"><span class="swatch-dashed-red"></span> Criterial-Pruned Control (Red Dashed)</span>
+        </div>
+      </div>
+      <div class="canvas-wrap" style="flex: 1;">
+        <canvas id="canvas-timeseries" width="796" height="158"></canvas>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+/**
+ * Stage 1 Spatiotemporal 4D Data Verifier, State Selector, Dual-Time Comparator,
+ * Orthogonal Slicer, and 4D Hyperplane Projector (spacetime_geochemistry_v0).
+ *
+ * Compatible with both browser (window.Spacetime4D) and Node.js CommonJS.
+ * Strictly zero em-dashes and zero en-dashes.
+ */
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) {
+    module.exports = factory();
+  } else {
+    root.Spacetime4D = factory();
+  }
+})(typeof self !== "undefined" ? self : this, function () {
+  "use strict";
+
+  var ALLOWED_EVIDENCE_CLASSES = [
+    "geographic_observation_or_locator",
+    "sourced_geological_record",
+    "prescribed_analytic_field",
+    "numerically_verified_synthetic_model",
+    "hypothesis_or_unvalidated_model",
+    "empirically_calibrated_model"
+  ];
+
+  var ALLOWED_STATE_DERIVATIONS = [
+    "computed",
+    "measured",
+    "prescribed_analytically",
+    "interpolated_for_display"
+  ];
+
+  // Pure-JS SHA-256 implementation for synchronous verification in browser (file://) and Node.js
+  var SHA256_K = new Uint32Array([
+    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+  ]);
+
+  function rotr(x, n) {
+    return (x >>> n) | (x << (32 - n));
+  }
+
+  function sha256Bytes(bytes) {
+    var len = bytes.length;
+    var bitLenHi = Math.floor((len * 8) / 0x100000000);
+    var bitLenLo = (len * 8) >>> 0;
+    var padLen = ((len + 9 + 63) & ~63);
+    var buf = new Uint8Array(padLen);
+    buf.set(bytes, 0);
+    buf[len] = 0x80;
+    var view = new DataView(buf.buffer);
+    view.setUint32(padLen - 8, bitLenHi, false);
+    view.setUint32(padLen - 4, bitLenLo, false);
+
+    var h0 = 0x6a09e667;
+    var h1 = 0xbb67ae85;
+    var h2 = 0x3c6ef372;
+    var h3 = 0xa54ff53a;
+    var h4 = 0x510e527f;
+    var h5 = 0x9b05688c;
+    var h6 = 0x1f83d9ab;
+    var h7 = 0x5be0cd19;
+
+    var w = new Uint32Array(64);
+
+    for (var offset = 0; offset < padLen; offset += 64) {
+      for (var i = 0; i < 16; i++) {
+        w[i] = view.getUint32(offset + i * 4, false);
+      }
+      for (var j = 16; j < 64; j++) {
+        var s0 = rotr(w[j - 15], 7) ^ rotr(w[j - 15], 18) ^ (w[j - 15] >>> 3);
+        var s1 = rotr(w[j - 2], 17) ^ rotr(w[j - 2], 19) ^ (w[j - 2] >>> 10);
+        w[j] = (w[j - 16] + s0 + w[j - 7] + s1) >>> 0;
+      }
+
+      var a = h0;
+      var b = h1;
+      var c = h2;
+      var d = h3;
+      var e = h4;
+      var f = h5;
+      var g = h6;
+      var h = h7;
+
+      for (var t = 0; t < 64; t++) {
+        var S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+        var ch = (e & f) ^ (~e & g);
+        var temp1 = (h + S1 + ch + SHA256_K[t] + w[t]) >>> 0;
+        var S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+        var maj = (a & b) ^ (a & c) ^ (b & c);
+        var temp2 = (S0 + maj) >>> 0;
+
+        h = g;
+        g = f;
+        f = e;
+        e = (d + temp1) >>> 0;
+        d = c;
+        c = b;
+        b = a;
+        a = (temp1 + temp2) >>> 0;
+      }
+
+      h0 = (h0 + a) >>> 0;
+      h1 = (h1 + b) >>> 0;
+      h2 = (h2 + c) >>> 0;
+      h3 = (h3 + d) >>> 0;
+      h4 = (h4 + e) >>> 0;
+      h5 = (h5 + f) >>> 0;
+      h6 = (h6 + g) >>> 0;
+      h7 = (h7 + h) >>> 0;
+    }
+
+    function hex32(val) {
+      return ("00000000" + (val >>> 0).toString(16)).slice(-8);
+    }
+
+    return (
+      hex32(h0) +
+      hex32(h1) +
+      hex32(h2) +
+      hex32(h3) +
+      hex32(h4) +
+      hex32(h5) +
+      hex32(h6) +
+      hex32(h7)
+    );
+  }
+
+  function sha256Float32LE(valuesArray) {
+    var count = valuesArray.length;
+    var ab = new ArrayBuffer(count * 4);
+    var dv = new DataView(ab);
+    for (var i = 0; i < count; i++) {
+      dv.setFloat32(i * 4, valuesArray[i], true);
+    }
+    return sha256Bytes(new Uint8Array(ab));
+  }
+
+  function voxelIndex(i, j, k, nx, ny) {
+    return i + nx * (j + ny * k);
+  }
+
+  function computeCenterOfMass(valuesArray, nx, ny, nz, domainBoundsM) {
+    var xMin = 0.0;
+    var xMax = nx;
+    var yMin = 0.0;
+    var yMax = ny;
+    var zMin = 0.0;
+    var zMax = nz;
+    if (domainBoundsM && typeof domainBoundsM === "object") {
+      if (Array.isArray(domainBoundsM.x) && domainBoundsM.x.length === 2) {
+        xMin = domainBoundsM.x[0];
+        xMax = domainBoundsM.x[1];
+      }
+      if (Array.isArray(domainBoundsM.y) && domainBoundsM.y.length === 2) {
+        yMin = domainBoundsM.y[0];
+        yMax = domainBoundsM.y[1];
+      }
+      if (Array.isArray(domainBoundsM.z_up) && domainBoundsM.z_up.length === 2) {
+        zMin = domainBoundsM.z_up[0];
+        zMax = domainBoundsM.z_up[1];
+      }
+    }
+    var dx = (xMax - xMin) / nx;
+    var dy = (yMax - yMin) / ny;
+    var dz = (zMax - zMin) / nz;
+    var total = 0.0;
+    var sx = 0.0;
+    var sy = 0.0;
+    var sz = 0.0;
+    for (var k = 0; k < nz; k++) {
+      var z = zMin + (k + 0.5) * dz;
+      for (var j = 0; j < ny; j++) {
+        var y = yMin + (j + 0.5) * dy;
+        for (var i = 0; i < nx; i++) {
+          var x = xMin + (i + 0.5) * dx;
+          var v = valuesArray[voxelIndex(i, j, k, nx, ny)];
+          total += v;
+          sx += x * v;
+          sy += y * v;
+          sz += z * v;
+        }
+      }
+    }
+    if (total <= 0.0) {
+      return [
+        Number((0.5 * (xMin + xMax)).toFixed(6)),
+        Number((0.5 * (yMin + yMax)).toFixed(6)),
+        Number((0.5 * (zMin + zMax)).toFixed(6))
+      ];
+    }
+    return [
+      Number((sx / total).toFixed(6)),
+      Number((sy / total).toFixed(6)),
+      Number((sz / total).toFixed(6))
+    ];
+  }
+
+  function computeVoxelSummaryStatistics(valuesArray, spatialFrame) {
+    var dims = spatialFrame.dimensions_voxels;
+    var nx = dims[0];
+    var ny = dims[1];
+    var nz = dims[2];
+    var dBounds = spatialFrame.domain_bounds_m;
+    var xMin = dBounds.x[0];
+    var xMax = dBounds.x[1];
+    var yMin = dBounds.y[0];
+    var yMax = dBounds.y[1];
+    var zMin = dBounds.z_up[0];
+    var zMax = dBounds.z_up[1];
+    var dx = (xMax - xMin) / nx;
+    var dy = (yMax - yMin) / ny;
+    var dz = (zMax - zMin) / nz;
+    var voxelVolumeM3 = dx * dy * dz;
+
+    var minV = Infinity;
+    var maxV = -Infinity;
+    var sumV = 0.0;
+    var sx = 0.0;
+    var sy = 0.0;
+    var sz = 0.0;
+
+    for (var k = 0; k < nz; k++) {
+      var z = zMin + (k + 0.5) * dz;
+      for (var j = 0; j < ny; j++) {
+        var y = yMin + (j + 0.5) * dy;
+        var baseIdx = nx * (j + ny * k);
+        for (var i = 0; i < nx; i++) {
+          var x = xMin + (i + 0.5) * dx;
+          var v = Math.fround(valuesArray[baseIdx + i]);
+          if (v < minV) minV = v;
+          if (v > maxV) maxV = v;
+          sumV += v;
+          sx += x * v;
+          sy += y * v;
+          sz += z * v;
+        }
+      }
+    }
+
+    var voxelCount = nx * ny * nz;
+    var com =
+      sumV > 0.0
+        ? [
+            Number((sx / sumV).toFixed(6)),
+            Number((sy / sumV).toFixed(6)),
+            Number((sz / sumV).toFixed(6))
+          ]
+        : [
+            Number((0.5 * (xMin + xMax)).toFixed(6)),
+            Number((0.5 * (yMin + yMax)).toFixed(6)),
+            Number((0.5 * (zMin + zMax)).toFixed(6))
+          ];
+
+    return {
+      min_value: minV,
+      max_value: maxV,
+      mean_value: sumV / voxelCount,
+      voxel_sum: sumV,
+      voxel_volume_m3: voxelVolumeM3,
+      total_integrated_inventory_mol: sumV * voxelVolumeM3,
+      center_of_mass_m: com
+    };
+  }
+
+  // Deterministic synchronous fallback generator matching scripts/generate_synthetic_4d_bundle.py
+  function buildEmbeddedSyntheticBundle() {
+    var nx = 16;
+    var ny = 16;
+    var nz = 16;
+    var voxelCount = nx * ny * nz;
+    var c0 = 10.0;
+    var sigma0 = 1.8;
+    var diff = 0.0012;
+    var kDecay = 0.0004;
+    var x0 = 8.0;
+    var y0 = 8.0;
+    var z0 = 4.5;
+    var ux = 0.0015;
+    var uy = -0.001;
+    var uz = 0.0065;
+    var timeSteps = [0.0, 250.0, 500.0, 750.0, 1000.0];
+
+    var eventDefs = [
+      [
+        "t0_injection_pulse",
+        "initial_condition",
+        "Initial 3D Gaussian tracer pulse centered at z = 4.50 m (+k upward axis)."
+      ],
+      [
+        "t1_lower_conduit_ascent",
+        "advection_diffusion_step",
+        "Upward +k advection to z_c = 6.125 m with isotropic diffusive spreading."
+      ],
+      [
+        "t2_mid_column_transit",
+        "advection_diffusion_step",
+        "Mid-domain transit at z_c = 7.75 m; peak amplitude attenuated by diffusion and decay."
+      ],
+      [
+        "t3_upper_zone_entry",
+        "advection_diffusion_step",
+        "Upper compartment entry at z_c = 9.375 m; per-frame float32 checksum recorded."
+      ],
+      [
+        "t4_late_plume_dispersion",
+        "terminal_benchmark_state",
+        "Late-stage dispersed plume at z_c = 11.00 m; discrete voxel quadrature inventory and analytical decay bookkeeping recorded."
+      ]
+    ];
+
+    var states = [];
+    var prunedPoints = [];
+    var eventMarkers = [];
+    var initialMassMol = null;
+
+    for (var sIdx = 0; sIdx < timeSteps.length; sIdx++) {
+      var tS = timeSteps[sIdx];
+      var sigmaSq = sigma0 * sigma0 + 2.0 * diff * tS;
+      var ampScale = Math.pow((sigma0 * sigma0) / sigmaSq, 1.5);
+      var decayFactor = Math.exp(-kDecay * tS);
+      var prefactor = c0 * ampScale * decayFactor;
+
+      var xc = x0 + ux * tS;
+      var yc = y0 + uy * tS;
+      var zc = z0 + uz * tS;
+
+      var f32 = new Float32Array(voxelCount);
+      var values = new Array(voxelCount);
+      var retainedMass = 0.0;
+      var minV = Infinity;
+      var maxV = -Infinity;
+
+      for (var k = 0; k < nz; k++) {
+        var z = k + 0.5;
+        var dz2 = (z - zc) * (z - zc);
+        for (var j = 0; j < ny; j++) {
+          var y = j + 0.5;
+          var dy2 = (y - yc) * (y - yc);
+          for (var i = 0; i < nx; i++) {
+            var x = i + 0.5;
+            var dx2 = (x - xc) * (x - xc);
+            var r2 = dx2 + dy2 + dz2;
+            var rawVal = prefactor * Math.exp(-r2 / (2.0 * sigmaSq));
+            var qVal = Math.fround(rawVal);
+            var flatIdx = voxelIndex(i, j, k, nx, ny);
+            f32[flatIdx] = qVal;
+            values[flatIdx] = qVal;
+            retainedMass += qVal;
+            if (qVal < minV) minV = qVal;
+            if (qVal > maxV) maxV = qVal;
+          }
+        }
+      }
+
+      if (initialMassMol === null) {
+        initialMassMol = retainedMass;
+      }
+
+      var expectedSurviving = initialMassMol * Math.exp(-kDecay * tS);
+      var cumulativeDecayed = initialMassMol * (1.0 - Math.exp(-kDecay * tS));
+      var quadratureGap = expectedSurviving - retainedMass;
+      var relQuadratureGap = Math.abs(quadratureGap) / initialMassMol;
+
+      var com = computeCenterOfMass(values, nx, ny, nz);
+      var shaHex = sha256Float32LE(f32);
+
+      eventMarkers.push({
+        state_index: sIdx,
+        simulation_time: tS,
+        label: eventDefs[sIdx][0] + ": " + eventDefs[sIdx][2],
+        event_type: eventDefs[sIdx][1]
+      });
+
+      states.push({
+        state_index: sIdx,
+        simulation_time: tS,
+        time_units: "s",
+        state_derivation: "prescribed_analytically",
+        criterial_status: "verified_accepted",
+        is_simulated_state: true,
+        run_receipt: "receipts/spacetime_geochemistry_v0_2026-10-20.md#state_" + sIdx,
+        voxel_count: voxelCount,
+        sha256_f32_le: shaHex,
+        min_value: minV,
+        max_value: maxV,
+        mean_value: retainedMass / voxelCount,
+        total_integrated_inventory_mol: retainedMass,
+        center_of_mass_m: com,
+        analytical_bookkeeping_ledger: {
+          initial_discrete_inventory_mol: Number(initialMassMol.toFixed(6)),
+          retained_discrete_inventory_mol: Number(retainedMass.toFixed(6)),
+          analytical_surviving_reference_mol: Number(expectedSurviving.toFixed(6)),
+          analytical_decayed_reference_mol: Number(cumulativeDecayed.toFixed(6)),
+          unmodeled_boundary_and_quadrature_gap_mol: Number(quadratureGap.toFixed(6)),
+          relative_quadrature_and_tail_gap: Number(relQuadratureGap.toFixed(6)),
+          closes_by_algebraic_definition: true,
+          is_finite_volume_conservation_test: false,
+          analytical_bookkeeping_note:
+            "Illustrative analytical bookkeeping only: M_surv = M0*exp(-k*t) and M_decay = M0*(1-exp(-k*t)) close by algebraic definition, while M_surv - M_retained reflects unmodeled Gaussian tail mass outside [0,16m]^3 and 1m voxel midpoint quadrature. Does not test finite-volume numerical conservation (deferred to Stage 2)."
+        },
+        values: values
+      });
+
+      var driftMult = 1.0 + 0.38 * (tS / 1000.0);
+      var driftFrac = Number((0.38 * (tS / 1000.0)).toFixed(6));
+      prunedPoints.push({
+        state_index: sIdx,
+        simulation_time: tS,
+        center_of_mass_m: [
+          Number((com[0] + 0.12 * (tS / 1000.0)).toFixed(6)),
+          Number((com[1] - 0.15 * (tS / 1000.0)).toFixed(6)),
+          Number((com[2] - 0.85 * (tS / 1000.0)).toFixed(6))
+        ],
+        probe_voxel_8_8_5_value: values[voxelIndex(8, 8, 5, nx, ny)] * driftMult,
+        probe_voxel_8_8_11_value: values[voxelIndex(8, 8, 11, nx, ny)] * driftMult,
+        relative_analytical_drift: driftFrac
+      });
+    }
+
+    return {
+      schema_version: "spacetime_4d_v0",
+      bundle_id: "synthetic_tracer_pulse_4d_v0",
+      model_id: "spacetime_geochemistry_v0",
+      model_version: "0.1.0",
+      specification_version: "docs/specs/SPACETIME_GEOCHEMISTRY_v0.md#v0.1.0",
+      evidence_class: "numerically_verified_synthetic_model",
+      source_repository: "https://github.com/aurascoper/oklo_pool_mobile",
+      baseline_commit: "636b7d7bb41999b80278d90046da893ee1044f20",
+      source_provenance: {
+        target_branch: "spacetime-geochemistry/v0-slice",
+        baseline_commit: "636b7d7bb41999b80278d90046da893ee1044f20",
+        generator_script: "scripts/generate_synthetic_4d_bundle.py",
+        generator_version: "spacetime_geochemistry_v0_gen_0.2.0",
+        generator_script_sha256: "d8a78d21351d8ee0c1c791adbec48e6e48c11e032ec93c6fb30eb91b815962e7",
+        tested_source_commit_policy: "recorded_in_external_verification_receipt"
+      },
+      run_id: "synth_adv_diff_decay_16x16x16_5state_v0",
+      run_receipt: "receipts/spacetime_geochemistry_v0_2026-10-20.md",
+      parameter_set_id: "synthetic_advection_diffusion_decay_v0_default",
+      field_name: "synthetic_tracer_concentration",
+      field_units: "mol_m3_synthetic_tracer",
+      uncertainty:
+        "Synthetic analytical benchmark sampled on a 1m voxel grid; IEEE-754 float32 quantization residual < 1e-6; analytical bookkeeping closes by algebraic identity (not a finite-volume PDE conservation test).",
+      known_limitations:
+        "Stage 1 synthetic 3D advection-diffusion-decay pulse on a schematic 16m cube; not a geological, hydrothermal, or radiation-transport simulation.",
+      scientific_status_disclaimer:
+        "Passing viewer and data-contract tests establishes rendering and data-contract correctness only, not geological validity, radiation transport accuracy, or empirical calibration.",
+      spatial_frame: {
+        coordinate_system: "cartesian_local_16m_cube",
+        geometry_provenance: "schematic",
+        dimensions_voxels: [nx, ny, nz],
+        voxel_order: "x_fastest_then_y_then_k_up",
+        domain_bounds_m: {
+          x: [0.0, 16.0],
+          y: [0.0, 16.0],
+          z_up: [0.0, 16.0]
+        },
+        up_axis: "+k"
+      },
+      temporal_axis: {
+        fourth_dimension_symbol: "t",
+        time_units: "s",
+        state_count: timeSteps.length,
+        temporal_resolution_s: 250.0,
+        time_bounds: [timeSteps[0], timeSteps[timeSteps.length - 1]],
+        strict_monotonic_ordering: true,
+        missing_frame_policy: "fail_closed_no_invented_states",
+        interpolation_policy: "none_discrete_states_only",
+        initial_condition_summary:
+          "3D Gaussian tracer pulse centered at (8.0, 8.0, 4.5) m with sigma_0 = 1.8 m and peak C_0 = 10.0 mol_m3_synthetic_tracer at t = 0.0 s.",
+        event_markers: eventMarkers
+      },
+      governing_parameters: {
+        equation_summary:
+          "C(x,y,z,t) = C0 * (sigma0^2 / sigma(t)^2)^(3/2) * exp(-k_decay * t) * exp(-((x-xc(t))^2 + (y-yc(t))^2 + (z-zc(t))^2) / (2 * sigma(t)^2))",
+        initial_peak_concentration_mol_m3: c0,
+        initial_sigma_m: sigma0,
+        diffusion_coefficient_m2_s: diff,
+        decay_rate_s_inv: kDecay,
+        advection_velocity_m_s: [ux, uy, uz],
+        initial_center_m: [x0, y0, z0]
+      },
+      v2_compatibility: {
+        schema_target: "https://aurascoper.github.io/oklo_pool_mobile/schemas/epistemic_record_v1.json",
+        epistemic_record: {
+          model_id: "spacetime_geochemistry_v0",
+          model_version: "0.1.0",
+          evidence_class: "numerically_verified_synthetic_model",
+          source_repository: "https://github.com/aurascoper/oklo_pool_mobile",
+          baseline_commit: "636b7d7bb41999b80278d90046da893ee1044f20",
+          source_revision: "spacetime-geochemistry/v0-slice@spacetime_geochemistry_v0_gen_0.2.0",
+          specification_version: "docs/specs/SPACETIME_GEOCHEMISTRY_v0.md#v0.1.0",
+          run_receipt: "receipts/spacetime_geochemistry_v0_2026-10-20.md",
+          parameter_set_id: "synthetic_advection_diffusion_decay_v0_default",
+          units: "mol_m3_synthetic_tracer; time_units=s",
+          coordinate_system: "cartesian_local_16m_cube",
+          uncertainty:
+            "Synthetic analytical benchmark sampled on a 1m voxel grid; IEEE-754 float32 quantization residual < 1e-6; analytical bookkeeping closes by algebraic identity (not a finite-volume PDE conservation test).",
+          known_limitations:
+            "Stage 1 synthetic 3D advection-diffusion-decay pulse on a schematic 16m cube; not a geological, hydrothermal, or radiation-transport simulation."
+        }
+      },
+      states: states,
+      criterial_pruned_branches: [
+        {
+          branch_id: "synthetic_amplitude_drift_control",
+          label: "Negative Control: Synthetic +38% Amplitude-Drift Candidate (Pruned)",
+          criterial_status: "criterial_pruned",
+          prune_reason:
+            "Synthetic negative-control candidate perturbed by an artificial +38% amplitude drift multiplier (1 + 0.38 * t / 1000 s) at t = 1000 s, exceeding the Stage 1 analytical reference envelope gate (0.38 > 1.0e-4). Demonstrates visual criterial separation only, not finite-volume PDE conservation.",
+          max_relative_analytical_drift: 0.38,
+          criterial_threshold_exceeded: 0.0001,
+          time_points: prunedPoints
+        }
+      ]
+    };
+  }
+
+  function verifyBundleIntegrity(bundle) {
+    if (!bundle || typeof bundle !== "object") {
+      throw new Error("SpacetimeContractError: Bundle must be a non-null object");
+    }
+    if (bundle.schema_version !== "spacetime_4d_v0") {
+      throw new Error("SpacetimeContractError: schema_version must be 'spacetime_4d_v0'");
+    }
+    var requiredStrings = [
+      "bundle_id",
+      "model_id",
+      "model_version",
+      "specification_version",
+      "source_repository",
+      "baseline_commit",
+      "run_id",
+      "parameter_set_id",
+      "field_name",
+      "field_units",
+      "uncertainty",
+      "known_limitations",
+      "scientific_status_disclaimer"
+    ];
+    for (var s = 0; s < requiredStrings.length; s++) {
+      var key = requiredStrings[s];
+      if (typeof bundle[key] !== "string" || bundle[key].trim().length === 0) {
+        throw new Error("SpacetimeContractError: Missing or empty required string '" + key + "'");
+      }
+    }
+    if (!/^[0-9a-f]{7,40}$/.test(bundle.baseline_commit)) {
+      throw new Error("SpacetimeContractError: baseline_commit must be a lowercase hex commit hash");
+    }
+
+    var prov = bundle.source_provenance;
+    if (!prov || typeof prov !== "object") {
+      throw new Error("SpacetimeContractError: Missing source_provenance object");
+    }
+    var provStrings = [
+      "target_branch",
+      "baseline_commit",
+      "generator_script",
+      "generator_version",
+      "generator_script_sha256",
+      "tested_source_commit_policy"
+    ];
+    for (var pIdx = 0; pIdx < provStrings.length; pIdx++) {
+      var pKey = provStrings[pIdx];
+      if (typeof prov[pKey] !== "string" || prov[pKey].trim().length === 0) {
+        throw new Error("SpacetimeContractError: Missing or empty source_provenance." + pKey);
+      }
+    }
+    if (prov.baseline_commit !== bundle.baseline_commit) {
+      throw new Error("SpacetimeContractError: source_provenance.baseline_commit mismatch with baseline_commit");
+    }
+    if (
+      prov.generator_version === bundle.baseline_commit ||
+      prov.generator_version.indexOf(bundle.baseline_commit.slice(0, 7)) === 0 ||
+      /^[0-9a-f]{7,40}$/.test(prov.generator_version)
+    ) {
+      throw new Error(
+        "SpacetimeContractError: source_provenance.generator_version must not conflate generator revision with baseline_commit or a raw commit hash"
+      );
+    }
+    if (!/^[0-9a-f]{64}$/.test(prov.generator_script_sha256)) {
+      throw new Error("SpacetimeContractError: source_provenance.generator_script_sha256 must be a 64-hex SHA-256");
+    }
+
+    if (ALLOWED_EVIDENCE_CLASSES.indexOf(bundle.evidence_class) === -1) {
+      throw new Error("SpacetimeContractError: Invalid evidence_class '" + bundle.evidence_class + "'");
+    }
+    if (bundle.evidence_class === "empirically_calibrated_model") {
+      throw new Error(
+        "SpacetimeContractError: Unauthorized evidence_class 'empirically_calibrated_model' in Stage 0/1 synthetic slice"
+      );
+    }
+
+    var spatial = bundle.spatial_frame;
+    if (!spatial || typeof spatial !== "object") {
+      throw new Error("SpacetimeContractError: Missing spatial_frame");
+    }
+    if (spatial.up_axis !== "+k") {
+      throw new Error("SpacetimeContractError: spatial_frame.up_axis must be '+k'");
+    }
+    if (spatial.voxel_order !== "x_fastest_then_y_then_k_up") {
+      throw new Error("SpacetimeContractError: spatial_frame.voxel_order must be 'x_fastest_then_y_then_k_up'");
+    }
+    if (
+      spatial.geometry_provenance !== "schematic" &&
+      spatial.geometry_provenance !== "surveyed_or_sourced"
+    ) {
+      throw new Error("SpacetimeContractError: Invalid spatial_frame.geometry_provenance");
+    }
+    var dims = spatial.dimensions_voxels;
+    if (
+      !Array.isArray(dims) ||
+      dims.length !== 3 ||
+      !Number.isInteger(dims[0]) ||
+      !Number.isInteger(dims[1]) ||
+      !Number.isInteger(dims[2]) ||
+      dims[0] <= 0 ||
+      dims[1] <= 0 ||
+      dims[2] <= 0
+    ) {
+      throw new Error("SpacetimeContractError: spatial_frame.dimensions_voxels must be 3 positive integers");
+    }
+    var expectedVoxels = dims[0] * dims[1] * dims[2];
+
+    var dBounds = spatial.domain_bounds_m;
+    if (!dBounds || typeof dBounds !== "object") {
+      throw new Error("SpacetimeContractError: Missing spatial_frame.domain_bounds_m");
+    }
+    var axes = ["x", "y", "z_up"];
+    for (var aIdx = 0; aIdx < axes.length; aIdx++) {
+      var ax = dBounds[axes[aIdx]];
+      if (
+        !Array.isArray(ax) ||
+        ax.length !== 2 ||
+        typeof ax[0] !== "number" ||
+        typeof ax[1] !== "number" ||
+        !Number.isFinite(ax[0]) ||
+        !Number.isFinite(ax[1]) ||
+        ax[0] >= ax[1]
+      ) {
+        throw new Error(
+          "SpacetimeContractError: spatial_frame.domain_bounds_m." + axes[aIdx] + " must have finite min < max"
+        );
+      }
+    }
+
+    var gov = bundle.governing_parameters;
+    if (!gov || typeof gov !== "object") {
+      throw new Error("SpacetimeContractError: Missing governing_parameters");
+    }
+    if (typeof gov.equation_summary !== "string" || gov.equation_summary.trim().length === 0) {
+      throw new Error("SpacetimeContractError: governing_parameters.equation_summary must be a non-empty string");
+    }
+    var govNums = [
+      "initial_peak_concentration_mol_m3",
+      "initial_sigma_m",
+      "diffusion_coefficient_m2_s",
+      "decay_rate_s_inv"
+    ];
+    for (var gIdx = 0; gIdx < govNums.length; gIdx++) {
+      var gKey = govNums[gIdx];
+      if (typeof gov[gKey] !== "number" || !Number.isFinite(gov[gKey])) {
+        throw new Error("SpacetimeContractError: governing_parameters." + gKey + " must be a finite number");
+      }
+    }
+    if (gov.decay_rate_s_inv < 0) {
+      throw new Error("SpacetimeContractError: governing_parameters.decay_rate_s_inv must be >= 0");
+    }
+    var kDecay = gov.decay_rate_s_inv;
+    var govVecs = ["advection_velocity_m_s", "initial_center_m"];
+    for (var gvIdx = 0; gvIdx < govVecs.length; gvIdx++) {
+      var gv = gov[govVecs[gvIdx]];
+      if (
+        !Array.isArray(gv) ||
+        gv.length !== 3 ||
+        typeof gv[0] !== "number" ||
+        typeof gv[1] !== "number" ||
+        typeof gv[2] !== "number" ||
+        !Number.isFinite(gv[0]) ||
+        !Number.isFinite(gv[1]) ||
+        !Number.isFinite(gv[2])
+      ) {
+        throw new Error("SpacetimeContractError: governing_parameters." + govVecs[gvIdx] + " must be 3 finite numbers");
+      }
+    }
+
+    var temporal = bundle.temporal_axis;
+    if (!temporal || typeof temporal !== "object") {
+      throw new Error("SpacetimeContractError: Missing temporal_axis");
+    }
+    if (temporal.fourth_dimension_symbol !== "t") {
+      throw new Error("SpacetimeContractError: temporal_axis.fourth_dimension_symbol must equal 't'");
+    }
+    if (temporal.time_units !== "s") {
+      throw new Error("SpacetimeContractError: temporal_axis.time_units must equal 's' in spacetime_4d_v0");
+    }
+    if (
+      typeof temporal.temporal_resolution_s !== "number" ||
+      !Number.isFinite(temporal.temporal_resolution_s) ||
+      temporal.temporal_resolution_s <= 0
+    ) {
+      throw new Error("SpacetimeContractError: temporal_axis.temporal_resolution_s must be a finite positive number");
+    }
+    if (temporal.strict_monotonic_ordering !== true) {
+      throw new Error("SpacetimeContractError: temporal_axis.strict_monotonic_ordering must be true");
+    }
+    if (temporal.missing_frame_policy !== "fail_closed_no_invented_states") {
+      throw new Error(
+        "SpacetimeContractError: temporal_axis.missing_frame_policy must be 'fail_closed_no_invented_states'"
+      );
+    }
+    if (
+      temporal.interpolation_policy !== "none_discrete_states_only" &&
+      temporal.interpolation_policy !== "explicit_display_only_when_toggled"
+    ) {
+      throw new Error("SpacetimeContractError: Invalid temporal_axis.interpolation_policy");
+    }
+    if (
+      typeof temporal.initial_condition_summary !== "string" ||
+      temporal.initial_condition_summary.trim().length === 0
+    ) {
+      throw new Error("SpacetimeContractError: temporal_axis.initial_condition_summary must be a non-empty string");
+    }
+
+    var states = bundle.states;
+    if (!Array.isArray(states) || states.length < 2) {
+      throw new Error("SpacetimeContractError: states must be an array with at least 2 time states");
+    }
+    if (states.length !== temporal.state_count) {
+      throw new Error("SpacetimeContractError: states.length does not match temporal_axis.state_count");
+    }
+
+    var prevTime = null;
+    var seenHashes = {};
+    var initialIntegratedInventory = 0.0;
+
+    for (var idx = 0; idx < states.length; idx++) {
+      var st = states[idx];
+      if (!st || typeof st !== "object") {
+        throw new Error("SpacetimeContractError: states[" + idx + "] must be an object");
+      }
+      if (st.state_index !== idx) {
+        throw new Error(
+          "SpacetimeContractError: Missing or out-of-order state_index at states[" +
+            idx +
+            "] (got " +
+            st.state_index +
+            ")"
+        );
+      }
+      if (typeof st.simulation_time !== "number" || !Number.isFinite(st.simulation_time)) {
+        throw new Error("SpacetimeContractError: states[" + idx + "].simulation_time must be finite");
+      }
+      if (prevTime !== null) {
+        if (st.simulation_time <= prevTime) {
+          throw new Error(
+            "SpacetimeContractError: Non-monotonic simulation_time at states[" +
+              idx +
+              "]: " +
+              st.simulation_time +
+              " <= " +
+              prevTime
+          );
+        }
+        var dtStep = st.simulation_time - prevTime;
+        if (Math.abs(dtStep - temporal.temporal_resolution_s) > 1e-6) {
+          throw new Error(
+            "SpacetimeContractError: Inconsistent time step at states[" +
+              idx +
+              "]: dt=" +
+              dtStep +
+              " != temporal_axis.temporal_resolution_s=" +
+              temporal.temporal_resolution_s
+          );
+        }
+      }
+      prevTime = st.simulation_time;
+
+      if (st.time_units !== "s") {
+        throw new Error("SpacetimeContractError: states[" + idx + "].time_units must equal 's'");
+      }
+      if (ALLOWED_STATE_DERIVATIONS.indexOf(st.state_derivation) === -1) {
+        throw new Error("SpacetimeContractError: Invalid state_derivation at states[" + idx + "]");
+      }
+      if (
+        temporal.interpolation_policy === "none_discrete_states_only" &&
+        st.state_derivation === "interpolated_for_display"
+      ) {
+        throw new Error(
+          "SpacetimeContractError: Stored states cannot be 'interpolated_for_display' under none_discrete_states_only"
+        );
+      }
+      if (st.state_derivation === "interpolated_for_display") {
+        if (st.run_receipt !== null) {
+          throw new Error("SpacetimeContractError: interpolated_for_display state must have run_receipt = null");
+        }
+        if (st.is_simulated_state !== false) {
+          throw new Error("SpacetimeContractError: interpolated_for_display state must have is_simulated_state = false");
+        }
+      } else {
+        if (st.is_simulated_state !== true) {
+          throw new Error("SpacetimeContractError: Discrete state at states[" + idx + "] must have is_simulated_state = true");
+        }
+        if (typeof st.run_receipt !== "string" || st.run_receipt.trim().length === 0) {
+          throw new Error("SpacetimeContractError: Discrete state at states[" + idx + "] must have a non-empty run_receipt");
+        }
+      }
+      if (st.criterial_status !== "verified_accepted") {
+        throw new Error(
+          "SpacetimeContractError: Primary states[" + idx + "] must have criterial_status='verified_accepted'"
+        );
+      }
+
+      var ledger = st.analytical_bookkeeping_ledger;
+      if (!ledger || typeof ledger !== "object") {
+        throw new Error("SpacetimeContractError: Missing analytical_bookkeeping_ledger at states[" + idx + "]");
+      }
+      if (ledger.closes_by_algebraic_definition !== true) {
+        throw new Error(
+          "SpacetimeContractError: states[" + idx + "].analytical_bookkeeping_ledger.closes_by_algebraic_definition must be true"
+        );
+      }
+      if (ledger.is_finite_volume_conservation_test !== false) {
+        throw new Error(
+          "SpacetimeContractError: states[" + idx + "].analytical_bookkeeping_ledger.is_finite_volume_conservation_test must be false in Stage 1"
+        );
+      }
+      if (
+        typeof ledger.analytical_bookkeeping_note !== "string" ||
+        ledger.analytical_bookkeeping_note.trim().length === 0
+      ) {
+        throw new Error(
+          "SpacetimeContractError: states[" + idx + "].analytical_bookkeeping_ledger.analytical_bookkeeping_note must be non-empty"
+        );
+      }
+      var ledgerNumFields = [
+        "initial_discrete_inventory_mol",
+        "retained_discrete_inventory_mol",
+        "analytical_surviving_reference_mol",
+        "analytical_decayed_reference_mol",
+        "unmodeled_boundary_and_quadrature_gap_mol",
+        "relative_quadrature_and_tail_gap"
+      ];
+      for (var lf = 0; lf < ledgerNumFields.length; lf++) {
+        var lfVal = ledger[ledgerNumFields[lf]];
+        if (typeof lfVal !== "number" || !Number.isFinite(lfVal)) {
+          throw new Error(
+            "SpacetimeContractError: states[" + idx + "].analytical_bookkeeping_ledger." + ledgerNumFields[lf] + " must be finite"
+          );
+        }
+      }
+      if (ledger.relative_quadrature_and_tail_gap < 0) {
+        throw new Error(
+          "SpacetimeContractError: states[" + idx + "].analytical_bookkeeping_ledger.relative_quadrature_and_tail_gap must be >= 0"
+        );
+      }
+
+      if (st.voxel_count !== expectedVoxels) {
+        throw new Error("SpacetimeContractError: states[" + idx + "].voxel_count mismatch");
+      }
+      if (!Array.isArray(st.values) || st.values.length !== expectedVoxels) {
+        throw new Error("SpacetimeContractError: states[" + idx + "].values length mismatch");
+      }
+      for (var v = 0; v < expectedVoxels; v++) {
+        var val = st.values[v];
+        if (typeof val !== "number" || !Number.isFinite(val) || !Number.isFinite(Math.fround(val))) {
+          throw new Error(
+            "SpacetimeContractError: Non-finite voxel value at states[" + idx + "].values[" + v + "]"
+          );
+        }
+      }
+
+      // Independently recompute derived summary statistics from hashed voxel array and spatial_frame
+      var recomputed = computeVoxelSummaryStatistics(st.values, spatial);
+      var sumNumFields = [
+        "min_value",
+        "max_value",
+        "mean_value",
+        "total_integrated_inventory_mol"
+      ];
+      for (var sf = 0; sf < sumNumFields.length; sf++) {
+        var sfKey = sumNumFields[sf];
+        if (typeof st[sfKey] !== "number" || !Number.isFinite(st[sfKey])) {
+          throw new Error("SpacetimeContractError: states[" + idx + "]." + sfKey + " must be a finite number");
+        }
+      }
+      if (Math.abs(st.min_value - recomputed.min_value) > 1e-6) {
+        throw new Error(
+          "SpacetimeContractError: states[" +
+            idx +
+            "].min_value (" +
+            st.min_value +
+            ") does not match recomputed voxel minimum (" +
+            recomputed.min_value +
+            ")"
+        );
+      }
+      if (Math.abs(st.max_value - recomputed.max_value) > 1e-6) {
+        throw new Error(
+          "SpacetimeContractError: states[" +
+            idx +
+            "].max_value (" +
+            st.max_value +
+            ") does not match recomputed voxel maximum (" +
+            recomputed.max_value +
+            ")"
+        );
+      }
+      if (Math.abs(st.mean_value - recomputed.mean_value) > 1e-6) {
+        throw new Error(
+          "SpacetimeContractError: states[" +
+            idx +
+            "].mean_value (" +
+            st.mean_value +
+            ") does not match recomputed voxel mean (" +
+            recomputed.mean_value +
+            ")"
+        );
+      }
+      if (Math.abs(st.total_integrated_inventory_mol - recomputed.total_integrated_inventory_mol) > 1e-5) {
+        throw new Error(
+          "SpacetimeContractError: states[" +
+            idx +
+            "].total_integrated_inventory_mol (" +
+            st.total_integrated_inventory_mol +
+            ") does not match recomputed integrated voxel inventory (" +
+            recomputed.total_integrated_inventory_mol +
+            ")"
+        );
+      }
+      if (
+        !Array.isArray(st.center_of_mass_m) ||
+        st.center_of_mass_m.length !== 3 ||
+        typeof st.center_of_mass_m[0] !== "number" ||
+        typeof st.center_of_mass_m[1] !== "number" ||
+        typeof st.center_of_mass_m[2] !== "number" ||
+        !Number.isFinite(st.center_of_mass_m[0]) ||
+        !Number.isFinite(st.center_of_mass_m[1]) ||
+        !Number.isFinite(st.center_of_mass_m[2])
+      ) {
+        throw new Error("SpacetimeContractError: states[" + idx + "].center_of_mass_m must be 3 finite numbers");
+      }
+      for (var cAxis = 0; cAxis < 3; cAxis++) {
+        if (Math.abs(st.center_of_mass_m[cAxis] - recomputed.center_of_mass_m[cAxis]) > 1e-5) {
+          throw new Error(
+            "SpacetimeContractError: states[" +
+              idx +
+              "].center_of_mass_m[" +
+              cAxis +
+              "] (" +
+              st.center_of_mass_m[cAxis] +
+              ") does not match recomputed voxel center of mass (" +
+              recomputed.center_of_mass_m[cAxis] +
+              ")"
+          );
+        }
+      }
+
+      var stateIntegratedInventory = recomputed.total_integrated_inventory_mol;
+      if (idx === 0) {
+        initialIntegratedInventory = stateIntegratedInventory;
+      }
+      if (
+        ledger.initial_discrete_inventory_mol <= 0 ||
+        Math.abs(ledger.initial_discrete_inventory_mol - initialIntegratedInventory) > 1e-5
+      ) {
+        throw new Error(
+          "SpacetimeContractError: states[" + idx + "].analytical_bookkeeping_ledger.initial_discrete_inventory_mol mismatch with state 0 integrated inventory"
+        );
+      }
+      if (Math.abs(ledger.retained_discrete_inventory_mol - stateIntegratedInventory) > 1e-5) {
+        throw new Error(
+          "SpacetimeContractError: states[" + idx + "].analytical_bookkeeping_ledger.retained_discrete_inventory_mol mismatch with discrete integrated inventory"
+        );
+      }
+      var expectedSurvRef = initialIntegratedInventory * Math.exp(-kDecay * st.simulation_time);
+      var expectedDecRef = initialIntegratedInventory * (1.0 - Math.exp(-kDecay * st.simulation_time));
+      if (Math.abs(ledger.analytical_surviving_reference_mol - expectedSurvRef) > 1e-5) {
+        throw new Error(
+          "SpacetimeContractError: states[" +
+            idx +
+            "].analytical_bookkeeping_ledger.analytical_surviving_reference_mol (" +
+            ledger.analytical_surviving_reference_mol +
+            ") does not match M0 * exp(-k_decay * simulation_time) (" +
+            expectedSurvRef.toFixed(6) +
+            ")"
+        );
+      }
+      if (Math.abs(ledger.analytical_decayed_reference_mol - expectedDecRef) > 1e-5) {
+        throw new Error(
+          "SpacetimeContractError: states[" +
+            idx +
+            "].analytical_bookkeeping_ledger.analytical_decayed_reference_mol (" +
+            ledger.analytical_decayed_reference_mol +
+            ") does not match M0 * (1 - exp(-k_decay * simulation_time)) (" +
+            expectedDecRef.toFixed(6) +
+            ")"
+        );
+      }
+      if (
+        Math.abs(
+          ledger.analytical_surviving_reference_mol +
+            ledger.analytical_decayed_reference_mol -
+            ledger.initial_discrete_inventory_mol
+        ) > 1e-5
+      ) {
+        throw new Error(
+          "SpacetimeContractError: states[" + idx + "].analytical_bookkeeping_ledger surviving + decayed does not close algebraically"
+        );
+      }
+      var expectedGapMol = ledger.analytical_surviving_reference_mol - ledger.retained_discrete_inventory_mol;
+      if (Math.abs(ledger.unmodeled_boundary_and_quadrature_gap_mol - expectedGapMol) > 1e-5) {
+        throw new Error(
+          "SpacetimeContractError: states[" + idx + "].analytical_bookkeeping_ledger.unmodeled_boundary_and_quadrature_gap_mol contradicts M_surv - M_retained"
+        );
+      }
+      var expectedRelGap = Math.abs(expectedGapMol) / ledger.initial_discrete_inventory_mol;
+      if (Math.abs(ledger.relative_quadrature_and_tail_gap - expectedRelGap) > 1e-5) {
+        throw new Error(
+          "SpacetimeContractError: states[" + idx + "].analytical_bookkeeping_ledger.relative_quadrature_and_tail_gap contradicts |M_surv - M_retained| / M0"
+        );
+      }
+
+      var computedSha = sha256Float32LE(st.values);
+      if (computedSha !== st.sha256_f32_le) {
+        throw new Error(
+          "SpacetimeContractError: Per-frame Float32LE SHA-256 checksum mismatch at states[" +
+            idx +
+            "]: expected " +
+            st.sha256_f32_le +
+            ", computed " +
+            computedSha
+        );
+      }
+      if (seenHashes[computedSha]) {
+        throw new Error("SpacetimeContractError: Duplicate frame SHA-256 across distinct time states");
+      }
+      seenHashes[computedSha] = true;
+    }
+
+    var tBounds = temporal.time_bounds;
+    if (
+      !Array.isArray(tBounds) ||
+      tBounds.length !== 2 ||
+      tBounds[0] !== states[0].simulation_time ||
+      tBounds[1] !== states[states.length - 1].simulation_time
+    ) {
+      throw new Error(
+        "SpacetimeContractError: temporal_axis.time_bounds must match [states[0].simulation_time, states[M-1].simulation_time]"
+      );
+    }
+
+    var evMarkers = temporal.event_markers;
+    if (!Array.isArray(evMarkers) || evMarkers.length !== states.length) {
+      throw new Error("SpacetimeContractError: temporal_axis.event_markers must be an array matching states.length");
+    }
+    for (var emIdx = 0; emIdx < evMarkers.length; emIdx++) {
+      var em = evMarkers[emIdx];
+      if (
+        !em ||
+        typeof em !== "object" ||
+        em.state_index !== emIdx ||
+        em.simulation_time !== states[emIdx].simulation_time ||
+        typeof em.label !== "string" ||
+        em.label.trim().length === 0 ||
+        typeof em.event_type !== "string" ||
+        em.event_type.trim().length === 0
+      ) {
+        throw new Error("SpacetimeContractError: Invalid temporal_axis.event_markers[" + emIdx + "]");
+      }
+    }
+
+    var v2Comp = bundle.v2_compatibility;
+    if (
+      !v2Comp ||
+      typeof v2Comp !== "object" ||
+      v2Comp.schema_target !== "https://aurascoper.github.io/oklo_pool_mobile/schemas/epistemic_record_v1.json" ||
+      !v2Comp.epistemic_record ||
+      typeof v2Comp.epistemic_record !== "object"
+    ) {
+      throw new Error("SpacetimeContractError: Missing or invalid v2_compatibility.epistemic_record");
+    }
+    var v2Ep = v2Comp.epistemic_record;
+    if (
+      v2Ep.evidence_class !== bundle.evidence_class ||
+      v2Ep.coordinate_system !== spatial.coordinate_system ||
+      v2Ep.baseline_commit !== bundle.baseline_commit
+    ) {
+      throw new Error("SpacetimeContractError: v2_compatibility.epistemic_record metadata mismatch");
+    }
+    if (
+      typeof v2Ep.source_revision !== "string" ||
+      v2Ep.source_revision.trim().length === 0 ||
+      v2Ep.source_revision === bundle.baseline_commit ||
+      v2Ep.source_revision.indexOf(bundle.baseline_commit.slice(0, 7)) === 0
+    ) {
+      throw new Error(
+        "SpacetimeContractError: v2_compatibility.epistemic_record.source_revision must be distinct from baseline_commit"
+      );
+    }
+
+    if (!Array.isArray(bundle.criterial_pruned_branches) || bundle.criterial_pruned_branches.length < 1) {
+      throw new Error("SpacetimeContractError: criterial_pruned_branches must contain at least 1 control branch");
+    }
+    for (var b = 0; b < bundle.criterial_pruned_branches.length; b++) {
+      var br = bundle.criterial_pruned_branches[b];
+      if (!br || br.criterial_status !== "criterial_pruned") {
+        throw new Error("SpacetimeContractError: Invalid criterial_pruned_branches[" + b + "]");
+      }
+      if (
+        typeof br.branch_id !== "string" ||
+        br.branch_id.trim().length === 0 ||
+        typeof br.label !== "string" ||
+        br.label.trim().length === 0 ||
+        typeof br.prune_reason !== "string" ||
+        br.prune_reason.trim().length === 0
+      ) {
+        throw new Error("SpacetimeContractError: criterial_pruned_branches[" + b + "] missing required string fields");
+      }
+      if (
+        typeof br.max_relative_analytical_drift !== "number" ||
+        !Number.isFinite(br.max_relative_analytical_drift) ||
+        typeof br.criterial_threshold_exceeded !== "number" ||
+        !Number.isFinite(br.criterial_threshold_exceeded) ||
+        br.criterial_threshold_exceeded <= 0 ||
+        br.max_relative_analytical_drift <= br.criterial_threshold_exceeded
+      ) {
+        throw new Error(
+          "SpacetimeContractError: criterial_pruned_branches[" + b + "] must exceed positive criterial threshold"
+        );
+      }
+      if (!Array.isArray(br.time_points) || br.time_points.length !== states.length) {
+        throw new Error(
+          "SpacetimeContractError: criterial_pruned_branches[" + b + "].time_points length must match states.length"
+        );
+      }
+      for (var tpIdx = 0; tpIdx < br.time_points.length; tpIdx++) {
+        var tp = br.time_points[tpIdx];
+        if (!tp || tp.state_index !== tpIdx || tp.simulation_time !== states[tpIdx].simulation_time) {
+          throw new Error(
+            "SpacetimeContractError: criterial_pruned_branches[" + b + "].time_points[" + tpIdx + "] time grid mismatch"
+          );
+        }
+        if (
+          !Array.isArray(tp.center_of_mass_m) ||
+          tp.center_of_mass_m.length !== 3 ||
+          typeof tp.center_of_mass_m[0] !== "number" ||
+          typeof tp.center_of_mass_m[1] !== "number" ||
+          typeof tp.center_of_mass_m[2] !== "number" ||
+          !Number.isFinite(tp.center_of_mass_m[0]) ||
+          !Number.isFinite(tp.center_of_mass_m[1]) ||
+          !Number.isFinite(tp.center_of_mass_m[2]) ||
+          typeof tp.probe_voxel_8_8_5_value !== "number" ||
+          !Number.isFinite(tp.probe_voxel_8_8_5_value) ||
+          typeof tp.probe_voxel_8_8_11_value !== "number" ||
+          !Number.isFinite(tp.probe_voxel_8_8_11_value) ||
+          typeof tp.relative_analytical_drift !== "number" ||
+          !Number.isFinite(tp.relative_analytical_drift)
+        ) {
+          throw new Error(
+            "SpacetimeContractError: criterial_pruned_branches[" + b + "].time_points[" + tpIdx + "] invalid numeric values"
+          );
+        }
+      }
+    }
+
+    return {
+      valid: true,
+      bundle_id: bundle.bundle_id,
+      state_count: states.length,
+      voxel_count: expectedVoxels
+    };
+  }
+
+  function selectTimeState(bundle, stateIndexOrPos, options) {
+    var opts = options || {};
+    if (!bundle || !Array.isArray(bundle.states) || bundle.states.length < 2) {
+      throw new Error("SpacetimeContractError: Invalid bundle passed to selectTimeState");
+    }
+    if (!bundle.temporal_axis || bundle.temporal_axis.time_units !== "s") {
+      throw new Error("SpacetimeContractError: temporal_axis.time_units must equal 's' in selectTimeState");
+    }
+    if (typeof stateIndexOrPos !== "number" || !Number.isFinite(stateIndexOrPos)) {
+      throw new Error("SpacetimeContractError: Requested state index must be a finite number");
+    }
+    var maxIdx = bundle.states.length - 1;
+    if (stateIndexOrPos < 0 || stateIndexOrPos > maxIdx) {
+      throw new Error(
+        "SpacetimeContractError: Requested state index " +
+          stateIndexOrPos +
+          " out of bounds [0, " +
+          maxIdx +
+          "] (missing_frame_policy: fail_closed_no_invented_states)"
+      );
+    }
+
+    var dims = bundle.spatial_frame.dimensions_voxels;
+    var expectedVoxels = dims[0] * dims[1] * dims[2];
+    var rounded = Math.round(stateIndexOrPos);
+    var isDiscrete = Math.abs(stateIndexOrPos - rounded) < 1e-9;
+
+    if (isDiscrete) {
+      var st = bundle.states[rounded];
+      if (!st || st.state_index !== rounded) {
+        throw new Error(
+          "SpacetimeContractError: Missing discrete state at index " +
+            rounded +
+            " (fail_closed_no_invented_states)"
+        );
+      }
+      if (st.time_units !== "s") {
+        throw new Error("SpacetimeContractError: states[" + rounded + "].time_units must equal 's'");
+      }
+      if (!Array.isArray(st.values) || st.values.length !== expectedVoxels) {
+        throw new Error("SpacetimeContractError: Corrupted voxel array at state " + rounded);
+      }
+      var f32 = new Float32Array(expectedVoxels);
+      for (var i = 0; i < expectedVoxels; i++) {
+        var v = st.values[i];
+        if (typeof v !== "number" || !Number.isFinite(v) || !Number.isFinite(Math.fround(v))) {
+          throw new Error("SpacetimeContractError: Non-finite voxel in state " + rounded);
+        }
+        f32[i] = v;
+      }
+      var actualSha = sha256Float32LE(f32);
+      if (actualSha !== st.sha256_f32_le) {
+        throw new Error(
+          "SpacetimeContractError: Frame SHA-256 checksum verification failed at state " +
+            rounded +
+            " (expected " +
+            st.sha256_f32_le +
+            ", got " +
+            actualSha +
+            ")"
+        );
+      }
+      var recomputed = computeVoxelSummaryStatistics(f32, bundle.spatial_frame);
+      if (typeof st.min_value !== "number" || Math.abs(st.min_value - recomputed.min_value) > 1e-6) {
+        throw new Error("SpacetimeContractError: states[" + rounded + "].min_value mismatch with voxel buffer");
+      }
+      if (typeof st.max_value !== "number" || Math.abs(st.max_value - recomputed.max_value) > 1e-6) {
+        throw new Error("SpacetimeContractError: states[" + rounded + "].max_value mismatch with voxel buffer");
+      }
+      if (typeof st.mean_value !== "number" || Math.abs(st.mean_value - recomputed.mean_value) > 1e-6) {
+        throw new Error("SpacetimeContractError: states[" + rounded + "].mean_value mismatch with voxel buffer");
+      }
+      if (
+        typeof st.total_integrated_inventory_mol !== "number" ||
+        Math.abs(st.total_integrated_inventory_mol - recomputed.total_integrated_inventory_mol) > 1e-5
+      ) {
+        throw new Error(
+          "SpacetimeContractError: states[" + rounded + "].total_integrated_inventory_mol mismatch with voxel buffer"
+        );
+      }
+      if (
+        !Array.isArray(st.center_of_mass_m) ||
+        st.center_of_mass_m.length !== 3 ||
+        Math.abs(st.center_of_mass_m[0] - recomputed.center_of_mass_m[0]) > 1e-5 ||
+        Math.abs(st.center_of_mass_m[1] - recomputed.center_of_mass_m[1]) > 1e-5 ||
+        Math.abs(st.center_of_mass_m[2] - recomputed.center_of_mass_m[2]) > 1e-5
+      ) {
+        throw new Error("SpacetimeContractError: states[" + rounded + "].center_of_mass_m mismatch with voxel buffer");
+      }
+
+      var stLedger = st.analytical_bookkeeping_ledger;
+      if (
+        !stLedger ||
+        typeof stLedger !== "object" ||
+        stLedger.closes_by_algebraic_definition !== true ||
+        stLedger.is_finite_volume_conservation_test !== false
+      ) {
+        throw new Error(
+          "SpacetimeContractError: Invalid analytical_bookkeeping_ledger flags at states[" + rounded + "]"
+        );
+      }
+      if (
+        !bundle.governing_parameters ||
+        typeof bundle.governing_parameters.decay_rate_s_inv !== "number" ||
+        !Number.isFinite(bundle.governing_parameters.decay_rate_s_inv) ||
+        bundle.governing_parameters.decay_rate_s_inv < 0
+      ) {
+        throw new Error("SpacetimeContractError: Invalid governing_parameters.decay_rate_s_inv in selectTimeState");
+      }
+      var m0Recomputed =
+        rounded === 0
+          ? recomputed.total_integrated_inventory_mol
+          : computeVoxelSummaryStatistics(bundle.states[0].values, bundle.spatial_frame).total_integrated_inventory_mol;
+      var kDec = bundle.governing_parameters.decay_rate_s_inv;
+      var expSurv = m0Recomputed * Math.exp(-kDec * st.simulation_time);
+      var expDec = m0Recomputed * (1.0 - Math.exp(-kDec * st.simulation_time));
+      var expGap = stLedger.analytical_surviving_reference_mol - stLedger.retained_discrete_inventory_mol;
+      var expRelGap = Math.abs(expGap) / m0Recomputed;
+      if (
+        typeof stLedger.initial_discrete_inventory_mol !== "number" ||
+        Math.abs(stLedger.initial_discrete_inventory_mol - m0Recomputed) > 1e-5 ||
+        typeof stLedger.retained_discrete_inventory_mol !== "number" ||
+        Math.abs(stLedger.retained_discrete_inventory_mol - recomputed.total_integrated_inventory_mol) > 1e-5 ||
+        typeof stLedger.analytical_surviving_reference_mol !== "number" ||
+        Math.abs(stLedger.analytical_surviving_reference_mol - expSurv) > 1e-5 ||
+        typeof stLedger.analytical_decayed_reference_mol !== "number" ||
+        Math.abs(stLedger.analytical_decayed_reference_mol - expDec) > 1e-5 ||
+        Math.abs(
+          stLedger.analytical_surviving_reference_mol +
+            stLedger.analytical_decayed_reference_mol -
+            stLedger.initial_discrete_inventory_mol
+        ) > 1e-5 ||
+        typeof stLedger.unmodeled_boundary_and_quadrature_gap_mol !== "number" ||
+        Math.abs(stLedger.unmodeled_boundary_and_quadrature_gap_mol - expGap) > 1e-5 ||
+        typeof stLedger.relative_quadrature_and_tail_gap !== "number" ||
+        Math.abs(stLedger.relative_quadrature_and_tail_gap - expRelGap) > 1e-5
+      ) {
+        throw new Error(
+          "SpacetimeContractError: states[" +
+            rounded +
+            "].analytical_bookkeeping_ledger mismatch with recomputed voxel inventory or exponential decay reference"
+        );
+      }
+
+      return {
+        state_index: st.state_index,
+        simulation_time: st.simulation_time,
+        time_units: st.time_units,
+        state_derivation: st.state_derivation,
+        criterial_status: st.criterial_status,
+        is_simulated_state: true,
+        run_receipt: st.run_receipt,
+        voxel_count: st.voxel_count,
+        sha256_f32_le: actualSha,
+        min_value: recomputed.min_value,
+        max_value: recomputed.max_value,
+        mean_value: recomputed.mean_value,
+        total_integrated_inventory_mol: recomputed.total_integrated_inventory_mol,
+        center_of_mass_m: recomputed.center_of_mass_m.slice(),
+        analytical_bookkeeping_ledger: Object.assign({}, st.analytical_bookkeeping_ledger),
+        display_warning: null,
+        float32Values: f32
+      };
+    }
+
+    // Fractional time position requested
+    if (!opts.allowDisplayInterpolation) {
+      throw new Error(
+        "SpacetimeContractError: Fractional state position " +
+          stateIndexOrPos +
+          " rejected under interpolation_policy='none_discrete_states_only' when allowDisplayInterpolation is false"
+      );
+    }
+
+    var idxLow = Math.floor(stateIndexOrPos);
+    var idxHigh = Math.ceil(stateIndexOrPos);
+    var alpha = stateIndexOrPos - idxLow;
+    var rawLow = bundle.states[idxLow];
+    var rawHigh = bundle.states[idxHigh];
+    var dtRes = bundle.temporal_axis.temporal_resolution_s;
+    if (
+      !rawLow ||
+      !rawHigh ||
+      typeof dtRes !== "number" ||
+      !Number.isFinite(dtRes) ||
+      dtRes <= 0 ||
+      Math.abs((rawHigh.simulation_time - rawLow.simulation_time) - dtRes) > 1e-6
+    ) {
+      throw new Error(
+        "SpacetimeContractError: Inconsistent time step interval for display interpolation between states " +
+          idxLow +
+          " and " +
+          idxHigh +
+          " (dt=" +
+          (rawHigh && rawLow ? rawHigh.simulation_time - rawLow.simulation_time : NaN) +
+          " != temporal_resolution_s=" +
+          dtRes +
+          ")"
+      );
+    }
+    var stLow = selectTimeState(bundle, idxLow, { allowDisplayInterpolation: false });
+    var stHigh = selectTimeState(bundle, idxHigh, { allowDisplayInterpolation: false });
+
+    var interpF32 = new Float32Array(expectedVoxels);
+    for (var k = 0; k < expectedVoxels; k++) {
+      interpF32[k] = (1.0 - alpha) * stLow.float32Values[k] + alpha * stHigh.float32Values[k];
+    }
+
+    var interpSummary = computeVoxelSummaryStatistics(interpF32, bundle.spatial_frame);
+    var tInterp = (1.0 - alpha) * stLow.simulation_time + alpha * stHigh.simulation_time;
+
+    return {
+      state_index: Number(stateIndexOrPos.toFixed(4)),
+      parent_state_indices: [idxLow, idxHigh],
+      interpolation_alpha: Number(alpha.toFixed(4)),
+      simulation_time: Number(tInterp.toFixed(3)),
+      time_units: stLow.time_units,
+      state_derivation: "interpolated_for_display",
+      criterial_status: "unverified_exploratory_display",
+      is_simulated_state: false,
+      run_receipt: null,
+      voxel_count: expectedVoxels,
+      sha256_f32_le: "unverified_display_interpolation",
+      min_value: interpSummary.min_value,
+      max_value: interpSummary.max_value,
+      mean_value: interpSummary.mean_value,
+      total_integrated_inventory_mol: interpSummary.total_integrated_inventory_mol,
+      center_of_mass_m: interpSummary.center_of_mass_m,
+      analytical_bookkeeping_ledger: null,
+      display_warning:
+        "INTERPOLATED FOR DISPLAY ONLY: Linear visual blend between states " +
+        idxLow +
+        " and " +
+        idxHigh +
+        " (alpha=" +
+        alpha.toFixed(2) +
+        "); not a simulated or receipt-backed state.",
+      float32Values: interpF32
+    };
+  }
+
+  function computeDualTimeComparison(bundle, indexA, indexB) {
+    var stateA = selectTimeState(bundle, indexA, { allowDisplayInterpolation: false });
+    var stateB = selectTimeState(bundle, indexB, { allowDisplayInterpolation: false });
+    var count = stateA.voxel_count;
+    var diffF32 = new Float32Array(count);
+    var sumSq = 0.0;
+    var maxAbs = 0.0;
+    var minDiff = Infinity;
+    var maxDiff = -Infinity;
+
+    for (var i = 0; i < count; i++) {
+      var d = stateB.float32Values[i] - stateA.float32Values[i];
+      diffF32[i] = d;
+      sumSq += d * d;
+      var absD = Math.abs(d);
+      if (absD > maxAbs) maxAbs = absD;
+      if (d < minDiff) minDiff = d;
+      if (d > maxDiff) maxDiff = d;
+    }
+
+    var comShift = [
+      Number((stateB.center_of_mass_m[0] - stateA.center_of_mass_m[0]).toFixed(6)),
+      Number((stateB.center_of_mass_m[1] - stateA.center_of_mass_m[1]).toFixed(6)),
+      Number((stateB.center_of_mass_m[2] - stateA.center_of_mass_m[2]).toFixed(6))
+    ];
+
+    return {
+      index_a: stateA.state_index,
+      index_b: stateB.state_index,
+      time_a: stateA.simulation_time,
+      time_b: stateB.simulation_time,
+      delta_time_s: stateB.simulation_time - stateA.simulation_time,
+      time_units: stateA.time_units,
+      sha256_a: stateA.sha256_f32_le,
+      sha256_b: stateB.sha256_f32_le,
+      l2_norm: Math.sqrt(sumSq),
+      linf_norm: maxAbs,
+      min_diff: minDiff,
+      max_diff: maxDiff,
+      center_of_mass_shift_m: comShift,
+      diffFloat32Values: diffF32
+    };
+  }
+
+  function extractVoxelTimeSeries(bundle, i, j, k) {
+    var dims = bundle.spatial_frame.dimensions_voxels;
+    var nx = dims[0];
+    var ny = dims[1];
+    var nz = dims[2];
+    if (
+      !Number.isInteger(i) ||
+      !Number.isInteger(j) ||
+      !Number.isInteger(k) ||
+      i < 0 ||
+      i >= nx ||
+      j < 0 ||
+      j >= ny ||
+      k < 0 ||
+      k >= nz
+    ) {
+      throw new Error(
+        "SpacetimeContractError: Voxel coordinates (" + i + ", " + j + ", " + k + ") out of bounds"
+      );
+    }
+    var flatIdx = voxelIndex(i, j, k, nx, ny);
+    var verifiedSeries = [];
+    for (var s = 0; s < bundle.states.length; s++) {
+      var st = bundle.states[s];
+      verifiedSeries.push({
+        state_index: st.state_index,
+        simulation_time: st.simulation_time,
+        time_units: st.time_units,
+        value: st.values[flatIdx],
+        state_derivation: st.state_derivation,
+        criterial_status: st.criterial_status,
+        sha256_f32_le: st.sha256_f32_le
+      });
+    }
+
+    var prunedBranches = [];
+    for (var b = 0; b < bundle.criterial_pruned_branches.length; b++) {
+      var br = bundle.criterial_pruned_branches[b];
+      var pts = [];
+      for (var p = 0; p < br.time_points.length; p++) {
+        var tp = br.time_points[p];
+        var baseVal = bundle.states[p].values[flatIdx];
+        var driftMult =
+          1.0 + (typeof tp.relative_analytical_drift === "number" ? tp.relative_analytical_drift : 0.0);
+        var prunedVal = baseVal * driftMult;
+        if (i === 8 && j === 8 && k === 5) {
+          prunedVal = tp.probe_voxel_8_8_5_value;
+        } else if (i === 8 && j === 8 && k === 11) {
+          prunedVal = tp.probe_voxel_8_8_11_value;
+        }
+        pts.push({
+          state_index: tp.state_index,
+          simulation_time: tp.simulation_time,
+          value: prunedVal,
+          relative_analytical_drift: tp.relative_analytical_drift,
+          criterial_status: "criterial_pruned"
+        });
+      }
+      prunedBranches.push({
+        branch_id: br.branch_id,
+        label: br.label,
+        criterial_status: br.criterial_status,
+        prune_reason: br.prune_reason,
+        max_relative_analytical_drift: br.max_relative_analytical_drift,
+        series: pts
+      });
+    }
+
+    return {
+      voxel: [i, j, k],
+      flat_index: flatIdx,
+      physical_coords_m: [i + 0.5, j + 0.5, k + 0.5],
+      field_units: bundle.field_units,
+      time_units: bundle.temporal_axis.time_units,
+      verified_series: verifiedSeries,
+      criterial_pruned_series: prunedBranches
+    };
+  }
+
+  function extractOrthogonalSlice(float32Values, dims, plane, sliceIndex) {
+    var nx = dims[0];
+    var ny = dims[1];
+    var nz = dims[2];
+    if (plane === "XY") {
+      if (sliceIndex < 0 || sliceIndex >= nz) {
+        throw new Error("SpacetimeContractError: XY slice k index out of bounds");
+      }
+      var gridXY = new Float32Array(nx * ny);
+      for (var j = 0; j < ny; j++) {
+        for (var i = 0; i < nx; i++) {
+          gridXY[i + nx * j] = float32Values[voxelIndex(i, j, sliceIndex, nx, ny)];
+        }
+      }
+      return { plane: "XY", width: nx, height: ny, fixed_index: sliceIndex, axis_labels: ["x (i)", "y (j)"], data: gridXY };
+    }
+    if (plane === "XZ") {
+      if (sliceIndex < 0 || sliceIndex >= ny) {
+        throw new Error("SpacetimeContractError: XZ slice j index out of bounds");
+      }
+      var gridXZ = new Float32Array(nx * nz);
+      for (var k = 0; k < nz; k++) {
+        for (var x = 0; x < nx; x++) {
+          gridXZ[x + nx * k] = float32Values[voxelIndex(x, sliceIndex, k, nx, ny)];
+        }
+      }
+      return { plane: "XZ", width: nx, height: nz, fixed_index: sliceIndex, axis_labels: ["x (i)", "+k (z up)"], data: gridXZ };
+    }
+    if (plane === "YZ") {
+      if (sliceIndex < 0 || sliceIndex >= nx) {
+        throw new Error("SpacetimeContractError: YZ slice i index out of bounds");
+      }
+      var gridYZ = new Float32Array(ny * nz);
+      for (var kz = 0; kz < nz; kz++) {
+        for (var y = 0; y < ny; y++) {
+          gridYZ[y + ny * kz] = float32Values[voxelIndex(sliceIndex, y, kz, nx, ny)];
+        }
+      }
+      return { plane: "YZ", width: ny, height: nz, fixed_index: sliceIndex, axis_labels: ["y (j)", "+k (z up)"], data: gridYZ };
+    }
+    throw new Error("SpacetimeContractError: Unsupported orthogonal plane '" + plane + "'");
+  }
+
+  // 4D spatiotemporal projection: (x, y, z, w = t_norm) with +k (z) as vertical up-axis
+  function project4DSpatiotemporalPoint(x, y, z, tNorm, params) {
+    var cfg = params || {};
+    var angleXT = typeof cfg.angleXT === "number" ? cfg.angleXT : 0.32;
+    var angleZT = typeof cfg.angleZT === "number" ? cfg.angleZT : 0.22;
+    var yaw = typeof cfg.yaw === "number" ? cfg.yaw : -0.62;
+    var pitch = typeof cfg.pitch === "number" ? cfg.pitch : 0.38;
+
+    // Normalize spatial coordinates from [0, 16] m to [-1, 1] and time w = tNorm from [0, 1] to [-1, 1]
+    var xn = (x - 8.0) / 8.0;
+    var yn = (y - 8.0) / 8.0;
+    var zn = (z - 8.0) / 8.0; // +k vertical up axis
+    var wn = (tNorm - 0.5) * 2.0; // 4th dimension w = continuous time evolution t
+
+    // 4D rotation in the X-t hyperplane
+    var cosXT = Math.cos(angleXT);
+    var sinXT = Math.sin(angleXT);
+    var x1 = xn * cosXT - wn * sinXT;
+    var w1 = xn * sinXT + wn * cosXT;
+
+    // 4D rotation in the Z-t (+k vs t) hyperplane
+    var cosZT = Math.cos(angleZT);
+    var sinZT = Math.sin(angleZT);
+    var z2 = zn * cosZT - w1 * sinZT;
+    var w2 = zn * sinZT + w1 * cosZT;
+
+    // 4D perspective stereographic distance factor along w=t
+    var distance4D = 3.2;
+    var scale4D = distance4D / (distance4D - w2 * 0.55);
+
+    var x3 = x1 * scale4D;
+    var y3 = yn * scale4D;
+    var z3 = z2 * scale4D; // +k remains vertical up in 3D space
+
+    // 3D turntable rotation around +k vertical up-axis (yaw) and elevation (pitch)
+    var cosYaw = Math.cos(yaw);
+    var sinYaw = Math.sin(yaw);
+    var xr = x3 * cosYaw - y3 * sinYaw;
+    var yr = x3 * sinYaw + y3 * cosYaw;
+
+    var cosPitch = Math.cos(pitch);
+    var sinPitch = Math.sin(pitch);
+    var screenX = xr;
+    var screenY = z3 * cosPitch - yr * sinPitch; // +k projects upward on screen
+    var depth = yr * cosPitch + z3 * sinPitch;
+
+    return {
+      screenX: screenX,
+      screenY: screenY,
+      depth: depth,
+      wRotated: w2,
+      scale4D: scale4D,
+      fourthDimensionSymbol: "t"
+    };
+  }
+
+  return {
+    ALLOWED_EVIDENCE_CLASSES: ALLOWED_EVIDENCE_CLASSES,
+    ALLOWED_STATE_DERIVATIONS: ALLOWED_STATE_DERIVATIONS,
+    sha256Float32LE: sha256Float32LE,
+    voxelIndex: voxelIndex,
+    computeCenterOfMass: computeCenterOfMass,
+    computeVoxelSummaryStatistics: computeVoxelSummaryStatistics,
+    buildEmbeddedSyntheticBundle: buildEmbeddedSyntheticBundle,
+    verifyBundleIntegrity: verifyBundleIntegrity,
+    selectTimeState: selectTimeState,
+    computeDualTimeComparison: computeDualTimeComparison,
+    extractVoxelTimeSeries: extractVoxelTimeSeries,
+    extractOrthogonalSlice: extractOrthogonalSlice,
+    project4DSpatiotemporalPoint: project4DSpatiotemporalPoint
+  };
+});
+
+</script>
+  <script>
+    (function () {
+      "use strict";
+
+      var S4D = window.Spacetime4D;
+      var bundle = S4D.buildEmbeddedSyntheticBundle();
+      S4D.verifyBundleIntegrity(bundle);
+
+      var tMin = bundle.temporal_axis.time_bounds[0];
+      var tMax = bundle.temporal_axis.time_bounds[1];
+      var tSpan = Math.max(1e-9, tMax - tMin);
+      var maxStateIdx = bundle.states.length - 1;
+
+      var state = {
+        currentPos: 0,
+        allowDisplayInterpolation: false,
+        playing: false,
+        playTimer: null,
+        indexA: 0,
+        indexB: 3,
+        probeI: 8,
+        probeJ: 8,
+        probeK: 5,
+        angleXT: 0.32,
+        angleZT: 0.22,
+        yaw: -0.62,
+        pitch: 0.38,
+        highlightDiff: false,
+        lastContractError: null,
+        lastActiveSelection: null
+      };
+
+      // Parse URL query parameters for deterministic headless screenshot verification
+      var params = new URLSearchParams(window.location.search);
+      if (params.has("interp")) {
+        state.allowDisplayInterpolation = params.get("interp") === "1" || params.get("interp") === "true";
+      }
+      if (params.has("state")) {
+        var reqState = parseFloat(params.get("state"));
+        if (Number.isFinite(reqState)) {
+          state.currentPos = reqState;
+        }
+      }
+      if (params.has("ta")) {
+        var reqTa = parseInt(params.get("ta"), 10);
+        if (Number.isInteger(reqTa)) state.indexA = reqTa;
+      }
+      if (params.has("tb")) {
+        var reqTb = parseInt(params.get("tb"), 10);
+        if (Number.isInteger(reqTb)) state.indexB = reqTb;
+      }
+      if (params.has("k")) {
+        var reqK = parseInt(params.get("k"), 10);
+        if (Number.isInteger(reqK) && reqK >= 0 && reqK <= 15) state.probeK = reqK;
+      }
+      if (params.has("xt")) {
+        var reqXT = parseFloat(params.get("xt"));
+        if (Number.isFinite(reqXT)) state.angleXT = Math.max(-1.2, Math.min(1.2, reqXT));
+      }
+      if (params.has("zt")) {
+        var reqZT = parseFloat(params.get("zt"));
+        if (Number.isFinite(reqZT)) state.angleZT = Math.max(-1.2, Math.min(1.2, reqZT));
+      }
+      if (params.get("highlight") === "diff") {
+        state.highlightDiff = true;
+      }
+
+      // DOM elements
+      var elTimeline = document.getElementById("slider-timeline");
+      var elChkInterp = document.getElementById("chk-display-interp");
+      var elSelectTa = document.getElementById("select-ta");
+      var elSelectTb = document.getElementById("select-tb");
+      var elSliderI = document.getElementById("slider-probe-i");
+      var elSliderJ = document.getElementById("slider-probe-j");
+      var elSliderK = document.getElementById("slider-probe-k");
+      var elSliderXT = document.getElementById("slider-angle-xt");
+      var elSliderZT = document.getElementById("slider-angle-zt");
+      var elSliderYaw = document.getElementById("slider-yaw");
+
+      // Color helpers
+      function viridisColor(t) {
+        var c = Math.max(0.0, Math.min(1.0, t));
+        var r = Math.round(255 * Math.min(1.0, Math.max(0.0, 0.15 + 0.85 * Math.pow(c, 1.3))));
+        var g = Math.round(255 * Math.min(1.0, Math.max(0.0, 0.08 + 0.88 * Math.pow(c, 0.85))));
+        var b = Math.round(255 * Math.min(1.0, Math.max(0.0, 0.35 + 0.55 * Math.sin(c * Math.PI) - 0.25 * c)));
+        return [r, g, b];
+      }
+
+      function divergingColor(val, maxAbs) {
+        if (maxAbs <= 1e-9) return [20, 26, 36];
+        var norm = Math.max(-1.0, Math.min(1.0, val / maxAbs));
+        if (norm >= 0) {
+          var p = norm;
+          return [
+            Math.round(20 + 230 * p),
+            Math.round(26 + 115 * p),
+            Math.round(36 + 20 * p)
+          ];
+        } else {
+          var n = -norm;
+          return [
+            Math.round(20 + 36 * n),
+            Math.round(26 + 163 * n),
+            Math.round(36 + 212 * n)
+          ];
+        }
+      }
+
+      function normTime(tS) {
+        return (tS - tMin) / tSpan;
+      }
+
+      function render4DProjection(activeSelection) {
+        var canvas = document.getElementById("canvas-4d-projection");
+        var ctx = canvas.getContext("2d");
+        var w = canvas.width;
+        var h = canvas.height;
+        ctx.fillStyle = "#080b10";
+        ctx.fillRect(0, 0, w, h);
+
+        var cx = w * 0.5;
+        var cy = h * 0.54;
+        var scale = 128.0;
+        var tNormActive = normTime(activeSelection.simulation_time);
+        var projCfg = {
+          angleXT: state.angleXT,
+          angleZT: state.angleZT,
+          yaw: state.yaw,
+          pitch: state.pitch
+        };
+
+        function toCanvas(x, y, z, tN) {
+          var p = S4D.project4DSpatiotemporalPoint(x, y, z, tN, projCfg);
+          return {
+            x: cx + p.screenX * scale,
+            y: cy - p.screenY * scale,
+            depth: p.depth,
+            scale4D: p.scale4D
+          };
+        }
+
+        // Draw outer t=0 and t=1 hypercube 3D frames connected along 4th dimension w = t
+        var corners = [
+          [0, 0, 0], [16, 0, 0], [16, 16, 0], [0, 16, 0],
+          [0, 0, 16], [16, 0, 16], [16, 16, 16], [0, 16, 16]
+        ];
+        var edges = [
+          [0, 1], [1, 2], [2, 3], [3, 0],
+          [4, 5], [5, 6], [6, 7], [7, 4],
+          [0, 4], [1, 5], [2, 6], [3, 7]
+        ];
+
+        // Ghost frame at t_min and t_max + connecting w=t struts
+        var ptsT0 = corners.map(function (c) { return toCanvas(c[0], c[1], c[2], 0.0); });
+        var ptsT1 = corners.map(function (c) { return toCanvas(c[0], c[1], c[2], 1.0); });
+        var ptsActive = corners.map(function (c) { return toCanvas(c[0], c[1], c[2], tNormActive); });
+
+        // 4D w=t connecting struts
+        ctx.strokeStyle = "rgba(99, 102, 241, 0.22)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        for (var cIdx = 0; cIdx < 8; cIdx++) {
+          ctx.beginPath();
+          ctx.moveTo(ptsT0[cIdx].x, ptsT0[cIdx].y);
+          ctx.lineTo(ptsT1[cIdx].x, ptsT1[cIdx].y);
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+
+        // Active time 3D cube wireframe
+        ctx.strokeStyle = "rgba(148, 163, 184, 0.48)";
+        ctx.lineWidth = 1.3;
+        for (var e = 0; e < edges.length; e++) {
+          var a = ptsActive[edges[e][0]];
+          var b = ptsActive[edges[e][1]];
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+
+        // Render active 3D scalar field iso-voxels (sorted back-to-front)
+        var voxelsToDraw = [];
+        var f32 = activeSelection.float32Values;
+        for (var k = 0; k < 16; k++) {
+          for (var j = 0; j < 16; j++) {
+            for (var i = 0; i < 16; i++) {
+              var val = f32[i + 16 * (j + 16 * k)];
+              if (val > 0.35) {
+                var p = toCanvas(i + 0.5, j + 0.5, k + 0.5, tNormActive);
+                voxelsToDraw.push({
+                  x: p.x,
+                  y: p.y,
+                  depth: p.depth,
+                  val: val
+                });
+              }
+            }
+          }
+        }
+        voxelsToDraw.sort(function (u, v) { return u.depth - v.depth; });
+
+        for (var vIdx = 0; vIdx < voxelsToDraw.length; vIdx++) {
+          var vx = voxelsToDraw[vIdx];
+          var normV = Math.min(1.0, vx.val / 9.26);
+          var rgb = viridisColor(normV);
+          var alpha = 0.14 + 0.55 * normV;
+          var radius = 2.2 + 4.5 * normV;
+          ctx.fillStyle = "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + alpha.toFixed(3) + ")";
+          ctx.beginPath();
+          ctx.arc(vx.x, vx.y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Draw Criterial-Pruned Negative Control Trajectory in Dashed Crimson Red (#ef4444)
+        var prunedBranch = bundle.criterial_pruned_branches[0];
+        ctx.strokeStyle = "#ef4444";
+        ctx.lineWidth = 2.4;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        for (var pIdx = 0; pIdx < prunedBranch.time_points.length; pIdx++) {
+          var tp = prunedBranch.time_points[pIdx];
+          var pCoord = toCanvas(
+            tp.center_of_mass_m[0],
+            tp.center_of_mass_m[1],
+            tp.center_of_mass_m[2],
+            normTime(tp.simulation_time)
+          );
+          if (pIdx === 0) ctx.moveTo(pCoord.x, pCoord.y);
+          else ctx.lineTo(pCoord.x, pCoord.y);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        for (var pNode = 0; pNode < prunedBranch.time_points.length; pNode++) {
+          var tpN = prunedBranch.time_points[pNode];
+          var ptN = toCanvas(
+            tpN.center_of_mass_m[0],
+            tpN.center_of_mass_m[1],
+            tpN.center_of_mass_m[2],
+            normTime(tpN.simulation_time)
+          );
+          ctx.strokeStyle = "#ef4444";
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.moveTo(ptN.x - 4, ptN.y - 4);
+          ctx.lineTo(ptN.x + 4, ptN.y + 4);
+          ctx.moveTo(ptN.x + 4, ptN.y - 4);
+          ctx.lineTo(ptN.x - 4, ptN.y + 4);
+          ctx.stroke();
+        }
+
+        // Draw Verified Accepted 4D Center-of-Mass Trajectory in Solid Emerald Green (#10b981)
+        ctx.strokeStyle = "#10b981";
+        ctx.lineWidth = 2.8;
+        ctx.beginPath();
+        for (var sIdx = 0; sIdx < bundle.states.length; sIdx++) {
+          var st = bundle.states[sIdx];
+          var stPt = toCanvas(
+            st.center_of_mass_m[0],
+            st.center_of_mass_m[1],
+            st.center_of_mass_m[2],
+            normTime(st.simulation_time)
+          );
+          if (sIdx === 0) ctx.moveTo(stPt.x, stPt.y);
+          else ctx.lineTo(stPt.x, stPt.y);
+        }
+        ctx.stroke();
+
+        for (var mIdx = 0; mIdx < bundle.states.length; mIdx++) {
+          var stM = bundle.states[mIdx];
+          var mPt = toCanvas(
+            stM.center_of_mass_m[0],
+            stM.center_of_mass_m[1],
+            stM.center_of_mass_m[2],
+            normTime(stM.simulation_time)
+          );
+          ctx.fillStyle = "#10b981";
+          ctx.beginPath();
+          ctx.arc(mPt.x, mPt.y, 4.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#d1fae5";
+          ctx.font = "10px ui-monospace, SFMono-Regular, Menlo, monospace";
+          ctx.fillText("t" + mIdx, mPt.x + 6, mPt.y - 4);
+        }
+
+        // Active center-of-mass beacon
+        var activeCom = activeSelection.center_of_mass_m;
+        var activePt = toCanvas(activeCom[0], activeCom[1], activeCom[2], tNormActive);
+        ctx.strokeStyle = activeSelection.is_simulated_state ? "#34d399" : "#fbbf24";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(activePt.x, activePt.y, 9, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Highlight +k vertical up axis arrow on top of wireframe with pill label
+        var originPt = toCanvas(0, 0, 0, tNormActive);
+        var kUpPt = toCanvas(0, 0, 17.5, tNormActive);
+        ctx.strokeStyle = "#38bdf8";
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(originPt.x, originPt.y);
+        ctx.lineTo(kUpPt.x, kUpPt.y);
+        ctx.stroke();
+        var lblX = Math.max(8, Math.min(w - 118, kUpPt.x + 5));
+        var lblY = Math.max(18, Math.min(h - 72, kUpPt.y + 3));
+        ctx.fillStyle = "rgba(8, 11, 16, 0.85)";
+        ctx.fillRect(lblX - 3, lblY - 11, 110, 15);
+        ctx.fillStyle = "#38bdf8";
+        ctx.font = "bold 11px ui-monospace, SFMono-Regular, Menlo, monospace";
+        ctx.fillText("+k (z up, 16m)", lblX, lblY);
+
+        // HUD Overlay in bottom-left corner of 4D canvas (avoids +k apex at top-left)
+        var hudY = h - 64;
+        ctx.fillStyle = "rgba(11, 15, 20, 0.88)";
+        ctx.fillRect(8, hudY, 290, 56);
+        ctx.strokeStyle = "#2a3746";
+        ctx.strokeRect(8, hudY, 290, 56);
+        ctx.fillStyle = "#e6edf3";
+        ctx.font = "bold 11px ui-monospace, SFMono-Regular, Menlo, monospace";
+        ctx.fillText("4D Hyperplane: (x, y, +k, w=t)", 16, hudY + 16);
+        ctx.fillStyle = "#10b981";
+        ctx.font = "10.5px ui-monospace, SFMono-Regular, Menlo, monospace";
+        ctx.fillText("Solid Green: Verified Accepted Trajectory", 16, hudY + 32);
+        ctx.fillStyle = "#ef4444";
+        ctx.fillText("Dashed Red : Criterial-Pruned Drift Control", 16, hudY + 47);
+      }
+
+      function renderSlice2D(canvasId, sliceObj, maxScale, probeX, probeY, invertY) {
+        var canvas = document.getElementById(canvasId);
+        var ctx = canvas.getContext("2d");
+        var w = canvas.width;
+        var h = canvas.height;
+        ctx.fillStyle = "#080b10";
+        ctx.fillRect(0, 0, w, h);
+
+        var padL = 28;
+        var padR = 14;
+        var padT = 10;
+        var padB = 22;
+        var plotW = w - padL - padR;
+        var plotH = h - padT - padB;
+        var cellW = plotW / sliceObj.width;
+        var cellH = plotH / sliceObj.height;
+
+        for (var row = 0; row < sliceObj.height; row++) {
+          var drawRow = invertY ? (sliceObj.height - 1 - row) : row;
+          for (var col = 0; col < sliceObj.width; col++) {
+            var val = sliceObj.data[col + sliceObj.width * row];
+            var rgb = viridisColor(val / maxScale);
+            ctx.fillStyle = "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")";
+            ctx.fillRect(
+              padL + col * cellW,
+              padT + drawRow * cellH,
+              Math.ceil(cellW),
+              Math.ceil(cellH)
+            );
+          }
+        }
+
+        // Crosshair for probe voxel
+        var pRow = invertY ? (sliceObj.height - 1 - probeY) : probeY;
+        var cx = padL + (probeX + 0.5) * cellW;
+        var cy = padT + (pRow + 0.5) * cellH;
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Axes labels
+        ctx.strokeStyle = "#334155";
+        ctx.strokeRect(padL, padT, plotW, plotH);
+        ctx.fillStyle = "#9da7b3";
+        ctx.font = "10px ui-monospace, SFMono-Regular, Menlo, monospace";
+        ctx.fillText(sliceObj.axis_labels[0] + " [0..16m]", padL + plotW * 0.32, h - 6);
+        ctx.save();
+        ctx.translate(12, padT + plotH * 0.65);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText(sliceObj.axis_labels[1], 0, 0);
+        ctx.restore();
+      }
+
+      function renderDualTimeDiff(diffObj) {
+        var canvas = document.getElementById("canvas-slice-diff");
+        var ctx = canvas.getContext("2d");
+        var w = canvas.width;
+        var h = canvas.height;
+        ctx.fillStyle = "#080b10";
+        ctx.fillRect(0, 0, w, h);
+
+        var sliceXZ = S4D.extractOrthogonalSlice(
+          diffObj.diffFloat32Values,
+          [16, 16, 16],
+          "XZ",
+          state.probeJ
+        );
+
+        var padL = 34;
+        var padR = 180;
+        var padT = 10;
+        var padB = 22;
+        var plotW = w - padL - padR;
+        var plotH = h - padT - padB;
+        var cellW = plotW / 16;
+        var cellH = plotH / 16;
+        var maxAbs = Math.max(diffObj.linf_norm, 0.01);
+
+        for (var k = 0; k < 16; k++) {
+          var drawRow = 15 - k; // +k upward
+          for (var i = 0; i < 16; i++) {
+            var dVal = sliceXZ.data[i + 16 * k];
+            var rgb = divergingColor(dVal, maxAbs);
+            ctx.fillStyle = "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")";
+            ctx.fillRect(
+              padL + i * cellW,
+              padT + drawRow * cellH,
+              Math.ceil(cellW),
+              Math.ceil(cellH)
+            );
+          }
+        }
+
+        ctx.strokeStyle = "#334155";
+        ctx.strokeRect(padL, padT, plotW, plotH);
+
+        // Draw center-of-mass shift vector from t_A to t_B
+        var comA = bundle.states[diffObj.index_a].center_of_mass_m;
+        var comB = bundle.states[diffObj.index_b].center_of_mass_m;
+        var xA = padL + (comA[0] / 16.0) * plotW;
+        var yA = padT + ((16.0 - comA[2]) / 16.0) * plotH;
+        var xB = padL + (comB[0] / 16.0) * plotW;
+        var yB = padT + ((16.0 - comB[2]) / 16.0) * plotH;
+
+        ctx.strokeStyle = "#fde047";
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        ctx.moveTo(xA, yA);
+        ctx.lineTo(xB, yB);
+        ctx.stroke();
+
+        ctx.fillStyle = "#38bdf8";
+        ctx.beginPath();
+        ctx.arc(xA, yA, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fb923c";
+        ctx.beginPath();
+        ctx.arc(xB, yB, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Legend & Quantitative Summary on Right Side of Diff Canvas
+        var infoX = padL + plotW + 10;
+        ctx.fillStyle = "#e6edf3";
+        ctx.font = "bold 10.5px ui-monospace, SFMono-Regular, Menlo, monospace";
+        ctx.fillText("Dual-Time Shift Summary", infoX, 24);
+        ctx.fillStyle = "#9da7b3";
+        ctx.font = "10px ui-monospace, SFMono-Regular, Menlo, monospace";
+        ctx.fillText("t_A = " + diffObj.time_a.toFixed(0) + " s (State " + diffObj.index_a + ")", infoX, 42);
+        ctx.fillText("t_B = " + diffObj.time_b.toFixed(0) + " s (State " + diffObj.index_b + ")", infoX, 56);
+        ctx.fillStyle = "#34d399";
+        ctx.fillText("dz_cm = " + (diffObj.center_of_mass_shift_m[2] >= 0 ? "+" : "") + diffObj.center_of_mass_shift_m[2].toFixed(3) + " m (+k)", infoX, 74);
+        ctx.fillStyle = "#fb923c";
+        ctx.fillText("Orange: +dF (Accumulation)", infoX, 94);
+        ctx.fillStyle = "#38bdf8";
+        ctx.fillText("Blue  : -dF (Depletion)", infoX, 108);
+        ctx.fillStyle = "#fde047";
+        ctx.fillText("Yellow: CoM Shift Vector", infoX, 122);
+
+        ctx.fillStyle = "#9da7b3";
+        ctx.fillText("x [0..16 m]", padL + plotW * 0.36, h - 6);
+        ctx.save();
+        ctx.translate(12, padT + plotH * 0.65);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText("+k (z up)", 0, 0);
+        ctx.restore();
+      }
+
+      function renderTimeSeriesChart(activeSelection) {
+        var canvas = document.getElementById("canvas-timeseries");
+        var ctx = canvas.getContext("2d");
+        var w = canvas.width;
+        var h = canvas.height;
+        ctx.fillStyle = "#080b10";
+        ctx.fillRect(0, 0, w, h);
+
+        var ts = S4D.extractVoxelTimeSeries(bundle, state.probeI, state.probeJ, state.probeK);
+        var verified = ts.verified_series;
+        var pruned = ts.criterial_pruned_series[0].series;
+
+        var maxVal = 0.5;
+        for (var idx = 0; idx < verified.length; idx++) {
+          if (verified[idx].value > maxVal) maxVal = verified[idx].value;
+          if (pruned[idx].value > maxVal) maxVal = pruned[idx].value;
+        }
+        maxVal *= 1.15;
+
+        var padL = 52;
+        var padR = 24;
+        var padT = 14;
+        var padB = 26;
+        var plotW = w - padL - padR;
+        var plotH = h - padT - padB;
+
+        function timeToX(tS) {
+          return padL + normTime(tS) * plotW;
+        }
+        function valToY(v) {
+          return padT + plotH - (v / maxVal) * plotH;
+        }
+
+        // Grid lines at discrete state timestamps
+        ctx.strokeStyle = "#1e293b";
+        ctx.lineWidth = 1;
+        for (var g = 0; g < bundle.states.length; g++) {
+          var stT = bundle.states[g].simulation_time;
+          var gx = timeToX(stT);
+          ctx.beginPath();
+          ctx.moveTo(gx, padT);
+          ctx.lineTo(gx, padT + plotH);
+          ctx.stroke();
+          ctx.fillStyle = "#9da7b3";
+          ctx.font = "10px ui-monospace, SFMono-Regular, Menlo, monospace";
+          ctx.fillText(stT.toFixed(0) + "s", gx - 12, h - 8);
+        }
+
+        // Y-axis ticks
+        ctx.fillStyle = "#9da7b3";
+        ctx.fillText(maxVal.toFixed(2), 6, padT + 8);
+        ctx.fillText((maxVal * 0.5).toFixed(2), 6, padT + plotH * 0.5 + 4);
+        ctx.fillText("0.00", 14, padT + plotH);
+
+        // Dual-time markers t_A and t_B
+        var xTa = timeToX(bundle.states[state.indexA].simulation_time);
+        var xTb = timeToX(bundle.states[state.indexB].simulation_time);
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.45)";
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath();
+        ctx.moveTo(xTa, padT);
+        ctx.lineTo(xTa, padT + plotH);
+        ctx.moveTo(xTb, padT);
+        ctx.lineTo(xTb, padT + plotH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 1. Criterial-Pruned Negative Control Series (Dashed Crimson Red #ef4444)
+        ctx.strokeStyle = "#ef4444";
+        ctx.lineWidth = 2.2;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        for (var p = 0; p < pruned.length; p++) {
+          var px = timeToX(pruned[p].simulation_time);
+          var py = valToY(pruned[p].value);
+          if (p === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 2. Verified Accepted Series (Solid Emerald Green #10b981)
+        ctx.strokeStyle = "#10b981";
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        for (var s = 0; s < verified.length; s++) {
+          var vx = timeToX(verified[s].simulation_time);
+          var vy = valToY(verified[s].value);
+          if (s === 0) ctx.moveTo(vx, vy);
+          else ctx.lineTo(vx, vy);
+        }
+        ctx.stroke();
+
+        for (var m = 0; m < verified.length; m++) {
+          var mx = timeToX(verified[m].simulation_time);
+          var my = valToY(verified[m].value);
+          ctx.fillStyle = "#10b981";
+          ctx.beginPath();
+          ctx.arc(mx, my, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Active time cursor
+        var actX = timeToX(activeSelection.simulation_time);
+        var probeFlatIdx = S4D.voxelIndex(state.probeI, state.probeJ, state.probeK, 16, 16);
+        var actVal = activeSelection.float32Values[probeFlatIdx];
+        var actY = valToY(actVal);
+
+        ctx.strokeStyle = activeSelection.is_simulated_state ? "#34d399" : "#fbbf24";
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(actX, padT);
+        ctx.lineTo(actX, padT + plotH);
+        ctx.stroke();
+
+        ctx.fillStyle = activeSelection.is_simulated_state ? "#34d399" : "#fbbf24";
+        ctx.beginPath();
+        ctx.arc(actX, actY, 6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function updateUI() {
+        var activeSelection;
+        try {
+          activeSelection = S4D.selectTimeState(bundle, state.currentPos, {
+            allowDisplayInterpolation: state.allowDisplayInterpolation
+          });
+        } catch (err) {
+          state.lastContractError = err.message;
+          state.currentPos = 0;
+          elTimeline.value = "0";
+          activeSelection = S4D.selectTimeState(bundle, 0, {
+            allowDisplayInterpolation: false
+          });
+        }
+        state.lastActiveSelection = activeSelection;
+
+        if (!Number.isInteger(state.indexA) || state.indexA < 0 || state.indexA > maxStateIdx) {
+          state.lastContractError = "SpacetimeContractError: Dual-time index t_A out of bounds; reset to State 0.";
+          state.indexA = 0;
+          elSelectTa.value = "0";
+        }
+        if (!Number.isInteger(state.indexB) || state.indexB < 0 || state.indexB > maxStateIdx) {
+          state.lastContractError = "SpacetimeContractError: Dual-time index t_B out of bounds; reset to State 3.";
+          state.indexB = Math.min(3, maxStateIdx);
+          elSelectTb.value = String(state.indexB);
+        }
+
+        // Synchronize policy readout at all times (including URL query initialization)
+        document.getElementById("lbl-policy-mode").textContent = state.allowDisplayInterpolation
+          ? "Policy: explicit_display_only_when_toggled | Display Interpolation Active"
+          : "Policy: fail_closed_no_invented_states | Discrete Verified Mode";
+
+        // Header & Provenance Badges
+        var badgeDeriv = document.getElementById("badge-state-derivation");
+        var badgeCrit = document.getElementById("badge-criterial-status");
+        var topBar = document.getElementById("top-disclaimer-bar");
+        var disclaimerText = document.getElementById("disclaimer-text");
+        var shaBox = document.getElementById("meta-sha256-box");
+
+        if (state.lastContractError) {
+          badgeDeriv.className = "badge badge-verified";
+          badgeDeriv.textContent = "DERIVATION: " + activeSelection.state_derivation.toUpperCase();
+          badgeCrit.className = "badge badge-verified";
+          badgeCrit.textContent = "CRITERIAL: VERIFIED_ACCEPTED";
+          topBar.className = "disclaimer-bar error-active";
+          disclaimerText.innerHTML =
+            "<strong>FAIL-CLOSED CONTRACT REJECTION:</strong> " +
+            state.lastContractError +
+            " (reverted to discrete State 0).";
+          shaBox.className = "sha-box";
+          shaBox.textContent = activeSelection.sha256_f32_le;
+        } else if (activeSelection.is_simulated_state) {
+          badgeDeriv.className = "badge badge-verified";
+          badgeDeriv.textContent = "DERIVATION: " + activeSelection.state_derivation.toUpperCase();
+          badgeCrit.className = "badge badge-verified";
+          badgeCrit.textContent = "CRITERIAL: VERIFIED_ACCEPTED";
+          topBar.className = "disclaimer-bar";
+          disclaimerText.innerHTML =
+            "<strong>STAGE 0/1 SYNTHETIC PROOF:</strong> Analytical 3D Gaussian advection-diffusion-decay tracer on [0, 16 m]^3; NOT a calibrated geological, hydrothermal, or radiation-transport simulation.";
+          shaBox.className = "sha-box";
+          shaBox.textContent = activeSelection.sha256_f32_le;
+        } else {
+          badgeDeriv.className = "badge badge-interpolated";
+          badgeDeriv.textContent = "DERIVATION: INTERPOLATED_FOR_DISPLAY";
+          badgeCrit.className = "badge badge-interpolated";
+          badgeCrit.textContent = "CRITERIAL: UNVERIFIED_DISPLAY_BLEND";
+          topBar.className = "disclaimer-bar interp-active";
+          disclaimerText.innerHTML =
+            "<strong>DISPLAY INTERPOLATION WARNING:</strong> " + activeSelection.display_warning;
+          shaBox.className = "sha-box unverified";
+          shaBox.textContent = "unverified_display_interpolation (run_receipt = null)";
+        }
+
+        document.getElementById("active-time-readout").textContent =
+          "STATE " + activeSelection.state_index + " / " + maxStateIdx + " | t = " + activeSelection.simulation_time.toFixed(1) + " " + activeSelection.time_units;
+
+        document.getElementById("proj-com-readout").textContent =
+          "z_cm(t) = " + activeSelection.center_of_mass_m[2].toFixed(3) + " m (+k up)";
+
+        document.getElementById("meta-baseline-commit").textContent = bundle.baseline_commit;
+        document.getElementById("meta-source-provenance").textContent =
+          bundle.source_provenance.generator_version +
+          " (" +
+          bundle.source_provenance.generator_script_sha256.slice(0, 12) +
+          ")";
+
+        document.getElementById("meta-state-time").textContent =
+          activeSelection.state_index + " (t = " + activeSelection.simulation_time.toFixed(1) + " " + activeSelection.time_units + ")";
+        document.getElementById("meta-state-derivation").textContent =
+          activeSelection.state_derivation + " (simulated=" + activeSelection.is_simulated_state + ")";
+        document.getElementById("meta-run-receipt").textContent =
+          activeSelection.run_receipt !== null ? activeSelection.run_receipt : "null (interpolated_for_display)";
+
+        // Illustrative analytical bookkeeping ledger (closes by algebraic definition; not a finite-volume PDE test)
+        document.getElementById("ledger-retained").textContent =
+          activeSelection.total_integrated_inventory_mol.toFixed(3);
+        if (activeSelection.analytical_bookkeeping_ledger) {
+          document.getElementById("ledger-decayed").textContent =
+            activeSelection.analytical_bookkeeping_ledger.analytical_decayed_reference_mol.toFixed(3);
+          var gapPct = (
+            activeSelection.analytical_bookkeeping_ledger.relative_quadrature_and_tail_gap * 100.0
+          ).toFixed(2);
+          var elRes = document.getElementById("ledger-residual");
+          elRes.textContent = "ALGEBRAIC (GAP " + gapPct + "%)";
+          elRes.style.color = "#38bdf8";
+        } else {
+          document.getElementById("ledger-decayed").textContent = "N/A (Display Interp)";
+          var elResInterp = document.getElementById("ledger-residual");
+          elResInterp.textContent = "UNVERIFIED (INTERP)";
+          elResInterp.style.color = "#fbbf24";
+        }
+
+        var com = activeSelection.center_of_mass_m;
+        document.getElementById("ledger-com").textContent =
+          "(" + com[0].toFixed(2) + ", " + com[1].toFixed(2) + ", " + com[2].toFixed(2) + ")";
+
+        // Event marker vs Interpolated Display Blend banner
+        var elEventBanner = document.getElementById("meta-event-banner");
+        if (activeSelection.is_simulated_state) {
+          var evMarker = bundle.temporal_axis.event_markers[activeSelection.state_index];
+          elEventBanner.className = "event-banner";
+          elEventBanner.innerHTML =
+            "<strong>Active Event Marker:</strong> " + evMarker.label;
+        } else {
+          elEventBanner.className = "event-banner interp-event-banner";
+          elEventBanner.innerHTML =
+            "<strong>Interpolated Display Frame (Not Simulated):</strong> Linear visual blend between State " +
+            activeSelection.parent_state_indices[0] +
+            " and State " +
+            activeSelection.parent_state_indices[1] +
+            " at t = " +
+            activeSelection.simulation_time.toFixed(1) +
+            " s (alpha = " +
+            activeSelection.interpolation_alpha.toFixed(2) +
+            ", run_receipt = null).";
+        }
+
+        // Probe readout
+        var probeFlat = S4D.voxelIndex(state.probeI, state.probeJ, state.probeK, 16, 16);
+        var probeVal = activeSelection.float32Values[probeFlat];
+        document.getElementById("slice-probe-readout").textContent =
+          "Probe (" + state.probeI + ", " + state.probeJ + ", " + state.probeK + ") = " + probeVal.toFixed(4) + " " + bundle.field_units;
+        document.getElementById("lbl-probe-ijk").textContent =
+          "(" + state.probeI + ", " + state.probeJ + ", " + state.probeK + ")";
+        document.getElementById("lbl-slice-xy").textContent =
+          "Plan Slice X-Y (k = " + state.probeK + ", z = " + (state.probeK + 0.5).toFixed(1) + " m)";
+        document.getElementById("lbl-slice-xz").textContent =
+          "Vertical Section X-k (j = " + state.probeJ + ", +k Up)";
+        document.getElementById("timeseries-title").textContent =
+          "4. Selected-Voxel Time Series F(" + state.probeI + ", " + state.probeJ + ", " + state.probeK + ", t)";
+
+        // State quick buttons highlight
+        var stateBtns = document.querySelectorAll("[data-state-btn]");
+        for (var b = 0; b < stateBtns.length; b++) {
+          var bIdx = parseInt(stateBtns[b].getAttribute("data-state-btn"), 10);
+          if (activeSelection.is_simulated_state && bIdx === activeSelection.state_index) {
+            stateBtns[b].className = "btn btn-active";
+          } else {
+            stateBtns[b].className = "btn";
+          }
+        }
+
+        // Render 4D Projection and Orthogonal Slices
+        render4DProjection(activeSelection);
+
+        var sliceXY = S4D.extractOrthogonalSlice(activeSelection.float32Values, [16, 16, 16], "XY", state.probeK);
+        var sliceXZ = S4D.extractOrthogonalSlice(activeSelection.float32Values, [16, 16, 16], "XZ", state.probeJ);
+        renderSlice2D("canvas-slice-xy", sliceXY, 9.26, state.probeI, state.probeJ, true);
+        renderSlice2D("canvas-slice-xz", sliceXZ, 9.26, state.probeI, state.probeK, true);
+
+        // Dual-time comparison
+        var diffObj = S4D.computeDualTimeComparison(bundle, state.indexA, state.indexB);
+        document.getElementById("lbl-diff-title").textContent =
+          "Dual-Time Difference dF(x; t_A=" + diffObj.time_a.toFixed(0) + "s, t_B=" + diffObj.time_b.toFixed(0) + "s) = F(t_B) - F(t_A) [Section X-k at j=" + state.probeJ + "]";
+        document.getElementById("lbl-diff-norms").textContent =
+          "||dF||_2 = " + diffObj.l2_norm.toFixed(2) + " | dz_cm = " + (diffObj.center_of_mass_shift_m[2] >= 0 ? "+" : "") + diffObj.center_of_mass_shift_m[2].toFixed(3) + " m";
+        document.getElementById("diff-max-inc").textContent = "+" + diffObj.max_diff.toFixed(3);
+        document.getElementById("diff-max-dec").textContent = diffObj.min_diff.toFixed(3);
+
+        var diffCard = document.getElementById("diff-card");
+        diffCard.className = state.highlightDiff ? "diff-box highlight-diff" : "diff-box";
+        renderDualTimeDiff(diffObj);
+
+        // Render Selected-Voxel Time Series
+        renderTimeSeriesChart(activeSelection);
+      }
+
+      // Wire controls
+      elTimeline.max = String(maxStateIdx);
+      elTimeline.step = state.allowDisplayInterpolation ? "0.25" : "1";
+      elTimeline.value = String(state.currentPos);
+      elChkInterp.checked = state.allowDisplayInterpolation;
+      elSelectTa.value = String(state.indexA);
+      elSelectTb.value = String(state.indexB);
+      elSliderI.value = String(state.probeI);
+      elSliderJ.value = String(state.probeJ);
+      elSliderK.value = String(state.probeK);
+      elSliderXT.value = String(state.angleXT);
+      elSliderZT.value = String(state.angleZT);
+      document.getElementById("lbl-angle-xt").textContent = state.angleXT.toFixed(2) + " rad";
+      document.getElementById("lbl-angle-zt").textContent = state.angleZT.toFixed(2) + " rad";
+
+      elTimeline.addEventListener("input", function () {
+        state.lastContractError = null;
+        state.currentPos = parseFloat(elTimeline.value);
+        updateUI();
+      });
+
+      elChkInterp.addEventListener("change", function () {
+        state.lastContractError = null;
+        state.allowDisplayInterpolation = elChkInterp.checked;
+        elTimeline.step = state.allowDisplayInterpolation ? "0.25" : "1";
+        if (!state.allowDisplayInterpolation) {
+          state.currentPos = Math.round(state.currentPos);
+          elTimeline.value = String(state.currentPos);
+        }
+        updateUI();
+      });
+
+      var stateBtns = document.querySelectorAll("[data-state-btn]");
+      for (var i = 0; i < stateBtns.length; i++) {
+        stateBtns[i].addEventListener("click", function (ev) {
+          state.lastContractError = null;
+          var idx = parseInt(ev.currentTarget.getAttribute("data-state-btn"), 10);
+          state.currentPos = idx;
+          elTimeline.value = String(idx);
+          updateUI();
+        });
+      }
+
+      document.getElementById("btn-step-prev").addEventListener("click", function () {
+        state.lastContractError = null;
+        var isFrac = Math.abs(state.currentPos - Math.round(state.currentPos)) > 1e-9;
+        var prevIdx = isFrac ? Math.floor(state.currentPos) : Math.round(state.currentPos) - 1;
+        state.currentPos = Math.max(0, prevIdx);
+        elTimeline.value = String(state.currentPos);
+        updateUI();
+      });
+
+      document.getElementById("btn-step-next").addEventListener("click", function () {
+        state.lastContractError = null;
+        var isFrac = Math.abs(state.currentPos - Math.round(state.currentPos)) > 1e-9;
+        var nextIdx = isFrac ? Math.ceil(state.currentPos) : Math.round(state.currentPos) + 1;
+        state.currentPos = Math.min(maxStateIdx, nextIdx);
+        elTimeline.value = String(state.currentPos);
+        updateUI();
+      });
+
+      document.getElementById("btn-play-pause").addEventListener("click", function () {
+        state.lastContractError = null;
+        var btn = document.getElementById("btn-play-pause");
+        if (state.playing) {
+          state.playing = false;
+          clearInterval(state.playTimer);
+          btn.textContent = "Play";
+        } else {
+          state.playing = true;
+          btn.textContent = "Pause";
+          state.playTimer = setInterval(function () {
+            var step = state.allowDisplayInterpolation ? 0.25 : 1.0;
+            var next = state.currentPos + step;
+            if (next > maxStateIdx) next = 0.0;
+            state.currentPos = next;
+            elTimeline.value = String(next);
+            updateUI();
+          }, 600);
+        }
+      });
+
+      elSelectTa.addEventListener("change", function () {
+        state.lastContractError = null;
+        state.indexA = parseInt(elSelectTa.value, 10);
+        updateUI();
+      });
+
+      elSelectTb.addEventListener("change", function () {
+        state.lastContractError = null;
+        state.indexB = parseInt(elSelectTb.value, 10);
+        updateUI();
+      });
+
+      elSliderI.addEventListener("input", function () {
+        state.probeI = parseInt(elSliderI.value, 10);
+        updateUI();
+      });
+      elSliderJ.addEventListener("input", function () {
+        state.probeJ = parseInt(elSliderJ.value, 10);
+        updateUI();
+      });
+      elSliderK.addEventListener("input", function () {
+        state.probeK = parseInt(elSliderK.value, 10);
+        updateUI();
+      });
+
+      document.getElementById("btn-probe-lower").addEventListener("click", function () {
+        state.probeI = 8;
+        state.probeJ = 8;
+        state.probeK = 5;
+        elSliderI.value = "8";
+        elSliderJ.value = "8";
+        elSliderK.value = "5";
+        updateUI();
+      });
+
+      document.getElementById("btn-probe-upper").addEventListener("click", function () {
+        state.probeI = 8;
+        state.probeJ = 8;
+        state.probeK = 11;
+        elSliderI.value = "8";
+        elSliderJ.value = "8";
+        elSliderK.value = "11";
+        updateUI();
+      });
+
+      elSliderXT.addEventListener("input", function () {
+        state.angleXT = parseFloat(elSliderXT.value);
+        document.getElementById("lbl-angle-xt").textContent = state.angleXT.toFixed(2) + " rad";
+        updateUI();
+      });
+      elSliderZT.addEventListener("input", function () {
+        state.angleZT = parseFloat(elSliderZT.value);
+        document.getElementById("lbl-angle-zt").textContent = state.angleZT.toFixed(2) + " rad";
+        updateUI();
+      });
+      elSliderYaw.addEventListener("input", function () {
+        state.yaw = parseFloat(elSliderYaw.value);
+        document.getElementById("lbl-yaw").textContent = state.yaw.toFixed(2) + " rad";
+        updateUI();
+      });
+
+      document.getElementById("btn-reset-camera").addEventListener("click", function () {
+        state.angleXT = 0.32;
+        state.angleZT = 0.22;
+        state.yaw = -0.62;
+        elSliderXT.value = "0.32";
+        elSliderZT.value = "0.22";
+        elSliderYaw.value = "-0.62";
+        document.getElementById("lbl-angle-xt").textContent = "0.32 rad";
+        document.getElementById("lbl-angle-zt").textContent = "0.22 rad";
+        document.getElementById("lbl-yaw").textContent = "-0.62 rad";
+        updateUI();
+      });
+
+      document.getElementById("btn-export-png").addEventListener("click", function () {
+        var activeSel = state.lastActiveSelection || S4D.selectTimeState(bundle, state.currentPos, {
+          allowDisplayInterpolation: state.allowDisplayInterpolation
+        });
+        var outCanvas = document.createElement("canvas");
+        outCanvas.width = 1920;
+        outCanvas.height = 1080;
+        var octx = outCanvas.getContext("2d");
+        octx.fillStyle = "#0b0f14";
+        octx.fillRect(0, 0, 1920, 1080);
+        octx.fillStyle = "#e6edf3";
+        octx.font = "bold 24px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+        octx.fillText("OKLO 4D SPATIOTEMPORAL GEOCHEMISTRY EXPLORER (spacetime_geochemistry_v0)", 40, 48);
+        octx.font = "15px ui-monospace, SFMono-Regular, Menlo, monospace";
+        if (activeSel.is_simulated_state) {
+          octx.fillStyle = "#10b981";
+          octx.fillText(
+            "Stage 0/1 Verified Synthetic 4D Tracer Proof | State: " +
+              activeSel.state_index +
+              " (t=" +
+              activeSel.simulation_time.toFixed(1) +
+              "s) | Derivation: " +
+              activeSel.state_derivation +
+              " | SHA256: " +
+              activeSel.sha256_f32_le.slice(0, 16) +
+              "... | +k up, w=t",
+            40,
+            80
+          );
+        } else {
+          octx.fillStyle = "#fbbf24";
+          octx.fillText(
+            "DISPLAY INTERPOLATION ONLY (NOT SIMULATED) | State: " +
+              activeSel.state_index +
+              " (t=" +
+              activeSel.simulation_time.toFixed(1) +
+              "s) | Derivation: interpolated_for_display | run_receipt: null | SHA256: unverified_display_interpolation",
+            40,
+            80
+          );
+        }
+        octx.drawImage(document.getElementById("canvas-4d-projection"), 40, 110, 860, 620);
+        octx.drawImage(document.getElementById("canvas-slice-xy"), 930, 110, 460, 390);
+        octx.drawImage(document.getElementById("canvas-slice-xz"), 1420, 110, 460, 390);
+        octx.drawImage(document.getElementById("canvas-slice-diff"), 930, 520, 950, 290);
+        octx.drawImage(document.getElementById("canvas-timeseries"), 40, 760, 1840, 280);
+        var link = document.createElement("a");
+        link.download = activeSel.is_simulated_state
+          ? "spacetime_geochemistry_v0_state_" + activeSel.state_index + "_1920x1080.png"
+          : "spacetime_geochemistry_v0_interpolated_display_1920x1080.png";
+        link.href = outCanvas.toDataURL("image/png");
+        link.click();
+      });
+
+      updateUI();
+    })();
+  </script>
+</body>
+</html>
