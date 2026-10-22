@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ScientificArtifactIndex version="1.0" generated_at="2026-10-21T21:44:00-05:00" baseline_main_commit="942e3f8d02a3b73cfb26f099dbb36c4a908f6764">
+<ScientificArtifactIndex version="1.1" generated_at="2026-10-21T23:31:00-05:00" baseline_main_commit="942e3f8d02a3b73cfb26f099dbb36c4a908f6764">
   <PortalIndex>
     <Title>Oklo 4D Spatiotemporal, Conformance Fixture, and TECDOC-643 Neutron Walk Shareable Index</Title>
-    <PortalHTMLUri>file:///Users/aurascoper/.gemini/antigravity/scratch/oklo_shareable_portal/index.html</PortalHTMLUri>
-    <ManifestXMLUri>file:///Users/aurascoper/.gemini/antigravity/scratch/oklo_shareable_portal/artifact_index.xml</ManifestXMLUri>
+    <PublicPortalUrl>https://aurascoper.github.io/oklo_shareable_portal/</PublicPortalUrl>
+    <RelativePortalPath>index.html</RelativePortalPath>
+    <RelativeManifestPath>artifact_index.xml</RelativeManifestPath>
+    <UpstreamRepositoryVisibility>private_owner_only (aurascoper/oklo_pool_mobile)</UpstreamRepositoryVisibility>
   </PortalIndex>
 
   <Artifacts>
@@ -11,9 +13,9 @@
       <Title>4D Spatiotemporal Geochemistry Explorer (Single-File Shareable HTML)</Title>
       <Requirement>R10 (spacetime_geochemistry_v0 - Stage 0 Data Contract and Stage 1 Synthetic Temporal Renderer)</Requirement>
       <EpistemicStatus>numerically_verified_synthetic_model (prescribed_analytically; local workstation verification; Stage 2 PDE solver not authorized)</EpistemicStatus>
-      <LocalFileUri>file:///Users/aurascoper/.gemini/antigravity/scratch/oklo_shareable_portal/spacetime_explorer_4d_shareable.html</LocalFileUri>
-      <RepositoryFileUri>file:///Users/aurascoper/Developer/oklo_pool_mobile/viewer/spacetime_explorer_4d.html</RepositoryFileUri>
-      <GitHubPullRequestUrl>https://github.com/aurascoper/oklo_pool_mobile/pull/10</GitHubPullRequestUrl>
+      <RelativePortalPath>spacetime_explorer_4d_shareable.html</RelativePortalPath>
+      <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/spacetime_explorer_4d_shareable.html</PublicArtifactUrl>
+      <OwnerOnlyUpstreamRef visibility="private_owner_only">aurascoper/oklo_pool_mobile PR #10 (merged at 942e3f8d02a3b73cfb26f099dbb36c4a908f6764)</OwnerOnlyUpstreamRef>
       <MergeCommitSHA>942e3f8d02a3b73cfb26f099dbb36c4a908f6764</MergeCommitSHA>
       <TestedSourceCommitSHA>d868075d78a13b14459d524350343ccc21de67a8</TestedSourceCommitSHA>
       <ReceiptHeadCommitSHA>df3326efe8a6aba636360d02ddc0a2bc1cc67a88</ReceiptHeadCommitSHA>
@@ -27,10 +29,9 @@
       <Requirement>neutron_transport_explorer_v0 (Stage 0 Reference Audit Only)</Requirement>
       <EpistemicStatus>external_design_reference (client-side 2-group toy surrogate + recorded OpenMC 0.15.3 playback using pre-2026-10-19 materials; not a live OpenMC solver)</EpistemicStatus>
       <PublicShareableUrl>https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md</PublicShareableUrl>
-      <LocalFileUri>file:///Users/aurascoper/Downloads/TECDOC-643%20Neutron%20Walk%20(Copy).html</LocalFileUri>
-      <AuditSpecUri>file:///Users/aurascoper/Developer/oklo_pool_mobile/docs/specs/NEUTRON_TRANSPORT_EXPLORER_v0.md</AuditSpecUri>
-      <AuditRegistryUri>file:///Users/aurascoper/Developer/oklo_pool_mobile/docs/references/NEUTRON_WALK_REFERENCE.md</AuditRegistryUri>
-      <GitHubPullRequestUrl>https://github.com/aurascoper/oklo_pool_mobile/pull/11</GitHubPullRequestUrl>
+      <RelativePortalPath>tecdoc643_neutron_walk.html</RelativePortalPath>
+      <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/tecdoc643_neutron_walk.html</PublicArtifactUrl>
+      <OwnerOnlyUpstreamRef visibility="private_owner_only">aurascoper/oklo_pool_mobile PR #11 (branch commit 718e9c6f7273706aabb905d50847bf13b1ebb2b1)</OwnerOnlyUpstreamRef>
       <BranchCommitSHA>718e9c6f7273706aabb905d50847bf13b1ebb2b1</BranchCommitSHA>
       <Bytes>937606</Bytes>
       <SHA256>dc15eb934fe6cd32a084dc13d05ee17d8f5ad988f7ea1bd2598bdcd9a0065b78</SHA256>
@@ -41,7 +42,8 @@
       <Title>Quarantined TECDOC-643 Julia Benchmark Reference Fixture</Title>
       <Requirement>neutron_transport_explorer_v0 / RadioPharm.jl Operator Equation Audit</Requirement>
       <EpistemicStatus>transcribed_unverified_reference_fixture (tests generic reactivity algebra; does not transfer MTR results to MURR annular core)</EpistemicStatus>
-      <LocalFileUri>file:///Users/aurascoper/Downloads/tecdoc643_reference_fixture.jl</LocalFileUri>
+      <RelativePortalPath>tecdoc643_reference_fixture.jl</RelativePortalPath>
+      <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/tecdoc643_reference_fixture.jl</PublicArtifactUrl>
       <Bytes>5951</Bytes>
       <SHA256>813c9e9fb33e47d9ceead8ea8f08bf07122583cf4292aab651d4f919a572a849</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
@@ -51,8 +53,10 @@
       <Title>Oklo Revision-0 GUI Conformance Fixture (Frozen Baseline)</Title>
       <Requirement>Revision-0 Six-Field Conformance Benchmark (CONFORMANCE_FIXTURE_SPEC.md)</Requirement>
       <EpistemicStatus>prescribed_analytic_field (frozen revision-0 reference fixture; must not be modified in place)</EpistemicStatus>
-      <LocalFileUri>file:///Users/aurascoper/.gemini/antigravity/scratch/oklo_gui_scratch/index.html</LocalFileUri>
-      <SpecUri>file:///Users/aurascoper/.gemini/antigravity/scratch/oklo_gui_scratch/CONFORMANCE_FIXTURE_SPEC.md</SpecUri>
+      <RelativePortalPath>oklo_r0_fixture_readonly.html</RelativePortalPath>
+      <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/oklo_r0_fixture_readonly.html</PublicArtifactUrl>
+      <RelativeSpecPath>CONFORMANCE_FIXTURE_SPEC.md</RelativeSpecPath>
+      <PublicSpecUrl>https://aurascoper.github.io/oklo_shareable_portal/CONFORMANCE_FIXTURE_SPEC.md</PublicSpecUrl>
       <Bytes>77117</Bytes>
       <SHA256>8dac3ae9b8268a476b791f8c2293130e899d5c86c7fab09ce27345de2333544d</SHA256>
       <OfflineSelfContained>false (loads Tailwind CDN script in header)</OfflineSelfContained>
@@ -62,12 +66,13 @@
       <Title>Oklo Prebiotic Nuclear-Geyser and Compartment Explorer v0 (Quarantined Export)</Title>
       <Requirement>Quarantined UI and Source Audit Export (Separate from PR #11 and Frozen Revision-0 Fixture)</Requirement>
       <EpistemicStatus>QUARANTINED_SYNTHETIC_PROTOTYPE (NOT_VALIDATED; draft PR #12; not authorized for merge)</EpistemicStatus>
-      <GitHubPullRequestUrl>https://github.com/aurascoper/oklo_pool_mobile/pull/12</GitHubPullRequestUrl>
+      <OwnerOnlyUpstreamRef visibility="private_owner_only">aurascoper/oklo_pool_mobile Draft PR #12 (branch commit 9e6bcf48a37086b052fe68b63b5079f789aa5131)</OwnerOnlyUpstreamRef>
       <BranchCommitSHA>9e6bcf48a37086b052fe68b63b5079f789aa5131</BranchCommitSHA>
       <ExportedPrototypePath>viewer/oklo_geyser_explorer_v0/prototype.html</ExportedPrototypePath>
       <Bytes>77116</Bytes>
       <SHA256>c1b9acc3b03b2b6d8da33f3e90e46d2d1466649b1fba865f80ce15b755f050cf</SHA256>
-      <ResearchProgramArtifactUri>file:///Users/aurascoper/.gemini/antigravity/brain/117f7eb5-27b2-4957-9f56-0fc102f31523/proto_biofilms_geyser_fission_research_program.md</ResearchProgramArtifactUri>
+      <RelativeResearchProgramPath>proto_biofilms_geyser_fission_research_program.md</RelativeResearchProgramPath>
+      <PublicResearchProgramUrl>https://aurascoper.github.io/oklo_shareable_portal/proto_biofilms_geyser_fission_research_program.md</PublicResearchProgramUrl>
       <OfflineSelfContained>false (prototype loads Tailwind CSS from external gstatic URL)</OfflineSelfContained>
     </Artifact>
   </Artifacts>
