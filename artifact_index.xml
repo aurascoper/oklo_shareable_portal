@@ -60,8 +60,8 @@
       <FrameGeneratorCommitSHA>de8d88e-dirty</FrameGeneratorCommitSHA>
       <FrameManifestSHA256>39ef51ef98abe56eab1f1b2cd6c0cc4cf99ccfb4403483b83f7ea06f22f3406c</FrameManifestSHA256>
       <EnsembleRadialCsvSHA256>c4b11303f36d45582e25311ba2bc0347292488e7c5899bd2fffa1f4156674dc0</EnsembleRadialCsvSHA256>
-      <Bytes>673657</Bytes>
-      <SHA256>885fe7610c9d1c7731dd964368f2eb46cee39bddbb7b30a15c0d67f133a54133</SHA256>
+      <Bytes>861182</Bytes>
+      <SHA256>f6557e3426a890e1515335e0d3710fad84707d1c0c5bacc9057ca713ab9a606c</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
 

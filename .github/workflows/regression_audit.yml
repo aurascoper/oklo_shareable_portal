@@ -1,0 +1,56 @@
+name: Portal & Biofilms 3D Regression Audit
+
+on:
+  push:
+    branches:
+      - feat/biofilms-3d-visualization
+      - main
+  pull_request:
+
+jobs:
+  regression-and-statistical-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify Chrome & Runtime Versions
+        run: |
+          node -v
+          google-chrome --version
+
+      - name: Run Headless Chrome Regression & 256-Seed Statistical Integrity Suite
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
+        run: |
+          node test_tecdoc643_viewer_regression.js | tee ci_test_output.txt
+          python3 -c '
+          import hashlib, json, subprocess, platform
+          commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
+          node_v = subprocess.check_output(["node", "-v"]).decode().strip()
+          chrome_v = subprocess.check_output(["google-chrome", "--version"]).decode().strip()
+          files = ["index.html", "biofilms_3d_explorer.html", "tecdoc643_neutron_walk.html", "oklo_r0_fixture_readonly.html", "artifact_index.xml"]
+          hashes = {f: {"bytes": len(open(f,"rb").read()), "sha256": hashlib.sha256(open(f,"rb").read()).hexdigest()} for f in files}
+          receipt = {
+              "commit_sha": commit,
+              "node_version": node_v,
+              "chrome_version": chrome_v,
+              "platform": platform.platform(),
+              "artifact_hashes": hashes,
+              "test_output": open("ci_test_output.txt").read().strip().splitlines()
+          }
+          open("ci_verification_receipt.json", "w").write(json.dumps(receipt, indent=2))
+          '
+
+      - name: Upload CI Verification Receipt Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: biofilms-portal-ci-receipt
+          path: |
+            ci_verification_receipt.json
+            ci_test_output.txt

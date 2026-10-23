@@ -18,7 +18,11 @@ const path = require('path');
 const { spawn } = require('child_process');
 
 const ROOT = __dirname;
-const CHROME_BIN = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const CHROME_BIN = process.env.CHROME_BIN || (
+  fs.existsSync('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')
+    ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    : (fs.existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : '/usr/bin/chromium-browser')
+);
 
 function sha256File(relPath) {
   const buf = fs.readFileSync(path.join(ROOT, relPath));
@@ -56,8 +60,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'biofilms_3d_explorer.html',
-      sha256: '885fe7610c9d1c7731dd964368f2eb46cee39bddbb7b30a15c0d67f133a54133',
-      bytes: 673657
+      sha256: 'f6557e3426a890e1515335e0d3710fad84707d1c0c5bacc9057ca713ab9a606c',
+      bytes: 861182
     }
   ];
 
@@ -96,6 +100,8 @@ async function withChromeSession(chromeFlags, port, debugPort, fn) {
   const userDataDir = `/tmp/oklo-test-chrome-${debugPort}-${Date.now()}`;
   const chrome = spawn(CHROME_BIN, [
     '--headless=new',
+    '--no-sandbox',
+    '--disable-dev-shm-usage',
     `--user-data-dir=${userDataDir}`,
     `--remote-debugging-port=${debugPort}`,
     '--no-first-run',
@@ -259,9 +265,10 @@ async function runTests() {
           slider.dispatchEvent(new Event('input'));
           const kpiOcc0 = d.getElementById('kpiOcc').textContent;
           const kpiMatch0 = d.getElementById('kpiMatch').textContent;
-          // Switch to 256-Seed 4-Arm Null Plot and test paired within-seed contrast view
+          // Switch to 256-Seed 4-Arm Null Plot and test paired within-seed contrast view + statistical integrity
           d.getElementById('btnModeEnsemble').click();
           d.getElementById('btnEnsContrast').click();
+          const statsAudit = ifr.contentWindow.verifyEnsembleStatisticalIntegrity();
           return JSON.stringify({
             embedded: d.documentElement.getAttribute('data-embedded'),
             glWidth: gl.width,
@@ -275,7 +282,8 @@ async function runTests() {
             kpiMatch100,
             kpiOcc0,
             kpiMatch0,
-            manifestSha: d.getElementById('manifestSha').textContent
+            manifestSha: d.getElementById('manifestSha').textContent,
+            statsAudit
           });
         })()`);
         assert.strictEqual(bio3dState.embedded, '1');
@@ -287,7 +295,15 @@ async function runTests() {
         assert.strictEqual(bio3dState.kpiOcc0, '3,038');
         assert.strictEqual(bio3dState.kpiMatch0, '100.0%');
         assert.strictEqual(bio3dState.manifestSha, '39ef51ef98abe56eab1f1b2cd6c0cc4cf99ccfb4403483b83f7ea06f22f3406c');
-        console.log(`PASS [5/7]: Biofilms 3-D WebGL, MCS 0/100 arms, and 256-Seed 4-Arm Null Plot verified (${bio3dState.glWidth}x${bio3dState.glHeight}, MCS 0 match=${bio3dState.kpiMatch0}, ensemble=${bio3dState.ensWidth}x${bio3dState.ensHeight}).`);
+        assert.strictEqual(bio3dState.statsAudit.seedCount, 256, 'Expected 256 seeds (42..297)');
+        assert.strictEqual(bio3dState.statsAudit.firstSeed, 42);
+        assert.strictEqual(bio3dState.statsAudit.lastSeed, 297);
+        assert.strictEqual(bio3dState.statsAudit.allSpeciesHave256PerArm, true, 'Every species and arm must have 256 finite observations');
+        assert.strictEqual(bio3dState.statsAudit.allSeedKeyOrderInvariant, true, 'Paired contrasts must be keyed by seed ID, not row position');
+        assert.strictEqual(bio3dState.statsAudit.allCiMatchReference, true, 'Dynamically calculated 90% CIs must match radial_analyse.jl to 4 decimals');
+        assert.strictEqual(bio3dState.statsAudit.allContrastsWithinEquivalenceBound, true, 'All 90% TOST CIs must lie strictly inside [-0.05, +0.05] r/R');
+        console.log(`PASS [5/8]: Biofilms 3-D WebGL, MCS 0/100 arms, and 256-Seed 4-Arm Null Plot verified (${bio3dState.glWidth}x${bio3dState.glHeight}, MCS 0 match=${bio3dState.kpiMatch0}, ensemble=${bio3dState.ensWidth}x${bio3dState.ensHeight}).`);
+        console.log(`PASS [6/8]: Biofilms 256-Seed Statistical Integrity verified (7 species x 4 arms x 256 seeds, seed-keyed pairing, TOST 90% CIs match radial_analyse.jl).`);
       }
     );
 
