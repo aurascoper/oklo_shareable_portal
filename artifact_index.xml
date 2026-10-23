@@ -33,8 +33,8 @@
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/tecdoc643_neutron_walk.html</PublicArtifactUrl>
       <OwnerOnlyUpstreamRef visibility="private_owner_only">aurascoper/oklo_pool_mobile PR #11 (branch commit 718e9c6f7273706aabb905d50847bf13b1ebb2b1)</OwnerOnlyUpstreamRef>
       <BranchCommitSHA>718e9c6f7273706aabb905d50847bf13b1ebb2b1</BranchCommitSHA>
-      <Bytes>937606</Bytes>
-      <SHA256>dc15eb934fe6cd32a084dc13d05ee17d8f5ad988f7ea1bd2598bdcd9a0065b78</SHA256>
+      <Bytes>939350</Bytes>
+      <SHA256>a463adfac1fbf8aa60b52f937d8f180e0c69678af2103bca4199718f8f849650</SHA256>
       <OfflineSelfContained>false (loads Three.js r128 from cdnjs and fonts from Google Fonts)</OfflineSelfContained>
     </Artifact>
 

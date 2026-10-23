@@ -117,6 +117,17 @@
       display: flex;
       flex-direction: column;
     }
+    .frame-card.is-hidden {
+      position: fixed !important;
+      left: -200vw !important;
+      top: 0 !important;
+      width: 1200px !important;
+      height: 860px !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      opacity: 0 !important;
+      z-index: -1 !important;
+    }
     .frame-head {
       padding: 10px 14px;
       background: var(--panel-alt);
@@ -137,7 +148,7 @@
     .frame-head a:hover { text-decoration: underline; }
     iframe {
       width: 100%;
-      height: 760px;
+      height: 860px;
       border: 0;
       background: #050a0f;
     }
@@ -229,7 +240,7 @@
         <iframe id="iframe4d" src="spacetime_explorer_4d_shareable.html" title="4D Spatiotemporal Geochemistry Explorer"></iframe>
       </div>
 
-      <div id="cardNw" class="frame-card" style="display:none">
+      <div id="cardNw" class="frame-card is-hidden">
         <div class="frame-head">
           <div>
             <strong>TECDOC-643 Neutron Walk (10 MW MTR Design &amp; Data Reference)</strong>
@@ -241,10 +252,10 @@
             <span class="mono" title="Upstream repository aurascoper/oklo_pool_mobile is private (owner-only)">Upstream Ref: PR #11 (718e9c6, Owner-Only Private Repo)</span>
           </div>
         </div>
-        <iframe id="iframeNw" src="tecdoc643_neutron_walk.html" title="TECDOC-643 Neutron Walk Reference"></iframe>
+        <iframe id="iframeNw" data-src="tecdoc643_neutron_walk.html" title="TECDOC-643 Neutron Walk Reference"></iframe>
       </div>
 
-      <div id="cardR0" class="frame-card" style="display:none">
+      <div id="cardR0" class="frame-card is-hidden">
         <div class="frame-head">
           <div>
             <strong>Oklo Revision-0 Conformance Fixture (Frozen Baseline)</strong>
@@ -256,7 +267,7 @@
             <span class="mono" title="Upstream repository aurascoper/oklo_pool_mobile is private (owner-only)">Upstream Ref: Draft PR #12 (9e6bcf4, Owner-Only Private Repo)</span>
           </div>
         </div>
-        <iframe id="iframeR0" src="oklo_r0_fixture_readonly.html" title="Frozen Revision-0 Oklo Conformance Fixture"></iframe>
+        <iframe id="iframeR0" data-src="oklo_r0_fixture_readonly.html" title="Frozen Revision-0 Oklo Conformance Fixture"></iframe>
       </div>
     </div>
 
@@ -291,7 +302,7 @@
               <a href="tecdoc643_neutron_walk.html" target="_blank" rel="noopener">Hosted Copy (tecdoc643_neutron_walk.html)</a><br>
               <span class="mono">Upstream Ref: PR #11 (718e9c6, Owner-Only Private Repo)</span>
             </td>
-            <td class="mono">dc15eb934fe6cd32...<br>(937,606 bytes)</td>
+            <td class="mono">a463adfac1fbf8aa...<br>(939,350 bytes)</td>
             <td><span class="badge amber">Reference Audit Only</span><br>"Real OpenMC" is 500-track playback (pre-Oct 19 materials); burnup is a 1-mat/element laptop demo (340.26 d vs ~298 d cluster).</td>
           </tr>
           <tr>
@@ -390,42 +401,87 @@
   </div>
 
   <script>
+    function notifyNwResize() {
+      const ifr = document.getElementById('iframeNw');
+      if (!ifr || !ifr.contentDocument || !ifr.contentWindow) return false;
+      const d = ifr.contentDocument;
+      const w = ifr.contentWindow;
+      const stage = d.getElementById('stage');
+      if (!stage || !d.body) return false;
+      requestAnimationFrame(() => {
+        w.dispatchEvent(new Event('resize'));
+      });
+      return true;
+    }
+
+    function ensureIframeLoaded(ifr, onLoadCb) {
+      if (!ifr) return;
+      const targetSrc = ifr.getAttribute('data-src');
+      if (targetSrc && !ifr.getAttribute('src')) {
+        if (onLoadCb) {
+          ifr.addEventListener('load', () => {
+            onLoadCb();
+            setTimeout(onLoadCb, 120);
+          });
+        }
+        ifr.setAttribute('src', targetSrc);
+      } else if (onLoadCb) {
+        onLoadCb();
+        setTimeout(onLoadCb, 60);
+      }
+    }
+
     function setView(mode) {
       const grid = document.getElementById('viewerGrid');
       const c4d = document.getElementById('card4d');
       const cNw = document.getElementById('cardNw');
       const cR0 = document.getElementById('cardR0');
+      const ifrNw = document.getElementById('iframeNw');
+      const ifrR0 = document.getElementById('iframeR0');
       const banner = document.getElementById('bannerTxt');
       ['tab4d','tabNw','tabSplit','tabR0','tabAudit'].forEach(id => document.getElementById(id).classList.remove('active'));
 
       grid.classList.remove('split');
-      c4d.style.display = 'none';
-      cNw.style.display = 'none';
-      cR0.style.display = 'none';
+      c4d.classList.add('is-hidden');
+      cNw.classList.add('is-hidden');
+      cR0.classList.add('is-hidden');
 
       if (mode === '4d') {
         document.getElementById('tab4d').classList.add('active');
-        c4d.style.display = 'flex';
+        c4d.classList.remove('is-hidden');
         banner.innerHTML = '<strong>Epistemic Status (R10 Stage 0/1):</strong> Prescribed analytical 3D Gaussian advection-diffusion-decay tracer pulse across 5 discrete time states (t = 0 s to 1000 s, +k vertical up-axis). Local workstation verification passed; Stage 2 transient PDE solver is not authorized.';
       } else if (mode === 'nw') {
         document.getElementById('tabNw').classList.add('active');
-        cNw.style.display = 'flex';
+        cNw.classList.remove('is-hidden');
+        void cNw.offsetWidth;
+        ensureIframeLoaded(ifrNw, notifyNwResize);
         banner.innerHTML = '<strong>Epistemic Status (TECDOC-643 Neutron Walk Reference):</strong> Design and data-structure reference (<a href="https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md" target="_blank" rel="noopener">claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md</a>). "Real OpenMC" replays 500 recorded histories from pre-Oct 19 materials; burnup is a laptop demo (crossing k = 1 at day 340.26 vs. ~day 298 on cluster).';
       } else if (mode === 'split') {
         document.getElementById('tabSplit').classList.add('active');
         grid.classList.add('split');
-        c4d.style.display = 'flex';
-        cNw.style.display = 'flex';
+        c4d.classList.remove('is-hidden');
+        cNw.classList.remove('is-hidden');
+        void cNw.offsetWidth;
+        ensureIframeLoaded(ifrNw, notifyNwResize);
         banner.innerHTML = '<strong>Side-by-Side Comparison:</strong> Left: R10 4D Spatiotemporal Geochemistry Viewer (continuum voxel contract). Right: TECDOC-643 Neutron Walk (discrete Monte Carlo particle tracks &amp; lattice tallies). Shared epistemic provenance discipline; separate physical models and schemas.';
       } else if (mode === 'r0') {
         document.getElementById('tabR0').classList.add('active');
-        cR0.style.display = 'flex';
+        cR0.classList.remove('is-hidden');
+        void cR0.offsetWidth;
+        ensureIframeLoaded(ifrR0, null);
         banner.innerHTML = '<strong>Frozen Revision-0 Conformance Fixture:</strong> Loaded read-only from <code>oklo_gui_scratch/index.html</code> (SHA-256: <code>8dac3ae9b8268a476b791f8c2293130e899d5c86c7fab09ce27345de2333544d</code>). Preserved unmodified per CONFORMANCE_FIXTURE_SPEC.md.';
       } else if (mode === 'audit') {
         document.getElementById('tabAudit').classList.add('active');
         banner.innerHTML = '<strong>Deep-Research UO2-Clay-Fracture &amp; TECDOC-643 Audit Summary:</strong> Review the artifact SHA-256 registry, precision-aware recomputations, and E1-E3 polymer evidence gates below.';
       }
     }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const h = (window.location.hash || '').replace('#', '').toLowerCase();
+      if (['4d', 'nw', 'split', 'r0', 'audit'].includes(h)) {
+        setView(h);
+      }
+    });
   </script>
 </body>
 </html>
