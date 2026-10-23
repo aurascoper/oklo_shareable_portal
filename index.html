@@ -217,8 +217,9 @@
       <button id="tab4d" class="active" onclick="setView('4d')">1. 4D Spatiotemporal Geochemistry Viewer (R10 Shareable)</button>
       <button id="tabNw" onclick="setView('nw')">2. TECDOC-643 Neutron Walk (10 MW MTR Reference)</button>
       <button id="tabSplit" onclick="setView('split')">3. Side-by-Side 4D Geochemistry + Neutron Walk</button>
-      <button id="tabR0" onclick="setView('r0')">4. Frozen Revision-0 Oklo Fixture (Read-Only)</button>
-      <button id="tabAudit" onclick="setView('audit')">5. Deep-Research UO2-Clay-Fracture &amp; Precision Audit</button>
+      <button id="tabBio" onclick="setView('bio')">4. Biofilms 3D Cellular Potts Consortium (Seed 42 Reference)</button>
+      <button id="tabR0" onclick="setView('r0')">5. Frozen Revision-0 Oklo Fixture (Read-Only)</button>
+      <button id="tabAudit" onclick="setView('audit')">6. Deep-Research UO2-Clay-Fracture &amp; Precision Audit</button>
     </div>
 
     <div id="bannerTxt" class="banner">
@@ -253,6 +254,20 @@
           </div>
         </div>
         <iframe id="iframeNw" data-src="tecdoc643_neutron_walk.html" title="TECDOC-643 Neutron Walk Reference"></iframe>
+      </div>
+
+      <div id="cardBio" class="frame-card is-hidden">
+        <div class="frame-head">
+          <div>
+            <strong>Biofilms 3D Cellular Potts Consortium Explorer (Uncalibrated 40x40x40 Reference)</strong>
+            <span class="badge amber">D-PITCH: awaiting_measurement | seconds_per_mcs = NaN</span>
+          </div>
+          <div>
+            <a href="biofilms_3d_explorer.html" target="_blank" rel="noopener">Open Standalone Biofilms 3D HTML</a> |
+            <span class="mono">Source Repo: aurascoper/Biofilms (c766e7b / de8d88e, Seed 42, MCS 0..100)</span>
+          </div>
+        </div>
+        <iframe id="iframeBio" data-src="biofilms_3d_explorer.html" title="Biofilms 3D Cellular Potts Consortium Explorer"></iframe>
       </div>
 
       <div id="cardR0" class="frame-card is-hidden">
@@ -313,6 +328,16 @@
             </td>
             <td class="mono">813c9e9fb33e47d9...<br>(5,951 bytes)</td>
             <td><span class="badge amber">Quarantined Test Fixture</span><br>Verifies generic rho = (k-1)/k algebra; does not transfer rectangular MTR results to annular MURR core.</td>
+          </tr>
+          <tr>
+            <td class="mono">BIOFILMS-3D-CPM-01</td>
+            <td><strong>Biofilms 3D Cellular Potts Consortium Explorer</strong><br>Read-only 3D lattice + 2D slice viewer of Seed 42 (MCS 0..100, Full vs. Null arms)</td>
+            <td>
+              <a href="biofilms_3d_explorer.html" target="_blank" rel="noopener">biofilms_3d_explorer.html</a><br>
+              <span class="mono">Source Repo: aurascoper/Biofilms (c766e7b / de8d88e, Julia 1.12.7)</span>
+            </td>
+            <td class="mono">a8d024b3d10d5718...<br>(602,444 bytes)</td>
+            <td><span class="badge amber">Uncalibrated Model Output</span><br>40x40x40 lattice (D-PITCH awaiting_measurement; seconds_per_mcs = NaN; Dose = 0 Gy; coupled radiodialysis BLOCKED).</td>
           </tr>
           <tr>
             <td class="mono">OKLO-R0-FIXTURE</td>
@@ -435,15 +460,18 @@
       const grid = document.getElementById('viewerGrid');
       const c4d = document.getElementById('card4d');
       const cNw = document.getElementById('cardNw');
+      const cBio = document.getElementById('cardBio');
       const cR0 = document.getElementById('cardR0');
       const ifrNw = document.getElementById('iframeNw');
+      const ifrBio = document.getElementById('iframeBio');
       const ifrR0 = document.getElementById('iframeR0');
       const banner = document.getElementById('bannerTxt');
-      ['tab4d','tabNw','tabSplit','tabR0','tabAudit'].forEach(id => document.getElementById(id).classList.remove('active'));
+      ['tab4d','tabNw','tabSplit','tabBio','tabR0','tabAudit'].forEach(id => document.getElementById(id).classList.remove('active'));
 
       grid.classList.remove('split');
       c4d.classList.add('is-hidden');
       cNw.classList.add('is-hidden');
+      cBio.classList.add('is-hidden');
       cR0.classList.add('is-hidden');
 
       if (mode === '4d') {
@@ -464,6 +492,12 @@
         void cNw.offsetWidth;
         ensureIframeLoaded(ifrNw, notifyNwResize);
         banner.innerHTML = '<strong>Side-by-Side Comparison:</strong> Left: R10 4D Spatiotemporal Geochemistry Viewer (continuum voxel contract). Right: TECDOC-643 Neutron Walk (discrete Monte Carlo particle tracks &amp; lattice tallies). Shared epistemic provenance discipline; separate physical models and schemas.';
+      } else if (mode === 'bio') {
+        document.getElementById('tabBio').classList.add('active');
+        cBio.classList.remove('is-hidden');
+        void cBio.offsetWidth;
+        ensureIframeLoaded(ifrBio, null);
+        banner.innerHTML = '<strong>Epistemic Status (Biofilms 3D Cellular Potts Reference):</strong> Uncalibrated 40x40x40 lattice snapshots from <code>aurascoper/Biofilms</code> (Seed 42, 6 parcels per species, MCS 0 to 100, Full vs. Null arms). Axes count discrete lattice sites (<code>D-PITCH: awaiting_measurement</code>, <code>seconds_per_mcs = NaN</code>); radiotrophy, radioresistance, physical dose, and the blocked radiodialysis loop are excluded from claims.';
       } else if (mode === 'r0') {
         document.getElementById('tabR0').classList.add('active');
         cR0.classList.remove('is-hidden');
@@ -478,7 +512,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       const h = (window.location.hash || '').replace('#', '').toLowerCase();
-      if (['4d', 'nw', 'split', 'r0', 'audit'].includes(h)) {
+      if (['4d', 'nw', 'split', 'bio', 'r0', 'audit'].includes(h)) {
         setView(h);
       }
     });

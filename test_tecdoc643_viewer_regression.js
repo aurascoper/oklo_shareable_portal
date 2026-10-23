@@ -53,6 +53,11 @@ function verifyArtifactHashes() {
       path: 'tecdoc643_neutron_walk.html',
       sha256: 'a463adfac1fbf8aa60b52f937d8f180e0c69678af2103bca4199718f8f849650',
       bytes: 939350
+    },
+    {
+      path: 'biofilms_3d_explorer.html',
+      sha256: 'a8d024b3d10d57182297ba703b6bf73aedaf84dad4288dbee8ce1fd86f87ed88',
+      bytes: 602444
     }
   ];
 
@@ -235,7 +240,46 @@ async function runTests() {
         assert.strictEqual(splitState.viewerPos, 'relative', 'Viewer must be position:relative when embedded / in split view');
         assert.ok(splitState.viewerTopAfterScroll < -200, `Viewer should scroll upward with page, got top=${splitState.viewerTopAfterScroll}`);
         assert.ok(splitState.viewerBottomAfterScroll <= splitState.sideTopAfterScroll + 2, 'Viewer must not overlap side controls when scrolled in split view');
-        console.log(`PASS [4/5]: Split-view layout & scrolling verified (position=${splitState.viewerPos}, no overlap).`);
+        console.log(`PASS [4/7]: Split-view layout & scrolling verified (position=${splitState.viewerPos}, no overlap).`);
+
+        // Test 5: Biofilms 3-D Explorer WebGL rendering & MCS 0 / MCS 100 arm verification
+        await evalJson(`(() => { setView('bio'); return 'true'; })()`);
+        await new Promise(r => setTimeout(r, 1500));
+        const bio3dState = await evalJson(`(() => {
+          const ifr = document.getElementById('iframeBio');
+          const d = ifr.contentDocument;
+          const gl = d.getElementById('glCanvas');
+          const sl = d.getElementById('sliceCanvas');
+          const kpiOcc = d.getElementById('kpiOcc').textContent;
+          const kpiMatch100 = d.getElementById('kpiMatch').textContent;
+          // Switch to MCS 0 and verify 100.0% match across Full and Null arms
+          const slider = d.getElementById('mcsSlider');
+          slider.value = '0';
+          slider.dispatchEvent(new Event('input'));
+          const kpiOcc0 = d.getElementById('kpiOcc').textContent;
+          const kpiMatch0 = d.getElementById('kpiMatch').textContent;
+          return JSON.stringify({
+            embedded: d.documentElement.getAttribute('data-embedded'),
+            glWidth: gl.width,
+            glHeight: gl.height,
+            glHidden: gl.hidden,
+            slHidden: sl.hidden,
+            kpiOcc100: kpiOcc,
+            kpiMatch100,
+            kpiOcc0,
+            kpiMatch0,
+            manifestSha: d.getElementById('manifestSha').textContent
+          });
+        })()`);
+        assert.strictEqual(bio3dState.embedded, '1');
+        assert.ok(bio3dState.glWidth > 400 && bio3dState.glHeight > 350, `Expected sized Biofilms 3D canvas, got ${bio3dState.glWidth}x${bio3dState.glHeight}`);
+        assert.strictEqual(bio3dState.glHidden, false);
+        assert.strictEqual(bio3dState.slHidden, true);
+        assert.strictEqual(bio3dState.kpiOcc100, '4,888');
+        assert.strictEqual(bio3dState.kpiOcc0, '3,038');
+        assert.strictEqual(bio3dState.kpiMatch0, '100.0%');
+        assert.strictEqual(bio3dState.manifestSha, '39ef51ef98abe56eab1f1b2cd6c0cc4cf99ccfb4403483b83f7ea06f22f3406c');
+        console.log(`PASS [5/7]: Biofilms 3-D WebGL rendering & MCS 0/100 arm verification passed (${bio3dState.glWidth}x${bio3dState.glHeight}, MCS 0 match=${bio3dState.kpiMatch0}).`);
       }
     );
 
@@ -275,7 +319,30 @@ async function runTests() {
         assert.strictEqual(fallbackState.vtitle, 'Cross-section');
         assert.notStrictEqual(fallbackState.kval, '\u2014', 'Tally k-eff must still compute in 2-D Slice fallback');
         assert.ok(!fallbackState.ntot.includes('(0 neutrons)'), `Expected live tally in fallback mode, got ${fallbackState.ntot}`);
-        console.log(`PASS [5/5]: Disabled-WebGL exception fallback verified (2-D Slice ${fallbackState.slWidth}x${fallbackState.slHeight}, k=${fallbackState.kval}, ${fallbackState.ntot}).`);
+        console.log(`PASS [6/7]: TECDOC-643 disabled-WebGL exception fallback verified (2-D Slice ${fallbackState.slWidth}x${fallbackState.slHeight}, k=${fallbackState.kval}, ${fallbackState.ntot}).`);
+
+        await evalJson(`(() => { setView('bio'); return 'true'; })()`);
+        await new Promise(r => setTimeout(r, 1500));
+        const bioFallback = await evalJson(`(() => {
+          const ifr = document.getElementById('iframeBio');
+          const d = ifr.contentDocument;
+          const gl = d.getElementById('glCanvas');
+          const sl = d.getElementById('sliceCanvas');
+          return JSON.stringify({
+            glHidden: gl.hidden,
+            slHidden: sl.hidden,
+            slWidth: sl.width,
+            slHeight: sl.height,
+            btn3dDisabled: d.getElementById('btnMode3d').disabled,
+            kpiOcc: d.getElementById('kpiOcc').textContent
+          });
+        })()`);
+        assert.strictEqual(bioFallback.glHidden, true);
+        assert.strictEqual(bioFallback.slHidden, false);
+        assert.ok(bioFallback.slWidth > 400 && bioFallback.slHeight > 350);
+        assert.strictEqual(bioFallback.btn3dDisabled, true);
+        assert.strictEqual(bioFallback.kpiOcc, '4,888');
+        console.log(`PASS [7/7]: Biofilms 3-D disabled-WebGL 2-D Slice fallback verified (${bioFallback.slWidth}x${bioFallback.slHeight}, sites=${bioFallback.kpiOcc}).`);
       }
     );
   } finally {
