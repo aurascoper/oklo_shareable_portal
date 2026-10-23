@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ScientificArtifactIndex version="1.1" generated_at="2026-10-21T23:31:00-05:00" baseline_main_commit="942e3f8d02a3b73cfb26f099dbb36c4a908f6764">
+<ScientificArtifactIndex version="1.2" generated_at="2026-10-22T21:25:00-05:00" baseline_main_commit="942e3f8d02a3b73cfb26f099dbb36c4a908f6764">
   <PortalIndex>
-    <Title>Oklo 4D Spatiotemporal, Conformance Fixture, and TECDOC-643 Neutron Walk Shareable Index</Title>
+    <Title>Oklo 4D Spatiotemporal, Conformance Fixture, Biofilms 3D, TECDOC-643 Neutron Walk, and Pool-Water Interactive Shareable Index</Title>
     <PublicPortalUrl>https://aurascoper.github.io/oklo_shareable_portal/</PublicPortalUrl>
     <RelativePortalPath>index.html</RelativePortalPath>
     <RelativeManifestPath>artifact_index.xml</RelativeManifestPath>
+    <RelativeBenchmarkContractPath>benchmark_manifest.json</RelativeBenchmarkContractPath>
+    <RelativePoolWaterSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativePoolWaterSpecPath>
     <UpstreamRepositoryVisibility>private_owner_only (aurascoper/oklo_pool_mobile)</UpstreamRepositoryVisibility>
   </PortalIndex>
 
@@ -13,6 +15,7 @@
       <Title>4D Spatiotemporal Geochemistry Explorer (Single-File Shareable HTML)</Title>
       <Requirement>R10 (spacetime_geochemistry_v0 - Stage 0 Data Contract and Stage 1 Synthetic Temporal Renderer)</Requirement>
       <EpistemicStatus>numerically_verified_synthetic_model (prescribed_analytically; local workstation verification; Stage 2 PDE solver not authorized)</EpistemicStatus>
+      <EvidenceClassification>synthetic</EvidenceClassification>
       <RelativePortalPath>spacetime_explorer_4d_shareable.html</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/spacetime_explorer_4d_shareable.html</PublicArtifactUrl>
       <OwnerOnlyUpstreamRef visibility="private_owner_only">aurascoper/oklo_pool_mobile PR #10 (merged at 942e3f8d02a3b73cfb26f099dbb36c4a908f6764)</OwnerOnlyUpstreamRef>
@@ -26,26 +29,49 @@
 
     <Artifact id="REF-NW-HTML-01">
       <Title>TECDOC-643 Neutron Walk (10 MW MTR 3D + 2D Slice Interactive Design Reference)</Title>
-      <Requirement>neutron_transport_explorer_v0 (Stage 0 Reference Audit Only)</Requirement>
+      <Requirement>neutron_transport_explorer_v0 (Stage 0 Reference Audit Only; Gate 0 Frozen Reference)</Requirement>
       <EpistemicStatus>external_design_reference (client-side 2-group toy surrogate + recorded OpenMC 0.15.3 playback using pre-2026-10-19 materials; not a live OpenMC solver)</EpistemicStatus>
+      <EvidenceClassification>replayed</EvidenceClassification>
       <PublicShareableUrl>https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md</PublicShareableUrl>
       <RelativePortalPath>tecdoc643_neutron_walk.html</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/tecdoc643_neutron_walk.html</PublicArtifactUrl>
       <OwnerOnlyUpstreamRef visibility="private_owner_only">aurascoper/oklo_pool_mobile PR #11 (branch commit 718e9c6f7273706aabb905d50847bf13b1ebb2b1)</OwnerOnlyUpstreamRef>
       <BranchCommitSHA>718e9c6f7273706aabb905d50847bf13b1ebb2b1</BranchCommitSHA>
-      <Bytes>939350</Bytes>
-      <SHA256>a463adfac1fbf8aa60b52f937d8f180e0c69678af2103bca4199718f8f849650</SHA256>
+      <Bytes>937606</Bytes>
+      <SHA256>dc15eb934fe6cd32a084dc13d05ee17d8f5ad988f7ea1bd2598bdcd9a0065b78</SHA256>
+      <UpstreamEmbedRevisionBytes>939350</UpstreamEmbedRevisionBytes>
+      <UpstreamEmbedRevisionSHA256>a463adfac1fbf8aa60b52f937d8f180e0c69678af2103bca4199718f8f849650</UpstreamEmbedRevisionSHA256>
       <OfflineSelfContained>false (loads Three.js r128 from cdnjs and fonts from Google Fonts)</OfflineSelfContained>
     </Artifact>
 
     <Artifact id="REF-NW-JL-FIX">
       <Title>Quarantined TECDOC-643 Julia Benchmark Reference Fixture</Title>
       <Requirement>neutron_transport_explorer_v0 / RadioPharm.jl Operator Equation Audit</Requirement>
-      <EpistemicStatus>transcribed_unverified_reference_fixture (tests generic reactivity algebra; does not transfer MTR results to MURR annular core)</EpistemicStatus>
+      <EpistemicStatus>transcribed_unverified_reference_fixture (tests generic reactivity algebra; does not transfer box-grid MTR results to annular MTR core)</EpistemicStatus>
+      <EvidenceClassification>transcribed</EvidenceClassification>
       <RelativePortalPath>tecdoc643_reference_fixture.jl</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/tecdoc643_reference_fixture.jl</PublicArtifactUrl>
-      <Bytes>5951</Bytes>
-      <SHA256>813c9e9fb33e47d9ceead8ea8f08bf07122583cf4292aab651d4f919a572a849</SHA256>
+      <Bytes>6018</Bytes>
+      <SHA256>ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d</SHA256>
+      <UpstreamRawDownloadsBytes>5951</UpstreamRawDownloadsBytes>
+      <UpstreamRawDownloadsSHA256>813c9e9fb33e47d9ceead8ea8f08bf07122583cf4292aab651d4f919a572a849</UpstreamRawDownloadsSHA256>
+      <OfflineSelfContained>true</OfflineSelfContained>
+    </Artifact>
+
+    <Artifact id="BIOFILMS-3D-CPM-01">
+      <Title>Biofilms 3D Cellular Potts Consortium Explorer (Seed 42 + 256-Seed 4-Arm Null Ensemble)</Title>
+      <Requirement>Biofilms 3D Visualization Portal Integration (feat/biofilms-3d-visualization)</Requirement>
+      <EpistemicStatus>uncalibrated_model_snapshot_reference (40x40x40 lattice; D-PITCH awaiting_measurement; seconds_per_mcs = NaN; accumulated_dose_Gy = 0; 256-seed 4-arm radial null within +/-0.05 r/R; cpm-sp-v1 displacement CIs span zero; coupled radiodialysis BLOCKED by tests/radiodialysis_basis_gate.jl)</EpistemicStatus>
+      <EvidenceClassification>uncalibrated_model_snapshot</EvidenceClassification>
+      <RelativePortalPath>biofilms_3d_explorer.html</RelativePortalPath>
+      <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/biofilms_3d_explorer.html</PublicArtifactUrl>
+      <SourceRepository>aurascoper/Biofilms</SourceRepository>
+      <SourceMasterCommitSHA>c766e7be31144f707155416b788bf7d1ba473ab9</SourceMasterCommitSHA>
+      <FrameGeneratorCommitSHA>de8d88e-dirty</FrameGeneratorCommitSHA>
+      <FrameManifestSHA256>39ef51ef98abe56eab1f1b2cd6c0cc4cf99ccfb4403483b83f7ea06f22f3406c</FrameManifestSHA256>
+      <EnsembleRadialCsvSHA256>c4b11303f36d45582e25311ba2bc0347292488e7c5899bd2fffa1f4156674dc0</EnsembleRadialCsvSHA256>
+      <Bytes>869267</Bytes>
+      <SHA256>037e2050b70e92b77075b3b913aeed615457d6a1cb09a0fe85f4d6b14d96366d</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
 
@@ -53,19 +79,78 @@
       <Title>Oklo Revision-0 GUI Conformance Fixture (Frozen Baseline)</Title>
       <Requirement>Revision-0 Six-Field Conformance Benchmark (CONFORMANCE_FIXTURE_SPEC.md)</Requirement>
       <EpistemicStatus>prescribed_analytic_field (frozen revision-0 reference fixture; must not be modified in place)</EpistemicStatus>
+      <EvidenceClassification>synthetic</EvidenceClassification>
       <RelativePortalPath>oklo_r0_fixture_readonly.html</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/oklo_r0_fixture_readonly.html</PublicArtifactUrl>
       <RelativeSpecPath>CONFORMANCE_FIXTURE_SPEC.md</RelativeSpecPath>
       <PublicSpecUrl>https://aurascoper.github.io/oklo_shareable_portal/CONFORMANCE_FIXTURE_SPEC.md</PublicSpecUrl>
+      <SpecBytes>20743</SpecBytes>
+      <SpecSHA256>587745ede6c6997a298f8f0a4e01127823de1b7c606383cfa49b87db0cc60d0c</SpecSHA256>
       <Bytes>77117</Bytes>
       <SHA256>8dac3ae9b8268a476b791f8c2293130e899d5c86c7fab09ce27345de2333544d</SHA256>
       <OfflineSelfContained>false (loads Tailwind CDN script in header)</OfflineSelfContained>
+    </Artifact>
+
+    <Artifact id="POOLWATER-3D-INTERACTIVE-01">
+      <Title>MTR Pool-Water Interactive 4D Visualization and TECDOC-643 Benchmark Workflow</Title>
+      <Requirement>Gates 0-4 Pool-Water Interactive Migration Workflow (POOLWATER_WORKFLOW_SPEC.md and benchmark_manifest.json)</Requirement>
+      <EpistemicStatus>dataset_driven_synthetic_pool_demo (4 independent modules: TECDOC-643 neutron reference, point-reactor kinetics algebra, divergence-free synthetic Boussinesq pool convection, and isolated 4-stage surrogate-loop PIE coupon protocol; not a live coupled OpenMC/CFD solver)</EpistemicStatus>
+      <EvidenceClassification>synthetic</EvidenceClassification>
+      <SourceDatasetId>poolwater_synthetic_demo_v1</SourceDatasetId>
+      <ModelVersion>1.0.0 (schema oklo_tecdoc_poolwater_benchmark_contract_v1)</ModelVersion>
+      <VerificationStatus>VERIFIED_OFFLINE_SYNTHETIC_DEMO_AND_TECDOC643_REGRESSION_GATE</VerificationStatus>
+      <RelativePortalPath>poolwater_interactive.html</RelativePortalPath>
+      <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/poolwater_interactive.html</PublicArtifactUrl>
+      <RelativeSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativeSpecPath>
+      <PublicSpecUrl>https://aurascoper.github.io/oklo_shareable_portal/POOLWATER_WORKFLOW_SPEC.md</PublicSpecUrl>
+      <SpecBytes>17684</SpecBytes>
+      <SpecSHA256>2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669</SpecSHA256>
+      <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
+      <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
+      <BenchmarkManifestBytes>12663</BenchmarkManifestBytes>
+      <BenchmarkManifestSHA256>f3689098bd9a5a8cb03c0c82776cc1de57f0ad504b001a664b3be27dba76f98f</BenchmarkManifestSHA256>
+      <Bytes>79610</Bytes>
+      <SHA256>fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a</SHA256>
+      <OfflineSelfContained>true</OfflineSelfContained>
+      <Fields>
+        <Field id="water_temperature_K" units="K" classification="synthetic" available="true" description="Prescribed Boussinesq buoyant plume temperature field across t = 0..600 s"/>
+        <Field id="velocity_magnitude_m_s" units="m/s" classification="synthetic" available="true" description="Analytic divergence-free Stokes streamfunction velocity field and streamlines (max |div(u)| = 0)"/>
+        <Field id="power_density_W_cm3" units="W/cm^3" classification="synthetic" available="true" description="Core fission power density overlay scaled by control-blade withdrawal state"/>
+        <Field id="thermal_flux_n_cm2_s" units="n/(cm^2 s)" classification="synthetic" available="true" description="Two-group thermal neutron flux surrogate in core and reflector"/>
+        <Field id="wall_shear_Pa" units="Pa" classification="synthetic" available="true" description="External surrogate water-loop coupon hydrodynamic wall shear stress"/>
+        <Field id="tecdoc643_blade_sweep_keff" units="dimensionless" classification="transcribed" available="true" description="5-point IAEA-TECDOC-643 control-blade withdrawal sweep (worth 18634.714 +/- 120.375 pcm)"/>
+        <Field id="tecdoc643_depletion_keff" units="dimensionless" classification="transcribed" available="true" description="12-point 10 MW MTR depletion table (linear k_eff = 1 crossing at Day 340.2540)"/>
+        <Field id="validated_cfd_pressure_Pa" units="Pa" classification="unavailable" available="false" description="Explicitly unavailable until validated 3-D RANS/LES CFD statepoint is supplied"/>
+        <Field id="empirical_piv_temperature" units="K" classification="unavailable" available="false" description="Explicitly unavailable until instrumented pool PIV/thermography campaign is supplied"/>
+        <Field id="live_coupled_openmc_cfd_statepoint" units="dimensionless" classification="unavailable" available="false" description="Explicitly unavailable; browser animation is offline dataset-driven"/>
+      </Fields>
+    </Artifact>
+
+    <Artifact id="BIOFILMS-ROBIN-CYL-GIF-01">
+      <Title>Multispecies Biofilm Spatial Model: Four-Panel Robin-Boundary Cylindrical Synthetic Visualization</Title>
+      <Requirement>Visual companion to the living biofilm spatial-modeling question (H6 vs. abiotic H5 in proto_biofilms_geyser_fission_research_program.md)</Requirement>
+      <EpistemicStatus>synthetic_four_panel_visualization (aurascoper/Biofilms diagnostics/fitness_phase/pv_workflow.py --clip, commit 841d052, cpm-sp-growth-v1, combined arm, growth=1, Seed 42, MCS 0..200; Robin denotes the mathematical Robin boundary condition -D_eff*dc/dr = P_eff*(c - c_ext) at cylinder outer radius r = R and not European robin Erithacus rubecula magnetoreception; synthetic dose_rate 0..0.01 Gy/s is not calibrated radiation transport; net_biomass_rate_proxy is conditional growth_rate minus mortality_hazard in mixed currencies and not measured growth; causal interpretation requires matched Radiation OFF vs. ON counterfactual runs)</EpistemicStatus>
+      <EvidenceClassification>synthetic</EvidenceClassification>
+      <RelativePortalPath>multispecies_biofilm_robin_cylindrical_4panel.gif</RelativePortalPath>
+      <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/multispecies_biofilm_robin_cylindrical_4panel.gif</PublicArtifactUrl>
+      <CompanionReferenceRelativePath>clonal_sector_expansion_reference.jpg</CompanionReferenceRelativePath>
+      <CompanionReferencePublicUrl>https://aurascoper.github.io/oklo_shareable_portal/clonal_sector_expansion_reference.jpg</CompanionReferencePublicUrl>
+      <CompanionReferenceBytes>159146</CompanionReferenceBytes>
+      <CompanionReferenceSHA256>67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115</CompanionReferenceSHA256>
+      <SourceRepository>aurascoper/Biofilms</SourceRepository>
+      <ExecutionSourceCommitSHA>841d052</ExecutionSourceCommitSHA>
+      <ConfigurationSHA256>eb090aa3c0a971776a6e262713eb0cf5c130b53cf2b8d7720ad93dec19f50b01</ConfigurationSHA256>
+      <WorkflowScript>diagnostics/fitness_phase/pv_workflow.py</WorkflowScript>
+      <Bytes>2571435</Bytes>
+      <SHA256>e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997</SHA256>
+      <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
 
     <Artifact id="PR12-GEYSER-V0-EXPORT">
       <Title>Oklo Prebiotic Nuclear-Geyser and Compartment Explorer v0 (Quarantined Export)</Title>
       <Requirement>Quarantined UI and Source Audit Export (Separate from PR #11 and Frozen Revision-0 Fixture)</Requirement>
       <EpistemicStatus>QUARANTINED_SYNTHETIC_PROTOTYPE (NOT_VALIDATED; draft PR #12; not authorized for merge)</EpistemicStatus>
+      <EvidenceClassification>synthetic</EvidenceClassification>
       <OwnerOnlyUpstreamRef visibility="private_owner_only">aurascoper/oklo_pool_mobile Draft PR #12 (branch commit 9e6bcf48a37086b052fe68b63b5079f789aa5131)</OwnerOnlyUpstreamRef>
       <BranchCommitSHA>9e6bcf48a37086b052fe68b63b5079f789aa5131</BranchCommitSHA>
       <ExportedPrototypePath>viewer/oklo_geyser_explorer_v0/prototype.html</ExportedPrototypePath>

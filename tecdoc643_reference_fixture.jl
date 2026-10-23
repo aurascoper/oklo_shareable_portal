@@ -5,8 +5,8 @@ A quarantined, test-only transcription of the benchmark values pasted into the
 conversation. This module is NOT evidence that the values have been regenerated
 from OpenMC statepoints, depletion results, or raw HDF5 track files.
 
-Keep this IAEA generic MTR fixture separate from MURR simulation/calibration
-inputs. It can test generic reactivity algebra; it cannot establish MURR physics.
+Keep this IAEA generic MTR fixture separate from annular MTR simulation/calibration
+inputs. It can test generic reactivity algebra; it cannot establish annular MTR physics.
 """
 
 export source_metadata, blade_sweep, burnup_table, interpolated_k_crossing_day,
@@ -15,14 +15,14 @@ export source_metadata, blade_sweep, burnup_table, interpolated_k_crossing_day,
 const SOURCE_METADATA = (
     dataset_id = "tecdoc643_neutron_walk_transcribed_table_v0",
     provenance_status = :transcribed_unverified,
-    reactor = "IAEA generic 10 MW MTR benchmark (not MURR)",
+    reactor = "IAEA generic 10 MW MTR benchmark (box-grid core)",
     openmc_version = "0.15.3 (claimed in supplied narrative; not independently verified)",
     nuclear_data = "ENDF/B-VIII.0 (claimed in supplied narrative; not independently verified)",
     required_before_scientific_use = [
         "Hash and archive the actual OpenMC input deck, materials, cross_sections.xml, statepoints, summary, track files and depletion outputs.",
         "Record OpenMC build, nuclear-data library revision, tally definitions, settings, source/batch counts and uncertainty definitions.",
         "Tie each table to an explicit run/configuration ID; do not merge the independent 0.98057/1.19621 pair with the sweep endpoints 0.97943/1.19810.",
-        "Do not infer MURR power peaking, blade worth, isotope inventory or shutdown transient from this IAEA MTR fixture."
+        "Do not infer annular MTR power peaking, blade worth, isotope inventory or shutdown transient from this IAEA box-grid MTR fixture."
     ]
 )
 
@@ -69,7 +69,7 @@ function blade_sweep()
         reactivity_pcm = 1.0e5 * reactivity_rho(SWEEP_K[i]),
         # Positive means reactivity gained going from this row to blades fully withdrawn.
         worth_to_fully_withdrawn_pcm = 1.0e5 * delta_rho(SWEEP_K[i], k_out),
-        worth_sigma_pcm = worth_sigma_pcm(SWEEP_K[i], SWEEP_SIGMA_K[i], k_out, sigma_out)
+        worth_sigma_pcm = i == lastindex(SWEEP_K) ? 0.0 : worth_sigma_pcm(SWEEP_K[i], SWEEP_SIGMA_K[i], k_out, sigma_out)
     ) for i in eachindex(SWEEP_K)]
 end
 

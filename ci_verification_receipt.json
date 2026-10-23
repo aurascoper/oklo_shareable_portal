@@ -1,0 +1,108 @@
+{
+  "schema": "oklo_portal_ci_verification_receipt_v1",
+  "generated_at": "2026-10-23T05:58:17.502Z",
+  "gate0_files_verified": 11,
+  "tests": {
+    "lazy_init": "PASS",
+    "tecdoc643_3d_webgl": {
+      "glWidth": 679,
+      "glHeight": 630,
+      "glHidden": false,
+      "slHidden": true,
+      "kval": "0.911 ± 0.107",
+      "ntot": "(120 neutrons)"
+    },
+    "split_view_layout": {
+      "splitClass": true,
+      "c4dHidden": false,
+      "cNwHidden": false,
+      "cPoolHidden": true
+    },
+    "biofilms_3d_and_256_seed_tost": {
+      "glWidth": 749,
+      "glHeight": 436,
+      "seedCount": 256,
+      "allContrastsWithinEquivalenceBound": true,
+      "selectionViewVerified": true
+    },
+    "poolwater_3d_and_gates": {
+      "schema": "oklo_tecdoc_poolwater_benchmark_contract_v1",
+      "gate0_provenancePreserved": true,
+      "gate1_bladeWorthPcm": 18634.714116,
+      "gate1_bladeWorthSigmaPcm": 120.374925,
+      "gate1_twoPointWorthPcm": 18384.138889,
+      "gate1_twoPointWorthSigmaPcm": 84.191196,
+      "gate1_kCrossingDay": 340.254042,
+      "gate1_day0To5DropPcm": -3214.223788,
+      "gate1_latticeCounts": {
+        "sfe": 23,
+        "cfe": 5,
+        "ft": 2,
+        "gr": 12,
+        "total": 42
+      },
+      "gate2_modulesIndependent": true,
+      "gate3_timeStepCount": 6,
+      "gate3_gridCellCount": 6144,
+      "gate3_maxAbsVelocityDivergence": 0,
+      "gate3_plumeWarmsOverTime": true,
+      "gate3_missingFieldsRemainUnavailable": true,
+      "gate4_pieStageCount": 4,
+      "gate4_plannedContrastCells": 15,
+      "gate4_fullFactorialCells": 24,
+      "gate4_glmmLayerCount": 4
+    },
+    "coupled_comparison_sync": {
+      "syncBarVisible": true,
+      "defaultStatus": "INDEPENDENT_REFERENCE_PANELS (Unaligned Time Basis: Pool Plume t = 0..600 s vs. Monte Carlo Batch Histories / Depletion 0..350 d)",
+      "syncedStatus": "SHARED_SCENARIO_BLADE_SYNC (Blade Withdrawal = 25% Out | Time Axes Remain Independent: INCOMPATIBLE_TIME_BASIS)",
+      "poolBladeSynced": "25",
+      "nwBladeSynced": "25",
+      "nwBladeTxtSynced": "25%",
+      "poolTimeDuringSync": "3",
+      "restoredStatus": "INDEPENDENT_REFERENCE_PANELS (Unaligned Time Basis: Pool Plume t = 0..600 s vs. Monte Carlo Batch Histories / Depletion 0..350 d)",
+      "poolBladeRestored": "75",
+      "nwBladeRestored": "0",
+      "nwBladeTxtRestored": "0%",
+      "poolTimeAfterUncheck": "3"
+    },
+    "multispecies_biofilm_robin_gif_card": {
+      "cardPresent": true,
+      "hasSyntheticBadge": true,
+      "clarifiesRobinBoundaryCondition": true,
+      "distinguishesSyntheticDoseRate": true,
+      "distinguishesNetBiomassProxy": true,
+      "linksResearchProgram": true,
+      "linksBiofilmsRepo": true,
+      "gifSrc": "multispecies_biofilm_robin_cylindrical_4panel.gif",
+      "gifLoaded": true,
+      "gifWidth": 800,
+      "gifHeight": 571,
+      "clonalRefSrc": "clonal_sector_expansion_reference.jpg",
+      "clonalRefLoaded": true,
+      "counterfactualCanvasPresent": true,
+      "noCanvasTextOverflow": true,
+      "plotsInitSurvRadShift": true,
+      "noHorizontalCardOverflow": true,
+      "speciesCount": 7,
+      "allDisplacementCisSpanZero": true
+    },
+    "biofilms_disabled_webgl_fallback": {
+      "glHidden": true,
+      "slHidden": false,
+      "slWidth": 749,
+      "slHeight": 436,
+      "btn3dDisabled": true,
+      "kpiOcc": "4,888"
+    },
+    "poolwater_disabled_webgl_fallback": {
+      "glHidden": true,
+      "slHidden": false,
+      "slWidth": 749,
+      "slHeight": 436,
+      "btn3dDisabled": true,
+      "kpiTemp": "328.3 K",
+      "gatesPass": true
+    }
+  }
+}

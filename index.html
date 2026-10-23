@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oklo 4D Spatiotemporal &amp; TECDOC-643 Neutron Walk Shareable Index</title>
+  <title>Oklo 4D Spatiotemporal, Pool-Water Interactive &amp; TECDOC-643 Shareable Portal</title>
   <style>
     :root {
       --bg: #080d14;
@@ -57,10 +57,14 @@
       border-radius: 999px;
       border: 1px solid var(--border);
       background: var(--panel-alt);
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
     }
     .badge.green { color: #86efac; border-color: #166534; background: #052e16; }
     .badge.amber { color: #fcd34d; border-color: #92400e; background: #451a03; }
     .badge.blue { color: #7dd3fc; border-color: #0369a1; background: #082f49; }
+    .badge.red { color: #fca5a5; border-color: #991b1b; background: #450a0a; }
     .wrap {
       max-width: 1600px;
       margin: 0 auto;
@@ -74,9 +78,9 @@
     }
     .tabs button {
       font-family: var(--sans);
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
-      padding: 9px 14px;
+      padding: 8px 13px;
       border-radius: 8px;
       border: 1px solid var(--border);
       background: var(--panel);
@@ -97,6 +101,38 @@
       margin-bottom: 14px;
       font-size: 13px;
       color: var(--text);
+    }
+    .sync-bar {
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: none;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 12.5px;
+    }
+    .sync-bar.visible {
+      display: flex;
+    }
+    .sync-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+    .sync-controls select {
+      background: #071019;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-family: var(--mono);
+      font-size: 12px;
     }
     .viewer-grid {
       display: grid;
@@ -185,8 +221,10 @@
       font-family: var(--mono);
       font-size: 12px;
       color: #bae6fd;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
-    a { color: var(--accent); }
+    a { color: var(--accent); overflow-wrap: anywhere; }
     pre {
       background: #060b11;
       border: 1px solid var(--border);
@@ -197,17 +235,46 @@
       font-size: 12px;
       color: #cbd5e1;
     }
+    .robin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+    .robin-grid > *, .clonal-ref-grid > * {
+      min-width: 0;
+      max-width: 100%;
+    }
+    .clonal-ref-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+      gap: 12px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .table-scroll {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (max-width: 640px) {
+      .wrap { padding: 12px 12px 28px; }
+      .card { padding: 12px; }
+      .clonal-ref-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
   <header>
     <div>
-      <h1>Oklo Scientific Visualization Index &amp; Embedded 4D / Neutron Walk Portal</h1>
-      <p>Companion portal preserving frozen Revision-0 fixture integrity while indexing R10 4D Spatiotemporal Geochemistry and TECDOC-643 Neutron Walk</p>
+      <h1>Oklo Scientific Visualization Index, Pool-Water Benchmark &amp; Biofilms 3D Portal</h1>
+      <p>Companion portal preserving frozen Revision-0 fixture integrity while indexing R10 4D Geochemistry, Pool-Water Interactive CFD/Kinetics, Biofilms 3D CPM, and TECDOC-643 Neutron Walk</p>
     </div>
     <div>
       <span class="badge green">R10 4D Slice: MERGED (942e3f8)</span>
-      <span class="badge amber">TECDOC-643: Reference Audit Only (PR #11)</span>
+      <span class="badge blue">Pool-Water Interactive: Gate 0-4 PASS</span>
+      <span class="badge amber">TECDOC-643: Reference Audit Only (dc15eb93)</span>
       <span class="badge blue">R0 Fixture: Frozen Unmodified (8dac3ae9)</span>
     </div>
   </header>
@@ -217,12 +284,36 @@
       <button id="tab4d" class="active" onclick="setView('4d')">1. 4D Spatiotemporal Geochemistry Viewer (R10 Shareable)</button>
       <button id="tabNw" onclick="setView('nw')">2. TECDOC-643 Neutron Walk (10 MW MTR Reference)</button>
       <button id="tabSplit" onclick="setView('split')">3. Side-by-Side 4D Geochemistry + Neutron Walk</button>
-      <button id="tabR0" onclick="setView('r0')">4. Frozen Revision-0 Oklo Fixture (Read-Only)</button>
-      <button id="tabAudit" onclick="setView('audit')">5. Deep-Research UO2-Clay-Fracture &amp; Precision Audit</button>
+      <button id="tabBio" onclick="setView('bio')">4. Biofilms 3D Cellular Potts Consortium (Seed 42 &amp; 256-Seed Null)</button>
+      <button id="tabR0" onclick="setView('r0')">5. Frozen Revision-0 Oklo Fixture (Read-Only)</button>
+      <button id="tabPool" onclick="setView('pool')">6. Pool-Water Interactive Viewer (3D Core &amp; Pool Demo)</button>
+      <button id="tabCoupled" onclick="setView('coupled')">7. Coupled Comparison (Pool-Water + TECDOC Reference Panels)</button>
+      <button id="tabAudit" onclick="setView('audit')">8. Benchmark Workflow, PIE Demarcation &amp; Precision Audit</button>
+      <button id="tabRobinGif" onclick="setView('robingif')">9. Multispecies Biofilm Spatial Model (4-Panel Robin Cylindrical GIF)</button>
     </div>
 
     <div id="bannerTxt" class="banner">
       <strong>Epistemic Status (R10 Stage 0/1):</strong> Prescribed analytical 3D Gaussian advection-diffusion-decay tracer pulse across 5 discrete time states (t = 0 s to 1000 s, +k vertical up-axis). Local workstation verification passed; Stage 2 transient PDE solver is not authorized.
+    </div>
+
+    <div id="coupledSyncBar" class="sync-bar">
+      <div>
+        <strong>Coupled Comparison Synchronization Gate:</strong>
+        <span id="coupledSyncStatus" class="badge amber">INDEPENDENT_REFERENCE_PANELS (Unaligned Time Basis: Pool Plume t = 0..600 s vs. Monte Carlo Batch Histories / Depletion 0..350 d)</span>
+      </div>
+      <div class="sync-controls">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="checkbox" id="chkSyncBlade" onchange="onCoupledSyncToggle()">
+          <span>Sync Shared MTR Blade Scenario:</span>
+        </label>
+        <select id="selCoupledBlade" onchange="onCoupledBladeChange()">
+          <option value="0">0% Withdrawn (Subcritical)</option>
+          <option value="25">25% Withdrawn (Subcritical)</option>
+          <option value="50">50% Withdrawn (Supercritical)</option>
+          <option value="75" selected>75% Withdrawn (Supercritical)</option>
+          <option value="100">100% Withdrawn (Full Out)</option>
+        </select>
+      </div>
     </div>
 
     <div id="viewerGrid" class="viewer-grid">
@@ -240,6 +331,21 @@
         <iframe id="iframe4d" src="spacetime_explorer_4d_shareable.html" title="4D Spatiotemporal Geochemistry Explorer"></iframe>
       </div>
 
+      <div id="cardPool" class="frame-card is-hidden">
+        <div class="frame-head">
+          <div>
+            <strong>Pool-Water Interactive Visualization (10 MW MTR Core Reference + Synthetic Boussinesq Plume + External Surrogate Loop / PIE Boundary)</strong>
+            <span class="badge blue">SYNTHETIC_PEDAGOGICAL_DEMO | Gate 0-4 Verified</span>
+          </div>
+          <div>
+            <a href="poolwater_interactive.html" target="_blank" rel="noopener">Open Standalone Pool-Water HTML</a> |
+            <a href="POOLWATER_WORKFLOW_SPEC.md" target="_blank" rel="noopener">Workflow Spec (.md)</a> |
+            <a href="benchmark_manifest.json" target="_blank" rel="noopener">Manifest (.json)</a>
+          </div>
+        </div>
+        <iframe id="iframePool" data-src="poolwater_interactive.html" title="Pool-Water Interactive Visualization"></iframe>
+      </div>
+
       <div id="cardNw" class="frame-card is-hidden">
         <div class="frame-head">
           <div>
@@ -255,6 +361,21 @@
         <iframe id="iframeNw" data-src="tecdoc643_neutron_walk.html" title="TECDOC-643 Neutron Walk Reference"></iframe>
       </div>
 
+      <div id="cardBio" class="frame-card is-hidden">
+        <div class="frame-head">
+          <div>
+            <strong>Biofilms 3D Cellular Potts Consortium Explorer (Uncalibrated 40x40x40 Reference + 256-Seed 4-Arm Null Ensemble)</strong>
+            <span class="badge amber">D-PITCH: awaiting_measurement | seconds_per_mcs = NaN</span>
+          </div>
+          <div>
+            <a href="#robingif" onclick="setView('robingif'); return false;">4-Panel Robin Cylindrical GIF &amp; Counterfactual</a> |
+            <a href="biofilms_3d_explorer.html" target="_blank" rel="noopener">Open Standalone Biofilms 3D HTML</a> |
+            <span class="mono">Source Repo: aurascoper/Biofilms (c766e7b / de8d88e, Seed 42, MCS 0..100, Seeds 42..297)</span>
+          </div>
+        </div>
+        <iframe id="iframeBio" data-src="biofilms_3d_explorer.html" title="Biofilms 3D Cellular Potts Consortium Explorer"></iframe>
+      </div>
+
       <div id="cardR0" class="frame-card is-hidden">
         <div class="frame-head">
           <div>
@@ -264,11 +385,153 @@
           <div>
             <a href="oklo_r0_fixture_readonly.html" target="_blank" rel="noopener">Open Frozen R0 Fixture</a> |
             <a href="CONFORMANCE_FIXTURE_SPEC.md" target="_blank" rel="noopener">CONFORMANCE_FIXTURE_SPEC.md</a> |
-            <span class="mono" title="Upstream repository aurascoper/oklo_pool_mobile is private (owner-only)">Upstream Ref: Draft PR #12 (9e6bcf4, Owner-Only Private Repo)</span>
+            <span class="mono" title="Upstream repository aurascoper/oklo_pool_mobile is private (owner-only)">Upstream Ref: Draft PR #12 (Owner-Only Private Repo)</span>
           </div>
         </div>
         <iframe id="iframeR0" data-src="oklo_r0_fixture_readonly.html" title="Frozen Revision-0 Oklo Conformance Fixture"></iframe>
       </div>
+    </div>
+
+    <div id="multispeciesBiofilmCard" class="card">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;">
+        <h2 style="margin:0;">Multispecies Biofilm Spatial Model <span class="badge amber">Synthetic visualization</span></h2>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+          <span class="badge blue">Robin Boundary Condition at Cylinder Wall r = R (Not Avian Magnetoreception)</span>
+          <span class="badge green">cpm-sp-growth-v1 | Seed 42 | combined (growth=1, MCS 0..200, --clip)</span>
+          <span class="badge red">Causal Interpretation Provisional (Matched Counterfactual Required)</span>
+        </div>
+      </div>
+
+      <p style="margin:0 0 12px;font-size:13px;color:var(--text);">
+        <strong>Visual Companion to the Biofilm Spatial-Modeling Question (Living Biofilms <code>H_6</code> vs. Abiotic Prebiotic Organization <code>H_5</code>):</strong>
+        This four-panel animation (<a href="multispecies_biofilm_robin_cylindrical_4panel.gif" target="_blank" rel="noopener"><code>multispecies_biofilm_robin_cylindrical_4panel.gif</code></a>, <code>2,571,435</code> bytes, SHA-256 <code>e73622d6454a3a6a...</code>) places four modeled quantities from the <a href="https://github.com/aurascoper/Biofilms" target="_blank" rel="noopener"><code>aurascoper/Biofilms</code></a> cylindrical Cellular Potts / Monod extension (<code>diagnostics/fitness_phase/pv_workflow.py --clip</code>, execution commit <code>841d052</code>, config SHA-256 <code>eb090aa3c0a97177...</code>) in one view: <strong>(1) microbial species and parcel geometry</strong>, <strong>(2) a wrapped Kuramoto phase field</strong>, <strong>(3) a net biomass-rate proxy</strong>, and <strong>(4) a synthetic radial dose-rate field</strong>.
+        Connecting this visualization to the portal's research-program section preserves the strict boundary between <strong>living cellular biofilms (<code>H_6</code>)</strong> and <strong>abiotic prebiotic oligomer organization (<code>H_5</code>)</strong> without conflating the two:
+        <a href="proto_biofilms_geyser_fission_research_program.md" target="_blank" rel="noopener">Read the research-program document (local .md)</a> |
+        <a href="https://github.com/aurascoper/oklo_shareable_portal/blob/main/proto_biofilms_geyser_fission_research_program.md" target="_blank" rel="noopener">GitHub Research-Program Document</a> |
+        <a href="https://github.com/aurascoper/Biofilms" target="_blank" rel="noopener">Underlying Simulation Repository (aurascoper/Biofilms)</a> |
+        <a href="biofilms_3d_explorer.html" onclick="setView('bio'); document.getElementById('cardBio').scrollIntoView({ behavior: 'smooth', block: 'start' }); return false;">Open Interactive 3D Biofilms Explorer (Tab 4)</a>.
+      </p>
+
+      <div class="robin-grid">
+        <div style="background:var(--panel-alt);border:1px solid var(--border);border-radius:8px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+            <strong style="font-size:13px;">Four-Panel Axis-Clipped Robin-Boundary Cylinder (<code>combined | growth=1 | MCS 0..200</code>)</strong>
+            <span class="mono">800 x 571 px | 219 frames</span>
+          </div>
+          <img id="robinCylindricalGif" src="multispecies_biofilm_robin_cylindrical_4panel.gif" alt="Multispecies Biofilm Spatial Model: Four-panel synthetic visualization on a Robin-boundary cylindrical domain" style="width:100%;height:auto;border-radius:6px;border:1px solid var(--border);display:block;background:#07111a;">
+          <div style="margin-top:8px;font-size:12px;color:var(--muted);line-height:1.45;">
+            <div><strong>Caption &amp; Modeling Limits:</strong> Four-panel ParaView <code>pvpython</code> export (<code>pv_workflow.py build OUTPUT/growth_1_seed_42/combined VIEW_CLIP --clip</code>) on a <code>40 x 40 x 40</code> nonperiodic cylindrical lattice (<code>legacy_nonperiodic_cylinder</code>) with a whole-voxel plane cut through the cylinder axis (<code>r = 0</code>) so the interior dose peak is visible.</div>
+            <ul style="margin:6px 0 0;padding-left:18px;">
+              <li><strong>Synthetic dose-rate field vs. calibrated radiation transport:</strong> Bottom-right panel shows an assumed radial profile (<code>0.0e+00</code> to <code>1.0e-02 Gy/s</code> peaking at <code>r = 0</code> with synthetic clock <code>seconds_per_mcs = 60.0 s</code>), <em>not</em> a calibrated OpenMC or coupled radiation-transport result (<code>validate_coupled_config</code> and <code>tests/radiodialysis_basis_gate.jl</code> refuse coupled transport until physical voxel pitch <code>dx</code> / <code>D-PITCH</code> and density <code>rho</code> are calibrated).</li>
+              <li><strong>Net biomass-rate proxy vs. experimentally measured growth rate:</strong> Bottom-left panel displays <code>growth_rate - hazard_rate</code> (<code>[-6.0e-02, +5.0e-02] 1/MCS</code>), subtracting an instantaneous whole-parcel death commitment hazard (<code>alpha_s * dD/dt</code>) from a conditional biomass-specific Monod uptake/maintenance rate. Because these two terms have different currencies, their difference is an illustrative model proxy (<code>net_biomass_rate_proxy</code>), not the growth rate of any physical quantity, not realized biomass change, and not an experimentally measured growth rate.</li>
+              <li><strong>Robin boundary condition vs. avian magnetoreception:</strong> "Robin cylindrical" refers strictly to the mathematical <strong>Robin boundary condition</strong> (<code>a * u + b * du/dn = g</code>, specifically the ghost-point membrane wall flux condition <code>-D_eff * dc/dr|_{r=R} = P_eff(t) * (c(R,t) - c_ext)</code> at outer cylinder radius <code>r = R</code> in <code>biofilms_potts.jl</code>), and has zero connection to the European robin (<code>Erithacus rubecula</code>) or avian magnetoreception.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="background:var(--panel-alt);border:1px solid var(--border);border-radius:8px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+            <strong style="font-size:13px;">Matched-Seed Counterfactual: <code>Radiation OFF</code> vs. <code>Radiation ON</code> (Fixed Initial Conditions)</strong>
+            <span class="badge green">Commit 841d052 | 256 Seeds (MCS 100) &amp; 16 Seeds (MCS 200)</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+            <button id="btnCfAll" type="button" class="badge blue" style="cursor:pointer;" onclick="setRobinCounterfactualMode('all')">All 3 Outcomes Side-by-Side</button>
+            <button id="btnCfSurv" type="button" class="badge" style="cursor:pointer;color:var(--text);" onclick="setRobinCounterfactualMode('survival')">1. Survival (MCS 100)</button>
+            <button id="btnCfBio" type="button" class="badge" style="cursor:pointer;color:var(--text);" onclick="setRobinCounterfactualMode('biomass')">2. Biomass Change (MCS 200)</button>
+            <button id="btnCfDisp" type="button" class="badge" style="cursor:pointer;color:var(--text);" onclick="setRobinCounterfactualMode('displacement')">3. Directional Displacement</button>
+          </div>
+          <canvas id="robinCounterfactualCanvas" width="760" height="390" style="width:100%;height:auto;background:#07111a;border:1px solid var(--border);border-radius:6px;display:block;"></canvas>
+          <div style="margin-top:8px;font-size:12px;color:var(--muted);line-height:1.45;">
+            <strong>Why a Single Combined-Growth GIF Cannot Establish Causality Alone:</strong>
+            Showing a combined-growth state and a dose-rate field does not by itself show whether dose drives parcel motion or species selection. Comparing matched seeds with <strong>Radiation OFF (<code>baseline</code> / <code>phase_only</code>)</strong> vs. <strong>Radiation ON (<code>survival_only</code> / <code>combined</code>)</strong> while holding initial coordinates, founder IDs, phases, and all non-radiation parameters fixed separates the three outcomes:
+            <strong>(1) Survival (<code>cpm-sp-v1</code>, 256 seeds):</strong> axial dose removes <code>5,511 / 10,752</code> parcels near the axis;
+            <strong>(2) Biomass change (<code>cpm-sp-growth-v1</code>, 16 seeds):</strong> low-hazard <code>D. radiodurans</code> (<code>+34,137</code>) and <code>C. neoformans</code> (<code>+6,142</code>) expand into freed nutrient/space while high-hazard competitors lose biomass;
+            <strong>(3) Directional displacement (<code>delta_r_i</code>):</strong> all 7 species' 95% CIs span zero (<code>[-0.0052, +0.0013] r/R</code>), proving that survivor radius shifts outward via <strong>selective axial mortality (<code>H0-B</code>), not directed movement (<code>H0-A</code>)</strong>.
+          </div>
+
+          <details style="margin-top:10px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px 10px;">
+            <summary style="cursor:pointer;font-weight:600;font-size:12px;color:var(--accent);">Companion Spatial Reference: Circular-Domain Clonal Sector Coarsening (<code>clonal_sector_expansion_reference.jpg</code>)</summary>
+            <div class="clonal-ref-grid">
+              <a href="clonal_sector_expansion_reference.jpg" target="_blank" rel="noopener">
+                <img id="clonalSectorRefImg" src="clonal_sector_expansion_reference.jpg" alt="Circular-domain clonal sector expansion reference: microscopy time-lapse vs. discrete agent simulation" style="width:100%;height:auto;border-radius:6px;border:1px solid var(--border);display:block;">
+              </a>
+              <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">
+                <div><strong>Comparative Spatial-Organization Benchmark (<code>159,146</code> bytes, SHA-256 <code>67865f346f4d2383...</code>):</strong></div>
+                <div style="margin-top:4px;"><strong>Panel A:</strong> Fluorescence microscopy time-lapse (<code>3.5 hps</code>, <code>5 hps</code>, <code>6.5 hps</code>, <code>9 hps</code>; <code>20 um</code> scale bar) of dual-labeled microbial expansion in a circular domain.</div>
+                <div style="margin-top:4px;"><strong>Panel B:</strong> Discrete particle simulation showing sparse founder seeding (left) coarsening into segregated red and green clonal sectors (right) as the circular domain fills. Included strictly to illustrate that macroscopic sector segregation (as seen at <code>MCS 200</code> in the top-left panel of the Robin cylindrical GIF) arises from local contact proliferation and space competition without requiring radiation-directed motility or magnetic-field sensing.</div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <details style="margin-top:12px;background:var(--panel-alt);border:1px solid var(--border);border-radius:8px;padding:10px 12px;">
+        <summary style="cursor:pointer;font-weight:600;font-size:12.5px;color:var(--accent);">Per-Species Matched-Seed Counterfactual Table (<code>Radiation ON - Radiation OFF</code>) &amp; Five Epistemic Distinctions</summary>
+        <div class="table-scroll" style="margin-top:8px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Species &amp; Assumed Hazard Sensitivity (<code>alpha_s</code>)</th>
+                <th>Outcome 1: Surviving Parcels (<code>cpm-sp-v1</code>, 256 Seeds, MCS 100)</th>
+                <th>Population Survivor Radius Shift vs. Initial MCS 0 Survivor Radius</th>
+                <th>Outcome 3: Tracked Parcel Displacement <code>delta_r_i</code> (95% Bootstrap CI)</th>
+                <th>Outcome 2: Net Biomass Change (<code>cpm-sp-growth-v1</code>, 16 Seeds, MCS 200)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. C. neoformans</strong> (<code>0.010 Gy^-1</code>, melanized)</td>
+                <td class="mono">-1.74 [-1.88, -1.61]</td>
+                <td class="mono">+0.0086 vs. +0.0075 r/R (256/0)</td>
+                <td class="mono">+0.0011 [-0.0025, +0.0047] (NULL)</td>
+                <td class="mono">+6,142 [+1,021, +11,415] (alive: +1.6)</td>
+              </tr>
+              <tr>
+                <td><strong>2. D. radiodurans</strong> (<code>0.002 Gy^-1</code>, lowest hazard)</td>
+                <td class="mono">-0.43 [-0.51, -0.35]</td>
+                <td class="mono">+0.0017 vs. +0.0004 r/R (256/0)</td>
+                <td class="mono">+0.0013 [-0.0010, +0.0036] (NULL)</td>
+                <td class="mono">+34,137 [+27,900, +40,681] (alive: +9.4)</td>
+              </tr>
+              <tr>
+                <td><strong>3. C. sphaerospermum</strong> (<code>0.015 Gy^-1</code>, melanized)</td>
+                <td class="mono">-2.62 [-2.76, -2.47]</td>
+                <td class="mono">+0.0192 vs. +0.0210 r/R (255/1)</td>
+                <td class="mono">-0.0018 [-0.0061, +0.0026] (NULL)</td>
+                <td class="mono">-3,002 [-8,424, +2,098] (alive: -4.3)</td>
+              </tr>
+              <tr>
+                <td><strong>4. B. subtilis</strong> (<code>0.040 Gy^-1</code>)</td>
+                <td class="mono">-4.48 [-4.62, -4.34]</td>
+                <td class="mono">+0.0382 vs. +0.0434 r/R (207/49)</td>
+                <td class="mono">-0.0052 [-0.0112, +0.0005] (NULL)</td>
+                <td class="mono">-13,293 [-17,223, -9,449] (alive: -8.4)</td>
+              </tr>
+              <tr>
+                <td><strong>5. A. niger</strong> (<code>0.020 Gy^-1</code>, melanized)</td>
+                <td class="mono">-3.18 [-3.32, -3.04]</td>
+                <td class="mono">+0.0191 vs. +0.0212 r/R (251/5)</td>
+                <td class="mono">-0.0021 [-0.0068, +0.0026] (NULL)</td>
+                <td class="mono">-6,032 [-10,204, -1,805] (alive: -5.2)</td>
+              </tr>
+              <tr>
+                <td><strong>6. S. oneidensis</strong> (<code>0.060 Gy^-1</code>, highest hazard)</td>
+                <td class="mono">-5.26 [-5.35, -5.16]</td>
+                <td class="mono">+0.0493 vs. +0.0538 r/R (145/111)</td>
+                <td class="mono">-0.0045 [-0.0117, +0.0027] (NULL)</td>
+                <td class="mono">-10,348 [-14,553, -6,117] (alive: -6.3)</td>
+              </tr>
+              <tr>
+                <td><strong>7. O. intermedium AM7</strong> (<code>0.030 Gy^-1</code>)</td>
+                <td class="mono">-3.82 [-3.97, -3.67]</td>
+                <td class="mono">+0.0356 vs. +0.0359 r/R (240/16)</td>
+                <td class="mono">-0.0003 [-0.0056, +0.0049] (NULL)</td>
+                <td class="mono">-10,264 [-14,877, -5,774] (alive: -6.5)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
     </div>
 
     <div id="auditSection" class="card">
@@ -278,7 +541,7 @@
           <tr>
             <th>Artifact ID</th>
             <th>Title &amp; Role</th>
-            <th>Public Artifact Link &amp; Upstream Provenance</th>
+            <th>Shareable / Local Link</th>
             <th>SHA-256 &amp; Size</th>
             <th>Epistemic Qualification</th>
           </tr>
@@ -288,31 +551,63 @@
             <td class="mono">R10-4D-SHAREABLE</td>
             <td><strong>4D Spatiotemporal Geochemistry Viewer</strong><br>Standalone single-file HTML with inlined JS + 5-state Float32LE bundle</td>
             <td>
-              <a href="spacetime_explorer_4d_shareable.html" target="_blank" rel="noopener">spacetime_explorer_4d_shareable.html</a><br>
-              <span class="mono">Upstream Ref: PR #10 (Merged: 942e3f8, Owner-Only Private Repo)</span>
+              <a href="spacetime_explorer_4d_shareable.html">spacetime_explorer_4d_shareable.html</a><br>
+              <span class="mono">Upstream Ref: PR #10 (Merged: 942e3f8)</span>
             </td>
             <td class="mono">f9ca39ea37503f0e...<br>(132,358 bytes)</td>
             <td><span class="badge green">Technical PASS</span><br>Prescribed analytical Gaussian pulse; local verification; Stage 2 PDE solver not authorized.</td>
+          </tr>
+          <tr>
+            <td class="mono">POOLWATER-3D-INTERACTIVE-01</td>
+            <td><strong>Pool-Water Interactive Visualization</strong><br>3D WebGL + 2D cut-plane + Gate 0-4 benchmark &amp; surrogate loop / PIE demarcation viewer</td>
+            <td>
+              <a href="poolwater_interactive.html">poolwater_interactive.html</a><br>
+              <a href="POOLWATER_WORKFLOW_SPEC.md">POOLWATER_WORKFLOW_SPEC.md</a> |
+              <a href="benchmark_manifest.json">benchmark_manifest.json</a>
+            </td>
+            <td class="mono">fa0f0dc30c45681a...<br>(79,610 bytes)</td>
+            <td><span class="badge blue">Gate 0-4 Verified</span><br>Decouples `NeutronTransportReference`, `PoolThermalHydraulicsSynthetic`, `ReactorKineticsAlgebra`, and `SurrogateLoopBiofilmPIEBoundary`; missing CFD/PIV fields stay `UNAVAILABLE`.</td>
+          </tr>
+          <tr>
+            <td class="mono">BIOFILMS-3D-CPM-01</td>
+            <td><strong>Biofilms 3D Cellular Potts Consortium Explorer</strong><br>Read-only 3D WebGL + 2D slice + 256-seed 4-arm radial null ensemble &amp; `cpm-sp-v1` / `cpm-sp-growth-v1` audit</td>
+            <td>
+              <a href="biofilms_3d_explorer.html">biofilms_3d_explorer.html</a><br>
+              <span class="mono">aurascoper/Biofilms (c766e7b / de8d88e)</span>
+            </td>
+            <td class="mono">037e2050b70e92b7...<br>(869,267 bytes)</td>
+            <td><span class="badge amber">Uncalibrated Reference</span><br>40x40x40 lattice (`D-PITCH: awaiting_measurement`, `seconds_per_mcs = NaN`); all 28 TOST 90% CIs lie inside `[-0.05, +0.05] r/R`.</td>
+          </tr>
+          <tr>
+            <td class="mono">BIOFILMS-ROBIN-CYL-GIF-01</td>
+            <td><strong>Multispecies Biofilm Spatial Model (4-Panel Robin Cylindrical GIF)</strong><br>Axis-clipped cylindrical 4-panel ParaView animation (`combined`, `growth=1`, Seed 42, MCS 0..200) + matched counterfactual &amp; clonal sector reference</td>
+            <td>
+              <a href="multispecies_biofilm_robin_cylindrical_4panel.gif">multispecies_biofilm_robin_cylindrical_4panel.gif</a><br>
+              <a href="clonal_sector_expansion_reference.jpg">clonal_sector_expansion_reference.jpg</a> |
+              <a href="https://github.com/aurascoper/Biofilms" target="_blank" rel="noopener">aurascoper/Biofilms (841d052, pv_workflow.py --clip)</a>
+            </td>
+            <td class="mono">e73622d6454a3a6a...<br>(2,571,435 bytes)<br><span style="color:var(--muted)">Ref: 67865f34... (159,146 B)</span></td>
+            <td><span class="badge amber">Synthetic visualization</span><br>Robin wall BC at `r = R` (not avian magnetoreception); synthetic `dose_rate` (`0..0.01 Gy/s`) != calibrated transport; `net_biomass_rate_proxy` != measured growth; living `H_6` != abiotic `H_5`.</td>
           </tr>
           <tr>
             <td class="mono">REF-NW-HTML-01</td>
             <td><strong>TECDOC-643 Neutron Walk</strong><br>10 MW MTR 3D core + 2D slice + OpenMC 0.15.3 playback design reference</td>
             <td>
               <a href="https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md" target="_blank" rel="noopener">https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md</a><br>
-              <a href="tecdoc643_neutron_walk.html" target="_blank" rel="noopener">Hosted Copy (tecdoc643_neutron_walk.html)</a><br>
-              <span class="mono">Upstream Ref: PR #11 (718e9c6, Owner-Only Private Repo)</span>
+              <a href="tecdoc643_neutron_walk.html" target="_blank" rel="noopener">Hosted Copy (.html)</a> |
+              <span class="mono">Upstream Ref: PR #11 (718e9c6)</span>
             </td>
-            <td class="mono">a463adfac1fbf8aa...<br>(939,350 bytes)</td>
-            <td><span class="badge amber">Reference Audit Only</span><br>"Real OpenMC" is 500-track playback (pre-Oct 19 materials); burnup is a 1-mat/element laptop demo (340.26 d vs ~298 d cluster).</td>
+            <td class="mono">dc15eb934fe6cd32...<br>(937,606 bytes)</td>
+            <td><span class="badge amber">Reference Audit Only</span><br>"Real OpenMC" is 500-track playback (pre-Oct 19 materials); burnup is a 1-mat/element laptop demo (340.26 d vs ~298 d cluster). Preserved byte-identical per Gate 0.</td>
           </tr>
           <tr>
             <td class="mono">REF-NW-JL-FIX</td>
-            <td><strong>Quarantined TECDOC-643 Julia Fixture</strong><br>Transcribed blade sweep &amp; burnup reactivity algebra test hook</td>
+            <td><strong>Quarantined TECDOC-643 Julia Fixture</strong><br>Transcribed blade sweep &amp; burnup reactivity algebra test hook (institutional-scrubbed generic MTR edition)</td>
             <td>
               <a href="tecdoc643_reference_fixture.jl" target="_blank" rel="noopener">tecdoc643_reference_fixture.jl</a>
             </td>
-            <td class="mono">813c9e9fb33e47d9...<br>(5,951 bytes)</td>
-            <td><span class="badge amber">Quarantined Test Fixture</span><br>Verifies generic rho = (k-1)/k algebra; does not transfer rectangular MTR results to annular MURR core.</td>
+            <td class="mono">ec440f838d6c7026...<br>(6,018 bytes)<br><span style="color:var(--muted)">Raw: 813c9e9f... (5,951 B)</span></td>
+            <td><span class="badge amber">Quarantined Test Fixture</span><br>Verifies generic `rho = (k-1)/k` algebra; does not transfer rectangular MTR results to annular MTR core.</td>
           </tr>
           <tr>
             <td class="mono">OKLO-R0-FIXTURE</td>
@@ -326,23 +621,22 @@
           </tr>
           <tr>
             <td class="mono">PR12-GEYSER-V0</td>
-            <td><strong>Quarantined Oklo Geyser Prototype Export</strong><br>Guarded wrapper + preserved prototype.html + manifest + 10-part research program</td>
+            <td><strong>Quarantined Oklo Geyser Prototype &amp; Research Program</strong><br>10-part evidence-gated multiphysics research program and Revision-0 fixture audit</td>
             <td>
-              <a href="proto_biofilms_geyser_fission_research_program.md" target="_blank" rel="noopener">10-Part Research Program (proto_biofilms_geyser_fission_research_program.md)</a><br>
-              <a href="oklo_r0_fixture_readonly.html" target="_blank" rel="noopener">Preserved Prototype HTML (oklo_r0_fixture_readonly.html)</a><br>
-              <span class="mono">Upstream Ref: Draft PR #12 (9e6bcf4, Owner-Only Private Repo)</span>
+              <a href="proto_biofilms_geyser_fission_research_program.md" target="_blank" rel="noopener">10-Part Research Program (.md)</a><br>
+              <span class="mono">Upstream Ref: Draft PR #12 (9e6bcf4)</span>
             </td>
-            <td class="mono">c1b9acc3b03b2b6d...<br>(77,116 bytes)</td>
+            <td class="mono">da50d4002e6bcca9...<br>(48,056 bytes)</td>
             <td><span class="badge amber">Quarantined Draft</span><br>Separate from PR #11 and frozen R0 fixture; not authorized for merge or physical solver claims.</td>
           </tr>
           <tr>
             <td class="mono">INDEX-XML-01</td>
-            <td><strong>Machine-Readable XML Artifact Manifest</strong><br>Structured XML index of all URLs, file URIs, SHAs, and gates</td>
+            <td><strong>Machine-Readable XML Artifact Manifest</strong><br>Structured XML index of all URLs, relative portal paths, SHAs, and gates</td>
             <td>
               <a href="artifact_index.xml">artifact_index.xml</a>
             </td>
             <td class="mono">XML 1.0 UTF-8</td>
-            <td><span class="badge green">Schema-Clean Index</span><br>Zero en-dashes, zero em-dashes.</td>
+            <td><span class="badge green">Schema-Clean Index</span><br>Zero en-dashes, zero em-dashes, zero workstation file URIs.</td>
           </tr>
         </tbody>
       </table>
@@ -380,7 +674,7 @@
             <td><strong>Day 0 to Day 5 Net Reactivity Drop</strong></td>
             <td class="mono">-3,214.224 pcm (k = 1.19676 to 1.15243)</td>
             <td class="mono">-3,214 pcm</td>
-            <td>Report as total core reactivity change; do not attribute solely to Xe-135 + Sm-149 without isotopic worth decomposition, and do not multiply MTR equilibrium Xe-135 by a MURR shutdown factor (11.82x).</td>
+            <td>Report as total core reactivity change; do not attribute solely to Xe-135 + Sm-149 without isotopic worth decomposition, and do not multiply MTR equilibrium Xe-135 by an annular MTR shutdown factor (11.82x).</td>
           </tr>
           <tr>
             <td><strong>UO2-Clay-Fracture Coupled Framework &amp; Polymer Gate</strong></td>
@@ -391,16 +685,97 @@
         </tbody>
       </table>
 
-      <h2 style="margin-top:20px">Shareable Embed Snippets (HTML &amp; Markdown)</h2>
-      <pre>&lt;!-- Embed the Self-Contained 4D Spatiotemporal Geochemistry Viewer --&gt;
-&lt;iframe src="https://aurascoper.github.io/oklo_shareable_portal/spacetime_explorer_4d_shareable.html" width="100%" height="760" style="border:1px solid #22364d;border-radius:8px;"&gt;&lt;/iframe&gt;
+      <h2 style="margin-top:20px">4-Stage Surrogate Water-Loop, Biofilm Dynamics &amp; PIE Materials-Compatibility Demarcation (SURROGATE-LOOP-PIE-CAMPAIGN-V1)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>Experimental Domain &amp; Coupons</th>
+            <th>Primary Observables &amp; Models</th>
+            <th>Strict Scientific &amp; Regulatory Firewall</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Stage 1: Surrogate Hydrodynamic &amp; Water-Chemistry Loop</strong></td>
+            <td class="mono">Non-nuclear bench flow cell<br>Coupons: PIE-COUPON-SS316L-01, PIE-COUPON-AL6061-02</td>
+            <td>Controlled wall shear (`tau_w = 0.05..2.5 Pa`), temperature (`294..318 K`), conductivity, dissolved O2, and DIC/DOC speciation (`simulate_surrogate_loop_pie_materials_campaign()`).</td>
+            <td>Strictly decoupled from reactor core reactivity (`k_eff`) and pool thermal-hydraulics; implies zero fouling in operating MTR primary coolant.</td>
+          </tr>
+          <tr>
+            <td><strong>Stage 2: Biofilm EPS/Melanin Rheology &amp; Porous Resistance</strong></td>
+            <td class="mono">OCT / Confocal z-stacks + parallel-plate rheometry</td>
+            <td>Storage/loss moduli (`G'`, `G''`), yield stress (`tau_y`), Darcy-Brinkman permeability reduction (`k_perm(phi_bio)`), and sloughing onset (`simulate_biofilm_porous_rheology_coupling()`).</td>
+            <td>Requires physical voxel pitch calibration (`D-PITCH`) and step time calibration (`seconds_per_mcs`) before converting CPM lattice steps to SI transport rates.</td>
+          </tr>
+          <tr>
+            <td><strong>Stage 3: Sham-Controlled Radiation &amp; Spin-Dynamics Assay</strong></td>
+            <td class="mono">External irradiator / sham-coil rig (`0..500 uT`)<br>Seeds 42..297 + `cpm-sp-v1` / `cpm-sp-growth-v1`</td>
+            <td>Pre-registered 5-row planned-contrast matrix (15 cells vs. 24-cell full factorial); radical-pair spin Hamiltonian (`evaluate_radical_pair_magnetoreception_hypothesis()`).</td>
+            <td>`cpm-sp-v1` selection-vs-displacement is NULL (`5,511 / 10,752` axial deaths shift survivor radius up to `+0.0493 r/R` while all 7 identified-parcel displacement 95% CIs `delta_r_i` span zero); `cpm-sp-growth-v1` 15/16 synthetic phase-locking PASS is purely algorithmic; zero radiotrophy claim permitted without C-13/C-14 dark fixation + ATP/NADH + killed controls.</td>
+          </tr>
+          <tr>
+            <td><strong>Stage 4: Post-Irradiation Examination (PIE) &amp; Materials Qualification</strong></td>
+            <td class="mono">Hot-cell / metallurgical coupon audit under `SOP-QMS-001`</td>
+            <td>SEM/EDS oxide film thickness (`14.2 nm` SS316L; `48.5 nm` Al-6061), ICP-MS leachate (`Fe, Cr, Ni, Al`), pitting factor (`1.08` vs `1.22`), Raman/XPS melanin-metal complexation.</td>
+            <td>Enforced by `verify_research_cgmp_firewall()` (`can_issue_cgmp_verdict = false`); exploratory research modules never alter clinical release or reactor safety envelopes.</td>
+          </tr>
+        </tbody>
+      </table>
 
-&lt;!-- Reference Link to TECDOC-643 Neutron Walk Claude Artifact --&gt;
-&lt;a href="https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md" target="_blank" rel="noopener"&gt;TECDOC-643 Neutron Walk (10 MW MTR Reference Artifact)&lt;/a&gt;</pre>
+      <h2 style="margin-top:20px">Revised 5-Row Planned-Contrast Matrix (15 Cells vs. 24-Cell Full Crossed Factorial) &amp; 4-Layer Multiphysics-GLMM Architecture</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Layer / Matrix Component</th>
+            <th>Specification &amp; Mathematical Formulation</th>
+            <th>RadioPharmacology.jl / Portal Implementation Hook</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>5-Row Planned-Contrast Matrix (15 Cells vs. 24-Cell Full Crossed Factorial)</strong></td>
+            <td>Crosses <strong>5 experimental rows</strong> with <strong>3 genotypes per row</strong> (<code>WT Melanized</code>, <code>Melanin-Deficient (Albino)</code>, <code>Complemented Rescue</code> = <strong>15 condition-by-genotype cells</strong>): <strong>Row 1:</strong> Sham radiation (<code>0 Gy</code>) + baseline field (<code>50 uT</code>, sham-coil control); <strong>Row 2:</strong> Radiation (<code>+grad I_gamma</code>) + baseline field (<code>50 uT</code>, separating selection <code>H0-B</code> from active movement <code>H0-A</code>); <strong>Row 3:</strong> Radiation (<code>+grad I_gamma</code>) + rotated field orientation (<code>+90 deg</code> at <code>50 uT</code>); <strong>Row 4:</strong> Radiation (<code>+grad I_gamma</code>) + reversed field direction (<code>180 deg</code>, <code>+B -&gt; -B</code> at <code>50 uT</code>, discriminating polarity-sensitive magnetite torque <code>tau = m x B</code> from polarity-insensitive radical-pair inclination compass); <strong>Row 5:</strong> Radiation (<code>+grad I_gamma</code>) + suppressed near-zero field (<code>&lt;0.1 uT</code>). A <strong>fully crossed 24-cell design</strong> (<code>2 Radiation x 4 Field states x 3 Genotypes</code>) additionally tests rotated (<code>+90 deg</code>), reversed (<code>180 deg</code>), and suppressed (<code>&lt;0.1 uT</code>) fields under sham radiation.</td>
+            <td class="mono">BiofilmInference.simulate_biofilm_factorial_glmm()<br>POOLWATER_WORKFLOW_SPEC.md Section 5</td>
+          </tr>
+          <tr>
+            <td><strong>Layer A: Hydrodynamics &amp; Reactive Transport (Darcy-Brinkman-Stokes)</strong></td>
+            <td>Conservative Darcy-Brinkman-Stokes hydrodynamics &amp; reactive transport (<code>div(u) = 0</code>, budget residual <code>&lt; 1e-6</code>; Kim &amp; Yao 2026 <code>arXiv:2610.01565</code>) coupling free-fluid Navier-Stokes with porous biofilm momentum sink <code>-(mu / K_perm) u</code> and nutrient/oxygen/radiolytic species transport.</td>
+            <td class="mono">BiofilmRheology.simulate_biofilm_porous_rheology_coupling()<br>PoolThermalHydraulicsSynthetic (poolwater_interactive.html)</td>
+          </tr>
+          <tr>
+            <td><strong>Layer B: Microbial Kinetics &amp; Viscoelastic Biofilm Rheology</strong></td>
+            <td>Separates species growth (<code>mu_i</code>), position-dependent mortality (<code>d_i</code>, Null <code>H0-B</code>), attachment (<code>a_i</code>), and detachment (<code>e_i</code>) from Oldroyd-B vs. generalized-Newtonian viscoelastic EPS rheology (<code>G'</code>, <code>G''</code>, stress relaxation <code>lambda_1</code>) calibrated from independent rheograms (Charlton et al. 2019 <code>PMC6707926</code>; Li, Matous &amp; Nerenberg 2022 <code>doi:10.1002/bit.28056</code>), alongside the discrete <code>40x40x40</code> CPM benchmark (<code>cpm-sp-v1</code> &amp; <code>cpm-sp-growth-v1</code>).</td>
+            <td class="mono">BiofilmRheology.simulate_biofilm_porous_rheology_coupling()<br>ingest_biofilms_3d_cpm_ensemble_benchmark()<br>biofilms_3d_explorer.html (BIOFILMS-3D-CPM-01)</td>
+          </tr>
+          <tr>
+            <td><strong>Layer C: Falsifiable Magnetic &amp; Radiation Perturbations Around Null</strong></td>
+            <td>Parameterizes candidate magnetic or radiation modulation of growth (<code>theta_i</code>) and active directional bias (<code>gamma_i</code>) as explicit perturbations around the null (<code>H_0: theta_i = 0, gamma_i = 0</code>; Dadachova et al. 2007; Maeda et al. 2012; Rishabh et al. 2023 <code>arXiv:2312.06597</code>; Gassab et al. 2026 <code>arXiv:2605.00205</code>).</td>
+            <td class="mono">MagnetoreceptionHypotheses.evaluate_radical_pair_magnetoreception_hypothesis()</td>
+          </tr>
+          <tr>
+            <td><strong>Layer D: Hierarchical Generalized Linear Mixed Model (GLMM)</strong></td>
+            <td>Hierarchical GLMM <code>g(E[Y_ijk(t)]) = beta_0 + beta_R*R + beta_B*B + beta_M*M + beta_RB*(RB) + beta_BM*(BM) + beta_RBM*(RBM) + b_batch + b_culture + f(t)</code> with separated endpoint families (Gaussian LMM for tracked displacement <code>delta_r_i</code> and moduli <code>G', G''</code>; Poisson/Negative-Binomial GLMM for attachment/detachment counts; Binomial GLMM for survival proportion; Lee, Green &amp; Ryan 2017 <code>arXiv:1709.06288</code>).</td>
+            <td class="mono">BiofilmInference.simulate_biofilm_factorial_glmm()<br>verifyEnsembleStatisticalIntegrity()</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 style="margin-top:20px">Shareable Embed Snippets (HTML &amp; Markdown)</h2>
+      <pre>&lt;!-- Embed the Self-Contained Pool-Water Interactive Benchmark Viewer --&gt;
+&lt;iframe src="https://aurascoper.github.io/oklo_shareable_portal/poolwater_interactive.html" width="100%" height="860" style="border:1px solid #22364d;border-radius:8px;"&gt;&lt;/iframe&gt;
+
+&lt;!-- Embed the Self-Contained 3D Cellular Potts Biofilms Consortium Explorer --&gt;
+&lt;iframe src="https://aurascoper.github.io/oklo_shareable_portal/biofilms_3d_explorer.html" width="100%" height="860" style="border:1px solid #22364d;border-radius:8px;"&gt;&lt;/iframe&gt;
+
+&lt;!-- Embed the Self-Contained 4D Spatiotemporal Geochemistry Viewer --&gt;
+&lt;iframe src="https://aurascoper.github.io/oklo_shareable_portal/spacetime_explorer_4d_shareable.html" width="100%" height="860" style="border:1px solid #22364d;border-radius:8px;"&gt;&lt;/iframe&gt;</pre>
     </div>
   </div>
 
   <script>
+    let savedIndependentBladeState = null;
+
     function notifyNwResize() {
       const ifr = document.getElementById('iframeNw');
       if (!ifr || !ifr.contentDocument || !ifr.contentWindow) return false;
@@ -414,36 +789,159 @@
       return true;
     }
 
+    function notifyPoolResize() {
+      const ifr = document.getElementById('iframePool');
+      if (!ifr || !ifr.contentDocument || !ifr.contentWindow) return false;
+      requestAnimationFrame(() => {
+        ifr.contentWindow.dispatchEvent(new Event('resize'));
+      });
+      return true;
+    }
+
     function ensureIframeLoaded(ifr, onLoadCb) {
       if (!ifr) return;
       const targetSrc = ifr.getAttribute('data-src');
       if (targetSrc && !ifr.getAttribute('src')) {
+        ifr.dataset.loaded = '0';
+        ifr.addEventListener('load', () => {
+          ifr.dataset.loaded = '1';
+        }, { once: true });
         if (onLoadCb) {
           ifr.addEventListener('load', () => {
             onLoadCb();
             setTimeout(onLoadCb, 120);
-          });
+          }, { once: true });
         }
         ifr.setAttribute('src', targetSrc);
+      } else if (ifr.dataset.loaded === '0') {
+        if (onLoadCb) {
+          ifr.addEventListener('load', () => {
+            onLoadCb();
+            setTimeout(onLoadCb, 120);
+          }, { once: true });
+        }
       } else if (onLoadCb) {
         onLoadCb();
         setTimeout(onLoadCb, 60);
       }
     }
 
+    function captureIndependentBladeState() {
+      const ifrPool = document.getElementById('iframePool');
+      const ifrNw = document.getElementById('iframeNw');
+      const poolSel = ifrPool && ifrPool.contentDocument ? ifrPool.contentDocument.getElementById('selBlade') : null;
+      const nwDoc = ifrNw ? ifrNw.contentDocument : null;
+      const nwBlade = nwDoc ? nwDoc.getElementById('blade') : null;
+      const nwRealBtn = nwDoc ? nwDoc.getElementById('srcReal') : null;
+      return {
+        poolPct: poolSel ? Number(poolSel.value) : 75,
+        nwPct: nwBlade ? Number(nwBlade.value) : 0,
+        nwWasReal: !!(nwRealBtn && nwRealBtn.classList.contains('on'))
+      };
+    }
+
+    function restoreIndependentBladeState(st) {
+      if (!st) return;
+      const ifrPool = document.getElementById('iframePool');
+      const ifrNw = document.getElementById('iframeNw');
+      if (ifrPool && ifrPool.contentWindow && typeof ifrPool.contentWindow.setPoolBladePct === 'function') {
+        ifrPool.contentWindow.setPoolBladePct(st.poolPct);
+      }
+      if (ifrNw && ifrNw.contentDocument) {
+        const d = ifrNw.contentDocument;
+        const bladeSlider = d.getElementById('blade');
+        if (bladeSlider) {
+          bladeSlider.value = String(st.nwPct);
+          bladeSlider.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        if (st.nwWasReal) {
+          const srcRealBtn = d.getElementById('srcReal');
+          if (srcRealBtn && !srcRealBtn.classList.contains('on')) {
+            srcRealBtn.click();
+          }
+        }
+      }
+    }
+
+    function syncCoupledBlade(pct) {
+      const numPct = Number(pct);
+      const ifrPool = document.getElementById('iframePool');
+      const ifrNw = document.getElementById('iframeNw');
+      if (ifrPool && ifrPool.contentWindow && typeof ifrPool.contentWindow.setPoolBladePct === 'function') {
+        ifrPool.contentWindow.setPoolBladePct(numPct);
+      }
+      if (ifrNw && ifrNw.contentDocument) {
+        const srcToyBtn = ifrNw.contentDocument.getElementById('srcToy');
+        if (srcToyBtn && !srcToyBtn.classList.contains('on')) {
+          srcToyBtn.click();
+        }
+        const bladeSlider = ifrNw.contentDocument.getElementById('blade');
+        if (bladeSlider) {
+          bladeSlider.value = String(numPct);
+          bladeSlider.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }
+    }
+
+    function onCoupledSyncToggle() {
+      const chk = document.getElementById('chkSyncBlade');
+      const sel = document.getElementById('selCoupledBlade');
+      const status = document.getElementById('coupledSyncStatus');
+      if (chk && chk.checked) {
+        if (!savedIndependentBladeState) {
+          savedIndependentBladeState = captureIndependentBladeState();
+        }
+        const pct = Number(sel.value);
+        status.className = 'badge green';
+        status.textContent = `SHARED_SCENARIO_BLADE_SYNC (Blade Withdrawal = ${pct}% Out | Time Axes Remain Independent: INCOMPATIBLE_TIME_BASIS)`;
+        syncCoupledBlade(pct);
+      } else {
+        if (savedIndependentBladeState) {
+          restoreIndependentBladeState(savedIndependentBladeState);
+          savedIndependentBladeState = null;
+        }
+        status.className = 'badge amber';
+        status.textContent = 'INDEPENDENT_REFERENCE_PANELS (Unaligned Time Basis: Pool Plume t = 0..600 s vs. Monte Carlo Batch Histories / Depletion 0..350 d)';
+      }
+    }
+
+    function onCoupledBladeChange() {
+      const chk = document.getElementById('chkSyncBlade');
+      if (chk && chk.checked) {
+        const sel = document.getElementById('selCoupledBlade');
+        const status = document.getElementById('coupledSyncStatus');
+        const pct = Number(sel.value);
+        status.className = 'badge green';
+        status.textContent = `SHARED_SCENARIO_BLADE_SYNC (Blade Withdrawal = ${pct}% Out | Time Axes Remain Independent: INCOMPATIBLE_TIME_BASIS)`;
+        syncCoupledBlade(pct);
+      }
+    }
+
     function setView(mode) {
       const grid = document.getElementById('viewerGrid');
       const c4d = document.getElementById('card4d');
+      const cPool = document.getElementById('cardPool');
       const cNw = document.getElementById('cardNw');
+      const cBio = document.getElementById('cardBio');
       const cR0 = document.getElementById('cardR0');
+      const ifrPool = document.getElementById('iframePool');
       const ifrNw = document.getElementById('iframeNw');
+      const ifrBio = document.getElementById('iframeBio');
       const ifrR0 = document.getElementById('iframeR0');
       const banner = document.getElementById('bannerTxt');
-      ['tab4d','tabNw','tabSplit','tabR0','tabAudit'].forEach(id => document.getElementById(id).classList.remove('active'));
+      const syncBar = document.getElementById('coupledSyncBar');
+
+      ['tab4d','tabNw','tabSplit','tabBio','tabR0','tabPool','tabCoupled','tabAudit','tabRobinGif'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+      });
 
       grid.classList.remove('split');
+      syncBar.classList.remove('visible');
       c4d.classList.add('is-hidden');
+      cPool.classList.add('is-hidden');
       cNw.classList.add('is-hidden');
+      cBio.classList.add('is-hidden');
       cR0.classList.add('is-hidden');
 
       if (mode === '4d') {
@@ -455,7 +953,7 @@
         cNw.classList.remove('is-hidden');
         void cNw.offsetWidth;
         ensureIframeLoaded(ifrNw, notifyNwResize);
-        banner.innerHTML = '<strong>Epistemic Status (TECDOC-643 Neutron Walk Reference):</strong> Design and data-structure reference (<a href="https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md" target="_blank" rel="noopener">claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md</a>). "Real OpenMC" replays 500 recorded histories from pre-Oct 19 materials; burnup is a laptop demo (crossing k = 1 at day 340.26 vs. ~day 298 on cluster).';
+        banner.innerHTML = '<strong>Epistemic Status (TECDOC-643 Neutron Walk Reference):</strong> Design and data-structure reference (<a href="https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md" target="_blank" rel="noopener">claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md</a>). "Real OpenMC" replays 500 recorded histories from pre-Oct 19 materials; burnup is a laptop demo (crossing k = 1 at day 340.26 vs. ~day 298 on cluster). Preserved byte-identical per Gate 0.';
       } else if (mode === 'split') {
         document.getElementById('tabSplit').classList.add('active');
         grid.classList.add('split');
@@ -464,21 +962,369 @@
         void cNw.offsetWidth;
         ensureIframeLoaded(ifrNw, notifyNwResize);
         banner.innerHTML = '<strong>Side-by-Side Comparison:</strong> Left: R10 4D Spatiotemporal Geochemistry Viewer (continuum voxel contract). Right: TECDOC-643 Neutron Walk (discrete Monte Carlo particle tracks &amp; lattice tallies). Shared epistemic provenance discipline; separate physical models and schemas.';
+      } else if (mode === 'bio') {
+        document.getElementById('tabBio').classList.add('active');
+        cBio.classList.remove('is-hidden');
+        void cBio.offsetWidth;
+        ensureIframeLoaded(ifrBio, null);
+        banner.innerHTML = '<strong>Epistemic Status (Biofilms 3D Cellular Potts Reference):</strong> Uncalibrated 40x40x40 lattice snapshots from <code>aurascoper/Biofilms</code> (Seed 42, 6 parcels per species, MCS 0 to 100, Full vs. Null arms) plus 256-seed 4-arm radial null ensemble (<code>Seeds 42..297</code>) and <code>cpm-sp-v1</code> / <code>cpm-sp-growth-v1</code> audits. Axes count discrete lattice sites (<code>D-PITCH: awaiting_measurement</code>, <code>seconds_per_mcs = NaN</code>); radiotrophy, radioresistance, physical dose, and the blocked radiodialysis loop are excluded from claims.';
       } else if (mode === 'r0') {
         document.getElementById('tabR0').classList.add('active');
         cR0.classList.remove('is-hidden');
         void cR0.offsetWidth;
         ensureIframeLoaded(ifrR0, null);
         banner.innerHTML = '<strong>Frozen Revision-0 Conformance Fixture:</strong> Loaded read-only from <code>oklo_gui_scratch/index.html</code> (SHA-256: <code>8dac3ae9b8268a476b791f8c2293130e899d5c86c7fab09ce27345de2333544d</code>). Preserved unmodified per CONFORMANCE_FIXTURE_SPEC.md.';
+      } else if (mode === 'pool') {
+        document.getElementById('tabPool').classList.add('active');
+        cPool.classList.remove('is-hidden');
+        void cPool.offsetWidth;
+        ensureIframeLoaded(ifrPool, notifyPoolResize);
+        banner.innerHTML = '<strong>Epistemic Status (Pool-Water Interactive Viewer):</strong> 3D core &amp; pool boundary overlay (`6 x 7` lattice: 23 SFE + 5 CFE + 2 FT + 12 GR inside `123.2 x 133.7 x 180.0 cm` reflector boundary) with prescribed analytical divergence-free Boussinesq convection (`SYNTHETIC_PEDAGOGICAL_DEMO`), recomputed TECDOC-643 reactivity algebra (`18,634.714 +/- 120.375 pcm`, `Day 340.254042`), explicit `UNAVAILABLE` states for missing CFD/PIV fields, and external non-nuclear surrogate water-loop / PIE coupon demarcation.';
+      } else if (mode === 'coupled') {
+        document.getElementById('tabCoupled').classList.add('active');
+        grid.classList.add('split');
+        syncBar.classList.add('visible');
+        cPool.classList.remove('is-hidden');
+        cNw.classList.remove('is-hidden');
+        void cPool.offsetWidth;
+        void cNw.offsetWidth;
+        ensureIframeLoaded(ifrPool, () => {
+          notifyPoolResize();
+          if (document.getElementById('chkSyncBlade').checked) {
+            syncCoupledBlade(document.getElementById('selCoupledBlade').value);
+          }
+        });
+        ensureIframeLoaded(ifrNw, () => {
+          notifyNwResize();
+          if (document.getElementById('chkSyncBlade').checked) {
+            syncCoupledBlade(document.getElementById('selCoupledBlade').value);
+          }
+        });
+        banner.innerHTML = '<strong>Coupled Comparison (Pool-Water Interactive + TECDOC-643 Neutron Walk):</strong> Left: Continuum pool-water thermal-hydraulics demo (`t = 0..600 s`) &amp; external PIE boundary. Right: Discrete Monte Carlo neutron histories &amp; lattice tallies. Time scrubbing is never falsely synchronized across incompatible time bases; optional scenario synchronization links only the shared MTR control-blade withdrawal percentage (`0%..100%`).';
       } else if (mode === 'audit') {
         document.getElementById('tabAudit').classList.add('active');
-        banner.innerHTML = '<strong>Deep-Research UO2-Clay-Fracture &amp; TECDOC-643 Audit Summary:</strong> Review the artifact SHA-256 registry, precision-aware recomputations, and E1-E3 polymer evidence gates below.';
+        banner.innerHTML = '<strong>Benchmark Workflow, Surrogate Loop / PIE Demarcation &amp; Precision Audit Summary:</strong> Review the artifact SHA-256 registry, precision-aware recomputations, 4-stage surrogate loop / PIE protocol, and 5-row planned-contrast experimental matrix below.';
+      } else if (mode === 'robingif') {
+        document.getElementById('tabRobinGif').classList.add('active');
+        banner.innerHTML = '<strong>Multispecies Biofilm Spatial Model (Synthetic visualization):</strong> Four-panel ParaView export (<code>multispecies_biofilm_robin_cylindrical_4panel.gif</code>, <code>cpm-sp-growth-v1</code>, <code>combined</code> arm, <code>growth=1</code>, Seed 42, MCS 0..200) on a cylindrical domain with a mathematical <strong>Robin boundary condition</strong> at outer radius <code>r = R</code> (unrelated to avian magnetoreception). Synthetic <code>dose_rate</code> (<code>0..0.01 Gy/s</code>) is not calibrated radiation transport; <code>net_biomass_rate_proxy</code> is not an experimentally measured growth rate; causal interpretation requires the matched-seed <code>Radiation OFF</code> vs. <code>Radiation ON</code> counterfactual comparison shown below.';
+        drawRobinCounterfactualCanvas(currentRobinCfMode);
       }
     }
 
+    const ROBIN_COUNTERFACTUAL_DATA = {
+      source_commit: '841d052',
+      config_sha256: 'eb090aa3c0a971776a6e262713eb0cf5c130b53cf2b8d7720ad93dec19f50b01',
+      gif_sha256: 'e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997',
+      gif_bytes: 2571435,
+      clonal_ref_sha256: '67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115',
+      clonal_ref_bytes: 159146,
+      species: [
+        { id: 1, short: 'CN', name: 'C. neoformans',      alpha: 0.010, color: '#40b373', aliveDiff: -1.74, aliveCi: [-1.88, -1.61], survRadShift: 0.0086, initSurvRadShift: 0.0075, disp: 0.0011,  dispCi: [-0.0025, 0.0047], bioDiff: 6142,   bioCi: [1021, 11415] },
+        { id: 2, short: 'DR', name: 'D. radiodurans',     alpha: 0.002, color: '#edb021', aliveDiff: -0.43, aliveCi: [-0.51, -0.35], survRadShift: 0.0017, initSurvRadShift: 0.0004, disp: 0.0013,  dispCi: [-0.0010, 0.0036], bioDiff: 34137,  bioCi: [27900, 40681] },
+        { id: 3, short: 'CS', name: 'C. sphaerospermum',  alpha: 0.015, color: '#1fa6db', aliveDiff: -2.62, aliveCi: [-2.76, -2.47], survRadShift: 0.0192, initSurvRadShift: 0.0210, disp: -0.0018, dispCi: [-0.0061, 0.0026], bioDiff: -3002,  bioCi: [-8424, 2098] },
+        { id: 4, short: 'BS', name: 'B. subtilis',        alpha: 0.040, color: '#cc6b4d', aliveDiff: -4.48, aliveCi: [-4.62, -4.34], survRadShift: 0.0382, initSurvRadShift: 0.0434, disp: -0.0052, dispCi: [-0.0112, 0.0005], bioDiff: -13293, bioCi: [-17223, -9449] },
+        { id: 5, short: 'AN', name: 'A. niger',           alpha: 0.020, color: '#ad7ac2', aliveDiff: -3.18, aliveCi: [-3.32, -3.04], survRadShift: 0.0191, initSurvRadShift: 0.0212, disp: -0.0021, dispCi: [-0.0068, 0.0026], bioDiff: -6032,  bioCi: [-10204, -1805] },
+        { id: 6, short: 'SO', name: 'S. oneidensis',      alpha: 0.060, color: '#e387c4', aliveDiff: -5.26, aliveCi: [-5.35, -5.16], survRadShift: 0.0493, initSurvRadShift: 0.0538, disp: -0.0045, dispCi: [-0.0117, 0.0027], bioDiff: -10348, bioCi: [-14553, -6117] },
+        { id: 7, short: 'OI', name: 'O. intermedium AM7', alpha: 0.030, color: '#999999', aliveDiff: -3.82, aliveCi: [-3.97, -3.67], survRadShift: 0.0356, initSurvRadShift: 0.0359, disp: -0.0003, dispCi: [-0.0056, 0.0049], bioDiff: -10264, bioCi: [-14877, -5774] }
+      ]
+    };
+
+    let currentRobinCfMode = 'all';
+
+    function setRobinCounterfactualMode(mode) {
+      currentRobinCfMode = mode;
+      const map = { all: 'btnCfAll', survival: 'btnCfSurv', biomass: 'btnCfBio', displacement: 'btnCfDisp' };
+      Object.entries(map).forEach(([k, id]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (k === mode) {
+          el.className = 'badge blue';
+        } else {
+          el.className = 'badge';
+        }
+      });
+      drawRobinCounterfactualCanvas(mode);
+    }
+
+    function drawRobinSubPanel(ctx, x0, y0, w, h, kind) {
+      const sp = ROBIN_COUNTERFACTUAL_DATA.species;
+      const isCompact = w < 360;
+      ctx.save();
+      ctx.fillStyle = '#0a1420';
+      ctx.strokeStyle = '#22364d';
+      ctx.lineWidth = 1;
+      ctx.fillRect(x0, y0, w, h);
+      ctx.strokeRect(x0, y0, w, h);
+      ctx.beginPath();
+      ctx.rect(x0, y0, w, h);
+      ctx.clip();
+
+      ctx.fillStyle = '#e6f0f8';
+      ctx.font = isCompact
+        ? 'bold 10.5px -apple-system, BlinkMacSystemFont, sans-serif'
+        : 'bold 11.5px -apple-system, BlinkMacSystemFont, sans-serif';
+      const titlesCompact = {
+        survival: '1. Survival (Rad ON - OFF, MCS 100)',
+        biomass: '2. Biomass (Rad ON - OFF, MCS 200)',
+        displacement: '3. Displacement delta_r_i vs. r/R'
+      };
+      const titlesFull = {
+        survival: '1. Survival: Alive Parcels (Rad ON - OFF, MCS 100, 256 Seeds)',
+        biomass: '2. Net Biomass Change (Rad ON - OFF, MCS 200, Growth ON, 16 Seeds)',
+        displacement: '3. Parcel Displacement delta_r_i vs. Survivor Radius (r/R, 256 Seeds)'
+      };
+      const titleStr = (isCompact ? titlesCompact[kind] : titlesFull[kind]) || '';
+      ctx.fillText(titleStr, x0 + 8, y0 + 17);
+
+      const padL = 38;
+      const padR = 10;
+      const padT = 30;
+      const padB = isCompact ? 42 : 36;
+      const pw = w - padL - padR;
+      const ph = h - padT - padB;
+      const px0 = x0 + padL;
+      const py0 = y0 + padT;
+
+      if (kind === 'survival') {
+        const minY = -6.0;
+        const maxY = 0.5;
+        const yToPx = v => py0 + ph * (1 - (v - minY) / (maxY - minY));
+        const yZero = yToPx(0);
+        ctx.strokeStyle = '#475569';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(px0, yZero);
+        ctx.lineTo(px0 + pw, yZero);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        sp.forEach((s, idx) => {
+          const cx = px0 + (idx + 0.5) * (pw / sp.length);
+          const bw = Math.min(24, (pw / sp.length) * 0.58);
+          const yVal = yToPx(s.aliveDiff);
+          ctx.fillStyle = s.color;
+          ctx.fillRect(cx - bw / 2, Math.min(yZero, yVal), bw, Math.abs(yVal - yZero));
+          // CI whisker
+          ctx.strokeStyle = '#e6f0f8';
+          ctx.beginPath();
+          ctx.moveTo(cx, yToPx(s.aliveCi[0]));
+          ctx.lineTo(cx, yToPx(s.aliveCi[1]));
+          ctx.stroke();
+          ctx.fillStyle = '#8ca5bc';
+          ctx.font = '10px ui-monospace, monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(s.short, cx, py0 + ph + 13);
+        });
+        ctx.fillStyle = '#8ca5bc';
+        ctx.font = '9px ui-monospace, monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText('0', px0 - 4, yZero + 3);
+        ctx.fillText('-3', px0 - 4, yToPx(-3) + 3);
+        ctx.fillText('-6', px0 - 4, yToPx(-6) + 3);
+        ctx.textAlign = 'left';
+        if (isCompact) {
+          ctx.fillText('5,511/10,752 axial deaths', x0 + 8, py0 + ph + 26);
+          ctx.fillText('(256 seeds, MCS 100, H0-B)', x0 + 8, py0 + ph + 37);
+        } else {
+          ctx.fillText('5,511 / 10,752 axial hazard deaths in survival_only & combined (256 seeds)', px0 + 4, py0 + ph + 28);
+        }
+      } else if (kind === 'biomass') {
+        const minY = -20000;
+        const maxY = 42000;
+        const yToPx = v => py0 + ph * (1 - (v - minY) / (maxY - minY));
+        const yZero = yToPx(0);
+        ctx.strokeStyle = '#475569';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(px0, yZero);
+        ctx.lineTo(px0 + pw, yZero);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        sp.forEach((s, idx) => {
+          const cx = px0 + (idx + 0.5) * (pw / sp.length);
+          const bw = Math.min(24, (pw / sp.length) * 0.58);
+          const yVal = yToPx(s.bioDiff);
+          ctx.fillStyle = s.color;
+          ctx.fillRect(cx - bw / 2, Math.min(yZero, yVal), bw, Math.abs(yVal - yZero));
+          ctx.strokeStyle = '#e6f0f8';
+          ctx.beginPath();
+          ctx.moveTo(cx, yToPx(s.bioCi[0]));
+          ctx.lineTo(cx, yToPx(s.bioCi[1]));
+          ctx.stroke();
+          ctx.fillStyle = '#8ca5bc';
+          ctx.font = '10px ui-monospace, monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(s.short, cx, py0 + ph + 13);
+        });
+        ctx.fillStyle = '#8ca5bc';
+        ctx.font = '9px ui-monospace, monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText('+35k', px0 - 4, yToPx(35000) + 3);
+        ctx.fillText('0', px0 - 4, yZero + 3);
+        ctx.fillText('-15k', px0 - 4, yToPx(-15000) + 3);
+        ctx.textAlign = 'left';
+        if (isCompact) {
+          ctx.fillText('DR & CN expand into freed', x0 + 8, py0 + ph + 26);
+          ctx.fillText('nutrient (16 seeds, Growth ON)', x0 + 8, py0 + ph + 37);
+        } else {
+          ctx.fillText('Low-hazard DR (+34,137) & CN (+6,142) expand into freed space (16 seeds)', px0 + 4, py0 + ph + 28);
+        }
+      } else if (kind === 'displacement') {
+        const minY = -0.02;
+        const maxY = 0.08;
+        const yToPx = v => py0 + ph * (1 - (v - minY) / (maxY - minY));
+        const yZero = yToPx(0);
+        ctx.strokeStyle = '#475569';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(px0, yZero);
+        ctx.lineTo(px0 + pw, yZero);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        sp.forEach((s, idx) => {
+          const cx = px0 + (idx + 0.5) * (pw / sp.length);
+          // Amber dot: MCS 100 population survivor radius shift (H0-B selection)
+          const ySurv = yToPx(s.survRadShift);
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.arc(cx - 5, ySurv, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Blue square: MCS 0 initial survivor radius shift (confirms pre-existing radial position)
+          const yInitSurv = yToPx(s.initSurvRadShift);
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillRect(cx - 2.5, yInitSurv - 2.5, 5, 5);
+
+          // Green dot + CI whisker: tracked parcel directional displacement delta_r_i (H0-A motion = NULL)
+          const yDisp = yToPx(s.disp);
+          ctx.strokeStyle = '#22c55e';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(cx + 5, yToPx(s.dispCi[0]));
+          ctx.lineTo(cx + 5, yToPx(s.dispCi[1]));
+          ctx.stroke();
+          ctx.fillStyle = '#22c55e';
+          ctx.beginPath();
+          ctx.arc(cx + 5, yDisp, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#8ca5bc';
+          ctx.font = '10px ui-monospace, monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(s.short, cx, py0 + ph + 13);
+        });
+        ctx.fillStyle = '#8ca5bc';
+        ctx.font = '9px ui-monospace, monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText('+0.06', px0 - 4, yToPx(0.06) + 3);
+        ctx.fillText('0.00', px0 - 4, yZero + 3);
+        ctx.textAlign = 'left';
+        if (isCompact) {
+          ctx.fillStyle = '#f59e0b';
+          ctx.fillText('Amber/Blue: Survivor r/R (MCS 100/0)', x0 + 8, py0 + ph + 26);
+          ctx.fillStyle = '#22c55e';
+          ctx.fillText('Green: delta_r_i (All 7 CIs span 0)', x0 + 8, py0 + ph + 37);
+        } else {
+          ctx.fillStyle = '#f59e0b';
+          ctx.fillText('Amber: MCS 100 Survivor r/R (H0-B)', px0 + 2, py0 + ph + 28);
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillText('Blue: MCS 0 Survivor r/R', px0 + 218, py0 + ph + 28);
+          ctx.fillStyle = '#22c55e';
+          ctx.fillText('Green: Parcel delta_r_i (All 7 CIs span 0)', px0 + 380, py0 + ph + 28);
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawRobinCounterfactualCanvas(mode = 'all') {
+      const cvs = document.getElementById('robinCounterfactualCanvas');
+      if (!cvs) return false;
+      const ctx = cvs.getContext('2d');
+      if (!ctx) return false;
+      const W = cvs.width;
+      const H = cvs.height;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#07111a';
+      ctx.fillRect(0, 0, W, H);
+
+      if (mode === 'all') {
+        const gap = 8;
+        const pw = (W - gap * 4) / 3;
+        const ph = H - 16;
+        drawRobinSubPanel(ctx, gap, 8, pw, ph, 'survival');
+        drawRobinSubPanel(ctx, gap * 2 + pw, 8, pw, ph, 'biomass');
+        drawRobinSubPanel(ctx, gap * 3 + pw * 2, 8, pw, ph, 'displacement');
+      } else {
+        drawRobinSubPanel(ctx, 10, 8, W - 20, H - 16, mode);
+      }
+      return true;
+    }
+
+    window.verifyRobinBiofilmCardIntegrity = function() {
+      const card = document.getElementById('multispeciesBiofilmCard');
+      const gif = document.getElementById('robinCylindricalGif');
+      const refImg = document.getElementById('clonalSectorRefImg');
+      const cvs = document.getElementById('robinCounterfactualCanvas');
+      const txt = card ? card.textContent : '';
+      const allDispSpanZero = ROBIN_COUNTERFACTUAL_DATA.species.every(
+        s => s.dispCi[0] <= 0 && s.dispCi[1] >= 0
+      );
+      const allHaveInitSurv = ROBIN_COUNTERFACTUAL_DATA.species.every(
+        s => typeof s.initSurvRadShift === 'number' && typeof s.survRadShift === 'number'
+      );
+      let noCanvasTextOverflow = false;
+      if (cvs) {
+        const ctx = cvs.getContext('2d');
+        const subW = (cvs.width - 32) / 3;
+        const maxAllowed = subW - 14;
+        ctx.font = 'bold 10.5px -apple-system, BlinkMacSystemFont, sans-serif';
+        const compactTitles = [
+          '1. Survival (Rad ON - OFF, MCS 100)',
+          '2. Biomass (Rad ON - OFF, MCS 200)',
+          '3. Displacement delta_r_i vs. r/R'
+        ];
+        const titlesFit = compactTitles.every(t => ctx.measureText(t).width <= maxAllowed);
+        ctx.font = '9px ui-monospace, monospace';
+        const compactFooters = [
+          '5,511/10,752 axial deaths',
+          '(256 seeds, MCS 100, H0-B)',
+          'DR & CN expand into freed',
+          'nutrient (16 seeds, Growth ON)',
+          'Amber/Blue: Survivor r/R (MCS 100/0)',
+          'Green: delta_r_i (All 7 CIs span 0)'
+        ];
+        const footersFit = compactFooters.every(f => ctx.measureText(f).width <= maxAllowed);
+        noCanvasTextOverflow = titlesFit && footersFit;
+      }
+      return {
+        cardPresent: !!card,
+        hasSyntheticBadge: txt.includes('Synthetic visualization'),
+        clarifiesRobinBoundaryCondition: txt.includes('Robin boundary condition') && txt.includes('Erithacus rubecula'),
+        distinguishesSyntheticDoseRate: txt.includes('Synthetic dose-rate field vs. calibrated radiation transport'),
+        distinguishesNetBiomassProxy: txt.includes('Net biomass-rate proxy vs. experimentally measured growth rate'),
+        linksResearchProgram: !!(card && card.querySelector('a[href*="proto_biofilms_geyser_fission_research_program.md"]')),
+        linksBiofilmsRepo: !!(card && card.querySelector('a[href="https://github.com/aurascoper/Biofilms"]')),
+        gifSrc: gif ? gif.getAttribute('src') : null,
+        gifLoaded: !!(gif && gif.complete && gif.naturalWidth === 800 && gif.naturalHeight === 571),
+        gifWidth: gif ? gif.naturalWidth : 0,
+        gifHeight: gif ? gif.naturalHeight : 0,
+        clonalRefSrc: refImg ? refImg.getAttribute('src') : null,
+        clonalRefLoaded: !!(refImg && refImg.complete && refImg.naturalWidth > 1000),
+        counterfactualCanvasPresent: !!(cvs && cvs.width === 760 && cvs.height === 390),
+        noCanvasTextOverflow,
+        plotsInitSurvRadShift: allHaveInitSurv,
+        noHorizontalCardOverflow: !!(card && card.scrollWidth <= card.clientWidth + 1),
+        speciesCount: ROBIN_COUNTERFACTUAL_DATA.species.length,
+        allDisplacementCisSpanZero: allDispSpanZero
+      };
+    };
+
     window.addEventListener('DOMContentLoaded', () => {
+      drawRobinCounterfactualCanvas('all');
       const h = (window.location.hash || '').replace('#', '').toLowerCase();
-      if (['4d', 'nw', 'split', 'r0', 'audit'].includes(h)) {
+      if (['4d', 'nw', 'split', 'bio', 'r0', 'pool', 'coupled', 'audit', 'robingif'].includes(h)) {
         setView(h);
       }
     });

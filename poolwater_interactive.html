@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MTR Pool-Water Interactive 4D Visualization &amp; TECDOC-643 Benchmark Workflow</title>
+  <style>
+    :root {
+      --bg: #080d14;
+      --panel: #0f1824;
+      --panel-alt: #132030;
+      --screen: #07111a;
+      --border: #22364d;
+      --text: #e6f0f8;
+      --muted: #8ca5bc;
+      --accent: #38bdf8;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .wrap {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 14px 18px 32px;
+    }
+    html[data-embedded="1"] .wrap {
+      padding: 8px 12px 20px;
+      max-width: 100%;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    html[data-embedded="1"] header h1 { font-size: 17px; }
+    header p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12.5px;
+      max-width: 98ch;
+    }
+    .badges { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--panel-alt);
+    }
+    .badge.amber { color: #fcd34d; border-color: #92400e; background: #451a03; }
+    .badge.green { color: #86efac; border-color: #166534; background: #052e16; }
+    .badge.blue { color: #7dd3fc; border-color: #0369a1; background: #082f49; }
+    .badge.red { color: #fca5a5; border-color: #991b1b; background: #450a0a; }
+    .qual-banner {
+      margin-top: 10px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--amber);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text);
+    }
+    .console {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: 14px;
+      margin-top: 12px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .console { grid-template-columns: minmax(0, 1fr); }
+    }
+    .viewer-card, .side-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .vhead {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .btn-group {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      background: var(--bg);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    button {
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    button:hover:not(:disabled) { color: var(--text); background: var(--panel-alt); }
+    button.on {
+      background: var(--accent);
+      color: #041019;
+      border-color: var(--accent);
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      min-height: 380px;
+      background: var(--screen);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    html[data-embedded="1"] .stage { height: 438px; min-height: 360px; }
+    .stage canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+    [hidden] { display: none !important; }
+    .hud-chips {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      pointer-events: none;
+      max-width: 68%;
+    }
+    .hud-chips span {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text);
+      background: rgba(7, 17, 26, 0.84);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 9px;
+    }
+    .hud-right {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(7, 17, 26, 0.84);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      pointer-events: none;
+      text-align: right;
+    }
+    .stage-hint {
+      position: absolute;
+      left: 10px;
+      bottom: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(7, 17, 26, 0.80);
+      padding: 3px 7px;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+    .ctrl-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .ctrl-bar label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text);
+    }
+    input[type="range"], select { accent-color: var(--accent); cursor: pointer; }
+    select {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+    .mono { font-family: var(--mono); font-size: 11.5px; color: #bae6fd; }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .kpi {
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .kpi .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+    .kpi .val { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--text); margin-top: 2px; }
+    .kpi .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+    th, td {
+      text-align: left;
+      padding: 4px 6px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+    details {
+      margin-top: 10px;
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    summary { cursor: pointer; font-weight: 600; font-size: 12px; color: var(--accent); }
+    .mod-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .mod-box {
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 11.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>MTR Pool-Water Interactive 4D Visualization &amp; TECDOC-643 Benchmark Workflow</h1>
+        <p>Dataset-driven 3D reactor-and-pool viewer coordinating IAEA-TECDOC-643 10 MW MTR benchmark provenance, point-reactor kinetics algebra, synthetic Boussinesq pool natural convection (<code>T</code>, <code>u</code>, streamlines), and the isolated 4-stage Surrogate Water-Loop &amp; Post-Irradiation Examination (PIE) coupon protocol.</p>
+      </div>
+      <div class="badges">
+        <span class="badge amber">SYNTHETIC POOL DEMO (Not Live OpenMC/CFD)</span>
+        <span class="badge green">GATES 0-4 VERIFIED (div(u) = 0, Worth = 18,634.7 pcm)</span>
+        <span class="badge blue">4 INDEPENDENT MODULES (Zero Oklo-to-Pool Mixing)</span>
+        <span class="badge red">PIE SURROGATE LOOP ISOLATED (SOP-QMS-001)</span>
+      </div>
+    </header>
+
+    <div class="qual-banner">
+      <strong>Epistemic &amp; Physical Boundary Qualification (Gates 0-4):</strong> (1) <strong>TECDOC-643 Reference Module:</strong> Reproduces the recorded 6x7 MTR lattice (23 SFE + 5 CFE + 2 FT + 12 GR inside <code>123.2 x 133.7 x 180.0 cm</code> pool reflector boundary), 5-point blade sweep (<code>k_eff = 0.97943 to 1.19810</code>, worth <code>18,634.714 +/- 120.375 pcm</code>), 2-point 2M-history worth (<code>18,384.139 +/- 84.191 pcm</code>), and 12-point depletion table (linear <code>k_eff = 1</code> crossing at <code>Day 340.2540</code>) without implying facility-specific annular MTR calibration. (2) <strong>Pool Thermal-Hydraulics Module:</strong> Displays an offline, divergence-free synthetic Boussinesq natural-convection dataset across 6 timestamps (<code>t = 0..600 s</code>); missing solver/experimental fields remain explicitly <code>UNAVAILABLE</code>. (3) <strong>Surrogate Water-Loop &amp; PIE Boundary:</strong> Biofilm rheology, sham-controlled radiation response (Sandia 2024 null &amp; 256-seed <code>cpm-sp-v1</code> displacement null), 5-row planned-contrast matrix (15 vs. 24 cells), and 316L stainless-steel PIE/MIC coupon tests are isolated in an external surrogate water loop and never alter reactor kinetics or imply an operating MTR pool biofilm problem.
+    </div>
+
+    <div class="console">
+      <div class="viewer-card">
+        <div class="vhead">
+          <div class="btn-group" role="group" aria-label="Render mode">
+            <button id="btnMode3d" class="on" type="button">3-D Core &amp; Pool View</button>
+            <button id="btnModeSlice" type="button">2-D Cut-Plane &amp; Vectors</button>
+            <button id="btnModeAudit" type="button">TECDOC-643 &amp; PIE Gate Audit</button>
+          </div>
+          <label>
+            <span>Field Overlay:</span>
+            <select id="selField">
+              <option value="water_temperature_K">[SYNTHETIC] Pool Water Temperature T(x,y,z,t) [K]</option>
+              <option value="velocity_magnitude_m_s">[SYNTHETIC] Coolant Velocity |u(x,y,z,t)| &amp; Streamlines [m/s]</option>
+              <option value="power_density_W_cm3">[SYNTHETIC] Core Fission Power Density q'''(x,y,z,t) [W/cm^3]</option>
+              <option value="thermal_flux_n_cm2_s">[SYNTHETIC SURROGATE] Thermal Neutron Flux phi_th [n/cm^2/s]</option>
+              <option value="wall_shear_Pa">[SURROGATE LOOP] PIE Coupon Wall Shear tau_w [Pa]</option>
+              <option value="validated_cfd_pressure_Pa">[UNAVAILABLE] Validated 3-D RANS/LES CFD Pressure Field [Pa]</option>
+              <option value="empirical_piv_temperature">[UNAVAILABLE] Empirical Pool PIV / Thermography Dataset [K]</option>
+              <option value="live_coupled_openmc_cfd_statepoint">[UNAVAILABLE] Live Coupled OpenMC + CFD Statepoint</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="stage" class="stage">
+          <canvas id="glCanvas"></canvas>
+          <canvas id="sliceCanvas" hidden></canvas>
+          <canvas id="auditCanvas" hidden></canvas>
+          <div class="hud-chips">
+            <span id="chipTime">t = 120 s (Synthetic Boussinesq Plume Snapshot #4/6)</span>
+            <span id="chipField">Field: Pool Water Temperature T [K] (Classification: SYNTHETIC)</span>
+            <span id="chipKinetics">Blades: 75% Withdrawn | k_eff = 1.17049 +/- 0.00113 (+14,565.7 pcm)</span>
+          </div>
+          <div id="hudRight" class="hud-right">16 x 16 x 24 Pool Grid<br>6x7 MTR Lattice (23 SFE + 5 CFE)<br>div(u) max: 0.00e+00 1/s</div>
+          <div id="stageHint" class="stage-hint">Drag to rotate 3D pool &amp; core | Scroll to zoom | Scrub t = 0..600 s or switch to 2-D Cut-Plane</div>
+        </div>
+
+        <div class="ctrl-bar">
+          <button id="btnPlay" type="button">Play Timeline</button>
+          <label style="flex:1; min-width:200px;">
+            <span>Time: <strong id="timeLabel" class="mono">t = 120 s</strong></span>
+            <input id="timeSlider" type="range" min="0" max="5" step="1" value="3" style="flex:1;">
+          </label>
+          <label>
+            <span>Control Blades:</span>
+            <select id="selBlade">
+              <option value="0">0% Withdrawn (k = 0.97943, Subcritical)</option>
+              <option value="25">25% Withdrawn (k = 1.02804)</option>
+              <option value="50">50% Withdrawn (k = 1.11336)</option>
+              <option value="75" selected>75% Withdrawn (k = 1.17049)</option>
+              <option value="100">100% Withdrawn (k = 1.19810, Full Out)</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="sliceCtrlBar" class="ctrl-bar">
+          <div class="btn-group" role="group" aria-label="Cut plane">
+            <button id="btnPlaneXZ" class="on" type="button">XZ Vertical Plume (y)</button>
+            <button id="btnPlaneYZ" type="button">YZ Vertical Plume (x)</button>
+            <button id="btnPlaneXY" type="button">XY Horizontal Core/Pool (z)</button>
+          </div>
+          <label style="flex:1; min-width:170px;">
+            <span>Cut Plane (<span id="sliceAxisLbl" class="mono">y</span> = <strong id="slicePosLbl" class="mono">0.0 cm</strong>):</span>
+            <input id="sliceSlider" type="range" min="-100" max="100" step="5" value="0" style="flex:1;">
+          </label>
+        </div>
+
+        <div class="ctrl-bar" style="justify-content:space-between;">
+          <label><input id="chkVectors" type="checkbox" checked> <span>Velocity Vectors <code>u(x,y,z,t)</code></span></label>
+          <label><input id="chkStreamlines" type="checkbox" checked> <span>3-D Buoyant Streamlines</span></label>
+          <label><input id="chkCoreOverlay" type="checkbox" checked> <span>Core Power/Flux Overlay</span></label>
+          <label><input id="chkSurrogateRig" type="checkbox" checked> <span>External PIE Surrogate Loop Rig</span></label>
+        </div>
+
+        <div class="mod-grid">
+          <div class="mod-box">
+            <strong>Module 1: TECDOC-643 Neutron Ref</strong><br>
+            <span class="mono">Status: TRANSCRIBED_AND_REPLAY_REF</span><br>
+            <span style="color:var(--muted);">23 SFE + 5 CFE box-grid; 500-track playback; not live OpenMC; not annular MTR.</span>
+          </div>
+          <div class="mod-box">
+            <strong>Module 2: Point-Reactor Kinetics</strong><br>
+            <span class="mono">Status: VERIFIED_ALGEBRA (atol &lt; 1e-12)</span><br>
+            <span style="color:var(--muted);">Worth: 18,634.714 +/- 120.375 pcm; linear k=1 crossing: Day 340.2540.</span>
+          </div>
+          <div class="mod-box">
+            <strong>Module 3: Pool Navier-Stokes Demo</strong><br>
+            <span class="mono">Status: SYNTHETIC_BOUSSINESQ_DEMO</span><br>
+            <span style="color:var(--muted);">16x16x24 grid, 6 time states (0..600 s), exact streamfunction div(u) = 0; zero Oklo R0 mixing.</span>
+          </div>
+          <div class="mod-box">
+            <strong>Module 4: Surrogate Loop &amp; PIE Gate</strong><br>
+            <span class="mono">Status: ISOLATED_RESEARCH_PROTOCOL</span><br>
+            <span style="color:var(--muted);">Stages 1-4 coupon MIC/PIE loop; Sandia 2024 &amp; cpm-sp-v1 null; SOP-QMS-001 firewall.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="lbl">Core Exit Plume T_max</div>
+            <div id="kpiTemp" class="val">336.4 K</div>
+            <div id="kpiTempSub" class="sub">Bulk pool inlet: 305.2 K (32.0 C)</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">Peak Updraft |u|_max</div>
+            <div id="kpiVel" class="val">0.412 m/s</div>
+            <div id="kpiVelSub" class="sub">Max |div(u)|: 0.00e+00 1/s</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">TECDOC-643 Blade Worth</div>
+            <div id="kpiWorth" class="val">18,634.7 pcm</div>
+            <div id="kpiWorthSub" class="sub">+/- 120.4 pcm (k=1 at 340.25 d)</div>
+          </div>
+        </div>
+
+        <h3 style="margin:6px 0 4px; font-size:13px;">TECDOC-643 Control-Blade Sweep &amp; Coupled Pool Plume State</h3>
+        <p style="margin:0 0 6px; font-size:11.5px; color:var(--muted);">
+          Reproduced from <code>tecdoc643_reference_fixture.jl</code> (Gate 1/4 acceptance check). Selecting a blade state updates the recorded <code>k_eff</code> and reactivity while scaling the synthetic pool buoyant plume:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Blade Out</th>
+              <th>k_eff +/- sigma</th>
+              <th>rho [pcm]</th>
+              <th>Worth to 100% [pcm]</th>
+              <th>Evidence Class</th>
+            </tr>
+          </thead>
+          <tbody id="sweepTableBody"></tbody>
+        </table>
+
+        <details open>
+          <summary>4-Stage Surrogate Water-Loop, Biofilm Rheology &amp; PIE Materials Protocol</summary>
+          <div style="margin-top:6px; font-size:11.5px; color:var(--muted);">
+            <div><strong>Stage 1 (Hydrodynamic Surrogate Loop Baseline):</strong> External bypass loop (<code>x = +115 cm</code>) tracks velocity <code>u</code>, temperature <code>T</code>, dissolved species, and coupon wall shear <code>tau_w</code> (<span id="lblShear" class="mono">1.84 Pa</span>) without perturbing the operating MTR pool.</div>
+            <div style="margin-top:3px;"><strong>Stage 2 (Biofilm Attachment &amp; Viscoelastic Rheology):</strong> Couples shear and mass transfer to attachment/detachment (`BiofilmRheology` in <code>RadioPharmacology.jl</code>) only for removable surrogate-loop coupons.</div>
+            <div style="margin-top:3px;"><strong>Stage 3 (Sham-Controlled Radiation-Response Test):</strong> Separates overall survival/growth from directional radiotropism. Enforces the <strong>Sandia (2024) 4-isolate gamma null</strong> and the <strong>256-seed <code>aurascoper/Biofilms</code> (<code>cpm-sp-v1</code>) null</strong> where all 7 identified-parcel displacement 95% CIs (<code>delta_r_i</code>) span zero.</div>
+            <div style="margin-top:3px;"><strong>Stage 4 (Post-Irradiation Examination / PIE &amp; MIC Endpoints):</strong> Evaluates stainless-steel coupon corrosion and surface chemistry post-exposure under <code>SOP-QMS-001</code> (<code>can_issue_cgmp_verdict = false</code>).</div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Normalized Field Contract &amp; Explicit Missing-Field Registry (Gate 1 &amp; Gate 3)</summary>
+          <table>
+            <thead>
+              <tr>
+                <th>Field ID</th>
+                <th>Units</th>
+                <th>Classification</th>
+                <th>Status in Viewer</th>
+              </tr>
+            </thead>
+            <tbody id="fieldContractBody"></tbody>
+          </table>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    try {
+      if (window.self !== window.top) {
+        document.documentElement.setAttribute('data-embedded', '1');
+      }
+    } catch (e) {}
+
+    // =========================================================================
+    // MODULE 1: TECDOC-643 Neutron Transport & Depletion Reference (Gate 0 & 2)
+    // =========================================================================
+    const CORE_LATTICE_6X7 = Object.freeze([
+      Object.freeze(['GR',  'GR',  'GR',  'GR',  'GR',  'GR']),
+      Object.freeze(['SFE', 'SFE', 'CFE', 'SFE', 'SFE', 'SFE']),
+      Object.freeze(['SFE', 'SFE', 'SFE', 'SFE', 'CFE', 'SFE']),
+      Object.freeze(['SFE', 'CFE', 'SFE', 'FT',  'SFE', 'SFE']),
+      Object.freeze(['SFE', 'SFE', 'SFE', 'SFE', 'CFE', 'SFE']),
+      Object.freeze(['FT',  'SFE', 'CFE', 'SFE', 'SFE', 'SFE']),
+      Object.freeze(['GR',  'GR',  'GR',  'GR',  'GR',  'GR'])
+    ]);
+
+    const NeutronTransportReference = Object.freeze({
+      moduleId: 'TECDOC643_NEUTRON_REF',
+      datasetId: 'tecdoc643_neutron_walk_transcribed_table_v0',
+      reactorDescription: 'IAEA generic 10 MW MTR benchmark (6x7 lattice: 23 SFE + 5 CFE + 2 FT + 12 GR)',
+      provenanceStatus: 'transcribed_unverified_reference_fixture',
+      isLiveOpenMCSolver: false,
+      transfersToAnnularMTRCore: false,
+      mixesOkloAnalyticVoxelsIntoPoolCFD: false,
+      coreGeometryCm: Object.freeze({
+        pitchX: 7.7,
+        pitchY: 8.1,
+        nx: 6,
+        ny: 7,
+        hx: 23.1,
+        hy: 28.35,
+        activeWidthX: 46.2,
+        activeDepthY: 56.7,
+        activeHeightZ: 60.0,
+        openmcPoolMarginCm: 38.5,
+        openmcReflectorBoxCm: Object.freeze([123.2, 133.7, 180.0]),
+        poolRadiusCm: 150.0,
+        poolZMinCm: -150.0,
+        poolZMaxCm: 450.0
+      }),
+      // Exact 6x7 MTR core layout MAP from tecdoc643_neutron_walk.html:
+      // 'SFE' (23), 'CFE' (5 at C2, E3, B4, E5, C6), 'FT' (2 at D4, A6), 'GR' (12 in rows 1 and 7)
+      coreLattice6x7: CORE_LATTICE_6X7,
+      coreLattice5x6: CORE_LATTICE_6X7,
+      withdrawnPct: Object.freeze([0.0, 25.0, 50.0, 75.0, 100.0]),
+      sweepK: Object.freeze([0.97943, 1.02804, 1.11336, 1.17049, 1.19810]),
+      sweepSigmaK: Object.freeze([0.00102, 0.00115, 0.00116, 0.00113, 0.00081]),
+      twoPointReference: Object.freeze({
+        kAllIn: 0.98057,
+        sigmaAllIn: 0.00069,
+        kAllOut: 1.19621,
+        sigmaAllOut: 0.00063,
+        claimedWorthPcm: 18384.14,
+        claimedSigmaPcm: 84.19
+      }),
+      burnDays: Object.freeze([0.0, 5.0, 10.0, 20.0, 40.0, 80.0, 120.0, 160.0, 200.0, 250.0, 300.0, 350.0]),
+      burnK: Object.freeze([1.19676, 1.15243, 1.14750, 1.14054, 1.12952, 1.11619, 1.09730, 1.07909, 1.06614, 1.04293, 1.01743, 0.99578]),
+      u235G: Object.freeze([10402.9928, 10337.9759, 10272.9547, 10143.4932, 9887.0078, 9383.6650, 8886.3671, 8394.8641, 7909.3097, 7314.7278, 6729.9779, 6155.7275]),
+      pu239G: Object.freeze([0.0, 2.9668, 8.4975, 20.7104, 44.5863, 89.2064, 128.1251, 162.4050, 192.7640, 225.5186, 252.1807, 273.5623]),
+      xe135EqG: Object.freeze([0.0, 0.0577, 0.0578, 0.0573, 0.0563, 0.0543, 0.0523, 0.0504, 0.0484, 0.0457, 0.0431, 0.0405]),
+      sm149G: Object.freeze([0.0, 0.1401, 0.3115, 0.4770, 0.5346, 0.5319, 0.5237, 0.5156, 0.5044, 0.4896, 0.4723, 0.4521])
+    });
+
+    // =========================================================================
+    // MODULE 2: Point-Reactor Kinetics & Reactivity Algebra (Gate 1 & 2)
+    // =========================================================================
+    const ReactorKineticsAlgebra = Object.freeze({
+      moduleId: 'POINT_KINETICS_ALGEBRA',
+      reactivityRho(k) {
+        return (k - 1.0) / k;
+      },
+      deltaRho(k1, k2) {
+        return ((k2 - 1.0) / k2) - ((k1 - 1.0) / k1);
+      },
+      worthSigmaPcm(k1, sigma1, k2, sigma2) {
+        if (sigma1 < 0 || sigma2 < 0) throw new Error('sigma_k must be non-negative');
+        return 1.0e5 * Math.hypot(sigma1 / (k1 * k1), sigma2 / (k2 * k2));
+      },
+      buildBladeSweepTable() {
+        const kOut = NeutronTransportReference.sweepK[NeutronTransportReference.sweepK.length - 1];
+        const sOut = NeutronTransportReference.sweepSigmaK[NeutronTransportReference.sweepSigmaK.length - 1];
+        return NeutronTransportReference.withdrawnPct.map((pct, i) => {
+          const k = NeutronTransportReference.sweepK[i];
+          const s = NeutronTransportReference.sweepSigmaK[i];
+          const isLast = (i === NeutronTransportReference.sweepK.length - 1);
+          return {
+            withdrawnPct: pct,
+            kEff: k,
+            sigmaK: s,
+            reactivityPcm: 1.0e5 * this.reactivityRho(k),
+            worthToFullyWithdrawnPcm: 1.0e5 * this.deltaRho(k, kOut),
+            worthSigmaPcm: isLast ? 0.0 : this.worthSigmaPcm(k, s, kOut, sOut),
+            evidenceClass: 'transcribed'
+          };
+        });
+      },
+      interpolatedKCrossingDay() {
+        const days = NeutronTransportReference.burnDays;
+        const ks = NeutronTransportReference.burnK;
+        for (let i = 0; i < ks.length - 1; i++) {
+          if ((ks[i] - 1.0) * (ks[i + 1] - 1.0) <= 0.0) {
+            const k1 = ks[i], k2 = ks[i + 1];
+            const t1 = days[i], t2 = days[i + 1];
+            if (k1 === k2) return t1;
+            return t1 + ((k1 - 1.0) / (k1 - k2)) * (t2 - t1);
+          }
+        }
+        return null;
+      }
+    });
+
+    // =========================================================================
+    // MODULE 3: Pool-Water 4D Thermal-Hydraulics Synthetic Dataset (Gate 2 & 3)
+    // =========================================================================
+    const PoolThermalHydraulicsSynthetic = (function() {
+      const NX = 16, NY = 16, NZ = 24;
+      const TIME_STEPS_S = [0, 30, 60, 120, 300, 600];
+      const X_MIN = -120.0, X_MAX = 120.0;
+      const Y_MIN = -120.0, Y_MAX = 120.0;
+      const Z_MIN = -150.0, Z_MAX = 450.0;
+      const T_INLET_K = 305.15; // 32.0 C bulk pool temperature
+
+      const FIELD_REGISTRY = Object.freeze({
+        water_temperature_K: {
+          id: 'water_temperature_K',
+          label: 'Pool Water Temperature T(x,y,z,t)',
+          units: 'K',
+          evidenceClassification: 'synthetic',
+          available: true,
+          status: 'AVAILABLE_SYNTHETIC_DEMO'
+        },
+        velocity_magnitude_m_s: {
+          id: 'velocity_magnitude_m_s',
+          label: 'Coolant Velocity |u(x,y,z,t)| & Streamlines',
+          units: 'm/s',
+          evidenceClassification: 'synthetic',
+          available: true,
+          status: 'AVAILABLE_SYNTHETIC_DEMO'
+        },
+        power_density_W_cm3: {
+          id: 'power_density_W_cm3',
+          label: 'Core Fission Power Density q\'\'\'(x,y,z,t)',
+          units: 'W/cm^3',
+          evidenceClassification: 'synthetic',
+          available: true,
+          status: 'AVAILABLE_SYNTHETIC_DEMO'
+        },
+        thermal_flux_n_cm2_s: {
+          id: 'thermal_flux_n_cm2_s',
+          label: 'Thermal Neutron Flux phi_th(x,y,z,t)',
+          units: 'n/(cm^2 s)',
+          evidenceClassification: 'synthetic',
+          available: true,
+          status: 'AVAILABLE_SYNTHETIC_SURROGATE'
+        },
+        wall_shear_Pa: {
+          id: 'wall_shear_Pa',
+          label: 'Surrogate-Loop PIE Coupon Wall Shear tau_w',
+          units: 'Pa',
+          evidenceClassification: 'synthetic',
+          available: true,
+          status: 'AVAILABLE_SURROGATE_LOOP_MODEL'
+        },
+        validated_cfd_pressure_Pa: {
+          id: 'validated_cfd_pressure_Pa',
+          label: 'Validated 3-D RANS/LES CFD Pressure Field',
+          units: 'Pa',
+          evidenceClassification: 'unavailable',
+          available: false,
+          status: 'UNAVAILABLE (Requires validated 3-D Navier-Stokes CFD solver statepoint; never invented)',
+          values: null
+        },
+        empirical_piv_temperature: {
+          id: 'empirical_piv_temperature',
+          label: 'Empirical Pool PIV / Thermography Dataset',
+          units: 'K',
+          evidenceClassification: 'unavailable',
+          available: false,
+          status: 'UNAVAILABLE (Requires instrumented pool PIV and thermocouple campaign; never invented)',
+          values: null
+        },
+        live_coupled_openmc_cfd_statepoint: {
+          id: 'live_coupled_openmc_cfd_statepoint',
+          label: 'Live Coupled OpenMC + CFD Multiphysics Statepoint',
+          units: 'dimensionless',
+          evidenceClassification: 'unavailable',
+          available: false,
+          status: 'UNAVAILABLE (Browser viewer is offline dataset-driven; live coupled solver not connected)',
+          values: null
+        }
+      });
+
+      // Analytic divergence-free axisymmetric Boussinesq recirculation velocity + plume temperature
+      // In cylindrical coordinates (r, z), u_r = -(1/r) d(psi)/dz, u_z = (1/r) d(psi)/dr,
+      // which satisfies exact solenoidal continuity div(u) = (1/r) d(r u_r)/dr + du_z/dz = 0.
+      function evaluatePointState(xCm, yCm, zCm, timeIdx, bladePct) {
+        const tSec = TIME_STEPS_S[timeIdx] !== undefined ? TIME_STEPS_S[timeIdx] : 120;
+        const ramp = 0.28 + 0.72 * (1.0 - Math.exp(-tSec / 95.0));
+        const bladeFactor = 0.35 + 0.65 * (bladePct / 100.0);
+        const amp = ramp * bladeFactor;
+
+        const rCm = Math.hypot(xCm, yCm);
+        const R0 = 52.0; // buoyant plume radial scale [cm]
+        const Z_NORM = (zCm - Z_MIN) / (Z_MAX - Z_MIN); // 0..1
+        const sZ = Math.sin(Math.PI * Math.max(0.0, Math.min(1.0, Z_NORM)));
+        const dsZ_dz = (Math.PI / (Z_MAX - Z_MIN)) * Math.cos(Math.PI * Math.max(0.0, Math.min(1.0, Z_NORM)));
+
+        // Streamfunction psi(r, z) = U0 * (r^2 / 2) * exp(-(r / R0)^2) * sin(pi * Z_NORM)
+        // => u_z = (1/r) d(psi)/dr = U0 * (1 - (r/R0)^2) * exp(-(r/R0)^2) * sin(pi * Z_NORM)
+        // => u_r = -(1/r) d(psi)/dz = -U0 * (r / 2) * exp(-(r/R0)^2) * dsZ_dz
+        const U0 = 0.48 * amp; // peak updraft velocity scale [m/s]
+        const qR = (rCm * rCm) / (R0 * R0);
+        const expR = Math.exp(-qR);
+        const uz = U0 * (1.0 - qR) * expR * sZ;
+        const ur = -U0 * 0.5 * rCm * expR * dsZ_dz;
+        const ux = rCm > 1e-6 ? ur * (xCm / rCm) : 0.0;
+        const uy = rCm > 1e-6 ? ur * (yCm / rCm) : 0.0;
+        const vMag = Math.hypot(ux, uy, uz);
+
+        // Exact analytic divergence check of the streamfunction velocity field:
+        // d(ux)/dx + d(uy)/dy = (1/r) d(r ur)/dr = -U0 * (1 - qR) * expR * dsZ_dz
+        // d(uz)/dz = +U0 * (1 - qR) * expR * dsZ_dz
+        // Sum = 0.0 identically!
+        const divU = (-U0 * (1.0 - qR) * expR * dsZ_dz) + (U0 * (1.0 - qR) * expR * dsZ_dz);
+
+        // Core region check: 6x7 MTR lattice [-23.1, 23.1] x [-28.35, 28.35] x [-30, 30] cm
+        const inCore = Math.abs(xCm) <= 23.1 && Math.abs(yCm) <= 28.35 && Math.abs(zCm) <= 30.0;
+        const zSkew = -10.0 * (1.0 - bladePct / 100.0);
+        const coreCosX = Math.cos((Math.PI * xCm) / 56.0);
+        const coreCosY = Math.cos((Math.PI * yCm) / 68.0);
+        const coreCosZ = Math.cos((Math.PI * (zCm - zSkew)) / 74.0);
+        const powerDensity = inCore
+          ? Math.max(0.0, 142.0 * bladeFactor * coreCosX * coreCosY * coreCosZ)
+          : 0.0;
+
+        // Two-group thermal flux surrogate (peaks in central flux trap and graphite reflector edge)
+        const inReflectorOrCore = Math.abs(xCm) <= 44.0 && Math.abs(yCm) <= 46.0 && Math.abs(zCm) <= 42.0;
+        const trapBump = 1.0 + 0.55 * Math.exp(-(xCm * xCm + yCm * yCm) / (14.0 * 14.0));
+        const thermalFlux = inReflectorOrCore
+          ? Math.max(0.0, 1.85e14 * bladeFactor * trapBump * Math.exp(-(rCm * rCm) / (42.0 * 42.0)) * Math.cos((Math.PI * zCm) / 96.0))
+          : 1.2e11 * bladeFactor * Math.exp(-(rCm * rCm) / (85.0 * 85.0)) * Math.exp(-Math.abs(zCm) / 90.0);
+
+        // Buoyant plume temperature T(x, y, z, t) [K]
+        const plumeFrontZ = -25.0 + 440.0 * ramp;
+        const axialPlume = zCm >= -30.0
+          ? Math.exp(-Math.max(0.0, zCm - plumeFrontZ) / 55.0) * (0.45 + 0.55 / (1.0 + Math.exp(-(zCm + 20.0) / 15.0)))
+          : Math.exp(-((-30.0 - zCm) / 28.0));
+        const radialPlume = Math.exp(-(rCm * rCm) / (44.0 * 44.0));
+        const tempK = T_INLET_K + 36.8 * amp * radialPlume * axialPlume;
+
+        // Surrogate water-loop coupon wall shear stress [Pa] in the external test section (x near +115 cm)
+        const distToRig = Math.hypot(xCm - 115.0, yCm);
+        const wallShearPa = (distToRig <= 18.0 && Math.abs(zCm) <= 60.0)
+          ? (1.45 + 0.52 * ramp * Math.cos((Math.PI * zCm) / 140.0))
+          : 0.12 * vMag * vMag;
+
+        return {
+          tempK,
+          ux,
+          uy,
+          uz,
+          vMag,
+          divU,
+          powerDensity,
+          thermalFlux,
+          wallShearPa
+        };
+      }
+
+      function computeSnapshotSummary(timeIdx, bladePct) {
+        let maxTempK = T_INLET_K;
+        let maxVelMS = 0.0;
+        let maxAbsDivU = 0.0;
+        let totalPowerMW = 0.0;
+        const dx = (X_MAX - X_MIN) / NX;
+        const dy = (Y_MAX - Y_MIN) / NY;
+        const dz = (Z_MAX - Z_MIN) / NZ;
+
+        for (let k = 0; k < NZ; k++) {
+          const z = Z_MIN + (k + 0.5) * dz;
+          for (let j = 0; j < NY; j++) {
+            const y = Y_MIN + (j + 0.5) * dy;
+            for (let i = 0; i < NX; i++) {
+              const x = X_MIN + (i + 0.5) * dx;
+              const st = evaluatePointState(x, y, z, timeIdx, bladePct);
+              if (st.tempK > maxTempK) maxTempK = st.tempK;
+              if (st.vMag > maxVelMS) maxVelMS = st.vMag;
+              if (Math.abs(st.divU) > maxAbsDivU) maxAbsDivU = Math.abs(st.divU);
+              totalPowerMW += st.powerDensity * (dx * dy * dz) * 1.0e-6;
+            }
+          }
+        }
+        const couponShear = evaluatePointState(115.0, 0.0, 0.0, timeIdx, bladePct).wallShearPa;
+        return {
+          timeS: TIME_STEPS_S[timeIdx],
+          gridDims: [NX, NY, NZ],
+          totalCells: NX * NY * NZ,
+          inletTempK: T_INLET_K,
+          maxTempK,
+          maxVelMS,
+          maxAbsDivU,
+          integratedCorePowerMW: totalPowerMW,
+          surrogateCouponWallShearPa: couponShear
+        };
+      }
+
+      return Object.freeze({
+        moduleId: 'POOL_NAVIER_STOKES_SYNTHETIC_DEMO',
+        datasetId: 'poolwater_synthetic_demo_v1',
+        evidenceClassification: 'synthetic',
+        solverValidated: false,
+        mixesOkloAnalyticVoxels: false,
+        gridDims: Object.freeze([NX, NY, NZ]),
+        timeStepsS: Object.freeze(TIME_STEPS_S.slice()),
+        boundsCm: Object.freeze({ X_MIN, X_MAX, Y_MIN, Y_MAX, Z_MIN, Z_MAX }),
+        fieldRegistry: FIELD_REGISTRY,
+        evaluatePointState,
+        computeSnapshotSummary
+      });
+    })();
+
+    // =========================================================================
+    // MODULE 4: Surrogate Water-Loop, Biofilm & PIE Boundary (Gate 2 & 4)
+    // =========================================================================
+    const SurrogateLoopBiofilmPIEBoundary = Object.freeze({
+      moduleId: 'SURROGATE_LOOP_PIE_ISOLATED',
+      protocolVersion: 'surrogate_water_loop_pie_v1',
+      campaignId: 'SURROGATE-LOOP-PIE-CAMPAIGN-V1',
+      qmsStandard: 'SOP-QMS-001',
+      altersReactorKineticsOrPoolCFD: false,
+      impliesOperatingMTRPoolBiofilmIssue: false,
+      canIssueCgmpVerdict: false,
+      altersCoreReactorOrNcaSeparation: false,
+      linkedBiofilmsArtifact: 'biofilms_3d_explorer.html',
+      linkedBiofilmsSchema: 'biofilms_cpm_snapshot_bundle_v1',
+      workflowHierarchy: Object.freeze([
+        'Stage1_HydrodynamicSurrogateLoop',
+        'Stage2_BiofilmColonizationDynamics',
+        'Stage3_ShamControlledRadiationResponse',
+        'Stage4_PIEMaterialsCompatibilityMIC'
+      ]),
+      coupons: Object.freeze([
+        { couponId: 'PIE-COUPON-SS316L-01', material: '316L Stainless Steel (UNS S31603)' },
+        { couponId: 'PIE-COUPON-AL6061-02', material: '6061-T6 Aluminum (UNS A96061)' }
+      ]),
+      experimentalMatrixDesign: Object.freeze({
+        plannedContrastCells: 15,
+        fullCrossedFactorialCells: 24,
+        genotypesPerRow: Object.freeze(['WT Melanized', 'Melanin-Deficient (Albino)', 'Complemented Rescue']),
+        rows: Object.freeze([
+          { row: 1, radiation: 'Sham radiation (0 Gy)', magneticField: 'Baseline field (50 uT); sham-coil control', primaryContrast: 'Baseline growth, survival, and directionality' },
+          { row: 2, radiation: 'Radiation (+grad I_gamma)', magneticField: 'Baseline field (50 uT); matched sham-coil control', primaryContrast: 'Radiation x melanin-genotype response (separating selection H0-B from active movement H0-A)' },
+          { row: 3, radiation: 'Radiation (+grad I_gamma)', magneticField: 'Rotate field orientation (+90 deg) at fixed magnitude (50 uT)', primaryContrast: 'Orientation-dependent response orthogonal to fixed radiation gradient' },
+          { row: 4, radiation: 'Radiation (+grad I_gamma)', magneticField: 'Reverse field direction (180 deg, +B -> -B) at fixed magnitude (50 uT)', primaryContrast: 'Polarity-sensitive (magnetite torque tau = m x B) vs. polarity-insensitive (radical-pair inclination compass) response' },
+          { row: 5, radiation: 'Radiation (+grad I_gamma)', magneticField: 'Suppress field toward prespecified near-zero target (<0.1 uT); matched sham coils', primaryContrast: 'Field-dependent response vs. radiation-only effects' }
+        ])
+      }),
+      multiphysicsGlmmLayers: Object.freeze([
+        { id: 'LAYER_A', title: 'Conservative Darcy-Brinkman-Stokes Hydrodynamics & Reactive Transport', ref: 'Kim & Yao (2026) arXiv:2610.01565' },
+        { id: 'LAYER_B', title: 'Microbial Kinetics & Oldroyd-B vs. Generalized-Newtonian Viscoelastic Rheology', ref: 'Charlton et al. (2019) PMC6707926; Li, Matous & Nerenberg (2022) doi:10.1002/bit.28056' },
+        { id: 'LAYER_C', title: 'Falsifiable Magnetic & Radiation Perturbation Parameters Around Null (theta_i = 0, gamma_i = 0)', ref: 'Dadachova et al. (2007); Maeda et al. (2012); Rishabh et al. (2023) arXiv:2312.06597; Gassab et al. (2026) arXiv:2605.00205' },
+        { id: 'LAYER_D', title: 'Hierarchical GLMM g(E[Y_ijk(t)]) = beta_0 + beta_R*R + beta_B*B + beta_M*M + beta_RB*(RB) + beta_BM*(BM) + beta_RBM*(RBM) + b_batch + b_culture + f(t)', ref: 'Lee, Green & Ryan (2017) arXiv:1709.06288' }
+      ]),
+      radioPharmacologySymbiosis: Object.freeze({
+        sourceFile: 'src/biofilm_magnetoreception_research.jl',
+        modules: Object.freeze(['BiofilmInference', 'BiofilmRheology', 'MagnetoreceptionHypotheses']),
+        benchmarkIngestFn: 'ingest_biofilms_3d_cpm_ensemble_benchmark()',
+        exportedFunctions: Object.freeze([
+          'ingest_biofilms_3d_cpm_ensemble_benchmark()',
+          'simulate_surrogate_loop_pie_materials_campaign()',
+          'simulate_biofilm_porous_rheology_coupling()',
+          'evaluate_radical_pair_magnetoreception_hypothesis()',
+          'simulate_biofilm_factorial_glmm()',
+          'simulate_4d_reactor_pool_kinetics()',
+          'build_magnetoreception_relationship_table()',
+          'build_magnetoreception_epistemic_matrix()',
+          'build_4d_reactor_pool_epistemic_matrix()',
+          'verify_research_cgmp_firewall()'
+        ]),
+        cpmCalibration: Object.freeze({
+          calibrated: false,
+          latticePitch: 'D-PITCH (awaiting_measurement; axes count lattice sites 1..40, not physical lengths)',
+          secondsPerMcs: 'NaN',
+          coupledRadiodialysisStatus: 'BLOCKED by tests/radiodialysis_basis_gate.jl'
+        })
+      }),
+      stages: Object.freeze([
+        {
+          stage: 1,
+          name: 'Hydrodynamic Surrogate Loop Baseline',
+          status: 'ESTABLISHED_ENGINEERING_TRANSPORT',
+          summary: 'External surrogate water loop tracking velocity u, temperature T, dissolved species, and coupon wall shear tau_w [Pa].'
+        },
+        {
+          stage: 2,
+          name: 'Biofilm Attachment, Detachment & Rheology',
+          status: 'CONDITIONAL_COUPON_MODEL',
+          summary: 'Couples hydrodynamic shear to surface attachment/detachment on removable coupons; viscoelastic rheology applied only when measured.'
+        },
+        {
+          stage: 3,
+          name: 'Sham-Controlled Radiation-Response Test',
+          status: 'EXPLORATORY_HYPOTHESIS_NULL_BOUNDED',
+          summary: 'Separates survival/growth from directional radiotropism; Sandia (2024) 4-isolate test and 256-seed cpm-sp-v1 displacement CIs are null.'
+        },
+        {
+          stage: 4,
+          name: 'Post-Irradiation Examination (PIE) & MIC Endpoints',
+          status: 'MATERIALS_COMPATIBILITY_ENDPOINT',
+          summary: 'Microscopy and corrosion characterization on 316L stainless-steel coupons under SOP-QMS-001 without touching operating pool.'
+        }
+      ])
+    });
+
+    window.PoolWaterModules = Object.freeze({
+      NeutronTransportReference,
+      ReactorKineticsAlgebra,
+      PoolThermalHydraulicsSynthetic,
+      SurrogateLoopBiofilmPIEBoundary
+    });
+
+    // =========================================================================
+    // UI State & DOM Wiring
+    // =========================================================================
+    let renderMode = '3d'; // '3d', 'slice', 'audit'
+    let currentField = 'water_temperature_K';
+    let timeIdx = 3; // 120 s
+    let bladePct = 75;
+    let slicePlane = 'XZ';
+    let slicePosCm = 0.0;
+    let showVectors = true;
+    let showStreamlines = true;
+    let showCoreOverlay = true;
+    let showSurrogateRig = true;
+    let playTimer = null;
+
+    let yaw = 0.62;
+    let pitch = 0.36;
+    let zoom = 1.0;
+    let dragging = false;
+    let lastX = 0, lastY = 0;
+
+    const stage = document.getElementById('stage');
+    const glCanvas = document.getElementById('glCanvas');
+    const sliceCanvas = document.getElementById('sliceCanvas');
+    const auditCanvas = document.getElementById('auditCanvas');
+
+    function populateTables() {
+      const sweepRows = ReactorKineticsAlgebra.buildBladeSweepTable();
+      const sweepBody = document.getElementById('sweepTableBody');
+      sweepBody.innerHTML = '';
+      for (const r of sweepRows) {
+        const tr = document.createElement('tr');
+        const isSel = Math.round(r.withdrawnPct) === Math.round(bladePct);
+        if (isSel) tr.style.background = 'rgba(56, 189, 248, 0.14)';
+        const rhoStr = (r.reactivityPcm >= 0 ? '+' : '') + r.reactivityPcm.toFixed(1);
+        const worthStr = r.worthToFullyWithdrawnPcm.toFixed(1) + ' +/- ' + r.worthSigmaPcm.toFixed(1);
+        tr.innerHTML = `
+          <td class="mono"><strong>${r.withdrawnPct.toFixed(0)}%</strong></td>
+          <td class="mono">${r.kEff.toFixed(5)} +/- ${r.sigmaK.toFixed(5)}</td>
+          <td class="mono">${rhoStr}</td>
+          <td class="mono">${worthStr}</td>
+          <td><span class="badge amber">${r.evidenceClass}</span></td>
+        `;
+        sweepBody.appendChild(tr);
+      }
+
+      const fcBody = document.getElementById('fieldContractBody');
+      fcBody.innerHTML = '';
+      for (const f of Object.values(PoolThermalHydraulicsSynthetic.fieldRegistry)) {
+        const tr = document.createElement('tr');
+        const clsBadge = f.available ? 'green' : 'red';
+        tr.innerHTML = `
+          <td class="mono">${f.id}</td>
+          <td class="mono">${f.units}</td>
+          <td><span class="badge ${clsBadge}">${f.evidenceClassification}</span></td>
+          <td style="color:var(--muted);">${f.status}</td>
+        `;
+        fcBody.appendChild(tr);
+      }
+    }
+
+    // =========================================================================
+    // WebGL 3-D Core, Pool, Velocity Vectors & PIE Surrogate Loop Renderer
+    // =========================================================================
+    let gl = null;
+    let glProg = null;
+    let glTriBuf = null;
+    let glLineBuf = null;
+
+    function initWebGL() {
+      gl = glCanvas.getContext('webgl', { antialias: true }) || glCanvas.getContext('experimental-webgl');
+      if (!gl) throw new Error('WebGL context unavailable');
+
+      const vsSrc = `
+        attribute vec3 aPos;
+        attribute vec4 aColor;
+        uniform mat4 uMVP;
+        varying vec4 vColor;
+        void main() {
+          gl_Position = uMVP * vec4(aPos, 1.0);
+          vColor = aColor;
+        }
+      `;
+      const fsSrc = `
+        precision mediump float;
+        varying vec4 vColor;
+        void main() {
+          gl_FragColor = vColor;
+        }
+      `;
+      const compile = (type, src) => {
+        const sh = gl.createShader(type);
+        gl.shaderSource(sh, src);
+        gl.compileShader(sh);
+        if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+          throw new Error(gl.getShaderInfoLog(sh) || 'Shader compile error');
+        }
+        return sh;
+      };
+      const vs = compile(gl.VERTEX_SHADER, vsSrc);
+      const fs = compile(gl.FRAGMENT_SHADER, fsSrc);
+      glProg = gl.createProgram();
+      gl.attachShader(glProg, vs);
+      gl.attachShader(glProg, fs);
+      gl.linkProgram(glProg);
+      if (!gl.getProgramParameter(glProg, gl.LINK_STATUS)) {
+        throw new Error('WebGL program link failed');
+      }
+      glTriBuf = gl.createBuffer();
+      glLineBuf = gl.createBuffer();
+    }
+
+    function tempColorRGB(normVal, fieldId) {
+      const t = Math.max(0.0, Math.min(1.0, normVal));
+      if (fieldId === 'velocity_magnitude_m_s') {
+        return [0.10 + 0.30 * t, 0.45 + 0.50 * t, 0.75 + 0.25 * Math.sin(Math.PI * t)];
+      }
+      if (fieldId === 'power_density_W_cm3' || fieldId === 'thermal_flux_n_cm2_s') {
+        return [0.25 + 0.75 * t, 0.15 + 0.70 * t * t, 0.65 - 0.45 * t];
+      }
+      if (fieldId === 'wall_shear_Pa') {
+        return [0.15 + 0.80 * t, 0.65 - 0.20 * t, 0.35 + 0.40 * (1.0 - t)];
+      }
+      // Thermal plume colormap: deep pool blue -> cyan -> amber -> hot coral
+      if (t < 0.35) {
+        const s = t / 0.35;
+        return [0.08 + 0.14 * s, 0.32 + 0.46 * s, 0.62 + 0.32 * s];
+      } else if (t < 0.70) {
+        const s = (t - 0.35) / 0.35;
+        return [0.22 + 0.72 * s, 0.78 - 0.12 * s, 0.94 - 0.72 * s];
+      } else {
+        const s = (t - 0.70) / 0.30;
+        return [0.94 + 0.06 * s, 0.66 - 0.46 * s, 0.22 - 0.14 * s];
+      }
+    }
+
+    function pushBox(tris, x0, x1, y0, y1, z0, z1, r, g, b, a) {
+      // Map reactor (x, y, z_up) -> WebGL (x, z_up, y)
+      const X0 = x0, X1 = x1;
+      const Y0 = z0, Y1 = z1;
+      const Z0 = y0, Z1 = y1;
+      const faces = [
+        { s: 0.95, v: [[X1,Y0,Z0],[X1,Y1,Z0],[X1,Y1,Z1], [X1,Y0,Z0],[X1,Y1,Z1],[X1,Y0,Z1]] },
+        { s: 0.72, v: [[X0,Y0,Z1],[X0,Y1,Z1],[X0,Y1,Z0], [X0,Y0,Z1],[X0,Y1,Z0],[X0,Y0,Z0]] },
+        { s: 1.00, v: [[X0,Y1,Z0],[X0,Y1,Z1],[X1,Y1,Z1], [X0,Y1,Z0],[X1,Y1,Z1],[X1,Y1,Z0]] },
+        { s: 0.60, v: [[X0,Y0,Z0],[X1,Y0,Z0],[X1,Y0,Z1], [X0,Y0,Z0],[X1,Y0,Z1],[X0,Y0,Z1]] },
+        { s: 0.86, v: [[X0,Y0,Z1],[X1,Y0,Z1],[X1,Y1,Z1], [X0,Y0,Z1],[X1,Y1,Z1],[X0,Y1,Z1]] },
+        { s: 0.68, v: [[X0,Y1,Z0],[X1,Y1,Z0],[X1,Y0,Z0], [X0,Y1,Z0],[X1,Y0,Z0],[X0,Y0,Z0]] }
+      ];
+      for (const f of faces) {
+        const cr = r * f.s, cg = g * f.s, cb = b * f.s;
+        for (const p of f.v) {
+          tris.push(p[0], p[1], p[2], cr, cg, cb, a);
+        }
+      }
+    }
+
+    function pushLine(lines, x0, y0, z0, x1, y1, z1, r, g, b, a) {
+      lines.push(x0, z0, y0, r, g, b, a, x1, z1, y1, r, g, b, a);
+    }
+
+    function makeMVP(aspect) {
+      const fov = 42 * Math.PI / 180;
+      const f = 1.0 / Math.tan(fov / 2);
+      const near = 10.0, far = 2500.0;
+      const proj = [
+        f / aspect, 0, 0, 0,
+        0, f, 0, 0,
+        0, 0, (far + near) / (near - far), -1,
+        0, 0, (2 * far * near) / (near - far), 0
+      ];
+
+      const dist = 560.0 / zoom;
+      const targetY = 95.0; // vertical center of pool column
+      const eyeX = dist * Math.cos(pitch) * Math.sin(yaw);
+      const eyeY = targetY + dist * Math.sin(pitch);
+      const eyeZ = dist * Math.cos(pitch) * Math.cos(yaw);
+
+      const z0 = eyeX, z1 = eyeY - targetY, z2 = eyeZ;
+      const zLen = Math.hypot(z0, z1, z2) || 1;
+      const zx = z0 / zLen, zy = z1 / zLen, zz = z2 / zLen;
+
+      let ux = 0, uy = 1, uz = 0;
+      let xx = uy * zz - uz * zy;
+      let xy = uz * zx - ux * zz;
+      let xz = ux * zy - uy * zx;
+      const xLen = Math.hypot(xx, xy, xz) || 1;
+      xx /= xLen; xy /= xLen; xz /= xLen;
+
+      ux = zy * xz - zz * xy;
+      uy = zz * xx - zx * xz;
+      uz = zx * xy - zy * xx;
+
+      const view = [
+        xx, ux, zx, 0,
+        xy, uy, zy, 0,
+        xz, uz, zz, 0,
+        -(xx * eyeX + xy * eyeY + xz * eyeZ),
+        -(ux * eyeX + uy * eyeY + uz * eyeZ),
+        -(zx * eyeX + zy * eyeY + zz * eyeZ),
+        1
+      ];
+
+      const out = new Float32Array(16);
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          out[c * 4 + r] =
+            proj[0 * 4 + r] * view[c * 4 + 0] +
+            proj[1 * 4 + r] * view[c * 4 + 1] +
+            proj[2 * 4 + r] * view[c * 4 + 2] +
+            proj[3 * 4 + r] * view[c * 4 + 3];
+        }
+      }
+      return out;
+    }
+
+    function render3DScene() {
+      if (!gl) return;
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      if (w <= 0 || h <= 0) return;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const cw = Math.round(w * dpr);
+      const ch = Math.round(h * dpr);
+      if (glCanvas.width !== cw || glCanvas.height !== ch) {
+        glCanvas.width = cw;
+        glCanvas.height = ch;
+      }
+
+      gl.viewport(0, 0, cw, ch);
+      gl.enable(gl.DEPTH_TEST);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.clearColor(0.027, 0.067, 0.102, 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+      const solidTris = [];
+      const alphaTris = [];
+      const lines = [];
+
+      // 1. Cylindrical open pool wireframe (R = 120 cm, z in [-120, 360] cm)
+      const R_POOL = 110.0;
+      const segs = 48;
+      for (const zRing of [-110, 0, 120, 240, 340]) {
+        const isTop = zRing === 340;
+        for (let i = 0; i < segs; i++) {
+          const a0 = (2 * Math.PI * i) / segs;
+          const a1 = (2 * Math.PI * (i + 1)) / segs;
+          pushLine(
+            lines,
+            R_POOL * Math.cos(a0), R_POOL * Math.sin(a0), zRing,
+            R_POOL * Math.cos(a1), R_POOL * Math.sin(a1), zRing,
+            isTop ? 0.22 : 0.13, isTop ? 0.74 : 0.34, isTop ? 0.97 : 0.52, isTop ? 0.85 : 0.45
+          );
+        }
+      }
+      for (let i = 0; i < 8; i++) {
+        const a = (2 * Math.PI * i) / 8;
+        pushLine(
+          lines,
+          R_POOL * Math.cos(a), R_POOL * Math.sin(a), -110,
+          R_POOL * Math.cos(a), R_POOL * Math.sin(a), 340,
+          0.12, 0.28, 0.44, 0.40
+        );
+      }
+
+      // 2. 6x7 IAEA-TECDOC-643 MTR Core Lattice (23 SFE + 5 CFE + 2 FT + 12 GR) & OpenMC 123.2x133.7x180.0 cm Reflector Box
+      const rx = 61.6, ry = 66.85, rz = 90.0;
+      for (const zz of [-rz, rz]) {
+        pushLine(lines, -rx, -ry, zz,  rx, -ry, zz, 0.22, 0.56, 0.78, 0.36);
+        pushLine(lines,  rx, -ry, zz,  rx,  ry, zz, 0.22, 0.56, 0.78, 0.36);
+        pushLine(lines,  rx,  ry, zz, -rx,  ry, zz, 0.22, 0.56, 0.78, 0.36);
+        pushLine(lines, -rx,  ry, zz, -rx, -ry, zz, 0.22, 0.56, 0.78, 0.36);
+      }
+      const lat = NeutronTransportReference.coreLattice6x7;
+      const dxPitch = 7.7, dyPitch = 8.1;
+      const hxCore = 23.1, hyCore = 28.35;
+      for (let row = 0; row < 7; row++) {
+        for (let col = 0; col < 6; col++) {
+          const kind = lat[row][col];
+          const cx = -hxCore + dxPitch * (col + 0.5);
+          const cy =  hyCore - dyPitch * (row + 0.5);
+          const x0 = cx - 3.4, x1 = cx + 3.4;
+          const y0 = cy - 3.6, y1 = cy + 3.6;
+
+          let r = 0.72, g = 0.42, b = 0.28;
+          if (kind === 'CFE') { r = 0.20; g = 0.76; b = 0.54; }
+          else if (kind === 'GR' || kind === 'REF') { r = 0.45; g = 0.52; b = 0.58; }
+          else if (kind === 'FT' || kind === 'TRAP') { r = 0.22; g = 0.74; b = 0.98; }
+
+          if (showCoreOverlay && (kind === 'SFE' || kind === 'CFE')) {
+            const st = PoolThermalHydraulicsSynthetic.evaluatePointState(cx, cy, 0.0, timeIdx, bladePct);
+            const boost = Math.min(1.0, st.powerDensity / 140.0);
+            r = Math.min(1.0, r + 0.25 * boost);
+            g = Math.min(1.0, g + 0.18 * boost);
+          }
+          pushBox(solidTris, x0, x1, y0, y1, -30.0, 30.0, r, g, b, 1.0);
+
+          // Render movable B4C absorber blade above CFE positions (C2, E3, B4, E5, C6)
+          if (kind === 'CFE') {
+            const bladeBottomZ = -30.0 + 0.60 * bladePct;
+            const bladeTopZ = bladeBottomZ + 60.0;
+            pushBox(solidTris, cx - 2.6, cx + 2.6, cy - 0.9, cy + 0.9, bladeBottomZ, bladeTopZ, 0.16, 0.85, 0.62, 1.0);
+          }
+        }
+      }
+
+      // 3. External Stage 1-4 Surrogate Water-Loop & PIE Coupon Rig (x = +132 cm, physically isolated from pool)
+      if (showSurrogateRig) {
+        pushBox(solidTris, 126.0, 140.0, -10.0, 10.0, -45.0, 75.0, 0.35, 0.48, 0.62, 0.92);
+        // 316L SS PIE Coupons inside the surrogate bypass column
+        for (const cz of [-20.0, 10.0, 40.0]) {
+          pushBox(solidTris, 129.0, 137.0, -4.0, 4.0, cz - 6.0, cz + 6.0, 0.95, 0.62, 0.14, 1.0);
+        }
+        // Isolation bracket lines showing zero fluid return to reactor core
+        pushLine(lines, 110.0, 0.0, 65.0, 126.0, 0.0, 65.0, 0.96, 0.62, 0.04, 0.85);
+        pushLine(lines, 110.0, 0.0, -35.0, 126.0, 0.0, -35.0, 0.96, 0.62, 0.04, 0.85);
+      }
+
+      // 4. 3D Velocity Vectors & Buoyant Streamlines inside the pool
+      const fMeta = PoolThermalHydraulicsSynthetic.fieldRegistry[currentField];
+      if (fMeta && fMeta.available) {
+        if (showStreamlines) {
+          const seedRadii = [10.0, 24.0, 38.0, 68.0];
+          const seedAngles = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2, Math.PI / 4, (5 * Math.PI) / 4];
+          for (const sr of seedRadii) {
+            for (const sa of seedAngles) {
+              let px = sr * Math.cos(sa);
+              let py = sr * Math.sin(sa);
+              let pz = sr < 45.0 ? -55.0 : 260.0;
+              const dt = 28.0;
+              for (let step = 0; step < 26; step++) {
+                const st = PoolThermalHydraulicsSynthetic.evaluatePointState(px, py, pz, timeIdx, bladePct);
+                const nx = px + st.ux * dt * (sr < 45.0 ? 1.0 : -1.0);
+                const ny = py + st.uy * dt * (sr < 45.0 ? 1.0 : -1.0);
+                const nz = pz + st.uz * dt * (sr < 45.0 ? 1.0 : -1.0);
+                if (nz < -105.0 || nz > 335.0 || Math.hypot(nx, ny) > 102.0) break;
+                const normT = (st.tempK - 305.15) / 36.0;
+                const rgb = tempColorRGB(normT, currentField);
+                pushLine(lines, px, py, pz, nx, ny, nz, rgb[0], rgb[1], rgb[2], 0.88);
+                px = nx; py = ny; pz = nz;
+              }
+            }
+          }
+        }
+
+        if (showVectors) {
+          for (let z = -60.0; z <= 300.0; z += 45.0) {
+            for (const r of [14.0, 34.0, 66.0]) {
+              for (let a = 0; a < 4; a++) {
+                const ang = (a * Math.PI) / 2 + 0.35;
+                const vx = r * Math.cos(ang);
+                const vy = r * Math.sin(ang);
+                const st = PoolThermalHydraulicsSynthetic.evaluatePointState(vx, vy, z, timeIdx, bladePct);
+                const scale = 52.0;
+                const ex = vx + st.ux * scale;
+                const ey = vy + st.uy * scale;
+                const ez = z + st.uz * scale;
+                pushLine(lines, vx, vy, z, ex, ey, ez, 0.45, 0.90, 1.0, 0.92);
+              }
+            }
+          }
+        }
+
+        // Translucent vertical thermal plume slice quads at y = slicePosCm
+        const nzSteps = 18, nxSteps = 14;
+        for (let iz = 0; iz < nzSteps; iz++) {
+          const z0 = -90.0 + (iz / nzSteps) * 410.0;
+          const z1 = -90.0 + ((iz + 1) / nzSteps) * 410.0;
+          const zm = 0.5 * (z0 + z1);
+          for (let ix = 0; ix < nxSteps; ix++) {
+            const x0 = -84.0 + (ix / nxSteps) * 168.0;
+            const x1 = -84.0 + ((ix + 1) / nxSteps) * 168.0;
+            const xm = 0.5 * (x0 + x1);
+            const st = PoolThermalHydraulicsSynthetic.evaluatePointState(xm, slicePosCm, zm, timeIdx, bladePct);
+            let norm = 0.0;
+            if (currentField === 'water_temperature_K') norm = (st.tempK - 305.15) / 36.0;
+            else if (currentField === 'velocity_magnitude_m_s') norm = st.vMag / 0.45;
+            else if (currentField === 'power_density_W_cm3') norm = st.powerDensity / 140.0;
+            else if (currentField === 'thermal_flux_n_cm2_s') norm = st.thermalFlux / 2.2e14;
+            else norm = st.wallShearPa / 2.2;
+            if (norm > 0.06) {
+              const rgb = tempColorRGB(norm, currentField);
+              const alpha = Math.min(0.46, 0.08 + 0.40 * norm);
+              pushBox(alphaTris, x0, x1, slicePosCm - 0.6, slicePosCm + 0.6, z0, z1, rgb[0], rgb[1], rgb[2], alpha);
+            }
+          }
+        }
+      }
+
+      gl.useProgram(glProg);
+      const uMVP = gl.getUniformLocation(glProg, 'uMVP');
+      const aPos = gl.getAttribLocation(glProg, 'aPos');
+      const aColor = gl.getAttribLocation(glProg, 'aColor');
+      gl.uniformMatrix4fv(uMVP, false, makeMVP(cw / ch));
+
+      const drawBuf = (arr, mode, depthMask) => {
+        if (arr.length === 0) return;
+        gl.depthMask(depthMask);
+        gl.bindBuffer(gl.ARRAY_BUFFER, mode === gl.LINES ? glLineBuf : glTriBuf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.DYNAMIC_DRAW);
+        gl.enableVertexAttribArray(aPos);
+        gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 28, 0);
+        gl.enableVertexAttribArray(aColor);
+        gl.vertexAttribPointer(aColor, 4, gl.FLOAT, false, 28, 12);
+        gl.drawArrays(mode, 0, arr.length / 7);
+      };
+
+      drawBuf(solidTris, gl.TRIANGLES, true);
+      drawBuf(lines, gl.LINES, true);
+      drawBuf(alphaTris, gl.TRIANGLES, false);
+      gl.depthMask(true);
+    }
+
+    // =========================================================================
+    // 2-D Cut-Plane & Explicit UNAVAILABLE Field Renderer (Gate 3)
+    // =========================================================================
+    function renderSliceView() {
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      if (w <= 0 || h <= 0) return;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      sliceCanvas.width = Math.round(w * dpr);
+      sliceCanvas.height = Math.round(h * dpr);
+      const ctx = sliceCanvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = '#07111a';
+      ctx.fillRect(0, 0, w, h);
+
+      const fMeta = PoolThermalHydraulicsSynthetic.fieldRegistry[currentField];
+      if (!fMeta || !fMeta.available) {
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(48, 64, w - 96, h - 128);
+        ctx.fillStyle = 'rgba(127, 29, 29, 0.22)';
+        ctx.fillRect(48, 64, w - 96, h - 128);
+
+        ctx.fillStyle = '#fca5a5';
+        ctx.font = '700 15px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(`FIELD EXPLICITLY UNAVAILABLE: ${currentField}`, w / 2, h / 2 - 28);
+        ctx.fillStyle = '#e6f0f8';
+        ctx.font = '13px sans-serif';
+        ctx.fillText(fMeta ? fMeta.status : 'Missing dataset', w / 2, h / 2 + 4);
+        ctx.fillStyle = '#8ca5bc';
+        ctx.font = '12px monospace';
+        ctx.fillText('Gate 3 Discipline: Missing experimental or solver fields are never invented in-browser (values = null).', w / 2, h / 2 + 34);
+        return;
+      }
+
+      const padL = 64, padR = 160, padT = 52, padB = 44;
+      const plotW = w - padL - padR;
+      const plotH = h - padT - padB;
+      const nu = 36, nv = 36;
+      const cellW = plotW / nu;
+      const cellH = plotH / nv;
+
+      const uMin = -110.0, uMax = 110.0;
+      const vMin = slicePlane === 'XY' ? -110.0 : -120.0;
+      const vMax = slicePlane === 'XY' ? 110.0 : 360.0;
+
+      for (let iv = 0; iv < nv; iv++) {
+        const vCoord = vMin + ((iv + 0.5) / nv) * (vMax - vMin);
+        for (let iu = 0; iu < nu; iu++) {
+          const uCoord = uMin + ((iu + 0.5) / nu) * (uMax - uMin);
+          const x = slicePlane === 'YZ' ? slicePosCm : uCoord;
+          const y = slicePlane === 'XZ' ? slicePosCm : (slicePlane === 'YZ' ? uCoord : vCoord);
+          const z = slicePlane === 'XY' ? slicePosCm : vCoord;
+
+          const st = PoolThermalHydraulicsSynthetic.evaluatePointState(x, y, z, timeIdx, bladePct);
+          let norm = 0.0;
+          if (currentField === 'water_temperature_K') norm = (st.tempK - 305.15) / 36.0;
+          else if (currentField === 'velocity_magnitude_m_s') norm = st.vMag / 0.45;
+          else if (currentField === 'power_density_W_cm3') norm = st.powerDensity / 140.0;
+          else if (currentField === 'thermal_flux_n_cm2_s') norm = st.thermalFlux / 2.2e14;
+          else norm = st.wallShearPa / 2.2;
+
+          const rgb = tempColorRGB(norm, currentField);
+          ctx.fillStyle = `rgb(${Math.round(rgb[0]*255)}, ${Math.round(rgb[1]*255)}, ${Math.round(rgb[2]*255)})`;
+          const px = padL + iu * cellW;
+          const py = padT + (nv - 1 - iv) * cellH;
+          ctx.fillRect(px, py, Math.ceil(cellW), Math.ceil(cellH));
+        }
+      }
+
+      // Draw 6x7 core lattice boundary and OpenMC reflector box outline on slice
+      const mapU = u => padL + ((u - uMin) / (uMax - uMin)) * plotW;
+      const mapV = v => padT + plotH - ((v - vMin) / (vMax - vMin)) * plotH;
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([4, 4]);
+      if (slicePlane === 'XY') {
+        ctx.strokeRect(mapU(-61.6), mapV(66.85), mapU(61.6) - mapU(-61.6), mapV(-66.85) - mapV(66.85));
+      } else {
+        const halfU = slicePlane === 'XZ' ? 61.6 : 66.85;
+        ctx.strokeRect(mapU(-halfU), mapV(90.0), mapU(halfU) - mapU(-halfU), mapV(-90.0) - mapV(90.0));
+      }
+      ctx.setLineDash([]);
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 1.6;
+      if (slicePlane === 'XY') {
+        ctx.strokeRect(mapU(-23.1), mapV(28.35), mapU(23.1) - mapU(-23.1), mapV(-28.35) - mapV(28.35));
+      } else {
+        const halfCoreU = slicePlane === 'XZ' ? 23.1 : 28.35;
+        ctx.strokeRect(mapU(-halfCoreU), mapV(30.0), mapU(halfCoreU) - mapU(-halfCoreU), mapV(-30.0) - mapV(30.0));
+      }
+
+      // Draw velocity arrows on 2D slice
+      if (showVectors && slicePlane !== 'XY') {
+        ctx.strokeStyle = 'rgba(230, 240, 248, 0.82)';
+        ctx.lineWidth = 1.2;
+        for (let iv = 2; iv < nv; iv += 4) {
+          const z = vMin + ((iv + 0.5) / nv) * (vMax - vMin);
+          for (let iu = 2; iu < nu; iu += 4) {
+            const u = uMin + ((iu + 0.5) / nu) * (uMax - uMin);
+            const x = slicePlane === 'XZ' ? u : slicePosCm;
+            const y = slicePlane === 'XZ' ? slicePosCm : u;
+            const st = PoolThermalHydraulicsSynthetic.evaluatePointState(x, y, z, timeIdx, bladePct);
+            const uVel = slicePlane === 'XZ' ? st.ux : st.uy;
+            const px = mapU(u);
+            const py = mapV(z);
+            const ex = px + uVel * 36.0;
+            const ey = py - st.uz * 36.0;
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(ex, ey);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw external PIE Surrogate Loop callout on right margin
+      if (showSurrogateRig) {
+        const rx = w - padR + 18;
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(rx, padT + 20, 124, plotH - 40);
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.10)';
+        ctx.fillRect(rx, padT + 20, 124, plotH - 40);
+        ctx.fillStyle = '#fcd34d';
+        ctx.font = '700 11px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('EXTERNAL PIE LOOP', rx + 62, padT + 40);
+        ctx.fillStyle = '#8ca5bc';
+        ctx.font = '10.5px monospace';
+        ctx.fillText('316L SS Coupons', rx + 62, padT + 58);
+        const stRig = PoolThermalHydraulicsSynthetic.evaluatePointState(115.0, 0.0, 0.0, timeIdx, bladePct);
+        ctx.fillStyle = '#86efac';
+        ctx.fillText(`tau_w = ${stRig.wallShearPa.toFixed(2)} Pa`, rx + 62, padT + 78);
+        ctx.fillStyle = '#e6f0f8';
+        ctx.fillText('Sandia 2024: NULL', rx + 62, padT + 102);
+        ctx.fillText('cpm-sp-v1: NULL', rx + 62, padT + 118);
+        ctx.fillStyle = '#fca5a5';
+        ctx.fillText('Zero Core Feedback', rx + 62, padT + 140);
+      }
+
+      ctx.fillStyle = '#e6f0f8';
+      ctx.font = '700 12.5px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(
+        `${fMeta.label} [${fMeta.units}] | ${slicePlane} Cut Plane at ${slicePosCm.toFixed(1)} cm | t = ${PoolThermalHydraulicsSynthetic.timeStepsS[timeIdx]} s`,
+        padL, 28
+      );
+    }
+
+    // =========================================================================
+    // Benchmark & Conservation Gate Audit Plotter (Gate 4)
+    // =========================================================================
+    function renderAuditView() {
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      if (w <= 0 || h <= 0) return;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      auditCanvas.width = Math.round(w * dpr);
+      auditCanvas.height = Math.round(h * dpr);
+      const ctx = auditCanvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = '#07111a';
+      ctx.fillRect(0, 0, w, h);
+
+      const midX = Math.floor(w / 2);
+      // Left plot: TECDOC-643 5-point blade sweep k_eff
+      const L1 = 58, R1 = midX - 24, T1 = 62, B1 = h - 54;
+      const pw1 = R1 - L1, ph1 = B1 - T1;
+      ctx.strokeStyle = '#22364d';
+      ctx.strokeRect(L1, T1, pw1, ph1);
+      ctx.fillStyle = '#e6f0f8';
+      ctx.font = '700 12px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('TECDOC-643 Control-Blade Sweep (Worth: 18,634.714 +/- 120.375 pcm)', L1, T1 - 12);
+
+      const pcts = NeutronTransportReference.withdrawnPct;
+      const ks = NeutronTransportReference.sweepK;
+      const X1 = p => L1 + (p / 100.0) * pw1;
+      const Y1 = k => B1 - ((k - 0.95) / (1.22 - 0.95)) * ph1;
+
+      // k = 1 critical line
+      ctx.strokeStyle = '#f59e0b';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(L1, Y1(1.0)); ctx.lineTo(R1, Y1(1.0)); ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      for (let i = 0; i < pcts.length; i++) {
+        const px = X1(pcts[i]), py = Y1(ks[i]);
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      for (let i = 0; i < pcts.length; i++) {
+        const px = X1(pcts[i]), py = Y1(ks[i]);
+        ctx.fillStyle = Math.round(pcts[i]) === Math.round(bladePct) ? '#fde047' : '#38bdf8';
+        ctx.beginPath(); ctx.arc(px, py, 4.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#8ca5bc';
+        ctx.font = '10.5px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${pcts[i]}%`, px, B1 + 16);
+      }
+
+      // Right plot: 12-point depletion curve & k=1 crossing at Day 340.2540
+      const L2 = midX + 36, R2 = w - 28, T2 = 62, B2 = h - 54;
+      const pw2 = R2 - L2, ph2 = B2 - T2;
+      ctx.strokeStyle = '#22364d';
+      ctx.strokeRect(L2, T2, pw2, ph2);
+      const tCross = ReactorKineticsAlgebra.interpolatedKCrossingDay();
+      ctx.fillStyle = '#e6f0f8';
+      ctx.font = '700 12px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(`10 MW MTR Depletion Curve (Linear k=1 Crossing: Day ${tCross.toFixed(4)})`, L2, T2 - 12);
+
+      const bDays = NeutronTransportReference.burnDays;
+      const bKs = NeutronTransportReference.burnK;
+      const X2 = d => L2 + (d / 350.0) * pw2;
+      const Y2 = k => B2 - ((k - 0.98) / (1.22 - 0.98)) * ph2;
+
+      ctx.strokeStyle = '#f59e0b';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(L2, Y2(1.0)); ctx.lineTo(R2, Y2(1.0)); ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.strokeStyle = '#22c55e';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      for (let i = 0; i < bDays.length; i++) {
+        const px = X2(bDays[i]), py = Y2(bKs[i]);
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      const cxCross = X2(tCross), cyCross = Y2(1.0);
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath(); ctx.arc(cxCross, cyCross, 5.5, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // =========================================================================
+    // Master Update & Acceptance Gate Verification API
+    // =========================================================================
+    function updateAll() {
+      const snap = PoolThermalHydraulicsSynthetic.computeSnapshotSummary(timeIdx, bladePct);
+      const fMeta = PoolThermalHydraulicsSynthetic.fieldRegistry[currentField];
+      const sweepRows = ReactorKineticsAlgebra.buildBladeSweepTable();
+      const activeSweep = sweepRows.find(r => Math.round(r.withdrawnPct) === Math.round(bladePct)) || sweepRows[3];
+
+      document.getElementById('timeLabel').textContent = `t = ${snap.timeS} s`;
+      document.getElementById('chipTime').textContent =
+        `t = ${snap.timeS} s (Synthetic Boussinesq Plume Snapshot #${timeIdx + 1}/${PoolThermalHydraulicsSynthetic.timeStepsS.length})`;
+      document.getElementById('chipField').textContent =
+        `Field: ${fMeta.label} [${fMeta.units}] (Class: ${fMeta.evidenceClassification.toUpperCase()})`;
+      const rhoSign = activeSweep.reactivityPcm >= 0 ? '+' : '';
+      document.getElementById('chipKinetics').textContent =
+        `Blades: ${bladePct}% Out | k_eff = ${activeSweep.kEff.toFixed(5)} +/- ${activeSweep.sigmaK.toFixed(5)} (${rhoSign}${activeSweep.reactivityPcm.toFixed(1)} pcm)`;
+
+      document.getElementById('kpiTemp').textContent = `${snap.maxTempK.toFixed(1)} K`;
+      document.getElementById('kpiTempSub').textContent = `Inlet: ${snap.inletTempK.toFixed(1)} K (dT = +${(snap.maxTempK - snap.inletTempK).toFixed(1)} K)`;
+      document.getElementById('kpiVel').textContent = `${snap.maxVelMS.toFixed(3)} m/s`;
+      document.getElementById('kpiVelSub').textContent = `Max |div(u)|: ${snap.maxAbsDivU.toExponential(2)} 1/s`;
+      document.getElementById('lblShear').textContent = `${snap.surrogateCouponWallShearPa.toFixed(2)} Pa`;
+
+      populateTables();
+
+      if (renderMode === '3d' && gl && fMeta.available) {
+        glCanvas.hidden = false;
+        sliceCanvas.hidden = true;
+        auditCanvas.hidden = true;
+        render3DScene();
+      } else if (renderMode === 'audit') {
+        glCanvas.hidden = true;
+        sliceCanvas.hidden = true;
+        auditCanvas.hidden = false;
+        renderAuditView();
+      } else {
+        glCanvas.hidden = true;
+        sliceCanvas.hidden = false;
+        auditCanvas.hidden = true;
+        renderSliceView();
+      }
+    }
+
+    function setRenderMode(m) {
+      if (m === '3d' && !gl) m = 'slice';
+      renderMode = m;
+      document.getElementById('btnMode3d').classList.toggle('on', m === '3d');
+      document.getElementById('btnModeSlice').classList.toggle('on', m === 'slice');
+      document.getElementById('btnModeAudit').classList.toggle('on', m === 'audit');
+      updateAll();
+    }
+
+    document.getElementById('btnMode3d').onclick = () => setRenderMode('3d');
+    document.getElementById('btnModeSlice').onclick = () => setRenderMode('slice');
+    document.getElementById('btnModeAudit').onclick = () => setRenderMode('audit');
+
+    document.getElementById('selField').onchange = e => {
+      currentField = e.target.value;
+      const fMeta = PoolThermalHydraulicsSynthetic.fieldRegistry[currentField];
+      if (!fMeta || !fMeta.available) {
+        setRenderMode('slice');
+      } else {
+        updateAll();
+      }
+    };
+
+    document.getElementById('timeSlider').oninput = e => {
+      timeIdx = Number(e.target.value);
+      updateAll();
+    };
+
+    document.getElementById('selBlade').onchange = e => {
+      bladePct = Number(e.target.value);
+      updateAll();
+    };
+
+    window.setPoolBladePct = function(pct) {
+      const valid = [0, 25, 50, 75, 100];
+      if (valid.includes(Number(pct))) {
+        bladePct = Number(pct);
+        document.getElementById('selBlade').value = String(bladePct);
+        updateAll();
+        return true;
+      }
+      return false;
+    };
+
+    for (const p of ['XZ', 'YZ', 'XY']) {
+      document.getElementById('btnPlane' + p).onclick = () => {
+        slicePlane = p;
+        ['XZ', 'YZ', 'XY'].forEach(q => document.getElementById('btnPlane' + q).classList.toggle('on', q === p));
+        document.getElementById('sliceAxisLbl').textContent = p === 'XZ' ? 'y' : p === 'YZ' ? 'x' : 'z';
+        updateAll();
+      };
+    }
+
+    document.getElementById('sliceSlider').oninput = e => {
+      slicePosCm = Number(e.target.value);
+      document.getElementById('slicePosLbl').textContent = `${slicePosCm.toFixed(1)} cm`;
+      updateAll();
+    };
+
+    document.getElementById('chkVectors').onchange = e => { showVectors = e.target.checked; updateAll(); };
+    document.getElementById('chkStreamlines').onchange = e => { showStreamlines = e.target.checked; updateAll(); };
+    document.getElementById('chkCoreOverlay').onchange = e => { showCoreOverlay = e.target.checked; updateAll(); };
+    document.getElementById('chkSurrogateRig').onchange = e => { showSurrogateRig = e.target.checked; updateAll(); };
+
+    document.getElementById('btnPlay').onclick = () => {
+      if (playTimer) {
+        clearInterval(playTimer);
+        playTimer = null;
+        document.getElementById('btnPlay').textContent = 'Play Timeline';
+        document.getElementById('btnPlay').classList.remove('on');
+        return;
+      }
+      if (timeIdx >= PoolThermalHydraulicsSynthetic.timeStepsS.length - 1) timeIdx = 0;
+      document.getElementById('btnPlay').textContent = 'Pause';
+      document.getElementById('btnPlay').classList.add('on');
+      playTimer = setInterval(() => {
+        timeIdx++;
+        if (timeIdx >= PoolThermalHydraulicsSynthetic.timeStepsS.length) {
+          timeIdx = PoolThermalHydraulicsSynthetic.timeStepsS.length - 1;
+          clearInterval(playTimer);
+          playTimer = null;
+          document.getElementById('btnPlay').textContent = 'Play Timeline';
+          document.getElementById('btnPlay').classList.remove('on');
+        }
+        document.getElementById('timeSlider').value = String(timeIdx);
+        updateAll();
+      }, 420);
+    };
+
+    glCanvas.addEventListener('pointerdown', e => {
+      dragging = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      glCanvas.setPointerCapture(e.pointerId);
+    });
+    glCanvas.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      yaw -= (e.clientX - lastX) * 0.008;
+      pitch = Math.max(-1.25, Math.min(1.25, pitch + (e.clientY - lastY) * 0.006));
+      lastX = e.clientX;
+      lastY = e.clientY;
+      updateAll();
+    });
+    glCanvas.addEventListener('pointerup', () => { dragging = false; });
+    glCanvas.addEventListener('pointercancel', () => { dragging = false; });
+    glCanvas.addEventListener('wheel', e => {
+      e.preventDefault();
+      zoom = Math.max(0.55, Math.min(2.2, zoom * (e.deltaY < 0 ? 1.08 : 0.92)));
+      updateAll();
+    }, { passive: false });
+
+    new ResizeObserver(() => updateAll()).observe(stage);
+    window.addEventListener('resize', () => updateAll());
+
+    // Gate 0-4 Acceptance Test Suite callable from headless Chrome & CI
+    window.verifyPoolWaterAcceptanceGates = function() {
+      const sweep = ReactorKineticsAlgebra.buildBladeSweepTable();
+      const totalWorthPcm = sweep[0].worthToFullyWithdrawnPcm;
+      const totalWorthSigmaPcm = sweep[0].worthSigmaPcm;
+      const twoPt = NeutronTransportReference.twoPointReference;
+      const twoPointWorthPcm = 1.0e5 * ReactorKineticsAlgebra.deltaRho(twoPt.kAllIn, twoPt.kAllOut);
+      const twoPointWorthSigmaPcm = ReactorKineticsAlgebra.worthSigmaPcm(
+        twoPt.kAllIn, twoPt.sigmaAllIn, twoPt.kAllOut, twoPt.sigmaAllOut
+      );
+      const kCrossingDay = ReactorKineticsAlgebra.interpolatedKCrossingDay();
+      const day0To5DropPcm = 1.0e5 * ReactorKineticsAlgebra.deltaRho(
+        NeutronTransportReference.burnK[0],
+        NeutronTransportReference.burnK[1]
+      );
+
+      let sfeCount = 0, cfeCount = 0, ftCount = 0, grCount = 0;
+      for (const row of NeutronTransportReference.coreLattice6x7) {
+        for (const cell of row) {
+          if (cell === 'SFE') sfeCount++;
+          else if (cell === 'CFE') cfeCount++;
+          else if (cell === 'FT') ftCount++;
+          else if (cell === 'GR') grCount++;
+        }
+      }
+
+      const snap0 = PoolThermalHydraulicsSynthetic.computeSnapshotSummary(0, 75);
+      const snap5 = PoolThermalHydraulicsSynthetic.computeSnapshotSummary(5, 75);
+
+      const reg = PoolThermalHydraulicsSynthetic.fieldRegistry;
+      const unavailableFields = [
+        reg.validated_cfd_pressure_Pa,
+        reg.empirical_piv_temperature,
+        reg.live_coupled_openmc_cfd_statepoint
+      ];
+      const missingFieldsRemainUnavailable = unavailableFields.every(
+        f => f && f.available === false && f.values === null && f.evidenceClassification === 'unavailable'
+      );
+
+      return {
+        schema: 'oklo_tecdoc_poolwater_benchmark_contract_v1',
+        gate0_provenancePreserved:
+          NeutronTransportReference.datasetId === 'tecdoc643_neutron_walk_transcribed_table_v0' &&
+          NeutronTransportReference.provenanceStatus === 'transcribed_unverified_reference_fixture',
+        gate1_bladeWorthPcm: Number(totalWorthPcm.toFixed(6)),
+        gate1_bladeWorthSigmaPcm: Number(totalWorthSigmaPcm.toFixed(6)),
+        gate1_twoPointWorthPcm: Number(twoPointWorthPcm.toFixed(6)),
+        gate1_twoPointWorthSigmaPcm: Number(twoPointWorthSigmaPcm.toFixed(6)),
+        gate1_kCrossingDay: Number(kCrossingDay.toFixed(6)),
+        gate1_day0To5DropPcm: Number(day0To5DropPcm.toFixed(6)),
+        gate1_latticeCounts: {
+          sfe: sfeCount,
+          cfe: cfeCount,
+          ft: ftCount,
+          gr: grCount,
+          total: sfeCount + cfeCount + ftCount + grCount
+        },
+        gate2_modulesIndependent:
+          NeutronTransportReference.isLiveOpenMCSolver === false &&
+          NeutronTransportReference.transfersToAnnularMTRCore === false &&
+          NeutronTransportReference.mixesOkloAnalyticVoxelsIntoPoolCFD === false &&
+          PoolThermalHydraulicsSynthetic.mixesOkloAnalyticVoxels === false &&
+          SurrogateLoopBiofilmPIEBoundary.altersReactorKineticsOrPoolCFD === false &&
+          SurrogateLoopBiofilmPIEBoundary.impliesOperatingMTRPoolBiofilmIssue === false &&
+          SurrogateLoopBiofilmPIEBoundary.canIssueCgmpVerdict === false,
+        gate3_timeStepCount: PoolThermalHydraulicsSynthetic.timeStepsS.length,
+        gate3_gridCellCount: snap5.totalCells,
+        gate3_maxAbsVelocityDivergence: snap5.maxAbsDivU,
+        gate3_plumeWarmsOverTime: snap5.maxTempK > snap0.maxTempK && snap0.maxTempK > snap0.inletTempK,
+        gate3_missingFieldsRemainUnavailable: missingFieldsRemainUnavailable,
+        gate4_pieStageCount: SurrogateLoopBiofilmPIEBoundary.stages.length,
+        gate4_plannedContrastCells: SurrogateLoopBiofilmPIEBoundary.experimentalMatrixDesign.plannedContrastCells,
+        gate4_fullFactorialCells: SurrogateLoopBiofilmPIEBoundary.experimentalMatrixDesign.fullCrossedFactorialCells,
+        gate4_glmmLayerCount: SurrogateLoopBiofilmPIEBoundary.multiphysicsGlmmLayers.length
+      };
+    };
+
+    try {
+      initWebGL();
+      setRenderMode('3d');
+    } catch (err) {
+      gl = null;
+      const btn3d = document.getElementById('btnMode3d');
+      btn3d.disabled = true;
+      btn3d.title = '3-D WebGL unavailable; using 2-D Cut-Plane fallback';
+      setRenderMode('slice');
+    }
+  })();
+  </script>
+</body>
+</html>
