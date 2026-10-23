@@ -74,18 +74,18 @@ function verifyArtifactHashes() {
     },
     {
       path: 'poolwater_interactive.html',
-      sha256: 'c3340543ded0e746153d39247d7ff106a00c61ec98996b9d9074cef97b0f8f76',
-      bytes: 73931
+      sha256: 'fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a',
+      bytes: 79610
     },
     {
       path: 'POOLWATER_WORKFLOW_SPEC.md',
-      sha256: '19144eafb188ab1d5fa2bb7d81ca97513d58a2c2b85ec1c74f1b809ea5c85b79',
-      bytes: 17490
+      sha256: '2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669',
+      bytes: 17684
     },
     {
       path: 'benchmark_manifest.json',
-      sha256: '2fbdf2e6b602494ad22a97e677b36a89514e33b2b8542397c162791551f6dcaf',
-      bytes: 10971
+      sha256: 'b41c6c99b26e4aa37b8ebab7b322b383da4a53b2af1342e3ebd6b63350f0bee4',
+      bytes: 11140
     }
   ];
 
@@ -100,9 +100,9 @@ function verifyArtifactHashes() {
     }
   }
   assert.ok(indexHtml.includes('dc15eb934fe6cd32...'), 'index.html missing Gate-0 REF-NW-HTML-01 SHA prefix');
-  assert.ok(indexHtml.includes('c3340543ded0e746...'), 'index.html missing POOLWATER-3D-INTERACTIVE-01 SHA prefix');
+  assert.ok(indexHtml.includes('fa0f0dc30c45681a...'), 'index.html missing POOLWATER-3D-INTERACTIVE-01 SHA prefix');
   assert.ok(indexHtml.includes('037e2050b70e92b7...'), 'index.html missing BIOFILMS-3D-CPM-01 SHA prefix');
-  console.log('PASS [1/9]: Gate-0 artifact hashes, byte counts, and manifests verified.');
+  console.log('PASS [1/10]: Gate-0 artifact hashes, byte counts, and manifests verified.');
   return expectedFiles;
 }
 
@@ -230,7 +230,7 @@ async function runTests() {
         assert.strictEqual(tab1State.poolDataSrc, 'poolwater_interactive.html');
         assert.strictEqual(tab1State.nwHiddenClass, true);
         assert.strictEqual(tab1State.poolHiddenClass, true);
-        console.log('PASS [2/9]: Hidden-tab lazy initialization verified (iframeNw, iframePool, iframeBio deferred on Tab 1).');
+        console.log('PASS [2/10]: Hidden-tab lazy initialization verified (iframeNw, iframePool, iframeBio deferred on Tab 1).');
         receipt.tests.lazy_init = 'PASS';
 
         // Test 3: Normal 3-D WebGL rendering on Tab 2 (unmodified Gate-0 tecdoc643_neutron_walk.html)
@@ -257,10 +257,32 @@ async function runTests() {
         assert.ok(nw3dState.glWidth > 400 && nw3dState.glHeight > 300, `Expected non-zero 3-D canvas size, got ${nw3dState.glWidth}x${nw3dState.glHeight}`);
         assert.notStrictEqual(nw3dState.kval, '\u2014', 'Tally k-eff should be computed');
         assert.ok(!nw3dState.ntot.includes('(0 neutrons)'), `Expected live neutron tally, got ${nw3dState.ntot}`);
-        console.log(`PASS [3/9]: TECDOC-643 3-D WebGL rendering verified on unmodified Gate-0 HTML (gl=${nw3dState.glWidth}x${nw3dState.glHeight}, k=${nw3dState.kval}).`);
+        console.log(`PASS [3/10]: TECDOC-643 3-D WebGL rendering verified on unmodified Gate-0 HTML (gl=${nw3dState.glWidth}x${nw3dState.glHeight}, k=${nw3dState.kval}).`);
         receipt.tests.tecdoc643_3d_webgl = nw3dState;
 
-        // Test 4: Biofilms 3-D Explorer WebGL rendering & 256-Seed 4-Arm Null Plot
+        // Test 4: Tab 3 Side-by-Side Split-View Layout (4D Spacetime + TECDOC-643 Neutron Walk)
+        await evalJson(`(() => { setView('split'); return 'true'; })()`);
+        await new Promise(r => setTimeout(r, 500));
+        const splitState = await evalJson(`(() => {
+          const grid = document.getElementById('viewerGrid');
+          const c4d = document.getElementById('card4d');
+          const cNw = document.getElementById('cardNw');
+          const cPool = document.getElementById('cardPool');
+          return JSON.stringify({
+            splitClass: grid.classList.contains('split'),
+            c4dHidden: c4d.classList.contains('is-hidden'),
+            cNwHidden: cNw.classList.contains('is-hidden'),
+            cPoolHidden: cPool.classList.contains('is-hidden')
+          });
+        })()`);
+        assert.strictEqual(splitState.splitClass, true);
+        assert.strictEqual(splitState.c4dHidden, false);
+        assert.strictEqual(splitState.cNwHidden, false);
+        assert.strictEqual(splitState.cPoolHidden, true);
+        console.log('PASS [4/10]: Tab 3 Side-by-Side Split-View layout verified (card4d + cardNw visible).');
+        receipt.tests.split_view_layout = splitState;
+
+        // Test 5: Biofilms 3-D Explorer WebGL rendering, 256-Seed 4-Arm TOST & #btnEnsSelection (cpm-sp-v1 H0-B vs H0-A + 15/16 phase-locking)
         await evalJson(`(() => { setView('bio'); return 'true'; })()`);
         await new Promise(r => setTimeout(r, 1500));
         const bio3dState = await evalJson(`(() => {
@@ -276,6 +298,11 @@ async function runTests() {
           const kpiMatch0 = d.getElementById('kpiMatch').textContent;
           d.getElementById('btnModeEnsemble').click();
           d.getElementById('btnEnsContrast').click();
+          const btnContrastOnBefore = d.getElementById('btnEnsContrast').classList.contains('on');
+          d.getElementById('btnEnsSelection').click();
+          const stageHintTxt = d.getElementById('stageHint').textContent;
+          const btnSelectionActive = d.getElementById('btnEnsSelection').classList.contains('on');
+          const btnContrastOnAfter = d.getElementById('btnEnsContrast').classList.contains('on');
           const statsAudit = ifr.contentWindow.verifyEnsembleStatisticalIntegrity();
           return JSON.stringify({
             embedded: d.documentElement.getAttribute('data-embedded'),
@@ -287,6 +314,10 @@ async function runTests() {
             kpiOcc100: kpiOcc,
             kpiOcc0,
             kpiMatch0,
+            btnContrastOnBefore,
+            btnContrastOnAfter,
+            stageHintTxt,
+            btnSelectionActive,
             manifestSha: d.getElementById('manifestSha').textContent,
             statsAudit
           });
@@ -297,20 +328,25 @@ async function runTests() {
         assert.strictEqual(bio3dState.kpiOcc100, '4,888');
         assert.strictEqual(bio3dState.kpiOcc0, '3,038');
         assert.strictEqual(bio3dState.kpiMatch0, '100.0%');
+        assert.strictEqual(bio3dState.btnContrastOnBefore, true);
+        assert.strictEqual(bio3dState.btnSelectionActive, true);
+        assert.strictEqual(bio3dState.btnContrastOnAfter, false);
+        assert.ok(bio3dState.stageHintTxt.includes('256-Seed 4-Arm Ensemble'));
         assert.strictEqual(bio3dState.statsAudit.seedCount, 256);
         assert.strictEqual(bio3dState.statsAudit.allSpeciesHave256PerArm, true);
         assert.strictEqual(bio3dState.statsAudit.allSeedKeyOrderInvariant, true);
         assert.strictEqual(bio3dState.statsAudit.allCiMatchReference, true);
         assert.strictEqual(bio3dState.statsAudit.allContrastsWithinEquivalenceBound, true);
-        console.log(`PASS [4/9]: Biofilms 3-D WebGL & 256-Seed 4-Arm TOST Statistical Integrity verified (${bio3dState.glWidth}x${bio3dState.glHeight}, 256 seeds).`);
+        console.log(`PASS [5/10]: Biofilms 3-D WebGL, 256-Seed 4-Arm TOST & #btnEnsSelection (cpm-sp-v1 H0-B vs H0-A + 15/16 phase-locking) verified (${bio3dState.glWidth}x${bio3dState.glHeight}, 256 seeds).`);
         receipt.tests.biofilms_3d_and_256_seed_tost = {
           glWidth: bio3dState.glWidth,
           glHeight: bio3dState.glHeight,
           seedCount: bio3dState.statsAudit.seedCount,
-          allContrastsWithinEquivalenceBound: bio3dState.statsAudit.allContrastsWithinEquivalenceBound
+          allContrastsWithinEquivalenceBound: bio3dState.statsAudit.allContrastsWithinEquivalenceBound,
+          selectionViewVerified: bio3dState.btnSelectionActive
         };
 
-        // Test 5: Pool-Water Interactive Viewer (Tab 6) WebGL, Gate 0-4 Acceptance Suite, Timeline Scrubbing & UNAVAILABLE Field Honesty
+        // Test 6: Pool-Water Interactive Viewer (Tab 6) WebGL, Gate 0-4 Acceptance Suite (including 6x7 lattice, 84.191 pcm 2M sigma, 5-row matrix, 4-layer GLMM), Timeline Scrubbing & UNAVAILABLE Field Honesty
         await evalJson(`(() => { setView('pool'); return 'true'; })()`);
         await new Promise(r => setTimeout(r, 1500));
         const poolState = await evalJson(`(() => {
@@ -363,7 +399,10 @@ async function runTests() {
         assert.ok(poolState.glWidth > 400 && poolState.glHeight > 350, `Expected sized Pool-Water 3D canvas, got ${poolState.glWidth}x${poolState.glHeight}`);
         assert.strictEqual(poolState.gates.gate0_provenancePreserved, true);
         assert.ok(Math.abs(poolState.gates.gate1_bladeWorthPcm - 18634.71413) < 0.01);
+        assert.ok(Math.abs(poolState.gates.gate1_twoPointWorthPcm - 18384.13889) < 0.01);
+        assert.ok(Math.abs(poolState.gates.gate1_twoPointWorthSigmaPcm - 84.191196) < 0.001);
         assert.ok(Math.abs(poolState.gates.gate1_kCrossingDay - 340.254042) < 0.001);
+        assert.deepStrictEqual(poolState.gates.gate1_latticeCounts, { sfe: 23, cfe: 5, ft: 2, gr: 12, total: 42 });
         assert.strictEqual(poolState.gates.gate2_modulesIndependent, true);
         assert.strictEqual(poolState.gates.gate3_timeStepCount, 6);
         assert.strictEqual(poolState.gates.gate3_gridCellCount, 6144);
@@ -371,48 +410,101 @@ async function runTests() {
         assert.strictEqual(poolState.gates.gate3_plumeWarmsOverTime, true);
         assert.strictEqual(poolState.gates.gate3_missingFieldsRemainUnavailable, true);
         assert.strictEqual(poolState.gates.gate4_pieStageCount, 4);
+        assert.strictEqual(poolState.gates.gate4_plannedContrastCells, 15);
+        assert.strictEqual(poolState.gates.gate4_fullFactorialCells, 24);
+        assert.strictEqual(poolState.gates.gate4_glmmLayerCount, 4);
         assert.strictEqual(poolState.timeLabel5, 't = 600 s');
         assert.strictEqual(poolState.unavailGlHidden, true, '3D canvas must hide when an UNAVAILABLE field is selected');
         assert.strictEqual(poolState.unavailSlHidden, false, '2D canvas must display UNAVAILABLE notice when an UNAVAILABLE field is selected');
         assert.ok(poolState.chipFieldUnavail.includes('UNAVAILABLE'));
         assert.strictEqual(poolState.auditHidden, false);
         assert.ok(poolState.auditWidth > 400);
-        console.log(`PASS [5/9]: Pool-Water Interactive 3-D WebGL & Gate 0-4 acceptance suite verified (${poolState.glWidth}x${poolState.glHeight}, worth=${poolState.gates.gate1_bladeWorthPcm} pcm, max|div u|=${poolState.gates.gate3_maxAbsVelocityDivergence}).`);
-        console.log(`PASS [6/9]: Pool-Water explicit UNAVAILABLE field honesty & Audit plotter verified (${poolState.chipFieldUnavail}).`);
+        console.log(`PASS [6/10]: Pool-Water Interactive 3-D WebGL & Gate 0-4 acceptance suite verified (${poolState.glWidth}x${poolState.glHeight}, 6x7 lattice=42 cells, worth=${poolState.gates.gate1_bladeWorthPcm} pcm, 2M sigma=${poolState.gates.gate1_twoPointWorthSigmaPcm} pcm, max|div u|=${poolState.gates.gate3_maxAbsVelocityDivergence}).`);
+        console.log(`PASS [7/10]: Pool-Water explicit UNAVAILABLE field honesty & Audit plotter verified (${poolState.chipFieldUnavail}).`);
         receipt.tests.poolwater_3d_and_gates = poolState.gates;
 
-        // Test 7: Coupled Comparison (Tab 7) synchronization gate
-        await evalJson(`(() => { setView('coupled'); return 'true'; })()`);
+        // Test 8: Coupled Comparison (Tab 7) rapid tab switching, synchronization gate, and independent state restoration on uncheck while timeline playback is active
+        await evalJson(`(() => {
+          setView('split');
+          setView('pool');
+          setView('coupled');
+          return 'true';
+        })()`);
         await new Promise(r => setTimeout(r, 800));
         const coupledState = await evalJson(`(() => {
+          const dPool = document.getElementById('iframePool').contentDocument;
+          const dNw = document.getElementById('iframeNw').contentDocument;
+
+          // Configure distinct independent blade positions (Pool=75%, NW=0%) and set timeSlider=3 while playing
+          const poolSel = dPool.getElementById('selBlade');
+          poolSel.value = '75';
+          poolSel.dispatchEvent(new Event('change'));
+          const poolTime = dPool.getElementById('timeSlider');
+          poolTime.value = '3';
+          poolTime.dispatchEvent(new Event('input'));
+          dPool.getElementById('btnPlay').click();
+
+          const nwSlider = dNw.getElementById('blade');
+          nwSlider.value = '0';
+          nwSlider.dispatchEvent(new Event('input'));
+
           const syncBarVisible = document.getElementById('coupledSyncBar').classList.contains('visible');
           const defaultStatus = document.getElementById('coupledSyncStatus').textContent;
           const chk = document.getElementById('chkSyncBlade');
           const sel = document.getElementById('selCoupledBlade');
+
+          // Check sync and set shared blade to 25%
           chk.checked = true;
           sel.value = '25';
-          onCoupledBladeChange();
+          onCoupledSyncToggle();
           const syncedStatus = document.getElementById('coupledSyncStatus').textContent;
-          const poolBladeVal = document.getElementById('iframePool').contentDocument.getElementById('selBlade').value;
-          const nwBladeVal = document.getElementById('iframeNw').contentDocument.getElementById('blade').value;
-          const nwBladeTxt = document.getElementById('iframeNw').contentDocument.getElementById('bval').textContent;
+          const poolBladeSynced = poolSel.value;
+          const nwBladeSynced = nwSlider.value;
+          const nwBladeTxtSynced = dNw.getElementById('bval').textContent;
+          const poolTimeDuringSync = poolTime.value;
+
+          // Uncheck sync and verify restoration of pre-sync independent blade states (Pool=75%, NW=0%) and untouched timeSlider
+          chk.checked = false;
+          onCoupledSyncToggle();
+          const restoredStatus = document.getElementById('coupledSyncStatus').textContent;
+          const poolBladeRestored = poolSel.value;
+          const nwBladeRestored = nwSlider.value;
+          const nwBladeTxtRestored = dNw.getElementById('bval').textContent;
+          const poolTimeAfterUncheck = poolTime.value;
+
+          // Pause timeline playback
+          dPool.getElementById('btnPlay').click();
+
           return JSON.stringify({
             syncBarVisible,
             defaultStatus,
             syncedStatus,
-            poolBladeVal,
-            nwBladeVal,
-            nwBladeTxt
+            poolBladeSynced,
+            nwBladeSynced,
+            nwBladeTxtSynced,
+            poolTimeDuringSync,
+            restoredStatus,
+            poolBladeRestored,
+            nwBladeRestored,
+            nwBladeTxtRestored,
+            poolTimeAfterUncheck
           });
         })()`);
         assert.strictEqual(coupledState.syncBarVisible, true);
         assert.ok(coupledState.defaultStatus.includes('INDEPENDENT_REFERENCE_PANELS'));
+        assert.ok(coupledState.defaultStatus.includes('0..600 s'));
         assert.ok(coupledState.syncedStatus.includes('SHARED_SCENARIO_BLADE_SYNC'));
         assert.ok(coupledState.syncedStatus.includes('INCOMPATIBLE_TIME_BASIS'));
-        assert.strictEqual(coupledState.poolBladeVal, '25');
-        assert.strictEqual(coupledState.nwBladeVal, '25');
-        assert.strictEqual(coupledState.nwBladeTxt, '25%');
-        console.log(`PASS [7/9]: Coupled Comparison synchronization gate verified (default=${coupledState.defaultStatus.slice(0, 28)}, synced blade=${coupledState.nwBladeTxt}).`);
+        assert.strictEqual(coupledState.poolBladeSynced, '25');
+        assert.strictEqual(coupledState.nwBladeSynced, '25');
+        assert.strictEqual(coupledState.nwBladeTxtSynced, '25%');
+        assert.strictEqual(coupledState.poolTimeDuringSync, '3');
+        assert.ok(coupledState.restoredStatus.includes('INDEPENDENT_REFERENCE_PANELS'));
+        assert.strictEqual(coupledState.poolBladeRestored, '75', 'Unchecking #chkSyncBlade must restore Pool pre-sync blade position (75%)');
+        assert.strictEqual(coupledState.nwBladeRestored, '0', 'Unchecking #chkSyncBlade must restore Neutron Walk pre-sync blade position (0%)');
+        assert.strictEqual(coupledState.nwBladeTxtRestored, '0%');
+        assert.strictEqual(coupledState.poolTimeAfterUncheck, '3', 'Blade sync/uncheck must never mutate Pool timeline slider');
+        console.log(`PASS [8/10]: Coupled Comparison synchronization gate & uncheck restoration verified (synced=${coupledState.nwBladeTxtSynced}, restored Pool=${coupledState.poolBladeRestored}% / NW=${coupledState.nwBladeTxtRestored}, timeIdx=${coupledState.poolTimeAfterUncheck}).`);
         receipt.tests.coupled_comparison_sync = coupledState;
       }
     );
@@ -444,7 +536,7 @@ async function runTests() {
         assert.ok(bioFallback.slWidth > 400 && bioFallback.slHeight > 350);
         assert.strictEqual(bioFallback.btn3dDisabled, true);
         assert.strictEqual(bioFallback.kpiOcc, '4,888');
-        console.log(`PASS [8/9]: Biofilms 3-D disabled-WebGL 2-D Slice fallback verified (${bioFallback.slWidth}x${bioFallback.slHeight}, sites=${bioFallback.kpiOcc}).`);
+        console.log(`PASS [9/10]: Biofilms 3-D disabled-WebGL 2-D Slice fallback verified (${bioFallback.slWidth}x${bioFallback.slHeight}, sites=${bioFallback.kpiOcc}).`);
         receipt.tests.biofilms_disabled_webgl_fallback = bioFallback;
 
         await evalJson(`(() => { setView('pool'); return 'true'; })()`);
@@ -471,7 +563,7 @@ async function runTests() {
         assert.ok(poolFallback.slWidth > 400 && poolFallback.slHeight > 350);
         assert.strictEqual(poolFallback.btn3dDisabled, true);
         assert.strictEqual(poolFallback.gatesPass, true);
-        console.log(`PASS [9/9]: Pool-Water Interactive disabled-WebGL 2-D Cut-Plane fallback verified (${poolFallback.slWidth}x${poolFallback.slHeight}, T_max=${poolFallback.kpiTemp}).`);
+        console.log(`PASS [10/10]: Pool-Water Interactive disabled-WebGL 2-D Cut-Plane fallback verified (${poolFallback.slWidth}x${poolFallback.slHeight}, T_max=${poolFallback.kpiTemp}).`);
         receipt.tests.poolwater_disabled_webgl_fallback = poolFallback;
       }
     );

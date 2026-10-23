@@ -298,7 +298,7 @@
     </header>
 
     <div class="qual-banner">
-      <strong>Epistemic &amp; Physical Boundary Qualification (Gates 0-4):</strong> (1) <strong>TECDOC-643 Reference Module:</strong> Reproduces the recorded 5x6 MTR core (23 SFE + 5 CFE), 5-point blade sweep (<code>k_eff = 0.97943 to 1.19810</code>, worth <code>18,634.714 +/- 120.375 pcm</code>), and 12-point depletion table (linear <code>k_eff = 1</code> crossing at <code>Day 340.2540</code>) without implying facility-specific annular MTR calibration. (2) <strong>Pool Thermal-Hydraulics Module:</strong> Displays an offline, divergence-free synthetic Boussinesq natural-convection dataset across 6 timestamps (<code>t = 0..600 s</code>); missing solver/experimental fields remain explicitly <code>UNAVAILABLE</code>. (3) <strong>Surrogate Water-Loop &amp; PIE Boundary:</strong> Biofilm rheology, sham-controlled radiation response (Sandia 2024 null &amp; 256-seed <code>cpm-sp-v1</code> displacement null), and 316L stainless-steel PIE/MIC coupon tests are isolated in an external surrogate water loop and never alter reactor kinetics or imply an operating MTR pool biofilm problem.
+      <strong>Epistemic &amp; Physical Boundary Qualification (Gates 0-4):</strong> (1) <strong>TECDOC-643 Reference Module:</strong> Reproduces the recorded 6x7 MTR lattice (23 SFE + 5 CFE + 2 FT + 12 GR inside <code>123.2 x 133.7 x 180.0 cm</code> pool reflector boundary), 5-point blade sweep (<code>k_eff = 0.97943 to 1.19810</code>, worth <code>18,634.714 +/- 120.375 pcm</code>), 2-point 2M-history worth (<code>18,384.139 +/- 84.191 pcm</code>), and 12-point depletion table (linear <code>k_eff = 1</code> crossing at <code>Day 340.2540</code>) without implying facility-specific annular MTR calibration. (2) <strong>Pool Thermal-Hydraulics Module:</strong> Displays an offline, divergence-free synthetic Boussinesq natural-convection dataset across 6 timestamps (<code>t = 0..600 s</code>); missing solver/experimental fields remain explicitly <code>UNAVAILABLE</code>. (3) <strong>Surrogate Water-Loop &amp; PIE Boundary:</strong> Biofilm rheology, sham-controlled radiation response (Sandia 2024 null &amp; 256-seed <code>cpm-sp-v1</code> displacement null), 5-row planned-contrast matrix (15 vs. 24 cells), and 316L stainless-steel PIE/MIC coupon tests are isolated in an external surrogate water loop and never alter reactor kinetics or imply an operating MTR pool biofilm problem.
     </div>
 
     <div class="console">
@@ -333,7 +333,7 @@
             <span id="chipField">Field: Pool Water Temperature T [K] (Classification: SYNTHETIC)</span>
             <span id="chipKinetics">Blades: 75% Withdrawn | k_eff = 1.17049 +/- 0.00113 (+14,565.7 pcm)</span>
           </div>
-          <div id="hudRight" class="hud-right">16 x 16 x 24 Pool Grid<br>5x6 MTR Core (23 SFE + 5 CFE)<br>div(u) max: 0.00e+00 1/s</div>
+          <div id="hudRight" class="hud-right">16 x 16 x 24 Pool Grid<br>6x7 MTR Lattice (23 SFE + 5 CFE)<br>div(u) max: 0.00e+00 1/s</div>
           <div id="stageHint" class="stage-hint">Drag to rotate 3D pool &amp; core | Scroll to zoom | Scrub t = 0..600 s or switch to 2-D Cut-Plane</div>
         </div>
 
@@ -473,10 +473,20 @@
     // =========================================================================
     // MODULE 1: TECDOC-643 Neutron Transport & Depletion Reference (Gate 0 & 2)
     // =========================================================================
+    const CORE_LATTICE_6X7 = Object.freeze([
+      Object.freeze(['GR',  'GR',  'GR',  'GR',  'GR',  'GR']),
+      Object.freeze(['SFE', 'SFE', 'CFE', 'SFE', 'SFE', 'SFE']),
+      Object.freeze(['SFE', 'SFE', 'SFE', 'SFE', 'CFE', 'SFE']),
+      Object.freeze(['SFE', 'CFE', 'SFE', 'FT',  'SFE', 'SFE']),
+      Object.freeze(['SFE', 'SFE', 'SFE', 'SFE', 'CFE', 'SFE']),
+      Object.freeze(['FT',  'SFE', 'CFE', 'SFE', 'SFE', 'SFE']),
+      Object.freeze(['GR',  'GR',  'GR',  'GR',  'GR',  'GR'])
+    ]);
+
     const NeutronTransportReference = Object.freeze({
       moduleId: 'TECDOC643_NEUTRON_REF',
       datasetId: 'tecdoc643_neutron_walk_transcribed_table_v0',
-      reactorDescription: 'IAEA generic 10 MW MTR benchmark (5x6 box-grid core: 23 SFE + 5 CFE)',
+      reactorDescription: 'IAEA generic 10 MW MTR benchmark (6x7 lattice: 23 SFE + 5 CFE + 2 FT + 12 GR)',
       provenanceStatus: 'transcribed_unverified_reference_fixture',
       isLiveOpenMCSolver: false,
       transfersToAnnularMTRCore: false,
@@ -485,30 +495,30 @@
         pitchX: 7.7,
         pitchY: 8.1,
         nx: 6,
-        ny: 5,
-        activeWidthX: 61.6,
-        activeDepthY: 66.85,
+        ny: 7,
+        hx: 23.1,
+        hy: 28.35,
+        activeWidthX: 46.2,
+        activeDepthY: 56.7,
         activeHeightZ: 60.0,
+        openmcPoolMarginCm: 38.5,
+        openmcReflectorBoxCm: Object.freeze([123.2, 133.7, 180.0]),
         poolRadiusCm: 150.0,
         poolZMinCm: -150.0,
         poolZMaxCm: 450.0
       }),
-      // 5x6 MTR core layout: 'SFE' (23), 'CFE' (5), 'REF' (1), 'TRAP' (1)
-      coreLattice5x6: Object.freeze([
-        ['REF', 'SFE', 'SFE', 'SFE', 'SFE', 'SFE'],
-        ['SFE', 'CFE', 'SFE', 'SFE', 'CFE', 'SFE'],
-        ['SFE', 'SFE', 'CFE', 'TRAP','SFE', 'SFE'],
-        ['SFE', 'CFE', 'SFE', 'SFE', 'CFE', 'SFE'],
-        ['SFE', 'SFE', 'SFE', 'SFE', 'SFE', 'SFE']
-      ]),
+      // Exact 6x7 MTR core layout MAP from tecdoc643_neutron_walk.html:
+      // 'SFE' (23), 'CFE' (5 at C2, E3, B4, E5, C6), 'FT' (2 at D4, A6), 'GR' (12 in rows 1 and 7)
+      coreLattice6x7: CORE_LATTICE_6X7,
+      coreLattice5x6: CORE_LATTICE_6X7,
       withdrawnPct: Object.freeze([0.0, 25.0, 50.0, 75.0, 100.0]),
       sweepK: Object.freeze([0.97943, 1.02804, 1.11336, 1.17049, 1.19810]),
       sweepSigmaK: Object.freeze([0.00102, 0.00115, 0.00116, 0.00113, 0.00081]),
       twoPointReference: Object.freeze({
         kAllIn: 0.98057,
-        sigmaAllIn: 0.00060,
+        sigmaAllIn: 0.00069,
         kAllOut: 1.19621,
-        sigmaAllOut: 0.00062,
+        sigmaAllOut: 0.00063,
         claimedWorthPcm: 18384.14,
         claimedSigmaPcm: 84.19
       }),
@@ -682,11 +692,11 @@
         // Sum = 0.0 identically!
         const divU = (-U0 * (1.0 - qR) * expR * dsZ_dz) + (U0 * (1.0 - qR) * expR * dsZ_dz);
 
-        // Core region check: [-30.8, 30.8] x [-33.425, 33.425] x [-30, 30] cm
-        const inCore = Math.abs(xCm) <= 30.8 && Math.abs(yCm) <= 33.425 && Math.abs(zCm) <= 30.0;
+        // Core region check: 6x7 MTR lattice [-23.1, 23.1] x [-28.35, 28.35] x [-30, 30] cm
+        const inCore = Math.abs(xCm) <= 23.1 && Math.abs(yCm) <= 28.35 && Math.abs(zCm) <= 30.0;
         const zSkew = -10.0 * (1.0 - bladePct / 100.0);
-        const coreCosX = Math.cos((Math.PI * xCm) / 72.0);
-        const coreCosY = Math.cos((Math.PI * yCm) / 78.0);
+        const coreCosX = Math.cos((Math.PI * xCm) / 56.0);
+        const coreCosY = Math.cos((Math.PI * yCm) / 68.0);
         const coreCosZ = Math.cos((Math.PI * (zCm - zSkew)) / 74.0);
         const powerDensity = inCore
           ? Math.max(0.0, 142.0 * bladeFactor * coreCosX * coreCosY * coreCosZ)
@@ -801,6 +811,24 @@
       coupons: Object.freeze([
         { couponId: 'PIE-COUPON-SS316L-01', material: '316L Stainless Steel (UNS S31603)' },
         { couponId: 'PIE-COUPON-AL6061-02', material: '6061-T6 Aluminum (UNS A96061)' }
+      ]),
+      experimentalMatrixDesign: Object.freeze({
+        plannedContrastCells: 15,
+        fullCrossedFactorialCells: 24,
+        genotypesPerRow: Object.freeze(['WT Melanized', 'Melanin-Deficient (Albino)', 'Complemented Rescue']),
+        rows: Object.freeze([
+          { row: 1, radiation: 'Sham radiation (0 Gy)', magneticField: 'Baseline field (50 uT); sham-coil control', primaryContrast: 'Baseline growth, survival, and directionality' },
+          { row: 2, radiation: 'Radiation (+grad I_gamma)', magneticField: 'Baseline field (50 uT); matched sham-coil control', primaryContrast: 'Radiation x melanin-genotype response (separating selection H0-B from active movement H0-A)' },
+          { row: 3, radiation: 'Radiation (+grad I_gamma)', magneticField: 'Rotate field orientation (+90 deg) at fixed magnitude (50 uT)', primaryContrast: 'Orientation-dependent response orthogonal to fixed radiation gradient' },
+          { row: 4, radiation: 'Radiation (+grad I_gamma)', magneticField: 'Reverse field direction (180 deg, +B -> -B) at fixed magnitude (50 uT)', primaryContrast: 'Polarity-sensitive (magnetite torque tau = m x B) vs. polarity-insensitive (radical-pair inclination compass) response' },
+          { row: 5, radiation: 'Radiation (+grad I_gamma)', magneticField: 'Suppress field toward prespecified near-zero target (<0.1 uT); matched sham coils', primaryContrast: 'Field-dependent response vs. radiation-only effects' }
+        ])
+      }),
+      multiphysicsGlmmLayers: Object.freeze([
+        { id: 'LAYER_A', title: 'Conservative Darcy-Brinkman-Stokes Hydrodynamics & Reactive Transport', ref: 'Kim & Yao (2026) arXiv:2610.01565' },
+        { id: 'LAYER_B', title: 'Microbial Kinetics & Oldroyd-B vs. Generalized-Newtonian Viscoelastic Rheology', ref: 'Charlton et al. (2019) PMC6707926; Li, Matous & Nerenberg (2022) doi:10.1002/bit.28056' },
+        { id: 'LAYER_C', title: 'Falsifiable Magnetic & Radiation Perturbation Parameters Around Null (theta_i = 0, gamma_i = 0)', ref: 'Dadachova et al. (2007); Maeda et al. (2012); Rishabh et al. (2023) arXiv:2312.06597; Gassab et al. (2026) arXiv:2605.00205' },
+        { id: 'LAYER_D', title: 'Hierarchical GLMM g(E[Y_ijk(t)]) = beta_0 + beta_R*R + beta_B*B + beta_M*M + beta_RB*(RB) + beta_BM*(BM) + beta_RBM*(RBM) + b_batch + b_culture + f(t)', ref: 'Lee, Green & Ryan (2017) arXiv:1709.06288' }
       ]),
       radioPharmacologySymbiosis: Object.freeze({
         sourceFile: 'src/biofilm_magnetoreception_research.jl',
@@ -1126,23 +1154,31 @@
         );
       }
 
-      // 2. 5x6 IAEA-TECDOC-643 MTR Core Elements
-      const lat = NeutronTransportReference.coreLattice5x6;
-      const dxPitch = 8.4, dyPitch = 8.8;
-      for (let row = 0; row < 5; row++) {
+      // 2. 6x7 IAEA-TECDOC-643 MTR Core Lattice (23 SFE + 5 CFE + 2 FT + 12 GR) & OpenMC 123.2x133.7x180.0 cm Reflector Box
+      const rx = 61.6, ry = 66.85, rz = 90.0;
+      for (const zz of [-rz, rz]) {
+        pushLine(lines, -rx, -ry, zz,  rx, -ry, zz, 0.22, 0.56, 0.78, 0.36);
+        pushLine(lines,  rx, -ry, zz,  rx,  ry, zz, 0.22, 0.56, 0.78, 0.36);
+        pushLine(lines,  rx,  ry, zz, -rx,  ry, zz, 0.22, 0.56, 0.78, 0.36);
+        pushLine(lines, -rx,  ry, zz, -rx, -ry, zz, 0.22, 0.56, 0.78, 0.36);
+      }
+      const lat = NeutronTransportReference.coreLattice6x7;
+      const dxPitch = 7.7, dyPitch = 8.1;
+      const hxCore = 23.1, hyCore = 28.35;
+      for (let row = 0; row < 7; row++) {
         for (let col = 0; col < 6; col++) {
           const kind = lat[row][col];
-          const cx = (col - 2.5) * dxPitch;
-          const cy = (row - 2.0) * dyPitch;
-          const x0 = cx - 3.6, x1 = cx + 3.6;
-          const y0 = cy - 3.8, y1 = cy + 3.8;
+          const cx = -hxCore + dxPitch * (col + 0.5);
+          const cy =  hyCore - dyPitch * (row + 0.5);
+          const x0 = cx - 3.4, x1 = cx + 3.4;
+          const y0 = cy - 3.6, y1 = cy + 3.6;
 
           let r = 0.72, g = 0.42, b = 0.28;
           if (kind === 'CFE') { r = 0.20; g = 0.76; b = 0.54; }
-          else if (kind === 'REF') { r = 0.45; g = 0.52; b = 0.58; }
-          else if (kind === 'TRAP') { r = 0.22; g = 0.74; b = 0.98; }
+          else if (kind === 'GR' || kind === 'REF') { r = 0.45; g = 0.52; b = 0.58; }
+          else if (kind === 'FT' || kind === 'TRAP') { r = 0.22; g = 0.74; b = 0.98; }
 
-          if (showCoreOverlay) {
+          if (showCoreOverlay && (kind === 'SFE' || kind === 'CFE')) {
             const st = PoolThermalHydraulicsSynthetic.evaluatePointState(cx, cy, 0.0, timeIdx, bladePct);
             const boost = Math.min(1.0, st.powerDensity / 140.0);
             r = Math.min(1.0, r + 0.25 * boost);
@@ -1150,7 +1186,7 @@
           }
           pushBox(solidTris, x0, x1, y0, y1, -30.0, 30.0, r, g, b, 1.0);
 
-          // Render movable B4C absorber blade above CFE positions
+          // Render movable B4C absorber blade above CFE positions (C2, E3, B4, E5, C6)
           if (kind === 'CFE') {
             const bladeBottomZ = -30.0 + 0.60 * bladePct;
             const bladeTopZ = bladeBottomZ + 60.0;
@@ -1337,15 +1373,26 @@
         }
       }
 
-      // Draw core boundary outline on slice
-      ctx.strokeStyle = '#fde047';
-      ctx.lineWidth = 1.6;
+      // Draw 6x7 core lattice boundary and OpenMC reflector box outline on slice
       const mapU = u => padL + ((u - uMin) / (uMax - uMin)) * plotW;
       const mapV = v => padT + plotH - ((v - vMin) / (vMax - vMin)) * plotH;
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([4, 4]);
       if (slicePlane === 'XY') {
-        ctx.strokeRect(mapU(-30.8), mapV(33.425), mapU(30.8) - mapU(-30.8), mapV(-33.425) - mapV(33.425));
+        ctx.strokeRect(mapU(-61.6), mapV(66.85), mapU(61.6) - mapU(-61.6), mapV(-66.85) - mapV(66.85));
       } else {
-        ctx.strokeRect(mapU(-30.8), mapV(30.0), mapU(30.8) - mapU(-30.8), mapV(-30.0) - mapV(30.0));
+        const halfU = slicePlane === 'XZ' ? 61.6 : 66.85;
+        ctx.strokeRect(mapU(-halfU), mapV(90.0), mapU(halfU) - mapU(-halfU), mapV(-90.0) - mapV(90.0));
+      }
+      ctx.setLineDash([]);
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 1.6;
+      if (slicePlane === 'XY') {
+        ctx.strokeRect(mapU(-23.1), mapV(28.35), mapU(23.1) - mapU(-23.1), mapV(-28.35) - mapV(28.35));
+      } else {
+        const halfCoreU = slicePlane === 'XZ' ? 23.1 : 28.35;
+        ctx.strokeRect(mapU(-halfCoreU), mapV(30.0), mapU(halfCoreU) - mapU(-halfCoreU), mapV(-30.0) - mapV(30.0));
       }
 
       // Draw velocity arrows on 2D slice
@@ -1662,11 +1709,26 @@
       const sweep = ReactorKineticsAlgebra.buildBladeSweepTable();
       const totalWorthPcm = sweep[0].worthToFullyWithdrawnPcm;
       const totalWorthSigmaPcm = sweep[0].worthSigmaPcm;
+      const twoPt = NeutronTransportReference.twoPointReference;
+      const twoPointWorthPcm = 1.0e5 * ReactorKineticsAlgebra.deltaRho(twoPt.kAllIn, twoPt.kAllOut);
+      const twoPointWorthSigmaPcm = ReactorKineticsAlgebra.worthSigmaPcm(
+        twoPt.kAllIn, twoPt.sigmaAllIn, twoPt.kAllOut, twoPt.sigmaAllOut
+      );
       const kCrossingDay = ReactorKineticsAlgebra.interpolatedKCrossingDay();
       const day0To5DropPcm = 1.0e5 * ReactorKineticsAlgebra.deltaRho(
         NeutronTransportReference.burnK[0],
         NeutronTransportReference.burnK[1]
       );
+
+      let sfeCount = 0, cfeCount = 0, ftCount = 0, grCount = 0;
+      for (const row of NeutronTransportReference.coreLattice6x7) {
+        for (const cell of row) {
+          if (cell === 'SFE') sfeCount++;
+          else if (cell === 'CFE') cfeCount++;
+          else if (cell === 'FT') ftCount++;
+          else if (cell === 'GR') grCount++;
+        }
+      }
 
       const snap0 = PoolThermalHydraulicsSynthetic.computeSnapshotSummary(0, 75);
       const snap5 = PoolThermalHydraulicsSynthetic.computeSnapshotSummary(5, 75);
@@ -1688,8 +1750,17 @@
           NeutronTransportReference.provenanceStatus === 'transcribed_unverified_reference_fixture',
         gate1_bladeWorthPcm: Number(totalWorthPcm.toFixed(6)),
         gate1_bladeWorthSigmaPcm: Number(totalWorthSigmaPcm.toFixed(6)),
+        gate1_twoPointWorthPcm: Number(twoPointWorthPcm.toFixed(6)),
+        gate1_twoPointWorthSigmaPcm: Number(twoPointWorthSigmaPcm.toFixed(6)),
         gate1_kCrossingDay: Number(kCrossingDay.toFixed(6)),
         gate1_day0To5DropPcm: Number(day0To5DropPcm.toFixed(6)),
+        gate1_latticeCounts: {
+          sfe: sfeCount,
+          cfe: cfeCount,
+          ft: ftCount,
+          gr: grCount,
+          total: sfeCount + cfeCount + ftCount + grCount
+        },
         gate2_modulesIndependent:
           NeutronTransportReference.isLiveOpenMCSolver === false &&
           NeutronTransportReference.transfersToAnnularMTRCore === false &&
@@ -1703,7 +1774,10 @@
         gate3_maxAbsVelocityDivergence: snap5.maxAbsDivU,
         gate3_plumeWarmsOverTime: snap5.maxTempK > snap0.maxTempK && snap0.maxTempK > snap0.inletTempK,
         gate3_missingFieldsRemainUnavailable: missingFieldsRemainUnavailable,
-        gate4_pieStageCount: SurrogateLoopBiofilmPIEBoundary.stages.length
+        gate4_pieStageCount: SurrogateLoopBiofilmPIEBoundary.stages.length,
+        gate4_plannedContrastCells: SurrogateLoopBiofilmPIEBoundary.experimentalMatrixDesign.plannedContrastCells,
+        gate4_fullFactorialCells: SurrogateLoopBiofilmPIEBoundary.experimentalMatrixDesign.fullCrossedFactorialCells,
+        gate4_glmmLayerCount: SurrogateLoopBiofilmPIEBoundary.multiphysicsGlmmLayers.length
       };
     };
 

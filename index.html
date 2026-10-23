@@ -265,7 +265,7 @@
     <div id="coupledSyncBar" class="sync-bar">
       <div>
         <strong>Coupled Comparison Synchronization Gate:</strong>
-        <span id="coupledSyncStatus" class="badge amber">INDEPENDENT_REFERENCE_PANELS (Unaligned Time Basis: Pool Plume t = 0..60 s vs. Monte Carlo Batch Histories / Depletion 0..350 d)</span>
+        <span id="coupledSyncStatus" class="badge amber">INDEPENDENT_REFERENCE_PANELS (Unaligned Time Basis: Pool Plume t = 0..600 s vs. Monte Carlo Batch Histories / Depletion 0..350 d)</span>
       </div>
       <div class="sync-controls">
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
@@ -388,7 +388,7 @@
               <a href="POOLWATER_WORKFLOW_SPEC.md">POOLWATER_WORKFLOW_SPEC.md</a> |
               <a href="benchmark_manifest.json">benchmark_manifest.json</a>
             </td>
-            <td class="mono">c3340543ded0e746...<br>(73,931 bytes)</td>
+            <td class="mono">fa0f0dc30c45681a...<br>(79,610 bytes)</td>
             <td><span class="badge blue">Gate 0-4 Verified</span><br>Decouples `NeutronTransportReference`, `PoolThermalHydraulicsSynthetic`, `ReactorKineticsAlgebra`, and `SurrogateLoopBiofilmPIEBoundary`; missing CFD/PIV fields stay `UNAVAILABLE`.</td>
           </tr>
           <tr>
@@ -524,7 +524,7 @@
             <td><strong>Stage 3: Sham-Controlled Radiation &amp; Spin-Dynamics Assay</strong></td>
             <td class="mono">External irradiator / sham-coil rig (`0..500 uT`)<br>Seeds 42..297 + `cpm-sp-v1` / `cpm-sp-growth-v1`</td>
             <td>Pre-registered 5-row planned-contrast matrix (15 cells vs. 24-cell full factorial); radical-pair spin Hamiltonian (`evaluate_radical_pair_magnetoreception_hypothesis()`).</td>
-            <td>`cpm-sp-v1` selection-vs-displacement is NULL (`-0.0080 r/R`); `cpm-sp-growth-v1` 15/16 synthetic phase-locking PASS is purely algorithmic; zero radiotrophy claim permitted without C-13/C-14 dark fixation + ATP/NADH + killed controls.</td>
+            <td>`cpm-sp-v1` selection-vs-displacement is NULL (`5,511 / 10,752` axial deaths shift survivor radius up to `+0.0493 r/R` while all 7 identified-parcel displacement 95% CIs `delta_r_i` span zero); `cpm-sp-growth-v1` 15/16 synthetic phase-locking PASS is purely algorithmic; zero radiotrophy claim permitted without C-13/C-14 dark fixation + ATP/NADH + killed controls.</td>
           </tr>
           <tr>
             <td><strong>Stage 4: Post-Irradiation Examination (PIE) &amp; Materials Qualification</strong></td>
@@ -546,28 +546,28 @@
         </thead>
         <tbody>
           <tr>
-            <td><strong>5-Row Planned-Contrast Matrix (15 Cells)</strong></td>
-            <td>Replaces an unpowered 24-cell full crossed factorial (`4 consortium x 2 melanin x 3 radiation`) with <strong>15 planned cells</strong>: Core Subdesign A (`4 consortium levels x 3 radiation regimes = 12 cells`) plus Targeted Melanin Subdesign B (`3 isogenic Delta-melanin knockout contrasts`), nested across `3 independent biological runs x 2 coupons x 5 FOVs`.</td>
-            <td class="mono">BiofilmInference.simulate_biofilm_factorial_glmm()<br>POOLWATER_WORKFLOW_SPEC.md Section 6</td>
+            <td><strong>5-Row Planned-Contrast Matrix (15 Cells vs. 24-Cell Full Crossed Factorial)</strong></td>
+            <td>Crosses <strong>5 experimental rows</strong> with <strong>3 genotypes per row</strong> (<code>WT Melanized</code>, <code>Melanin-Deficient (Albino)</code>, <code>Complemented Rescue</code> = <strong>15 condition-by-genotype cells</strong>): <strong>Row 1:</strong> Sham radiation (<code>0 Gy</code>) + baseline field (<code>50 uT</code>, sham-coil control); <strong>Row 2:</strong> Radiation (<code>+grad I_gamma</code>) + baseline field (<code>50 uT</code>, separating selection <code>H0-B</code> from active movement <code>H0-A</code>); <strong>Row 3:</strong> Radiation (<code>+grad I_gamma</code>) + rotated field orientation (<code>+90 deg</code> at <code>50 uT</code>); <strong>Row 4:</strong> Radiation (<code>+grad I_gamma</code>) + reversed field direction (<code>180 deg</code>, <code>+B -&gt; -B</code> at <code>50 uT</code>, discriminating polarity-sensitive magnetite torque <code>tau = m x B</code> from polarity-insensitive radical-pair inclination compass); <strong>Row 5:</strong> Radiation (<code>+grad I_gamma</code>) + suppressed near-zero field (<code>&lt;0.1 uT</code>). A <strong>fully crossed 24-cell design</strong> (<code>2 Radiation x 4 Field states x 3 Genotypes</code>) additionally tests rotated (<code>+90 deg</code>), reversed (<code>180 deg</code>), and suppressed (<code>&lt;0.1 uT</code>) fields under sham radiation.</td>
+            <td class="mono">BiofilmInference.simulate_biofilm_factorial_glmm()<br>POOLWATER_WORKFLOW_SPEC.md Section 5</td>
           </tr>
           <tr>
-            <td><strong>Layer A: Continuum Transport &amp; Darcy-Brinkman Coupling</strong></td>
-            <td>Incompressible Navier-Stokes in free fluid coupled to Darcy-Brinkman momentum sink `-mu * K(phi_b)^(-1) u` inside hydrated biofilm volume fraction `phi_b(x,t)`, with reaction-diffusion-advection for `[O2]`, `[DIC]`, `[DOC]`, `[H2O2]`, and radiolytic species.</td>
+            <td><strong>Layer A: Hydrodynamics &amp; Reactive Transport (Darcy-Brinkman-Stokes)</strong></td>
+            <td>Conservative Darcy-Brinkman-Stokes hydrodynamics &amp; reactive transport (<code>div(u) = 0</code>, budget residual <code>&lt; 1e-6</code>; Kim &amp; Yao 2026 <code>arXiv:2610.01565</code>) coupling free-fluid Navier-Stokes with porous biofilm momentum sink <code>-(mu / K_perm) u</code> and nutrient/oxygen/radiolytic species transport.</td>
             <td class="mono">BiofilmRheology.simulate_biofilm_porous_rheology_coupling()<br>PoolThermalHydraulicsSynthetic (poolwater_interactive.html)</td>
           </tr>
           <tr>
-            <td><strong>Layer B: 3D Cellular Potts / Continuum Hybrid</strong></td>
-            <td>40x40x40 discrete Cellular Potts model (`aurascoper/Biofilms`, 7 species, 6 parcels/species) with adhesion `J`, volume constraint `lambda_V`, and optional radial bias `mu_rad`, audited via 256-seed 4-arm TOST (`+/-0.05 r/R`) and `cpm-sp-v1` / `cpm-sp-growth-v1`.</td>
-            <td class="mono">ingest_biofilms_3d_cpm_ensemble_benchmark()<br>biofilms_3d_explorer.html (BIOFILMS-3D-CPM-01)</td>
+            <td><strong>Layer B: Microbial Kinetics &amp; Viscoelastic Biofilm Rheology</strong></td>
+            <td>Separates species growth (<code>mu_i</code>), position-dependent mortality (<code>d_i</code>, Null <code>H0-B</code>), attachment (<code>a_i</code>), and detachment (<code>e_i</code>) from Oldroyd-B vs. generalized-Newtonian viscoelastic EPS rheology (<code>G'</code>, <code>G''</code>, stress relaxation <code>lambda_1</code>) calibrated from independent rheograms (Charlton et al. 2019 <code>PMC6707926</code>; Li, Matous &amp; Nerenberg 2022 <code>doi:10.1002/bit.28056</code>), alongside the discrete <code>40x40x40</code> CPM benchmark (<code>cpm-sp-v1</code> &amp; <code>cpm-sp-growth-v1</code>).</td>
+            <td class="mono">BiofilmRheology.simulate_biofilm_porous_rheology_coupling()<br>ingest_biofilms_3d_cpm_ensemble_benchmark()<br>biofilms_3d_explorer.html (BIOFILMS-3D-CPM-01)</td>
           </tr>
           <tr>
-            <td><strong>Layer C: Radical-Pair Spin Dynamics &amp; Dosimetry</strong></td>
-            <td>2-spin density-matrix Liouville-von Neumann evolution (`H = H_Zeeman + H_hyperfine + H_exchange`, Haberkorn recombination `k_S, k_T`) with explicit thermal-noise and spin-relaxation falsification gates (`T_1, T_2`).</td>
+            <td><strong>Layer C: Falsifiable Magnetic &amp; Radiation Perturbations Around Null</strong></td>
+            <td>Parameterizes candidate magnetic or radiation modulation of growth (<code>theta_i</code>) and active directional bias (<code>gamma_i</code>) as explicit perturbations around the null (<code>H_0: theta_i = 0, gamma_i = 0</code>; Dadachova et al. 2007; Maeda et al. 2012; Rishabh et al. 2023 <code>arXiv:2312.06597</code>; Gassab et al. 2026 <code>arXiv:2605.00205</code>).</td>
             <td class="mono">MagnetoreceptionHypotheses.evaluate_radical_pair_magnetoreception_hypothesis()</td>
           </tr>
           <tr>
-            <td><strong>Layer D: Hierarchical GLMM &amp; Compositional Inference</strong></td>
-            <td>Negative-binomial GLMM for CFU/biovolume, beta-binomial GLMM for intact-membrane survival fraction, and Dirichlet-multinomial /CLR linear mixed model for 16S/ITS composition with `(1 | run_id) + (1 | run_id:coupon_id)` random effects and Holm-Bonferroni multiplicity control.</td>
+            <td><strong>Layer D: Hierarchical Generalized Linear Mixed Model (GLMM)</strong></td>
+            <td>Hierarchical GLMM <code>g(E[Y_ijk(t)]) = beta_0 + beta_R*R + beta_B*B + beta_M*M + beta_RB*(RB) + beta_BM*(BM) + beta_RBM*(RBM) + b_batch + b_culture + f(t)</code> with separated endpoint families (Gaussian LMM for tracked displacement <code>delta_r_i</code> and moduli <code>G', G''</code>; Poisson/Negative-Binomial GLMM for attachment/detachment counts; Binomial GLMM for survival proportion; Lee, Green &amp; Ryan 2017 <code>arXiv:1709.06288</code>).</td>
             <td class="mono">BiofilmInference.simulate_biofilm_factorial_glmm()<br>verifyEnsembleStatisticalIntegrity()</td>
           </tr>
         </tbody>
@@ -586,6 +586,8 @@
   </div>
 
   <script>
+    let savedIndependentBladeState = null;
+
     function notifyNwResize() {
       const ifr = document.getElementById('iframeNw');
       if (!ifr || !ifr.contentDocument || !ifr.contentWindow) return false;
@@ -612,16 +614,64 @@
       if (!ifr) return;
       const targetSrc = ifr.getAttribute('data-src');
       if (targetSrc && !ifr.getAttribute('src')) {
+        ifr.dataset.loaded = '0';
+        ifr.addEventListener('load', () => {
+          ifr.dataset.loaded = '1';
+        }, { once: true });
         if (onLoadCb) {
           ifr.addEventListener('load', () => {
             onLoadCb();
             setTimeout(onLoadCb, 120);
-          });
+          }, { once: true });
         }
         ifr.setAttribute('src', targetSrc);
+      } else if (ifr.dataset.loaded === '0') {
+        if (onLoadCb) {
+          ifr.addEventListener('load', () => {
+            onLoadCb();
+            setTimeout(onLoadCb, 120);
+          }, { once: true });
+        }
       } else if (onLoadCb) {
         onLoadCb();
         setTimeout(onLoadCb, 60);
+      }
+    }
+
+    function captureIndependentBladeState() {
+      const ifrPool = document.getElementById('iframePool');
+      const ifrNw = document.getElementById('iframeNw');
+      const poolSel = ifrPool && ifrPool.contentDocument ? ifrPool.contentDocument.getElementById('selBlade') : null;
+      const nwDoc = ifrNw ? ifrNw.contentDocument : null;
+      const nwBlade = nwDoc ? nwDoc.getElementById('blade') : null;
+      const nwRealBtn = nwDoc ? nwDoc.getElementById('srcReal') : null;
+      return {
+        poolPct: poolSel ? Number(poolSel.value) : 75,
+        nwPct: nwBlade ? Number(nwBlade.value) : 0,
+        nwWasReal: !!(nwRealBtn && nwRealBtn.classList.contains('on'))
+      };
+    }
+
+    function restoreIndependentBladeState(st) {
+      if (!st) return;
+      const ifrPool = document.getElementById('iframePool');
+      const ifrNw = document.getElementById('iframeNw');
+      if (ifrPool && ifrPool.contentWindow && typeof ifrPool.contentWindow.setPoolBladePct === 'function') {
+        ifrPool.contentWindow.setPoolBladePct(st.poolPct);
+      }
+      if (ifrNw && ifrNw.contentDocument) {
+        const d = ifrNw.contentDocument;
+        const bladeSlider = d.getElementById('blade');
+        if (bladeSlider) {
+          bladeSlider.value = String(st.nwPct);
+          bladeSlider.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        if (st.nwWasReal) {
+          const srcRealBtn = d.getElementById('srcReal');
+          if (srcRealBtn && !srcRealBtn.classList.contains('on')) {
+            srcRealBtn.click();
+          }
+        }
       }
     }
 
@@ -650,21 +700,32 @@
       const sel = document.getElementById('selCoupledBlade');
       const status = document.getElementById('coupledSyncStatus');
       if (chk && chk.checked) {
+        if (!savedIndependentBladeState) {
+          savedIndependentBladeState = captureIndependentBladeState();
+        }
         const pct = Number(sel.value);
         status.className = 'badge green';
         status.textContent = `SHARED_SCENARIO_BLADE_SYNC (Blade Withdrawal = ${pct}% Out | Time Axes Remain Independent: INCOMPATIBLE_TIME_BASIS)`;
         syncCoupledBlade(pct);
       } else {
+        if (savedIndependentBladeState) {
+          restoreIndependentBladeState(savedIndependentBladeState);
+          savedIndependentBladeState = null;
+        }
         status.className = 'badge amber';
-        status.textContent = 'INDEPENDENT_REFERENCE_PANELS (Unaligned Time Basis: Pool Plume t = 0..60 s vs. Monte Carlo Batch Histories / Depletion 0..350 d)';
+        status.textContent = 'INDEPENDENT_REFERENCE_PANELS (Unaligned Time Basis: Pool Plume t = 0..600 s vs. Monte Carlo Batch Histories / Depletion 0..350 d)';
       }
     }
 
     function onCoupledBladeChange() {
       const chk = document.getElementById('chkSyncBlade');
-      const sel = document.getElementById('selCoupledBlade');
       if (chk && chk.checked) {
-        onCoupledSyncToggle();
+        const sel = document.getElementById('selCoupledBlade');
+        const status = document.getElementById('coupledSyncStatus');
+        const pct = Number(sel.value);
+        status.className = 'badge green';
+        status.textContent = `SHARED_SCENARIO_BLADE_SYNC (Blade Withdrawal = ${pct}% Out | Time Axes Remain Independent: INCOMPATIBLE_TIME_BASIS)`;
+        syncCoupledBlade(pct);
       }
     }
 
@@ -730,7 +791,7 @@
         cPool.classList.remove('is-hidden');
         void cPool.offsetWidth;
         ensureIframeLoaded(ifrPool, notifyPoolResize);
-        banner.innerHTML = '<strong>Epistemic Status (Pool-Water Interactive Viewer):</strong> 3D core &amp; pool boundary overlay (`123.2 x 133.7 x 180.0 cm`) with prescribed analytical divergence-free Boussinesq convection (`SYNTHETIC_PEDAGOGICAL_DEMO`), recomputed TECDOC-643 reactivity algebra (`18,634.714 +/- 120.375 pcm`, `Day 340.254042`), explicit `UNAVAILABLE` states for missing CFD/PIV fields, and external non-nuclear surrogate water-loop / PIE coupon demarcation.';
+        banner.innerHTML = '<strong>Epistemic Status (Pool-Water Interactive Viewer):</strong> 3D core &amp; pool boundary overlay (`6 x 7` lattice: 23 SFE + 5 CFE + 2 FT + 12 GR inside `123.2 x 133.7 x 180.0 cm` reflector boundary) with prescribed analytical divergence-free Boussinesq convection (`SYNTHETIC_PEDAGOGICAL_DEMO`), recomputed TECDOC-643 reactivity algebra (`18,634.714 +/- 120.375 pcm`, `Day 340.254042`), explicit `UNAVAILABLE` states for missing CFD/PIV fields, and external non-nuclear surrogate water-loop / PIE coupon demarcation.';
       } else if (mode === 'coupled') {
         document.getElementById('tabCoupled').classList.add('active');
         grid.classList.add('split');
@@ -751,7 +812,7 @@
             syncCoupledBlade(document.getElementById('selCoupledBlade').value);
           }
         });
-        banner.innerHTML = '<strong>Coupled Comparison (Pool-Water Interactive + TECDOC-643 Neutron Walk):</strong> Left: Continuum pool-water thermal-hydraulics demo (`t = 0..60 s`) &amp; external PIE boundary. Right: Discrete Monte Carlo neutron histories &amp; lattice tallies. Time scrubbing is never falsely synchronized across incompatible time bases; optional scenario synchronization links only the shared MTR control-blade withdrawal percentage (`0%..100%`).';
+        banner.innerHTML = '<strong>Coupled Comparison (Pool-Water Interactive + TECDOC-643 Neutron Walk):</strong> Left: Continuum pool-water thermal-hydraulics demo (`t = 0..600 s`) &amp; external PIE boundary. Right: Discrete Monte Carlo neutron histories &amp; lattice tallies. Time scrubbing is never falsely synchronized across incompatible time bases; optional scenario synchronization links only the shared MTR control-blade withdrawal percentage (`0%..100%`).';
       } else if (mode === 'audit') {
         document.getElementById('tabAudit').classList.add('active');
         banner.innerHTML = '<strong>Benchmark Workflow, Surrogate Loop / PIE Demarcation &amp; Precision Audit Summary:</strong> Review the artifact SHA-256 registry, precision-aware recomputations, 4-stage surrogate loop / PIE protocol, and 5-row planned-contrast experimental matrix below.';

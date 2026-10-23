@@ -72,11 +72,11 @@
     "POOLWATER-3D-INTERACTIVE-01": {
       "relative_path": "poolwater_interactive.html",
       "public_url": "https://aurascoper.github.io/oklo_shareable_portal/poolwater_interactive.html",
-      "bytes": 73931,
-      "sha256": "c3340543ded0e746153d39247d7ff106a00c61ec98996b9d9074cef97b0f8f76",
+      "bytes": 79610,
+      "sha256": "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a",
       "spec_relative_path": "POOLWATER_WORKFLOW_SPEC.md",
-      "spec_bytes": 17490,
-      "spec_sha256": "19144eafb188ab1d5fa2bb7d81ca97513d58a2c2b85ec1c74f1b809ea5c85b79",
+      "spec_bytes": 17684,
+      "spec_sha256": "2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669",
       "dataset_id": "poolwater_synthetic_demo_v1",
       "evidence_classification": "synthetic",
       "epistemic_status": "dataset_driven_synthetic_pool_demo (separates TECDOC-643 neutron reference, point-reactor kinetics, synthetic Boussinesq pool convection, and isolated surrogate-loop PIE protocol)",
@@ -99,9 +99,14 @@
         "up_axis": "+z",
         "units": "cm",
         "active_core_bounds_cm": {
-          "x": [-30.8, 30.8],
-          "y": [-33.425, 33.425],
+          "x": [-23.1, 23.1],
+          "y": [-28.35, 28.35],
           "z": [-30.0, 30.0]
+        },
+        "openmc_reflector_box_bounds_cm": {
+          "x": [-61.6, 61.6],
+          "y": [-66.85, 66.85],
+          "z": [-90.0, 90.0]
         },
         "pool_grid_bounds_cm": {
           "x": [-120.0, 120.0],
@@ -127,23 +132,23 @@
       }
     },
     "tecdoc643_recorded_benchmark": {
-      "reactor_type": "IAEA-TECDOC-643 10 MW MTR generic box-grid core (23 SFE + 5 CFE)",
+      "reactor_type": "IAEA-TECDOC-643 10 MW MTR generic 6x7 lattice core (23 SFE + 5 CFE + 2 FT + 12 GR)",
       "evidence_classification": "transcribed",
       "transfers_to_annular_mtr_core": false,
       "blade_sweep": [
-        { "withdrawn_pct": 0.0,   "k_eff": 0.97943, "sigma_k": 0.00102, "reactivity_pcm": -2100.201137396238, "worth_to_100_pcm": 18634.71413008074, "worth_sigma_pcm": 120.37524899417376 },
-        { "withdrawn_pct": 25.0,  "k_eff": 1.02804, "sigma_k": 0.00115, "reactivity_pcm": 2727.520329948254,  "worth_to_100_pcm": 13806.992662736247, "worth_sigma_pcm": 122.42934657263844 },
-        { "withdrawn_pct": 50.0,  "k_eff": 1.11336, "sigma_k": 0.00116, "reactivity_pcm": 10181.79205288496,  "worth_to_100_pcm": 6352.720939799541,  "worth_sigma_pcm": 109.25792074805419 },
-        { "withdrawn_pct": 75.0,  "k_eff": 1.17049, "sigma_k": 0.00113, "reactivity_pcm": 14565.694709053472, "worth_to_100_pcm": 1968.8182836310288, "worth_sigma_pcm": 99.92920619822977 },
-        { "withdrawn_pct": 100.0, "k_eff": 1.19810, "sigma_k": 0.00081, "reactivity_pcm": 16534.5129926845,   "worth_to_100_pcm": 0.0,                "worth_sigma_pcm": 0.0 }
+        { "withdrawn_pct": 0.0,   "k_eff": 0.97943, "sigma_k": 0.00102, "reactivity_pcm": -2100.201137396238, "worth_to_100_pcm": 18634.714116279465, "worth_sigma_pcm": 120.3749252933642 },
+        { "withdrawn_pct": 25.0,  "k_eff": 1.02804, "sigma_k": 0.00115, "reactivity_pcm": 2727.520329948254,  "worth_to_100_pcm": 13806.992648934972, "worth_sigma_pcm": 122.42902821922595 },
+        { "withdrawn_pct": 50.0,  "k_eff": 1.11336, "sigma_k": 0.00116, "reactivity_pcm": 10181.79205288496,  "worth_to_100_pcm": 6352.720925998266,  "worth_sigma_pcm": 109.2575640423707 },
+        { "withdrawn_pct": 75.0,  "k_eff": 1.17049, "sigma_k": 0.00113, "reactivity_pcm": 14565.694709053472, "worth_to_100_pcm": 1968.818269829754,  "worth_sigma_pcm": 99.92881617173938 },
+        { "withdrawn_pct": 100.0, "k_eff": 1.19810, "sigma_k": 0.00081, "reactivity_pcm": 16534.51297888323,  "worth_to_100_pcm": 0.0,                "worth_sigma_pcm": 0.0 }
       ],
       "two_point_2m_reference": {
         "k_all_in": 0.98057,
-        "sigma_all_in": 0.00060,
+        "sigma_all_in": 0.00069,
         "k_all_out": 1.19621,
-        "sigma_all_out": 0.00062,
-        "worth_pcm": 18384.14,
-        "sigma_pcm": 84.19,
+        "sigma_all_out": 0.00063,
+        "worth_pcm": 18384.138889,
+        "sigma_pcm": 84.191196,
         "sweep_vs_two_point_diff_pcm": 251.16,
         "sweep_vs_two_point_sigma_ratio": 1.71
       },
@@ -152,7 +157,7 @@
         "days": [0.0, 5.0, 10.0, 20.0, 40.0, 80.0, 120.0, 160.0, 200.0, 250.0, 300.0, 350.0],
         "k_eff": [1.19676, 1.15243, 1.14750, 1.14054, 1.12952, 1.11619, 1.09730, 1.07909, 1.06614, 1.04293, 1.01743, 0.99578],
         "linear_k_crossing_day": 340.2540415704388,
-        "day_0_to_5_reactivity_drop_pcm": -3214.224162835399
+        "day_0_to_5_reactivity_drop_pcm": -3214.223788039883
       }
     }
   },

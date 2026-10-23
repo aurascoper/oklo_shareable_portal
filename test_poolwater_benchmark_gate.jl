@@ -31,9 +31,9 @@ end
             "biofilms_3d_explorer.html"                         => (869267, "037e2050b70e92b77075b3b913aeed615457d6a1cb09a0fe85f4d6b14d96366d"),
             "tecdoc643_reference_fixture.jl"                    => (6018,   "ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d"),
             "proto_biofilms_geyser_fission_research_program.md" => (48056,  "da50d4002e6bcca94234045c3d371e16af243806cdb1ed99e0beff074c1cfb11"),
-            "poolwater_interactive.html"                        => (73931,  "c3340543ded0e746153d39247d7ff106a00c61ec98996b9d9074cef97b0f8f76"),
-            "POOLWATER_WORKFLOW_SPEC.md"                        => (17490,  "19144eafb188ab1d5fa2bb7d81ca97513d58a2c2b85ec1c74f1b809ea5c85b79"),
-            "benchmark_manifest.json"                           => (10971,  "2fbdf2e6b602494ad22a97e677b36a89514e33b2b8542397c162791551f6dcaf"),
+            "poolwater_interactive.html"                        => (79610,  "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a"),
+            "POOLWATER_WORKFLOW_SPEC.md"                        => (17684,  "2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669"),
+            "benchmark_manifest.json"                           => (11140,  "b41c6c99b26e4aa37b8ebab7b322b383da4a53b2af1342e3ebd6b63350f0bee4"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")
@@ -151,6 +151,32 @@ end
         ]
             @test occursin(peer_fn, spec_txt)
         end
+
+        index_html = file_sha256_and_bytes("index.html").text
+        for cite_token in [
+            "arXiv:2610.01565",
+            "PMC6707926",
+            "arXiv:1709.06288",
+        ]
+            @test occursin(cite_token, index_html)
+            @test occursin(cite_token, pool_html)
+            @test occursin(cite_token, spec_txt)
+        end
+
+        for genotype_token in [
+            "WT Melanized",
+            "Melanin-Deficient",
+            "Complemented Rescue",
+        ]
+            @test occursin(genotype_token, index_html)
+            @test occursin(genotype_token, pool_html)
+            @test occursin(genotype_token, manifest_txt)
+            @test occursin(genotype_token, spec_txt)
+        end
+
+        @test occursin("coreLattice6x7", pool_html)
+        @test occursin("sigmaAllIn: 0.00069", pool_html)
+        @test occursin("sigmaAllOut: 0.00063", pool_html)
     end
 
     # --------------------------------------------------------------------------

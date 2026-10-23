@@ -103,14 +103,14 @@
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/poolwater_interactive.html</PublicArtifactUrl>
       <RelativeSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativeSpecPath>
       <PublicSpecUrl>https://aurascoper.github.io/oklo_shareable_portal/POOLWATER_WORKFLOW_SPEC.md</PublicSpecUrl>
-      <SpecBytes>17490</SpecBytes>
-      <SpecSHA256>19144eafb188ab1d5fa2bb7d81ca97513d58a2c2b85ec1c74f1b809ea5c85b79</SpecSHA256>
+      <SpecBytes>17684</SpecBytes>
+      <SpecSHA256>2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669</SpecSHA256>
       <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
       <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
-      <BenchmarkManifestBytes>10971</BenchmarkManifestBytes>
-      <BenchmarkManifestSHA256>2fbdf2e6b602494ad22a97e677b36a89514e33b2b8542397c162791551f6dcaf</BenchmarkManifestSHA256>
-      <Bytes>73931</Bytes>
-      <SHA256>c3340543ded0e746153d39247d7ff106a00c61ec98996b9d9074cef97b0f8f76</SHA256>
+      <BenchmarkManifestBytes>11140</BenchmarkManifestBytes>
+      <BenchmarkManifestSHA256>b41c6c99b26e4aa37b8ebab7b322b383da4a53b2af1342e3ebd6b63350f0bee4</BenchmarkManifestSHA256>
+      <Bytes>79610</Bytes>
+      <SHA256>fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
       <Fields>
         <Field id="water_temperature_K" units="K" classification="synthetic" available="true" description="Prescribed Boussinesq buoyant plume temperature field across t = 0..600 s"/>

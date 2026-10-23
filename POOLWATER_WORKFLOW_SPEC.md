@@ -16,7 +16,7 @@ Core architectural principle: we migrate the **workflow, evidence qualification,
 
 | Existing / Added Artifact | Reuse in the Pool-Water Workflow | Strictly Do Not Imply |
 | :--- | :--- | :--- |
-| **TECDOC-643 Neutron Walk** ([`tecdoc643_neutron_walk.html`](tecdoc643_neutron_walk.html), `REF-NW-HTML-01`) | 10 MW MTR 5x6 box-grid core geometry (23 SFE + 5 CFE), 2D/3D slice interaction, 500-track OpenMC 0.15.3 playback, reference $k_{\text{eff}}$ and reaction tallies | That animated client-side particles are a live OpenMC calculation or validated 4D reactor solver |
+| **TECDOC-643 Neutron Walk** ([`tecdoc643_neutron_walk.html`](tecdoc643_neutron_walk.html), `REF-NW-HTML-01`) | 10 MW MTR 6x7 box-grid core geometry (23 SFE + 5 CFE + 2 FT + 12 GR inside `123.2 x 133.7 x 180.0 cm` reflector boundary), 2D/3D slice interaction, 500-track OpenMC 0.15.3 playback, reference $k_{\text{eff}}$ and reaction tallies | That animated client-side particles are a live OpenMC calculation or validated 4D reactor solver |
 | **TECDOC Julia Reference Fixture** ([`tecdoc643_reference_fixture.jl`](tecdoc643_reference_fixture.jl), `REF-NW-JL-FIX`) | Regression tests for point-reactor reactivity algebra ($\rho = (k-1)/k$, $\Delta\rho$, $\sigma_{\Delta\rho}$), 5-point blade sweep, 12-point depletion table, and linear $k_{\text{eff}} = 1$ crossing (`340.2540 d`) | That transcribed values are independently regenerated from raw OpenMC statepoints or calibrated to an annular pressurized MTR core |
 | **Oklo Revision-0 Fixture** ([`oklo_r0_fixture_readonly.html`](oklo_r0_fixture_readonly.html), [`CONFORMANCE_FIXTURE_SPEC.md`](CONFORMANCE_FIXTURE_SPEC.md), `OKLO-R0-FROZEN-FIXTURE`) | Frozen $32 \times 32 \times 32$ voxel-generation and export/conformance test discipline | That prescribed analytic geochemistry fields are an empirical reconstruction of an ancient reactor or pool-water CFD data |
 | **R10 4D Spatiotemporal Explorer** ([`spacetime_explorer_4d_shareable.html`](spacetime_explorer_4d_shareable.html), `R10-4D-SHAREABLE-HTML`) | Time-scrubber UI, synchronized field inspection, viewport and timeline patterns | That its prescribed analytical 3D Gaussian advection-diffusion-decay pulse is a validated transient PDE solution |
@@ -39,7 +39,7 @@ All existing benchmark and reference artifacts are pinned by commit SHA, byte co
 ### Gate 1: Normalize the Benchmark Contract
 [`benchmark_manifest.json`](benchmark_manifest.json) defines schema `oklo_tecdoc_poolwater_benchmark_contract_v1`, normalizing:
 - **Geometry & Coordinate Systems**:
-  - `MTR_POOL_CARTESIAN_CM`: Right-handed Cartesian $(x, y, z)$ in $\text{cm}$ with $+z$ vertical upward along the pool column; active 5x6 MTR core $[-30.8, 30.8]\text{ cm} \times [-33.425, 33.425]\text{ cm} \times [-30.0, 30.0]\text{ cm}$ inside a $300\text{ cm}$ diameter, $600\text{ cm}$ visualized open-pool water column ($z \in [-150, 450]\text{ cm}$).
+  - `MTR_POOL_CARTESIAN_CM`: Right-handed Cartesian $(x, y, z)$ in $\text{cm}$ with $+z$ vertical upward along the pool column; active 6x7 MTR lattice $[-23.1, 23.1]\text{ cm} \times [-28.35, 28.35]\text{ cm} \times [-30.0, 30.0]\text{ cm}$ (inside the $[-61.6, 61.6]\text{ cm} \times [-66.85, 66.85]\text{ cm} \times [-90.0, 90.0]\text{ cm}$ OpenMC reflector box) within a $300\text{ cm}$ diameter, $600\text{ cm}$ visualized open-pool water column ($z \in [-150, 450]\text{ cm}$).
   - `OKLO_R10_VOXEL_M`: $12 \times 12 \times 12$ continuum geochemistry lattice with $+k$ vertical upward ($t \in \{0, 250, 500, 750, 1000\}\text{ s}$).
   - `BIOFILMS_CPM_LATTICE_SITES`: $40 \times 40 \times 40$ discrete lattice sites ($1..40$, `D-PITCH: awaiting_measurement`, `seconds_per_mcs = NaN`).
 - **Evidence Classification Enum**: Every dataset and field is tagged as one of `measured`, `calculated`, `transcribed`, `replayed`, `synthetic`, `uncalibrated_model_snapshot`, or `unavailable`.
@@ -53,7 +53,7 @@ Inside [`poolwater_interactive.html`](poolwater_interactive.html), four independ
 
 ### Gate 3: Build the Interactive Pool-Water View & Coupled Comparison
 - [`poolwater_interactive.html`](poolwater_interactive.html) provides:
-  - 3D WebGL core-and-pool visualization with rotatable camera, cylindrical pool boundary, 5x6 MTR core elements (23 SFE, 5 CFE, graphite reflectors, central flux trap), interactive control-blade insertion ($0\%, 25\%, 50\%, 75\%, 100\%$), 3D velocity vectors and buoyant streamlines, translucent cut planes, and the external surrogate-loop coupon test section.
+  - 3D WebGL core-and-pool visualization with rotatable camera, cylindrical pool boundary, 6x7 MTR lattice elements (23 SFE, 5 CFE, 12 graphite reflectors, 2 flux traps), interactive control-blade insertion ($0\%, 25\%, 50\%, 75\%, 100\%$), 3D velocity vectors and buoyant streamlines, translucent cut planes, and the external surrogate-loop coupon test section.
   - 2D cross-section cut-plane renderer (`XZ`, `YZ`, `XY` planes) with continuous slice position scrubbing, velocity vector arrows, and field overlays.
   - Time scrubber ($t = 0\text{ s}$ to $600\text{ s}$) with Play/Pause animation and timestamp verification.
   - Explicit `UNAVAILABLE` state when selecting fields that require external solver or experimental campaigns (`validated_cfd_pressure_Pa`, `empirical_piv_temperature`, `live_coupled_openmc_cfd_statepoint`).
