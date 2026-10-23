@@ -45,16 +45,9 @@ header p{color:var(--muted);margin:6px 0 0;max-width:70ch}
 .side .burncard{margin-top:0}
 .side .burngrid{grid-template-columns:minmax(0,1fr)}
 .side .minis{grid-template-columns:repeat(2,minmax(0,1fr))}
-html[data-embedded="1"] .wrap{max-width:100%;padding-block:10px 28px}
-html[data-embedded="1"] header .eyebrow{font-size:11px}
-html[data-embedded="1"] header h1{font-size:clamp(20px,2.4vw,26px);line-height:1.15}
-html[data-embedded="1"] header p{font-size:13px;margin-top:3px;max-width:96ch}
-html[data-embedded="1"] .console{margin-top:10px;align-items:start}
-html[data-embedded="1"] .console > .viewer{position:relative;top:auto}
-html[data-embedded="1"] .console .stage{height:clamp(380px,calc(100vh - 170px),520px);min-height:380px}
 @media (max-width:900px){
-  .console > .viewer{position:relative;top:auto;border-radius:12px;box-shadow:none;margin-inline:0}
-  .console .stage{height:clamp(320px,46vh,440px);min-height:260px}
+  .console > .viewer{top:0;border-radius:0 0 12px 12px;box-shadow:0 8px 24px rgba(0,0,0,.35);margin-inline:calc(-1 * max(16px, env(safe-area-inset-left,0px)))}
+  .console .stage{height:34vh;min-height:220px}
   .console .slicebar{margin-top:6px;gap:6px}
   .console .slicebar button{padding:8px 10px;font-size:13px}
   .console .legend{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
@@ -385,10 +378,8 @@ function walk(R,record,start){
 }
 
 (function(){
-try{ if(window.self!==window.top) document.documentElement.setAttribute('data-embedded','1'); }catch(e){}
 const $=id=>document.getElementById(id);
-const CSS_FALLBACK={'--bg':'#eef3f5','--panel':'#ffffff','--fg':'#13212a','--muted':'#566874','--line':'#d3dde2','--accent':'#0a6aa8','--accent-fg':'#ffffff','--good':'#1d8657','--warn':'#a85f00','--screen':'#0b1a24','--s-grid':'#1d3445','--s-text':'#8fb0c2','--s-fuel':'#8c4f3f','--s-clad':'#7d8b93','--s-graphite':'#56616a','--s-al':'#8e9ba3','--s-water':'#245f86','--s-pool':'#12334a','--s-b4c':'#2fbf87','--s-endbox':'#a88f63','--s-fast':'#ff7aa8','--s-thermal':'#4fc3f7','--s-fission':'#fff36b','--s-glow':'#ffb000','--s-capture':'#8f7bd6','--s-leak':'#3ee0c4','--f-mono':'monospace'};
-const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim()||CSS_FALLBACK[v]||'';
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 let rnd=rng((Date.now()%1e6)+7), paused=false, mode='3d';
 const REAL=JSON.parse(document.getElementById('realdata').textContent);
 let srcReal=false, pmView='toy'; const realIdx={'100':0,'0':0};
@@ -512,7 +503,7 @@ function buildScale(){
   label("175 cm (5′9″)",[px0+106,y0+H-6,0],'--s-text'); label('180 cm model',[-140,82,0],'--s-thermal'); label('60 cm fuel',[-140,0,0],'--s-fuel');
   let yw=-0.35, pt=0.18, dragging=false, lx=0, ly=0;
   const draw=()=>{ const tx=20, ty=0, D=520; cam.position.set(tx+D*Math.cos(pt)*Math.sin(yw), ty+D*Math.sin(pt), D*Math.cos(pt)*Math.cos(yw)); cam.lookAt(tx,ty,0); r.render(sc,cam); };
-  const fit=()=>{ const w=st.clientWidth, h=st.clientHeight; if(w<=0||h<=0) return; r.setSize(w,h,false); cam.aspect=w/h; cam.updateProjectionMatrix(); draw(); };
+  const fit=()=>{ const w=st.clientWidth, h=st.clientHeight; r.setSize(w,h,false); cam.aspect=w/h; cam.updateProjectionMatrix(); draw(); };
   cvs.addEventListener('pointerdown',e=>{dragging=true;lx=e.clientX;ly=e.clientY;cvs.setPointerCapture(e.pointerId)});
   cvs.addEventListener('pointermove',e=>{ if(!dragging) return; yw-=(e.clientX-lx)*0.008; pt=Math.max(-0.2,Math.min(1.2,pt+(e.clientY-ly)*0.006)); lx=e.clientX; ly=e.clientY; draw(); });
   cvs.addEventListener('pointerup',()=>dragging=false); cvs.addEventListener('pointercancel',()=>dragging=false);
@@ -539,7 +530,7 @@ function addTrack(h,single){
   return tr;
 }
 let yaw=0.6, pitch=0.42, dist=260, dragging=false, lx=0, ly=0, pinch=0;
-function resize3d(){ if(!renderer) return; const w=stage.clientWidth, h=stage.clientHeight; if(w<=0||h<=0) return; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+function resize3d(){ if(!renderer) return; const w=stage.clientWidth, h=stage.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
 function placeCam(){ camera.position.set(dist*Math.cos(pitch)*Math.sin(yaw), dist*Math.sin(pitch), dist*Math.cos(pitch)*Math.cos(yaw)); camera.lookAt(0,0,0); }
 glc.addEventListener('pointerdown',e=>{dragging=true;lx=e.clientX;ly=e.clientY;glc.setPointerCapture(e.pointerId)});
 glc.addEventListener('pointermove',e=>{ if(!dragging) return; yaw-=(e.clientX-lx)*0.008; pitch=Math.max(-1.3,Math.min(1.3,pitch+(e.clientY-ly)*0.006)); lx=e.clientX; ly=e.clientY; });
@@ -623,8 +614,7 @@ function extent(){ if(sliceZoom) return plane==='XY'?{u:[-33.1,33.1],v:[-38.35,3
   return plane==='XY'?{u:[-61.6,61.6],v:[-66.85,66.85]}:plane==='XZ'?{u:[-61.6,61.6],v:[-90,90]}:{u:[-66.85,66.85],v:[-90,90]}; }
 function toXYZ(u,v){ return plane==='XY'?[u,v,spos]:plane==='XZ'?[u,spos,v]:[spos,u,v]; }
 function drawSlice(){
-  const w=stage.clientWidth, hgt=stage.clientHeight; if(w<=0||hgt<=0){ sliceDirty=true; return; }
-  sliceDirty=false; const dpr=Math.min(2,window.devicePixelRatio||1);
+  sliceDirty=false; const w=stage.clientWidth, hgt=stage.clientHeight, dpr=Math.min(2,window.devicePixelRatio||1);
   slc.width=Math.round(w*dpr); slc.height=Math.round(hgt*dpr); const g=slc.getContext('2d');
   const E=extent(), du=E.u[1]-E.u[0], dv=E.v[1]-E.v[0], sc=Math.min(slc.width/du, slc.height/dv)*0.96;
   const ox=(slc.width-du*sc)/2, oy=(slc.height-dv*sc)/2;
@@ -672,7 +662,7 @@ function setPlane(p){ plane=p; for(const q of ['XY','XZ','YZ']) $('p'+q).classLi
 $('zC').onclick=()=>{ sliceZoom=true; $('zC').classList.add('on'); $('zF').classList.remove('on'); sliceDirty=true; };
 $('zF').onclick=()=>{ sliceZoom=false; $('zF').classList.add('on'); $('zC').classList.remove('on'); sliceDirty=true; };
 $('spos').oninput=e=>{ spos=+e.target.value; $('sval').textContent=spos.toFixed(1)+' cm'; sliceDirty=true; };
-function setMode(m){ if(m==='3d' && !renderer) m='slice'; mode=m; $('m3d').classList.toggle('on',m==='3d'); $('mslice').classList.toggle('on',m==='slice');
+function setMode(m){ mode=m; $('m3d').classList.toggle('on',m==='3d'); $('mslice').classList.toggle('on',m==='slice');
   glc.hidden=(m!=='3d'); slc.hidden=(m!=='slice'); $('slicebar').hidden=(m!=='slice');
   $('vtitle').textContent = m==='3d'?'Whole core, spinning':'Cross-section';
   $('hint').textContent = m==='3d'?'Drag to rotate · scroll to zoom':'Hover the slice to identify a region'; sliceDirty=true; }
@@ -830,24 +820,12 @@ new ResizeObserver(redrawCharts).observe($('chainChart'));
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',redrawCharts);
 new MutationObserver(redrawCharts).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
-if(window.THREE){
-  try{
-    colFast=new THREE.Color(css('--s-fast')); colTherm=new THREE.Color(css('--s-thermal')); colHi=new THREE.Color('#ffffff');
-    build3d();
-    if(!renderer || !renderer.getContext()) throw new Error('WebGL context unavailable');
-  }catch(err){
-    renderer=null; scene=null; camera=null; root=null; bladeMeshes=[]; tracks=[]; marks={}; structMats=[];
-    $('m3d').disabled=true; $('m3d').title='3-D WebGL unavailable; using 2-D Slice fallback';
-    setMode('slice');
-  }
-} else {
-  $('m3d').disabled=true;
-  setMode('slice');
-}
+if(window.THREE){ colFast=new THREE.Color(css('--s-fast')); colTherm=new THREE.Color(css('--s-thermal')); colHi=new THREE.Color('#ffffff'); build3d(); }
+else setMode('slice');
 // open in a working state: a batch already finished, plus the stream running
 bulk=true; for(let k=0;k<120;k++){ const h=walk(rnd,false); if(renderer){ const tr=addTrack(h,false); tr.i=h.path.length; tr.line.geometry.setDrawRange(0,tr.i); tr.age=2; finish(tr); } else finish({h}); }
 bulk=false; updTally(); requestAnimationFrame(frame);
-try{ buildScale(); }catch(err){}
+buildScale();
 })();
 </script>
 

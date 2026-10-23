@@ -1,68 +1,62 @@
 {
-  "schema": "ci_verification_receipt_v1",
-  "repository": "aurascoper/oklo_shareable_portal",
-  "branch": "feat/biofilms-3d-visualization",
-  "node_version": "v26.11.1",
-  "chrome_version": "Google Chrome 155.0.8059.86",
-  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
-  "source_ensemble_csv": {
-    "path": "diagnostics/melanin_ensemble/radial_n40_p6_seeds42-297.csv",
-    "bytes": 902487,
-    "sha256": "c4b11303f36d45582e25311ba2bc0347292488e7c5899bd2fffa1f4156674dc0"
-  },
-  "source_seed42_manifest": {
-    "path": "diagnostics/melanin_ensemble/consortium_seed42/manifest.txt",
-    "sha256": "39ef51ef98abe56eab1f1b2cd6c0cc4cf99ccfb4403483b83f7ea06f22f3406c"
-  },
-  "statistical_integrity_verification": {
-    "seeds_verified": "42..297 (256 distinct seeds)",
-    "observations_per_species_per_arm": 256,
-    "total_mcs100_observations": 7168,
-    "total_mcs0_observations": 1792,
-    "pairing_method": "Explicit dictionary lookup by seed ID (verified invariant under seed-array reversal)",
-    "tost_equivalence_bound_r_over_R": 0.05,
-    "z90_quantile": 1.6448536269514722,
-    "all_90ci_match_radial_analyse_jl_to_4_decimals": true,
-    "all_contrasts_strictly_inside_tost_bound": true
-  },
-  "artifact_hashes": {
-    "index.html": {
-      "bytes": 24332,
-      "sha256": "2098bfcd2672d9439e11ba27b8903d25f971b8e1d9a7388248b98ba2f6eda10e"
+  "schema": "oklo_portal_ci_verification_receipt_v1",
+  "generated_at": "2026-10-23T02:38:04.511Z",
+  "gate0_files_verified": 9,
+  "tests": {
+    "lazy_init": "PASS",
+    "tecdoc643_3d_webgl": {
+      "glWidth": 679,
+      "glHeight": 630,
+      "glHidden": false,
+      "slHidden": true,
+      "kval": "0.911 ± 0.107",
+      "ntot": "(120 neutrons)"
     },
-    "biofilms_3d_explorer.html": {
-      "bytes": 869267,
-      "sha256": "037e2050b70e92b77075b3b913aeed615457d6a1cb09a0fe85f4d6b14d96366d"
+    "biofilms_3d_and_256_seed_tost": {
+      "glWidth": 749,
+      "glHeight": 436,
+      "seedCount": 256,
+      "allContrastsWithinEquivalenceBound": true
     },
-    "tecdoc643_neutron_walk.html": {
-      "bytes": 939350,
-      "sha256": "a463adfac1fbf8aa60b52f937d8f180e0c69678af2103bca4199718f8f849650"
+    "poolwater_3d_and_gates": {
+      "schema": "oklo_tecdoc_poolwater_benchmark_contract_v1",
+      "gate0_provenancePreserved": true,
+      "gate1_bladeWorthPcm": 18634.714116,
+      "gate1_bladeWorthSigmaPcm": 120.374925,
+      "gate1_kCrossingDay": 340.254042,
+      "gate1_day0To5DropPcm": -3214.223788,
+      "gate2_modulesIndependent": true,
+      "gate3_timeStepCount": 6,
+      "gate3_gridCellCount": 6144,
+      "gate3_maxAbsVelocityDivergence": 0,
+      "gate3_plumeWarmsOverTime": true,
+      "gate3_missingFieldsRemainUnavailable": true,
+      "gate4_pieStageCount": 4
     },
-    "oklo_r0_fixture_readonly.html": {
-      "bytes": 77117,
-      "sha256": "8dac3ae9b8268a476b791f8c2293130e899d5c86c7fab09ce27345de2333544d"
+    "coupled_comparison_sync": {
+      "syncBarVisible": true,
+      "defaultStatus": "INDEPENDENT_REFERENCE_PANELS (Unaligned Time Basis: Pool Plume t = 0..60 s vs. Monte Carlo Batch Histories / Depletion 0..350 d)",
+      "syncedStatus": "SHARED_SCENARIO_BLADE_SYNC (Blade Withdrawal = 25% Out | Time Axes Remain Independent: INCOMPATIBLE_TIME_BASIS)",
+      "poolBladeVal": "25",
+      "nwBladeVal": "25",
+      "nwBladeTxt": "25%"
     },
-    "spacetime_explorer_4d_shareable.html": {
-      "bytes": 132358,
-      "sha256": "f9ca39ea37503f0e2012ad3dd5aad05ef26709337d5e84f83df89234920b4612"
+    "biofilms_disabled_webgl_fallback": {
+      "glHidden": true,
+      "slHidden": false,
+      "slWidth": 749,
+      "slHeight": 436,
+      "btn3dDisabled": true,
+      "kpiOcc": "4,888"
     },
-    "artifact_index.xml": {
-      "bytes": 7646,
-      "sha256": "05ca03794842fd12742afe613d8be19f6768f1d6d281b3bc5144a23bb36ea3c6"
-    },
-    "test_tecdoc643_viewer_regression.js": {
-      "bytes": 18965,
-      "sha256": "5583d8dbac65e737d5c0736db6e3671c2443060cc86df4bb9d293b696c7e8bd8"
+    "poolwater_disabled_webgl_fallback": {
+      "glHidden": true,
+      "slHidden": false,
+      "slWidth": 749,
+      "slHeight": 436,
+      "btn3dDisabled": true,
+      "kpiTemp": "328.3 K",
+      "gatesPass": true
     }
-  },
-  "test_output": [
-    "PASS [1/5]: Artifact hashes, byte counts, and frozen R0 fixture verified.",
-    "PASS [2/5]: Hidden-tab lazy initialization verified (iframeNw deferred on Tab 1).",
-    "PASS [3/5]: Normal 3-D WebGL rendering verified (768x520, k=0.851 \u00b1 0.106, (120 neutrons)).",
-    "PASS [4/7]: Split-view layout & scrolling verified (position=relative, no overlap).",
-    "PASS [5/8]: Biofilms 3-D WebGL, MCS 0/100 arms, and 256-Seed 4-Arm Null Plot verified (749x436, MCS 0 match=100.0%, ensemble=749x436).",
-    "PASS [6/8]: Biofilms 256-Seed Statistical Integrity verified (7 species x 4 arms x 256 seeds, seed-keyed pairing, TOST 90% CIs match radial_analyse.jl).",
-    "PASS [6/7]: TECDOC-643 disabled-WebGL exception fallback verified (2-D Slice 768x520, k=0.917 \u00b1 0.096, (151 neutrons)).",
-    "PASS [7/7]: Biofilms 3-D disabled-WebGL 2-D Slice fallback verified (749x436, sites=4,888)."
-  ]
+  }
 }
