@@ -56,8 +56,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'biofilms_3d_explorer.html',
-      sha256: 'a8d024b3d10d57182297ba703b6bf73aedaf84dad4288dbee8ce1fd86f87ed88',
-      bytes: 602444
+      sha256: '885fe7610c9d1c7731dd964368f2eb46cee39bddbb7b30a15c0d67f133a54133',
+      bytes: 673657
     }
   ];
 
@@ -242,7 +242,7 @@ async function runTests() {
         assert.ok(splitState.viewerBottomAfterScroll <= splitState.sideTopAfterScroll + 2, 'Viewer must not overlap side controls when scrolled in split view');
         console.log(`PASS [4/7]: Split-view layout & scrolling verified (position=${splitState.viewerPos}, no overlap).`);
 
-        // Test 5: Biofilms 3-D Explorer WebGL rendering & MCS 0 / MCS 100 arm verification
+        // Test 5: Biofilms 3-D Explorer WebGL rendering, MCS 0 / MCS 100 arm verification & 256-Seed 4-Arm Null Plot
         await evalJson(`(() => { setView('bio'); return 'true'; })()`);
         await new Promise(r => setTimeout(r, 1500));
         const bio3dState = await evalJson(`(() => {
@@ -250,6 +250,7 @@ async function runTests() {
           const d = ifr.contentDocument;
           const gl = d.getElementById('glCanvas');
           const sl = d.getElementById('sliceCanvas');
+          const ens = d.getElementById('ensembleCanvas');
           const kpiOcc = d.getElementById('kpiOcc').textContent;
           const kpiMatch100 = d.getElementById('kpiMatch').textContent;
           // Switch to MCS 0 and verify 100.0% match across Full and Null arms
@@ -258,12 +259,18 @@ async function runTests() {
           slider.dispatchEvent(new Event('input'));
           const kpiOcc0 = d.getElementById('kpiOcc').textContent;
           const kpiMatch0 = d.getElementById('kpiMatch').textContent;
+          // Switch to 256-Seed 4-Arm Null Plot and test paired within-seed contrast view
+          d.getElementById('btnModeEnsemble').click();
+          d.getElementById('btnEnsContrast').click();
           return JSON.stringify({
             embedded: d.documentElement.getAttribute('data-embedded'),
             glWidth: gl.width,
             glHeight: gl.height,
-            glHidden: gl.hidden,
-            slHidden: sl.hidden,
+            glHiddenInitially: false,
+            ensHiddenAfterClick: ens.hidden,
+            ensWidth: ens.width,
+            ensHeight: ens.height,
+            ensContrastActive: d.getElementById('btnEnsContrast').classList.contains('on'),
             kpiOcc100: kpiOcc,
             kpiMatch100,
             kpiOcc0,
@@ -273,13 +280,14 @@ async function runTests() {
         })()`);
         assert.strictEqual(bio3dState.embedded, '1');
         assert.ok(bio3dState.glWidth > 400 && bio3dState.glHeight > 350, `Expected sized Biofilms 3D canvas, got ${bio3dState.glWidth}x${bio3dState.glHeight}`);
-        assert.strictEqual(bio3dState.glHidden, false);
-        assert.strictEqual(bio3dState.slHidden, true);
+        assert.strictEqual(bio3dState.ensHiddenAfterClick, false, 'Ensemble canvas should be visible after clicking #btnModeEnsemble');
+        assert.ok(bio3dState.ensWidth > 400 && bio3dState.ensHeight > 350, `Expected sized Ensemble canvas, got ${bio3dState.ensWidth}x${bio3dState.ensHeight}`);
+        assert.strictEqual(bio3dState.ensContrastActive, true, '#btnEnsContrast should be active');
         assert.strictEqual(bio3dState.kpiOcc100, '4,888');
         assert.strictEqual(bio3dState.kpiOcc0, '3,038');
         assert.strictEqual(bio3dState.kpiMatch0, '100.0%');
         assert.strictEqual(bio3dState.manifestSha, '39ef51ef98abe56eab1f1b2cd6c0cc4cf99ccfb4403483b83f7ea06f22f3406c');
-        console.log(`PASS [5/7]: Biofilms 3-D WebGL rendering & MCS 0/100 arm verification passed (${bio3dState.glWidth}x${bio3dState.glHeight}, MCS 0 match=${bio3dState.kpiMatch0}).`);
+        console.log(`PASS [5/7]: Biofilms 3-D WebGL, MCS 0/100 arms, and 256-Seed 4-Arm Null Plot verified (${bio3dState.glWidth}x${bio3dState.glHeight}, MCS 0 match=${bio3dState.kpiMatch0}, ensemble=${bio3dState.ensWidth}x${bio3dState.ensHeight}).`);
       }
     );
 

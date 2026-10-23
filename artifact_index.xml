@@ -50,17 +50,18 @@
     </Artifact>
 
     <Artifact id="BIOFILMS-3D-CPM-01">
-      <Title>Biofilms 3D Cellular Potts Consortium Explorer (Seed 42, Full vs. Null Arms)</Title>
+      <Title>Biofilms 3D Cellular Potts Consortium Explorer (Seed 42 + 256-Seed 4-Arm Null Ensemble)</Title>
       <Requirement>Biofilms 3D Visualization Portal Integration (feat/biofilms-3d-visualization)</Requirement>
-      <EpistemicStatus>uncalibrated_model_snapshot_reference (40x40x40 lattice; D-PITCH awaiting_measurement; seconds_per_mcs = NaN; accumulated_dose_Gy = 0; coupled radiodialysis BLOCKED by tests/radiodialysis_basis_gate.jl)</EpistemicStatus>
+      <EpistemicStatus>uncalibrated_model_snapshot_reference (40x40x40 lattice; D-PITCH awaiting_measurement; seconds_per_mcs = NaN; accumulated_dose_Gy = 0; 256-seed 4-arm radial null within +/-0.05 r/R; coupled radiodialysis BLOCKED by tests/radiodialysis_basis_gate.jl)</EpistemicStatus>
       <RelativePortalPath>biofilms_3d_explorer.html</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/biofilms_3d_explorer.html</PublicArtifactUrl>
       <SourceRepository>aurascoper/Biofilms</SourceRepository>
       <SourceMasterCommitSHA>c766e7be31144f707155416b788bf7d1ba473ab9</SourceMasterCommitSHA>
       <FrameGeneratorCommitSHA>de8d88e-dirty</FrameGeneratorCommitSHA>
       <FrameManifestSHA256>39ef51ef98abe56eab1f1b2cd6c0cc4cf99ccfb4403483b83f7ea06f22f3406c</FrameManifestSHA256>
-      <Bytes>602444</Bytes>
-      <SHA256>a8d024b3d10d57182297ba703b6bf73aedaf84dad4288dbee8ce1fd86f87ed88</SHA256>
+      <EnsembleRadialCsvSHA256>c4b11303f36d45582e25311ba2bc0347292488e7c5899bd2fffa1f4156674dc0</EnsembleRadialCsvSHA256>
+      <Bytes>673657</Bytes>
+      <SHA256>885fe7610c9d1c7731dd964368f2eb46cee39bddbb7b30a15c0d67f133a54133</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
 
