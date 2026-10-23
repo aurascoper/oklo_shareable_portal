@@ -60,8 +60,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'biofilms_3d_explorer.html',
-      sha256: 'f6557e3426a890e1515335e0d3710fad84707d1c0c5bacc9057ca713ab9a606c',
-      bytes: 861182
+      sha256: '037e2050b70e92b77075b3b913aeed615457d6a1cb09a0fe85f4d6b14d96366d',
+      bytes: 869267
     }
   ];
 
