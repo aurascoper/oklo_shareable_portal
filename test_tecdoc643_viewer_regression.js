@@ -83,9 +83,19 @@ function verifyArtifactHashes() {
       bytes: 17684
     },
     {
+      path: 'multispecies_biofilm_robin_cylindrical_4panel.gif',
+      sha256: 'e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997',
+      bytes: 2571435
+    },
+    {
+      path: 'clonal_sector_expansion_reference.jpg',
+      sha256: '67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115',
+      bytes: 159146
+    },
+    {
       path: 'benchmark_manifest.json',
-      sha256: 'b41c6c99b26e4aa37b8ebab7b322b383da4a53b2af1342e3ebd6b63350f0bee4',
-      bytes: 11140
+      sha256: 'f3689098bd9a5a8cb03c0c82776cc1de57f0ad504b001a664b3be27dba76f98f',
+      bytes: 12663
     }
   ];
 
@@ -102,7 +112,8 @@ function verifyArtifactHashes() {
   assert.ok(indexHtml.includes('dc15eb934fe6cd32...'), 'index.html missing Gate-0 REF-NW-HTML-01 SHA prefix');
   assert.ok(indexHtml.includes('fa0f0dc30c45681a...'), 'index.html missing POOLWATER-3D-INTERACTIVE-01 SHA prefix');
   assert.ok(indexHtml.includes('037e2050b70e92b7...'), 'index.html missing BIOFILMS-3D-CPM-01 SHA prefix');
-  console.log('PASS [1/10]: Gate-0 artifact hashes, byte counts, and manifests verified.');
+  assert.ok(indexHtml.includes('e73622d6454a3a6a...'), 'index.html missing BIOFILMS-ROBIN-CYL-GIF-01 SHA prefix');
+  console.log('PASS [1/11]: Gate-0 artifact hashes, byte counts, and manifests verified.');
   return expectedFiles;
 }
 
@@ -120,6 +131,9 @@ function startStaticServer(port) {
         ext === '.html' ? 'text/html' :
         ext === '.js' ? 'text/javascript' :
         ext === '.json' ? 'application/json' :
+        ext === '.gif' ? 'image/gif' :
+        ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' :
+        ext === '.png' ? 'image/png' :
         ext === '.xml' ? 'application/xml' : 'text/plain';
       res.writeHead(200, { 'Content-Type': mime });
       res.end(fs.readFileSync(fp));
@@ -230,7 +244,7 @@ async function runTests() {
         assert.strictEqual(tab1State.poolDataSrc, 'poolwater_interactive.html');
         assert.strictEqual(tab1State.nwHiddenClass, true);
         assert.strictEqual(tab1State.poolHiddenClass, true);
-        console.log('PASS [2/10]: Hidden-tab lazy initialization verified (iframeNw, iframePool, iframeBio deferred on Tab 1).');
+        console.log('PASS [2/11]: Hidden-tab lazy initialization verified (iframeNw, iframePool, iframeBio deferred on Tab 1).');
         receipt.tests.lazy_init = 'PASS';
 
         // Test 3: Normal 3-D WebGL rendering on Tab 2 (unmodified Gate-0 tecdoc643_neutron_walk.html)
@@ -257,7 +271,7 @@ async function runTests() {
         assert.ok(nw3dState.glWidth > 400 && nw3dState.glHeight > 300, `Expected non-zero 3-D canvas size, got ${nw3dState.glWidth}x${nw3dState.glHeight}`);
         assert.notStrictEqual(nw3dState.kval, '\u2014', 'Tally k-eff should be computed');
         assert.ok(!nw3dState.ntot.includes('(0 neutrons)'), `Expected live neutron tally, got ${nw3dState.ntot}`);
-        console.log(`PASS [3/10]: TECDOC-643 3-D WebGL rendering verified on unmodified Gate-0 HTML (gl=${nw3dState.glWidth}x${nw3dState.glHeight}, k=${nw3dState.kval}).`);
+        console.log(`PASS [3/11]: TECDOC-643 3-D WebGL rendering verified on unmodified Gate-0 HTML (gl=${nw3dState.glWidth}x${nw3dState.glHeight}, k=${nw3dState.kval}).`);
         receipt.tests.tecdoc643_3d_webgl = nw3dState;
 
         // Test 4: Tab 3 Side-by-Side Split-View Layout (4D Spacetime + TECDOC-643 Neutron Walk)
@@ -279,7 +293,7 @@ async function runTests() {
         assert.strictEqual(splitState.c4dHidden, false);
         assert.strictEqual(splitState.cNwHidden, false);
         assert.strictEqual(splitState.cPoolHidden, true);
-        console.log('PASS [4/10]: Tab 3 Side-by-Side Split-View layout verified (card4d + cardNw visible).');
+        console.log('PASS [4/11]: Tab 3 Side-by-Side Split-View layout verified (card4d + cardNw visible).');
         receipt.tests.split_view_layout = splitState;
 
         // Test 5: Biofilms 3-D Explorer WebGL rendering, 256-Seed 4-Arm TOST & #btnEnsSelection (cpm-sp-v1 H0-B vs H0-A + 15/16 phase-locking)
@@ -337,7 +351,7 @@ async function runTests() {
         assert.strictEqual(bio3dState.statsAudit.allSeedKeyOrderInvariant, true);
         assert.strictEqual(bio3dState.statsAudit.allCiMatchReference, true);
         assert.strictEqual(bio3dState.statsAudit.allContrastsWithinEquivalenceBound, true);
-        console.log(`PASS [5/10]: Biofilms 3-D WebGL, 256-Seed 4-Arm TOST & #btnEnsSelection (cpm-sp-v1 H0-B vs H0-A + 15/16 phase-locking) verified (${bio3dState.glWidth}x${bio3dState.glHeight}, 256 seeds).`);
+        console.log(`PASS [5/11]: Biofilms 3-D WebGL, 256-Seed 4-Arm TOST & #btnEnsSelection (cpm-sp-v1 H0-B vs H0-A + 15/16 phase-locking) verified (${bio3dState.glWidth}x${bio3dState.glHeight}, 256 seeds).`);
         receipt.tests.biofilms_3d_and_256_seed_tost = {
           glWidth: bio3dState.glWidth,
           glHeight: bio3dState.glHeight,
@@ -419,8 +433,8 @@ async function runTests() {
         assert.ok(poolState.chipFieldUnavail.includes('UNAVAILABLE'));
         assert.strictEqual(poolState.auditHidden, false);
         assert.ok(poolState.auditWidth > 400);
-        console.log(`PASS [6/10]: Pool-Water Interactive 3-D WebGL & Gate 0-4 acceptance suite verified (${poolState.glWidth}x${poolState.glHeight}, 6x7 lattice=42 cells, worth=${poolState.gates.gate1_bladeWorthPcm} pcm, 2M sigma=${poolState.gates.gate1_twoPointWorthSigmaPcm} pcm, max|div u|=${poolState.gates.gate3_maxAbsVelocityDivergence}).`);
-        console.log(`PASS [7/10]: Pool-Water explicit UNAVAILABLE field honesty & Audit plotter verified (${poolState.chipFieldUnavail}).`);
+        console.log(`PASS [6/11]: Pool-Water Interactive 3-D WebGL & Gate 0-4 acceptance suite verified (${poolState.glWidth}x${poolState.glHeight}, 6x7 lattice=42 cells, worth=${poolState.gates.gate1_bladeWorthPcm} pcm, 2M sigma=${poolState.gates.gate1_twoPointWorthSigmaPcm} pcm, max|div u|=${poolState.gates.gate3_maxAbsVelocityDivergence}).`);
+        console.log(`PASS [7/11]: Pool-Water explicit UNAVAILABLE field honesty & Audit plotter verified (${poolState.chipFieldUnavail}).`);
         receipt.tests.poolwater_3d_and_gates = poolState.gates;
 
         // Test 8: Coupled Comparison (Tab 7) rapid tab switching, synchronization gate, and independent state restoration on uncheck while timeline playback is active
@@ -504,8 +518,58 @@ async function runTests() {
         assert.strictEqual(coupledState.nwBladeRestored, '0', 'Unchecking #chkSyncBlade must restore Neutron Walk pre-sync blade position (0%)');
         assert.strictEqual(coupledState.nwBladeTxtRestored, '0%');
         assert.strictEqual(coupledState.poolTimeAfterUncheck, '3', 'Blade sync/uncheck must never mutate Pool timeline slider');
-        console.log(`PASS [8/10]: Coupled Comparison synchronization gate & uncheck restoration verified (synced=${coupledState.nwBladeTxtSynced}, restored Pool=${coupledState.poolBladeRestored}% / NW=${coupledState.nwBladeTxtRestored}, timeIdx=${coupledState.poolTimeAfterUncheck}).`);
+        console.log(`PASS [8/11]: Coupled Comparison synchronization gate & uncheck restoration verified (synced=${coupledState.nwBladeTxtSynced}, restored Pool=${coupledState.poolBladeRestored}% / NW=${coupledState.nwBladeTxtRestored}, timeIdx=${coupledState.poolTimeAfterUncheck}).`);
         receipt.tests.coupled_comparison_sync = coupledState;
+
+        // Test 9: Multispecies Biofilm Spatial Model (Synthetic visualization) card, 4-panel Robin cylindrical GIF, 4-mode counterfactual plotter, and narrow mobile viewport (< 500 px) layout
+        await evalJson(`(() => { setView('robingif'); return 'true'; })()`);
+        await new Promise(r => setTimeout(r, 400));
+        const robinCardState = await evalJson(`(() => {
+          const card = document.getElementById('multispeciesBiofilmCard');
+          const wrap = document.querySelector('.wrap');
+          const modeChecks = [];
+          for (const [m, btnId] of [['survival', 'btnCfSurv'], ['biomass', 'btnCfBio'], ['displacement', 'btnCfDisp'], ['all', 'btnCfAll']]) {
+            setRobinCounterfactualMode(m);
+            modeChecks.push(document.getElementById(btnId).classList.contains('blue'));
+          }
+          // Expand both details drawers and test narrow mobile container width (375 px)
+          card.querySelectorAll('details').forEach(d => { d.open = true; });
+          const prevMaxWidth = wrap.style.maxWidth;
+          wrap.style.maxWidth = '375px';
+          const mobileCardClientW = card.clientWidth;
+          const mobileCardScrollW = card.scrollWidth;
+          wrap.style.maxWidth = prevMaxWidth;
+          return JSON.stringify({
+            tabActive: document.getElementById('tabRobinGif').classList.contains('active'),
+            bannerTxt: document.getElementById('bannerTxt').textContent,
+            allFourModesActivated: modeChecks.every(Boolean),
+            mobileNoOverflowAt375px: mobileCardScrollW <= mobileCardClientW + 1,
+            mobileCardClientW,
+            mobileCardScrollW,
+            audit: window.verifyRobinBiofilmCardIntegrity()
+          });
+        })()`);
+        assert.strictEqual(robinCardState.tabActive, true);
+        assert.ok(robinCardState.bannerTxt.includes('Robin boundary condition'));
+        assert.strictEqual(robinCardState.allFourModesActivated, true, 'All 4 counterfactual mode buttons must toggle cleanly');
+        assert.strictEqual(robinCardState.mobileNoOverflowAt375px, true, `Expected zero horizontal overflow at 375px width, got scrollWidth=${robinCardState.mobileCardScrollW} vs clientWidth=${robinCardState.mobileCardClientW}`);
+        assert.strictEqual(robinCardState.audit.cardPresent, true);
+        assert.strictEqual(robinCardState.audit.hasSyntheticBadge, true);
+        assert.strictEqual(robinCardState.audit.clarifiesRobinBoundaryCondition, true);
+        assert.strictEqual(robinCardState.audit.distinguishesSyntheticDoseRate, true);
+        assert.strictEqual(robinCardState.audit.distinguishesNetBiomassProxy, true);
+        assert.strictEqual(robinCardState.audit.linksResearchProgram, true);
+        assert.strictEqual(robinCardState.audit.linksBiofilmsRepo, true);
+        assert.strictEqual(robinCardState.audit.gifLoaded, true, `Expected 800x571 Robin cylindrical GIF to load, got ${robinCardState.audit.gifWidth}x${robinCardState.audit.gifHeight}`);
+        assert.strictEqual(robinCardState.audit.clonalRefLoaded, true, 'Expected companion clonal sector reference JPG to load');
+        assert.strictEqual(robinCardState.audit.counterfactualCanvasPresent, true);
+        assert.strictEqual(robinCardState.audit.noCanvasTextOverflow, true, 'Expected all compact sub-panel titles and footers to fit inside sub-panel width');
+        assert.strictEqual(robinCardState.audit.plotsInitSurvRadShift, true);
+        assert.strictEqual(robinCardState.audit.noHorizontalCardOverflow, true);
+        assert.strictEqual(robinCardState.audit.speciesCount, 7);
+        assert.strictEqual(robinCardState.audit.allDisplacementCisSpanZero, true);
+        console.log(`PASS [9/11]: Multispecies Biofilm Spatial Model (Synthetic visualization) card, 4-panel Robin cylindrical GIF (${robinCardState.audit.gifWidth}x${robinCardState.audit.gifHeight}), 3-outcome counterfactual plotter, & 375px mobile layout verified.`);
+        receipt.tests.multispecies_biofilm_robin_gif_card = robinCardState.audit;
       }
     );
 
@@ -536,7 +600,7 @@ async function runTests() {
         assert.ok(bioFallback.slWidth > 400 && bioFallback.slHeight > 350);
         assert.strictEqual(bioFallback.btn3dDisabled, true);
         assert.strictEqual(bioFallback.kpiOcc, '4,888');
-        console.log(`PASS [9/10]: Biofilms 3-D disabled-WebGL 2-D Slice fallback verified (${bioFallback.slWidth}x${bioFallback.slHeight}, sites=${bioFallback.kpiOcc}).`);
+        console.log(`PASS [10/11]: Biofilms 3-D disabled-WebGL 2-D Slice fallback verified (${bioFallback.slWidth}x${bioFallback.slHeight}, sites=${bioFallback.kpiOcc}).`);
         receipt.tests.biofilms_disabled_webgl_fallback = bioFallback;
 
         await evalJson(`(() => { setView('pool'); return 'true'; })()`);
@@ -563,7 +627,7 @@ async function runTests() {
         assert.ok(poolFallback.slWidth > 400 && poolFallback.slHeight > 350);
         assert.strictEqual(poolFallback.btn3dDisabled, true);
         assert.strictEqual(poolFallback.gatesPass, true);
-        console.log(`PASS [10/10]: Pool-Water Interactive disabled-WebGL 2-D Cut-Plane fallback verified (${poolFallback.slWidth}x${poolFallback.slHeight}, T_max=${poolFallback.kpiTemp}).`);
+        console.log(`PASS [11/11]: Pool-Water Interactive disabled-WebGL 2-D Cut-Plane fallback verified (${poolFallback.slWidth}x${poolFallback.slHeight}, T_max=${poolFallback.kpiTemp}).`);
         receipt.tests.poolwater_disabled_webgl_fallback = poolFallback;
       }
     );

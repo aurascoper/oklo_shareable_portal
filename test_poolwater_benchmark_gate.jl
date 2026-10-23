@@ -31,14 +31,17 @@ end
             "biofilms_3d_explorer.html"                         => (869267, "037e2050b70e92b77075b3b913aeed615457d6a1cb09a0fe85f4d6b14d96366d"),
             "tecdoc643_reference_fixture.jl"                    => (6018,   "ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d"),
             "proto_biofilms_geyser_fission_research_program.md" => (48056,  "da50d4002e6bcca94234045c3d371e16af243806cdb1ed99e0beff074c1cfb11"),
-            "poolwater_interactive.html"                        => (79610,  "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a"),
-            "POOLWATER_WORKFLOW_SPEC.md"                        => (17684,  "2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669"),
-            "benchmark_manifest.json"                           => (11140,  "b41c6c99b26e4aa37b8ebab7b322b383da4a53b2af1342e3ebd6b63350f0bee4"),
+            "poolwater_interactive.html"                         => (79610,   "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a"),
+            "POOLWATER_WORKFLOW_SPEC.md"                         => (17684,   "2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669"),
+            "multispecies_biofilm_robin_cylindrical_4panel.gif"  => (2571435, "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997"),
+            "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
+            "benchmark_manifest.json"                            => (12663,   "f3689098bd9a5a8cb03c0c82776cc1de57f0ad504b001a664b3be27dba76f98f"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")
         readme_info = file_sha256_and_bytes("README.md")
         manifest_info = file_sha256_and_bytes("benchmark_manifest.json")
+        index_info = file_sha256_and_bytes("index.html")
 
         for (rel, (exp_bytes, exp_sha)) in exact_table
             actual = file_sha256_and_bytes(rel)
@@ -51,10 +54,20 @@ end
             if rel in ("spacetime_explorer_4d_shareable.html", "tecdoc643_neutron_walk.html",
                        "oklo_r0_fixture_readonly.html", "CONFORMANCE_FIXTURE_SPEC.md",
                        "biofilms_3d_explorer.html", "tecdoc643_reference_fixture.jl",
-                       "poolwater_interactive.html", "POOLWATER_WORKFLOW_SPEC.md")
+                       "poolwater_interactive.html", "POOLWATER_WORKFLOW_SPEC.md",
+                       "multispecies_biofilm_robin_cylindrical_4panel.gif",
+                       "clonal_sector_expansion_reference.jpg")
                 @test occursin(exp_sha, manifest_info.text)
             end
         end
+
+        @test occursin("Multispecies Biofilm Spatial Model", index_info.text)
+        @test occursin("Synthetic visualization", index_info.text)
+        @test occursin("Robin boundary condition", index_info.text)
+        @test occursin("Erithacus rubecula", index_info.text)
+        @test occursin("multispecies_biofilm_robin_cylindrical_4panel.gif", index_info.text)
+        @test occursin("clonal_sector_expansion_reference.jpg", index_info.text)
+        @test occursin("https://github.com/aurascoper/Biofilms", index_info.text)
 
         @test !occursin("file://", xml_info.text)
         @test !occursin("/Users/", xml_info.text)
@@ -209,15 +222,23 @@ end
             "oklo_r0_fixture_readonly.html",
             "CONFORMANCE_FIXTURE_SPEC.md",
             "proto_biofilms_geyser_fission_research_program.md",
+            "test_tecdoc643_viewer_regression.js",
         ]
 
         forbidden_patterns = [
             r"\bmurr\b"i,
             r"missouri\s+university\s+research\s+reactor"i,
             r"\br-103\b"i,
-            r"rur-26-"i,
+            r"rur-26"i,
             r"\bap-dc-001\b"i,
             r"specialist\s+ii"i,
+            r"177lu"i,
+            r"lu-177"i,
+            r"lutetium"i,
+            r"chelat"i,
+            r"\bdota\b"i,
+            r"\bpsma\b"i,
+            r"radiopharmaceutical"i,
         ]
 
         for f in all_portal_files
@@ -238,8 +259,10 @@ end
             "tecdoc643_reference_fixture.jl",
             "biofilms_3d_explorer.html",
             "spacetime_explorer_4d_shareable.html",
+            "oklo_r0_fixture_readonly.html",
             "CONFORMANCE_FIXTURE_SPEC.md",
             "proto_biofilms_geyser_fission_research_program.md",
+            "test_tecdoc643_viewer_regression.js",
         ]
 
         for f in dash_clean_files

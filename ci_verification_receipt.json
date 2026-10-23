@@ -1,7 +1,7 @@
 {
   "schema": "oklo_portal_ci_verification_receipt_v1",
-  "generated_at": "2026-10-23T03:09:42.006Z",
-  "gate0_files_verified": 9,
+  "generated_at": "2026-10-23T05:58:17.502Z",
+  "gate0_files_verified": 11,
   "tests": {
     "lazy_init": "PASS",
     "tecdoc643_3d_webgl": {
@@ -9,7 +9,7 @@
       "glHeight": 630,
       "glHidden": false,
       "slHidden": true,
-      "kval": "0.851 ± 0.106",
+      "kval": "0.911 ± 0.107",
       "ntot": "(120 neutrons)"
     },
     "split_view_layout": {
@@ -65,6 +65,27 @@
       "nwBladeRestored": "0",
       "nwBladeTxtRestored": "0%",
       "poolTimeAfterUncheck": "3"
+    },
+    "multispecies_biofilm_robin_gif_card": {
+      "cardPresent": true,
+      "hasSyntheticBadge": true,
+      "clarifiesRobinBoundaryCondition": true,
+      "distinguishesSyntheticDoseRate": true,
+      "distinguishesNetBiomassProxy": true,
+      "linksResearchProgram": true,
+      "linksBiofilmsRepo": true,
+      "gifSrc": "multispecies_biofilm_robin_cylindrical_4panel.gif",
+      "gifLoaded": true,
+      "gifWidth": 800,
+      "gifHeight": 571,
+      "clonalRefSrc": "clonal_sector_expansion_reference.jpg",
+      "clonalRefLoaded": true,
+      "counterfactualCanvasPresent": true,
+      "noCanvasTextOverflow": true,
+      "plotsInitSurvRadShift": true,
+      "noHorizontalCardOverflow": true,
+      "speciesCount": 7,
+      "allDisplacementCisSpanZero": true
     },
     "biofilms_disabled_webgl_fallback": {
       "glHidden": true,

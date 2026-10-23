@@ -57,6 +57,9 @@
       border-radius: 999px;
       border: 1px solid var(--border);
       background: var(--panel-alt);
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
     }
     .badge.green { color: #86efac; border-color: #166534; background: #052e16; }
     .badge.amber { color: #fcd34d; border-color: #92400e; background: #451a03; }
@@ -218,8 +221,10 @@
       font-family: var(--mono);
       font-size: 12px;
       color: #bae6fd;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
-    a { color: var(--accent); }
+    a { color: var(--accent); overflow-wrap: anywhere; }
     pre {
       background: #060b11;
       border: 1px solid var(--border);
@@ -229,6 +234,34 @@
       font-family: var(--mono);
       font-size: 12px;
       color: #cbd5e1;
+    }
+    .robin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+    .robin-grid > *, .clonal-ref-grid > * {
+      min-width: 0;
+      max-width: 100%;
+    }
+    .clonal-ref-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+      gap: 12px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .table-scroll {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (max-width: 640px) {
+      .wrap { padding: 12px 12px 28px; }
+      .card { padding: 12px; }
+      .clonal-ref-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -256,6 +289,7 @@
       <button id="tabPool" onclick="setView('pool')">6. Pool-Water Interactive Viewer (3D Core &amp; Pool Demo)</button>
       <button id="tabCoupled" onclick="setView('coupled')">7. Coupled Comparison (Pool-Water + TECDOC Reference Panels)</button>
       <button id="tabAudit" onclick="setView('audit')">8. Benchmark Workflow, PIE Demarcation &amp; Precision Audit</button>
+      <button id="tabRobinGif" onclick="setView('robingif')">9. Multispecies Biofilm Spatial Model (4-Panel Robin Cylindrical GIF)</button>
     </div>
 
     <div id="bannerTxt" class="banner">
@@ -334,6 +368,7 @@
             <span class="badge amber">D-PITCH: awaiting_measurement | seconds_per_mcs = NaN</span>
           </div>
           <div>
+            <a href="#robingif" onclick="setView('robingif'); return false;">4-Panel Robin Cylindrical GIF &amp; Counterfactual</a> |
             <a href="biofilms_3d_explorer.html" target="_blank" rel="noopener">Open Standalone Biofilms 3D HTML</a> |
             <span class="mono">Source Repo: aurascoper/Biofilms (c766e7b / de8d88e, Seed 42, MCS 0..100, Seeds 42..297)</span>
           </div>
@@ -355,6 +390,148 @@
         </div>
         <iframe id="iframeR0" data-src="oklo_r0_fixture_readonly.html" title="Frozen Revision-0 Oklo Conformance Fixture"></iframe>
       </div>
+    </div>
+
+    <div id="multispeciesBiofilmCard" class="card">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;">
+        <h2 style="margin:0;">Multispecies Biofilm Spatial Model <span class="badge amber">Synthetic visualization</span></h2>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+          <span class="badge blue">Robin Boundary Condition at Cylinder Wall r = R (Not Avian Magnetoreception)</span>
+          <span class="badge green">cpm-sp-growth-v1 | Seed 42 | combined (growth=1, MCS 0..200, --clip)</span>
+          <span class="badge red">Causal Interpretation Provisional (Matched Counterfactual Required)</span>
+        </div>
+      </div>
+
+      <p style="margin:0 0 12px;font-size:13px;color:var(--text);">
+        <strong>Visual Companion to the Biofilm Spatial-Modeling Question (Living Biofilms <code>H_6</code> vs. Abiotic Prebiotic Organization <code>H_5</code>):</strong>
+        This four-panel animation (<a href="multispecies_biofilm_robin_cylindrical_4panel.gif" target="_blank" rel="noopener"><code>multispecies_biofilm_robin_cylindrical_4panel.gif</code></a>, <code>2,571,435</code> bytes, SHA-256 <code>e73622d6454a3a6a...</code>) places four modeled quantities from the <a href="https://github.com/aurascoper/Biofilms" target="_blank" rel="noopener"><code>aurascoper/Biofilms</code></a> cylindrical Cellular Potts / Monod extension (<code>diagnostics/fitness_phase/pv_workflow.py --clip</code>, execution commit <code>841d052</code>, config SHA-256 <code>eb090aa3c0a97177...</code>) in one view: <strong>(1) microbial species and parcel geometry</strong>, <strong>(2) a wrapped Kuramoto phase field</strong>, <strong>(3) a net biomass-rate proxy</strong>, and <strong>(4) a synthetic radial dose-rate field</strong>.
+        Connecting this visualization to the portal's research-program section preserves the strict boundary between <strong>living cellular biofilms (<code>H_6</code>)</strong> and <strong>abiotic prebiotic oligomer organization (<code>H_5</code>)</strong> without conflating the two:
+        <a href="proto_biofilms_geyser_fission_research_program.md" target="_blank" rel="noopener">Read the research-program document (local .md)</a> |
+        <a href="https://github.com/aurascoper/oklo_shareable_portal/blob/main/proto_biofilms_geyser_fission_research_program.md" target="_blank" rel="noopener">GitHub Research-Program Document</a> |
+        <a href="https://github.com/aurascoper/Biofilms" target="_blank" rel="noopener">Underlying Simulation Repository (aurascoper/Biofilms)</a> |
+        <a href="biofilms_3d_explorer.html" onclick="setView('bio'); document.getElementById('cardBio').scrollIntoView({ behavior: 'smooth', block: 'start' }); return false;">Open Interactive 3D Biofilms Explorer (Tab 4)</a>.
+      </p>
+
+      <div class="robin-grid">
+        <div style="background:var(--panel-alt);border:1px solid var(--border);border-radius:8px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+            <strong style="font-size:13px;">Four-Panel Axis-Clipped Robin-Boundary Cylinder (<code>combined | growth=1 | MCS 0..200</code>)</strong>
+            <span class="mono">800 x 571 px | 219 frames</span>
+          </div>
+          <img id="robinCylindricalGif" src="multispecies_biofilm_robin_cylindrical_4panel.gif" alt="Multispecies Biofilm Spatial Model: Four-panel synthetic visualization on a Robin-boundary cylindrical domain" style="width:100%;height:auto;border-radius:6px;border:1px solid var(--border);display:block;background:#07111a;">
+          <div style="margin-top:8px;font-size:12px;color:var(--muted);line-height:1.45;">
+            <div><strong>Caption &amp; Modeling Limits:</strong> Four-panel ParaView <code>pvpython</code> export (<code>pv_workflow.py build OUTPUT/growth_1_seed_42/combined VIEW_CLIP --clip</code>) on a <code>40 x 40 x 40</code> nonperiodic cylindrical lattice (<code>legacy_nonperiodic_cylinder</code>) with a whole-voxel plane cut through the cylinder axis (<code>r = 0</code>) so the interior dose peak is visible.</div>
+            <ul style="margin:6px 0 0;padding-left:18px;">
+              <li><strong>Synthetic dose-rate field vs. calibrated radiation transport:</strong> Bottom-right panel shows an assumed radial profile (<code>0.0e+00</code> to <code>1.0e-02 Gy/s</code> peaking at <code>r = 0</code> with synthetic clock <code>seconds_per_mcs = 60.0 s</code>), <em>not</em> a calibrated OpenMC or coupled radiation-transport result (<code>validate_coupled_config</code> and <code>tests/radiodialysis_basis_gate.jl</code> refuse coupled transport until physical voxel pitch <code>dx</code> / <code>D-PITCH</code> and density <code>rho</code> are calibrated).</li>
+              <li><strong>Net biomass-rate proxy vs. experimentally measured growth rate:</strong> Bottom-left panel displays <code>growth_rate - hazard_rate</code> (<code>[-6.0e-02, +5.0e-02] 1/MCS</code>), subtracting an instantaneous whole-parcel death commitment hazard (<code>alpha_s * dD/dt</code>) from a conditional biomass-specific Monod uptake/maintenance rate. Because these two terms have different currencies, their difference is an illustrative model proxy (<code>net_biomass_rate_proxy</code>), not the growth rate of any physical quantity, not realized biomass change, and not an experimentally measured growth rate.</li>
+              <li><strong>Robin boundary condition vs. avian magnetoreception:</strong> "Robin cylindrical" refers strictly to the mathematical <strong>Robin boundary condition</strong> (<code>a * u + b * du/dn = g</code>, specifically the ghost-point membrane wall flux condition <code>-D_eff * dc/dr|_{r=R} = P_eff(t) * (c(R,t) - c_ext)</code> at outer cylinder radius <code>r = R</code> in <code>biofilms_potts.jl</code>), and has zero connection to the European robin (<code>Erithacus rubecula</code>) or avian magnetoreception.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="background:var(--panel-alt);border:1px solid var(--border);border-radius:8px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+            <strong style="font-size:13px;">Matched-Seed Counterfactual: <code>Radiation OFF</code> vs. <code>Radiation ON</code> (Fixed Initial Conditions)</strong>
+            <span class="badge green">Commit 841d052 | 256 Seeds (MCS 100) &amp; 16 Seeds (MCS 200)</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+            <button id="btnCfAll" type="button" class="badge blue" style="cursor:pointer;" onclick="setRobinCounterfactualMode('all')">All 3 Outcomes Side-by-Side</button>
+            <button id="btnCfSurv" type="button" class="badge" style="cursor:pointer;color:var(--text);" onclick="setRobinCounterfactualMode('survival')">1. Survival (MCS 100)</button>
+            <button id="btnCfBio" type="button" class="badge" style="cursor:pointer;color:var(--text);" onclick="setRobinCounterfactualMode('biomass')">2. Biomass Change (MCS 200)</button>
+            <button id="btnCfDisp" type="button" class="badge" style="cursor:pointer;color:var(--text);" onclick="setRobinCounterfactualMode('displacement')">3. Directional Displacement</button>
+          </div>
+          <canvas id="robinCounterfactualCanvas" width="760" height="390" style="width:100%;height:auto;background:#07111a;border:1px solid var(--border);border-radius:6px;display:block;"></canvas>
+          <div style="margin-top:8px;font-size:12px;color:var(--muted);line-height:1.45;">
+            <strong>Why a Single Combined-Growth GIF Cannot Establish Causality Alone:</strong>
+            Showing a combined-growth state and a dose-rate field does not by itself show whether dose drives parcel motion or species selection. Comparing matched seeds with <strong>Radiation OFF (<code>baseline</code> / <code>phase_only</code>)</strong> vs. <strong>Radiation ON (<code>survival_only</code> / <code>combined</code>)</strong> while holding initial coordinates, founder IDs, phases, and all non-radiation parameters fixed separates the three outcomes:
+            <strong>(1) Survival (<code>cpm-sp-v1</code>, 256 seeds):</strong> axial dose removes <code>5,511 / 10,752</code> parcels near the axis;
+            <strong>(2) Biomass change (<code>cpm-sp-growth-v1</code>, 16 seeds):</strong> low-hazard <code>D. radiodurans</code> (<code>+34,137</code>) and <code>C. neoformans</code> (<code>+6,142</code>) expand into freed nutrient/space while high-hazard competitors lose biomass;
+            <strong>(3) Directional displacement (<code>delta_r_i</code>):</strong> all 7 species' 95% CIs span zero (<code>[-0.0052, +0.0013] r/R</code>), proving that survivor radius shifts outward via <strong>selective axial mortality (<code>H0-B</code>), not directed movement (<code>H0-A</code>)</strong>.
+          </div>
+
+          <details style="margin-top:10px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px 10px;">
+            <summary style="cursor:pointer;font-weight:600;font-size:12px;color:var(--accent);">Companion Spatial Reference: Circular-Domain Clonal Sector Coarsening (<code>clonal_sector_expansion_reference.jpg</code>)</summary>
+            <div class="clonal-ref-grid">
+              <a href="clonal_sector_expansion_reference.jpg" target="_blank" rel="noopener">
+                <img id="clonalSectorRefImg" src="clonal_sector_expansion_reference.jpg" alt="Circular-domain clonal sector expansion reference: microscopy time-lapse vs. discrete agent simulation" style="width:100%;height:auto;border-radius:6px;border:1px solid var(--border);display:block;">
+              </a>
+              <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">
+                <div><strong>Comparative Spatial-Organization Benchmark (<code>159,146</code> bytes, SHA-256 <code>67865f346f4d2383...</code>):</strong></div>
+                <div style="margin-top:4px;"><strong>Panel A:</strong> Fluorescence microscopy time-lapse (<code>3.5 hps</code>, <code>5 hps</code>, <code>6.5 hps</code>, <code>9 hps</code>; <code>20 um</code> scale bar) of dual-labeled microbial expansion in a circular domain.</div>
+                <div style="margin-top:4px;"><strong>Panel B:</strong> Discrete particle simulation showing sparse founder seeding (left) coarsening into segregated red and green clonal sectors (right) as the circular domain fills. Included strictly to illustrate that macroscopic sector segregation (as seen at <code>MCS 200</code> in the top-left panel of the Robin cylindrical GIF) arises from local contact proliferation and space competition without requiring radiation-directed motility or magnetic-field sensing.</div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <details style="margin-top:12px;background:var(--panel-alt);border:1px solid var(--border);border-radius:8px;padding:10px 12px;">
+        <summary style="cursor:pointer;font-weight:600;font-size:12.5px;color:var(--accent);">Per-Species Matched-Seed Counterfactual Table (<code>Radiation ON - Radiation OFF</code>) &amp; Five Epistemic Distinctions</summary>
+        <div class="table-scroll" style="margin-top:8px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Species &amp; Assumed Hazard Sensitivity (<code>alpha_s</code>)</th>
+                <th>Outcome 1: Surviving Parcels (<code>cpm-sp-v1</code>, 256 Seeds, MCS 100)</th>
+                <th>Population Survivor Radius Shift vs. Initial MCS 0 Survivor Radius</th>
+                <th>Outcome 3: Tracked Parcel Displacement <code>delta_r_i</code> (95% Bootstrap CI)</th>
+                <th>Outcome 2: Net Biomass Change (<code>cpm-sp-growth-v1</code>, 16 Seeds, MCS 200)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. C. neoformans</strong> (<code>0.010 Gy^-1</code>, melanized)</td>
+                <td class="mono">-1.74 [-1.88, -1.61]</td>
+                <td class="mono">+0.0086 vs. +0.0075 r/R (256/0)</td>
+                <td class="mono">+0.0011 [-0.0025, +0.0047] (NULL)</td>
+                <td class="mono">+6,142 [+1,021, +11,415] (alive: +1.6)</td>
+              </tr>
+              <tr>
+                <td><strong>2. D. radiodurans</strong> (<code>0.002 Gy^-1</code>, lowest hazard)</td>
+                <td class="mono">-0.43 [-0.51, -0.35]</td>
+                <td class="mono">+0.0017 vs. +0.0004 r/R (256/0)</td>
+                <td class="mono">+0.0013 [-0.0010, +0.0036] (NULL)</td>
+                <td class="mono">+34,137 [+27,900, +40,681] (alive: +9.4)</td>
+              </tr>
+              <tr>
+                <td><strong>3. C. sphaerospermum</strong> (<code>0.015 Gy^-1</code>, melanized)</td>
+                <td class="mono">-2.62 [-2.76, -2.47]</td>
+                <td class="mono">+0.0192 vs. +0.0210 r/R (255/1)</td>
+                <td class="mono">-0.0018 [-0.0061, +0.0026] (NULL)</td>
+                <td class="mono">-3,002 [-8,424, +2,098] (alive: -4.3)</td>
+              </tr>
+              <tr>
+                <td><strong>4. B. subtilis</strong> (<code>0.040 Gy^-1</code>)</td>
+                <td class="mono">-4.48 [-4.62, -4.34]</td>
+                <td class="mono">+0.0382 vs. +0.0434 r/R (207/49)</td>
+                <td class="mono">-0.0052 [-0.0112, +0.0005] (NULL)</td>
+                <td class="mono">-13,293 [-17,223, -9,449] (alive: -8.4)</td>
+              </tr>
+              <tr>
+                <td><strong>5. A. niger</strong> (<code>0.020 Gy^-1</code>, melanized)</td>
+                <td class="mono">-3.18 [-3.32, -3.04]</td>
+                <td class="mono">+0.0191 vs. +0.0212 r/R (251/5)</td>
+                <td class="mono">-0.0021 [-0.0068, +0.0026] (NULL)</td>
+                <td class="mono">-6,032 [-10,204, -1,805] (alive: -5.2)</td>
+              </tr>
+              <tr>
+                <td><strong>6. S. oneidensis</strong> (<code>0.060 Gy^-1</code>, highest hazard)</td>
+                <td class="mono">-5.26 [-5.35, -5.16]</td>
+                <td class="mono">+0.0493 vs. +0.0538 r/R (145/111)</td>
+                <td class="mono">-0.0045 [-0.0117, +0.0027] (NULL)</td>
+                <td class="mono">-10,348 [-14,553, -6,117] (alive: -6.3)</td>
+              </tr>
+              <tr>
+                <td><strong>7. O. intermedium AM7</strong> (<code>0.030 Gy^-1</code>)</td>
+                <td class="mono">-3.82 [-3.97, -3.67]</td>
+                <td class="mono">+0.0356 vs. +0.0359 r/R (240/16)</td>
+                <td class="mono">-0.0003 [-0.0056, +0.0049] (NULL)</td>
+                <td class="mono">-10,264 [-14,877, -5,774] (alive: -6.5)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
     </div>
 
     <div id="auditSection" class="card">
@@ -400,6 +577,17 @@
             </td>
             <td class="mono">037e2050b70e92b7...<br>(869,267 bytes)</td>
             <td><span class="badge amber">Uncalibrated Reference</span><br>40x40x40 lattice (`D-PITCH: awaiting_measurement`, `seconds_per_mcs = NaN`); all 28 TOST 90% CIs lie inside `[-0.05, +0.05] r/R`.</td>
+          </tr>
+          <tr>
+            <td class="mono">BIOFILMS-ROBIN-CYL-GIF-01</td>
+            <td><strong>Multispecies Biofilm Spatial Model (4-Panel Robin Cylindrical GIF)</strong><br>Axis-clipped cylindrical 4-panel ParaView animation (`combined`, `growth=1`, Seed 42, MCS 0..200) + matched counterfactual &amp; clonal sector reference</td>
+            <td>
+              <a href="multispecies_biofilm_robin_cylindrical_4panel.gif">multispecies_biofilm_robin_cylindrical_4panel.gif</a><br>
+              <a href="clonal_sector_expansion_reference.jpg">clonal_sector_expansion_reference.jpg</a> |
+              <a href="https://github.com/aurascoper/Biofilms" target="_blank" rel="noopener">aurascoper/Biofilms (841d052, pv_workflow.py --clip)</a>
+            </td>
+            <td class="mono">e73622d6454a3a6a...<br>(2,571,435 bytes)<br><span style="color:var(--muted)">Ref: 67865f34... (159,146 B)</span></td>
+            <td><span class="badge amber">Synthetic visualization</span><br>Robin wall BC at `r = R` (not avian magnetoreception); synthetic `dose_rate` (`0..0.01 Gy/s`) != calibrated transport; `net_biomass_rate_proxy` != measured growth; living `H_6` != abiotic `H_5`.</td>
           </tr>
           <tr>
             <td class="mono">REF-NW-HTML-01</td>
@@ -529,7 +717,7 @@
           <tr>
             <td><strong>Stage 4: Post-Irradiation Examination (PIE) &amp; Materials Qualification</strong></td>
             <td class="mono">Hot-cell / metallurgical coupon audit under `SOP-QMS-001`</td>
-            <td>SEM/EDS oxide film thickness (`14.2 nm` SS316L; `48.5 nm` Al-6061), ICP-MS leachate (`Fe, Cr, Ni, Al`), pitting factor (`1.08` vs `1.22`), Raman/XPS melanin-metal chelation.</td>
+            <td>SEM/EDS oxide film thickness (`14.2 nm` SS316L; `48.5 nm` Al-6061), ICP-MS leachate (`Fe, Cr, Ni, Al`), pitting factor (`1.08` vs `1.22`), Raman/XPS melanin-metal complexation.</td>
             <td>Enforced by `verify_research_cgmp_firewall()` (`can_issue_cgmp_verdict = false`); exploratory research modules never alter clinical release or reactor safety envelopes.</td>
           </tr>
         </tbody>
@@ -743,7 +931,7 @@
       const banner = document.getElementById('bannerTxt');
       const syncBar = document.getElementById('coupledSyncBar');
 
-      ['tab4d','tabNw','tabSplit','tabBio','tabR0','tabPool','tabCoupled','tabAudit'].forEach(id => {
+      ['tab4d','tabNw','tabSplit','tabBio','tabR0','tabPool','tabCoupled','tabAudit','tabRobinGif'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
       });
@@ -816,12 +1004,327 @@
       } else if (mode === 'audit') {
         document.getElementById('tabAudit').classList.add('active');
         banner.innerHTML = '<strong>Benchmark Workflow, Surrogate Loop / PIE Demarcation &amp; Precision Audit Summary:</strong> Review the artifact SHA-256 registry, precision-aware recomputations, 4-stage surrogate loop / PIE protocol, and 5-row planned-contrast experimental matrix below.';
+      } else if (mode === 'robingif') {
+        document.getElementById('tabRobinGif').classList.add('active');
+        banner.innerHTML = '<strong>Multispecies Biofilm Spatial Model (Synthetic visualization):</strong> Four-panel ParaView export (<code>multispecies_biofilm_robin_cylindrical_4panel.gif</code>, <code>cpm-sp-growth-v1</code>, <code>combined</code> arm, <code>growth=1</code>, Seed 42, MCS 0..200) on a cylindrical domain with a mathematical <strong>Robin boundary condition</strong> at outer radius <code>r = R</code> (unrelated to avian magnetoreception). Synthetic <code>dose_rate</code> (<code>0..0.01 Gy/s</code>) is not calibrated radiation transport; <code>net_biomass_rate_proxy</code> is not an experimentally measured growth rate; causal interpretation requires the matched-seed <code>Radiation OFF</code> vs. <code>Radiation ON</code> counterfactual comparison shown below.';
+        drawRobinCounterfactualCanvas(currentRobinCfMode);
       }
     }
 
+    const ROBIN_COUNTERFACTUAL_DATA = {
+      source_commit: '841d052',
+      config_sha256: 'eb090aa3c0a971776a6e262713eb0cf5c130b53cf2b8d7720ad93dec19f50b01',
+      gif_sha256: 'e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997',
+      gif_bytes: 2571435,
+      clonal_ref_sha256: '67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115',
+      clonal_ref_bytes: 159146,
+      species: [
+        { id: 1, short: 'CN', name: 'C. neoformans',      alpha: 0.010, color: '#40b373', aliveDiff: -1.74, aliveCi: [-1.88, -1.61], survRadShift: 0.0086, initSurvRadShift: 0.0075, disp: 0.0011,  dispCi: [-0.0025, 0.0047], bioDiff: 6142,   bioCi: [1021, 11415] },
+        { id: 2, short: 'DR', name: 'D. radiodurans',     alpha: 0.002, color: '#edb021', aliveDiff: -0.43, aliveCi: [-0.51, -0.35], survRadShift: 0.0017, initSurvRadShift: 0.0004, disp: 0.0013,  dispCi: [-0.0010, 0.0036], bioDiff: 34137,  bioCi: [27900, 40681] },
+        { id: 3, short: 'CS', name: 'C. sphaerospermum',  alpha: 0.015, color: '#1fa6db', aliveDiff: -2.62, aliveCi: [-2.76, -2.47], survRadShift: 0.0192, initSurvRadShift: 0.0210, disp: -0.0018, dispCi: [-0.0061, 0.0026], bioDiff: -3002,  bioCi: [-8424, 2098] },
+        { id: 4, short: 'BS', name: 'B. subtilis',        alpha: 0.040, color: '#cc6b4d', aliveDiff: -4.48, aliveCi: [-4.62, -4.34], survRadShift: 0.0382, initSurvRadShift: 0.0434, disp: -0.0052, dispCi: [-0.0112, 0.0005], bioDiff: -13293, bioCi: [-17223, -9449] },
+        { id: 5, short: 'AN', name: 'A. niger',           alpha: 0.020, color: '#ad7ac2', aliveDiff: -3.18, aliveCi: [-3.32, -3.04], survRadShift: 0.0191, initSurvRadShift: 0.0212, disp: -0.0021, dispCi: [-0.0068, 0.0026], bioDiff: -6032,  bioCi: [-10204, -1805] },
+        { id: 6, short: 'SO', name: 'S. oneidensis',      alpha: 0.060, color: '#e387c4', aliveDiff: -5.26, aliveCi: [-5.35, -5.16], survRadShift: 0.0493, initSurvRadShift: 0.0538, disp: -0.0045, dispCi: [-0.0117, 0.0027], bioDiff: -10348, bioCi: [-14553, -6117] },
+        { id: 7, short: 'OI', name: 'O. intermedium AM7', alpha: 0.030, color: '#999999', aliveDiff: -3.82, aliveCi: [-3.97, -3.67], survRadShift: 0.0356, initSurvRadShift: 0.0359, disp: -0.0003, dispCi: [-0.0056, 0.0049], bioDiff: -10264, bioCi: [-14877, -5774] }
+      ]
+    };
+
+    let currentRobinCfMode = 'all';
+
+    function setRobinCounterfactualMode(mode) {
+      currentRobinCfMode = mode;
+      const map = { all: 'btnCfAll', survival: 'btnCfSurv', biomass: 'btnCfBio', displacement: 'btnCfDisp' };
+      Object.entries(map).forEach(([k, id]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (k === mode) {
+          el.className = 'badge blue';
+        } else {
+          el.className = 'badge';
+        }
+      });
+      drawRobinCounterfactualCanvas(mode);
+    }
+
+    function drawRobinSubPanel(ctx, x0, y0, w, h, kind) {
+      const sp = ROBIN_COUNTERFACTUAL_DATA.species;
+      const isCompact = w < 360;
+      ctx.save();
+      ctx.fillStyle = '#0a1420';
+      ctx.strokeStyle = '#22364d';
+      ctx.lineWidth = 1;
+      ctx.fillRect(x0, y0, w, h);
+      ctx.strokeRect(x0, y0, w, h);
+      ctx.beginPath();
+      ctx.rect(x0, y0, w, h);
+      ctx.clip();
+
+      ctx.fillStyle = '#e6f0f8';
+      ctx.font = isCompact
+        ? 'bold 10.5px -apple-system, BlinkMacSystemFont, sans-serif'
+        : 'bold 11.5px -apple-system, BlinkMacSystemFont, sans-serif';
+      const titlesCompact = {
+        survival: '1. Survival (Rad ON - OFF, MCS 100)',
+        biomass: '2. Biomass (Rad ON - OFF, MCS 200)',
+        displacement: '3. Displacement delta_r_i vs. r/R'
+      };
+      const titlesFull = {
+        survival: '1. Survival: Alive Parcels (Rad ON - OFF, MCS 100, 256 Seeds)',
+        biomass: '2. Net Biomass Change (Rad ON - OFF, MCS 200, Growth ON, 16 Seeds)',
+        displacement: '3. Parcel Displacement delta_r_i vs. Survivor Radius (r/R, 256 Seeds)'
+      };
+      const titleStr = (isCompact ? titlesCompact[kind] : titlesFull[kind]) || '';
+      ctx.fillText(titleStr, x0 + 8, y0 + 17);
+
+      const padL = 38;
+      const padR = 10;
+      const padT = 30;
+      const padB = isCompact ? 42 : 36;
+      const pw = w - padL - padR;
+      const ph = h - padT - padB;
+      const px0 = x0 + padL;
+      const py0 = y0 + padT;
+
+      if (kind === 'survival') {
+        const minY = -6.0;
+        const maxY = 0.5;
+        const yToPx = v => py0 + ph * (1 - (v - minY) / (maxY - minY));
+        const yZero = yToPx(0);
+        ctx.strokeStyle = '#475569';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(px0, yZero);
+        ctx.lineTo(px0 + pw, yZero);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        sp.forEach((s, idx) => {
+          const cx = px0 + (idx + 0.5) * (pw / sp.length);
+          const bw = Math.min(24, (pw / sp.length) * 0.58);
+          const yVal = yToPx(s.aliveDiff);
+          ctx.fillStyle = s.color;
+          ctx.fillRect(cx - bw / 2, Math.min(yZero, yVal), bw, Math.abs(yVal - yZero));
+          // CI whisker
+          ctx.strokeStyle = '#e6f0f8';
+          ctx.beginPath();
+          ctx.moveTo(cx, yToPx(s.aliveCi[0]));
+          ctx.lineTo(cx, yToPx(s.aliveCi[1]));
+          ctx.stroke();
+          ctx.fillStyle = '#8ca5bc';
+          ctx.font = '10px ui-monospace, monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(s.short, cx, py0 + ph + 13);
+        });
+        ctx.fillStyle = '#8ca5bc';
+        ctx.font = '9px ui-monospace, monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText('0', px0 - 4, yZero + 3);
+        ctx.fillText('-3', px0 - 4, yToPx(-3) + 3);
+        ctx.fillText('-6', px0 - 4, yToPx(-6) + 3);
+        ctx.textAlign = 'left';
+        if (isCompact) {
+          ctx.fillText('5,511/10,752 axial deaths', x0 + 8, py0 + ph + 26);
+          ctx.fillText('(256 seeds, MCS 100, H0-B)', x0 + 8, py0 + ph + 37);
+        } else {
+          ctx.fillText('5,511 / 10,752 axial hazard deaths in survival_only & combined (256 seeds)', px0 + 4, py0 + ph + 28);
+        }
+      } else if (kind === 'biomass') {
+        const minY = -20000;
+        const maxY = 42000;
+        const yToPx = v => py0 + ph * (1 - (v - minY) / (maxY - minY));
+        const yZero = yToPx(0);
+        ctx.strokeStyle = '#475569';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(px0, yZero);
+        ctx.lineTo(px0 + pw, yZero);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        sp.forEach((s, idx) => {
+          const cx = px0 + (idx + 0.5) * (pw / sp.length);
+          const bw = Math.min(24, (pw / sp.length) * 0.58);
+          const yVal = yToPx(s.bioDiff);
+          ctx.fillStyle = s.color;
+          ctx.fillRect(cx - bw / 2, Math.min(yZero, yVal), bw, Math.abs(yVal - yZero));
+          ctx.strokeStyle = '#e6f0f8';
+          ctx.beginPath();
+          ctx.moveTo(cx, yToPx(s.bioCi[0]));
+          ctx.lineTo(cx, yToPx(s.bioCi[1]));
+          ctx.stroke();
+          ctx.fillStyle = '#8ca5bc';
+          ctx.font = '10px ui-monospace, monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(s.short, cx, py0 + ph + 13);
+        });
+        ctx.fillStyle = '#8ca5bc';
+        ctx.font = '9px ui-monospace, monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText('+35k', px0 - 4, yToPx(35000) + 3);
+        ctx.fillText('0', px0 - 4, yZero + 3);
+        ctx.fillText('-15k', px0 - 4, yToPx(-15000) + 3);
+        ctx.textAlign = 'left';
+        if (isCompact) {
+          ctx.fillText('DR & CN expand into freed', x0 + 8, py0 + ph + 26);
+          ctx.fillText('nutrient (16 seeds, Growth ON)', x0 + 8, py0 + ph + 37);
+        } else {
+          ctx.fillText('Low-hazard DR (+34,137) & CN (+6,142) expand into freed space (16 seeds)', px0 + 4, py0 + ph + 28);
+        }
+      } else if (kind === 'displacement') {
+        const minY = -0.02;
+        const maxY = 0.08;
+        const yToPx = v => py0 + ph * (1 - (v - minY) / (maxY - minY));
+        const yZero = yToPx(0);
+        ctx.strokeStyle = '#475569';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(px0, yZero);
+        ctx.lineTo(px0 + pw, yZero);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        sp.forEach((s, idx) => {
+          const cx = px0 + (idx + 0.5) * (pw / sp.length);
+          // Amber dot: MCS 100 population survivor radius shift (H0-B selection)
+          const ySurv = yToPx(s.survRadShift);
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.arc(cx - 5, ySurv, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Blue square: MCS 0 initial survivor radius shift (confirms pre-existing radial position)
+          const yInitSurv = yToPx(s.initSurvRadShift);
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillRect(cx - 2.5, yInitSurv - 2.5, 5, 5);
+
+          // Green dot + CI whisker: tracked parcel directional displacement delta_r_i (H0-A motion = NULL)
+          const yDisp = yToPx(s.disp);
+          ctx.strokeStyle = '#22c55e';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(cx + 5, yToPx(s.dispCi[0]));
+          ctx.lineTo(cx + 5, yToPx(s.dispCi[1]));
+          ctx.stroke();
+          ctx.fillStyle = '#22c55e';
+          ctx.beginPath();
+          ctx.arc(cx + 5, yDisp, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#8ca5bc';
+          ctx.font = '10px ui-monospace, monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(s.short, cx, py0 + ph + 13);
+        });
+        ctx.fillStyle = '#8ca5bc';
+        ctx.font = '9px ui-monospace, monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText('+0.06', px0 - 4, yToPx(0.06) + 3);
+        ctx.fillText('0.00', px0 - 4, yZero + 3);
+        ctx.textAlign = 'left';
+        if (isCompact) {
+          ctx.fillStyle = '#f59e0b';
+          ctx.fillText('Amber/Blue: Survivor r/R (MCS 100/0)', x0 + 8, py0 + ph + 26);
+          ctx.fillStyle = '#22c55e';
+          ctx.fillText('Green: delta_r_i (All 7 CIs span 0)', x0 + 8, py0 + ph + 37);
+        } else {
+          ctx.fillStyle = '#f59e0b';
+          ctx.fillText('Amber: MCS 100 Survivor r/R (H0-B)', px0 + 2, py0 + ph + 28);
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillText('Blue: MCS 0 Survivor r/R', px0 + 218, py0 + ph + 28);
+          ctx.fillStyle = '#22c55e';
+          ctx.fillText('Green: Parcel delta_r_i (All 7 CIs span 0)', px0 + 380, py0 + ph + 28);
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawRobinCounterfactualCanvas(mode = 'all') {
+      const cvs = document.getElementById('robinCounterfactualCanvas');
+      if (!cvs) return false;
+      const ctx = cvs.getContext('2d');
+      if (!ctx) return false;
+      const W = cvs.width;
+      const H = cvs.height;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#07111a';
+      ctx.fillRect(0, 0, W, H);
+
+      if (mode === 'all') {
+        const gap = 8;
+        const pw = (W - gap * 4) / 3;
+        const ph = H - 16;
+        drawRobinSubPanel(ctx, gap, 8, pw, ph, 'survival');
+        drawRobinSubPanel(ctx, gap * 2 + pw, 8, pw, ph, 'biomass');
+        drawRobinSubPanel(ctx, gap * 3 + pw * 2, 8, pw, ph, 'displacement');
+      } else {
+        drawRobinSubPanel(ctx, 10, 8, W - 20, H - 16, mode);
+      }
+      return true;
+    }
+
+    window.verifyRobinBiofilmCardIntegrity = function() {
+      const card = document.getElementById('multispeciesBiofilmCard');
+      const gif = document.getElementById('robinCylindricalGif');
+      const refImg = document.getElementById('clonalSectorRefImg');
+      const cvs = document.getElementById('robinCounterfactualCanvas');
+      const txt = card ? card.textContent : '';
+      const allDispSpanZero = ROBIN_COUNTERFACTUAL_DATA.species.every(
+        s => s.dispCi[0] <= 0 && s.dispCi[1] >= 0
+      );
+      const allHaveInitSurv = ROBIN_COUNTERFACTUAL_DATA.species.every(
+        s => typeof s.initSurvRadShift === 'number' && typeof s.survRadShift === 'number'
+      );
+      let noCanvasTextOverflow = false;
+      if (cvs) {
+        const ctx = cvs.getContext('2d');
+        const subW = (cvs.width - 32) / 3;
+        const maxAllowed = subW - 14;
+        ctx.font = 'bold 10.5px -apple-system, BlinkMacSystemFont, sans-serif';
+        const compactTitles = [
+          '1. Survival (Rad ON - OFF, MCS 100)',
+          '2. Biomass (Rad ON - OFF, MCS 200)',
+          '3. Displacement delta_r_i vs. r/R'
+        ];
+        const titlesFit = compactTitles.every(t => ctx.measureText(t).width <= maxAllowed);
+        ctx.font = '9px ui-monospace, monospace';
+        const compactFooters = [
+          '5,511/10,752 axial deaths',
+          '(256 seeds, MCS 100, H0-B)',
+          'DR & CN expand into freed',
+          'nutrient (16 seeds, Growth ON)',
+          'Amber/Blue: Survivor r/R (MCS 100/0)',
+          'Green: delta_r_i (All 7 CIs span 0)'
+        ];
+        const footersFit = compactFooters.every(f => ctx.measureText(f).width <= maxAllowed);
+        noCanvasTextOverflow = titlesFit && footersFit;
+      }
+      return {
+        cardPresent: !!card,
+        hasSyntheticBadge: txt.includes('Synthetic visualization'),
+        clarifiesRobinBoundaryCondition: txt.includes('Robin boundary condition') && txt.includes('Erithacus rubecula'),
+        distinguishesSyntheticDoseRate: txt.includes('Synthetic dose-rate field vs. calibrated radiation transport'),
+        distinguishesNetBiomassProxy: txt.includes('Net biomass-rate proxy vs. experimentally measured growth rate'),
+        linksResearchProgram: !!(card && card.querySelector('a[href*="proto_biofilms_geyser_fission_research_program.md"]')),
+        linksBiofilmsRepo: !!(card && card.querySelector('a[href="https://github.com/aurascoper/Biofilms"]')),
+        gifSrc: gif ? gif.getAttribute('src') : null,
+        gifLoaded: !!(gif && gif.complete && gif.naturalWidth === 800 && gif.naturalHeight === 571),
+        gifWidth: gif ? gif.naturalWidth : 0,
+        gifHeight: gif ? gif.naturalHeight : 0,
+        clonalRefSrc: refImg ? refImg.getAttribute('src') : null,
+        clonalRefLoaded: !!(refImg && refImg.complete && refImg.naturalWidth > 1000),
+        counterfactualCanvasPresent: !!(cvs && cvs.width === 760 && cvs.height === 390),
+        noCanvasTextOverflow,
+        plotsInitSurvRadShift: allHaveInitSurv,
+        noHorizontalCardOverflow: !!(card && card.scrollWidth <= card.clientWidth + 1),
+        speciesCount: ROBIN_COUNTERFACTUAL_DATA.species.length,
+        allDisplacementCisSpanZero: allDispSpanZero
+      };
+    };
+
     window.addEventListener('DOMContentLoaded', () => {
+      drawRobinCounterfactualCanvas('all');
       const h = (window.location.hash || '').replace('#', '').toLowerCase();
-      if (['4d', 'nw', 'split', 'bio', 'r0', 'pool', 'coupled', 'audit'].includes(h)) {
+      if (['4d', 'nw', 'split', 'bio', 'r0', 'pool', 'coupled', 'audit', 'robingif'].includes(h)) {
         setView(h);
       }
     });

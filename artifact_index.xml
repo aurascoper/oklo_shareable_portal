@@ -107,8 +107,8 @@
       <SpecSHA256>2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669</SpecSHA256>
       <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
       <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
-      <BenchmarkManifestBytes>11140</BenchmarkManifestBytes>
-      <BenchmarkManifestSHA256>b41c6c99b26e4aa37b8ebab7b322b383da4a53b2af1342e3ebd6b63350f0bee4</BenchmarkManifestSHA256>
+      <BenchmarkManifestBytes>12663</BenchmarkManifestBytes>
+      <BenchmarkManifestSHA256>f3689098bd9a5a8cb03c0c82776cc1de57f0ad504b001a664b3be27dba76f98f</BenchmarkManifestSHA256>
       <Bytes>79610</Bytes>
       <SHA256>fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
@@ -124,6 +124,26 @@
         <Field id="empirical_piv_temperature" units="K" classification="unavailable" available="false" description="Explicitly unavailable until instrumented pool PIV/thermography campaign is supplied"/>
         <Field id="live_coupled_openmc_cfd_statepoint" units="dimensionless" classification="unavailable" available="false" description="Explicitly unavailable; browser animation is offline dataset-driven"/>
       </Fields>
+    </Artifact>
+
+    <Artifact id="BIOFILMS-ROBIN-CYL-GIF-01">
+      <Title>Multispecies Biofilm Spatial Model: Four-Panel Robin-Boundary Cylindrical Synthetic Visualization</Title>
+      <Requirement>Visual companion to the living biofilm spatial-modeling question (H6 vs. abiotic H5 in proto_biofilms_geyser_fission_research_program.md)</Requirement>
+      <EpistemicStatus>synthetic_four_panel_visualization (aurascoper/Biofilms diagnostics/fitness_phase/pv_workflow.py --clip, commit 841d052, cpm-sp-growth-v1, combined arm, growth=1, Seed 42, MCS 0..200; Robin denotes the mathematical Robin boundary condition -D_eff*dc/dr = P_eff*(c - c_ext) at cylinder outer radius r = R and not European robin Erithacus rubecula magnetoreception; synthetic dose_rate 0..0.01 Gy/s is not calibrated radiation transport; net_biomass_rate_proxy is conditional growth_rate minus mortality_hazard in mixed currencies and not measured growth; causal interpretation requires matched Radiation OFF vs. ON counterfactual runs)</EpistemicStatus>
+      <EvidenceClassification>synthetic</EvidenceClassification>
+      <RelativePortalPath>multispecies_biofilm_robin_cylindrical_4panel.gif</RelativePortalPath>
+      <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/multispecies_biofilm_robin_cylindrical_4panel.gif</PublicArtifactUrl>
+      <CompanionReferenceRelativePath>clonal_sector_expansion_reference.jpg</CompanionReferenceRelativePath>
+      <CompanionReferencePublicUrl>https://aurascoper.github.io/oklo_shareable_portal/clonal_sector_expansion_reference.jpg</CompanionReferencePublicUrl>
+      <CompanionReferenceBytes>159146</CompanionReferenceBytes>
+      <CompanionReferenceSHA256>67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115</CompanionReferenceSHA256>
+      <SourceRepository>aurascoper/Biofilms</SourceRepository>
+      <ExecutionSourceCommitSHA>841d052</ExecutionSourceCommitSHA>
+      <ConfigurationSHA256>eb090aa3c0a971776a6e262713eb0cf5c130b53cf2b8d7720ad93dec19f50b01</ConfigurationSHA256>
+      <WorkflowScript>diagnostics/fitness_phase/pv_workflow.py</WorkflowScript>
+      <Bytes>2571435</Bytes>
+      <SHA256>e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997</SHA256>
+      <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
 
     <Artifact id="PR12-GEYSER-V0-EXPORT">

@@ -81,6 +81,24 @@
       "evidence_classification": "synthetic",
       "epistemic_status": "dataset_driven_synthetic_pool_demo (separates TECDOC-643 neutron reference, point-reactor kinetics, synthetic Boussinesq pool convection, and isolated surrogate-loop PIE protocol)",
       "frozen_gate0": false
+    },
+    "BIOFILMS-ROBIN-CYL-GIF-01": {
+      "relative_path": "multispecies_biofilm_robin_cylindrical_4panel.gif",
+      "public_url": "https://aurascoper.github.io/oklo_shareable_portal/multispecies_biofilm_robin_cylindrical_4panel.gif",
+      "bytes": 2571435,
+      "sha256": "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997",
+      "companion_reference_relative_path": "clonal_sector_expansion_reference.jpg",
+      "companion_reference_bytes": 159146,
+      "companion_reference_sha256": "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115",
+      "source_repo": "aurascoper/Biofilms",
+      "source_commit": "841d052",
+      "config_sha256": "eb090aa3c0a971776a6e262713eb0cf5c130b53cf2b8d7720ad93dec19f50b01",
+      "workflow_script": "diagnostics/fitness_phase/pv_workflow.py",
+      "model_id": "cpm-sp-growth-v1",
+      "boundary_condition": "Robin boundary condition at cylinder wall r = R (-D_eff * dc/dr = P_eff * (c - c_ext)); legacy_nonperiodic_cylinder; unrelated to avian (Erithacus rubecula) magnetoreception",
+      "evidence_classification": "synthetic",
+      "epistemic_status": "synthetic_four_panel_visualization (combined arm, growth=1, Seed 42, MCS 0..200, axis-clipped cylinder; synthetic dose_rate 0..0.01 Gy/s is not calibrated radiation transport; net_biomass_rate_proxy is growth_rate minus mortality_hazard in mixed currencies and not measured growth; causal interpretation requires matched Radiation OFF vs ON counterfactuals)",
+      "frozen_gate0": false
     }
   },
   "gate_1_normalized_contracts": {
