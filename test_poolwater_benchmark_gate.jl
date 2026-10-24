@@ -35,10 +35,10 @@ end
             "POOLWATER_WORKFLOW_SPEC.md"                         => (17684,   "2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669"),
             "multispecies_biofilm_robin_cylindrical_4panel.gif"  => (2571435, "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997"),
             "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
-            "magnetoreception_3d_explorer.html"                  => (261273,  "ba18d4869398c6ae26bb66b34516816bd8cc926944225d2783916e83f8bb1004"),
+            "magnetoreception_3d_explorer.html"                  => (263619,  "e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064"),
             "evidence_manifest.json"                             => (116876,  "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf"),
             "test_calculation_provenance_and_invariants.js"      => (38751,   "db751a8972ee125fe4e334cdc59c51f1f3c5784b03026119587b50a3cd65fb55"),
-            "benchmark_manifest.json"                            => (17965,   "6311cd0d9e19b1edce0a1ebc9d72c7d74710d6cdaf04c0a9e77c3a6a28c4c572"),
+            "benchmark_manifest.json"                            => (17965,   "f32f2393768e6c6ddb1baa47702e4d1ca973fcd7e5ae2e26907a3e4c2743e35b"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")

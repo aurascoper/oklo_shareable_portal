@@ -108,7 +108,7 @@
       <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
       <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
       <BenchmarkManifestBytes>17965</BenchmarkManifestBytes>
-      <BenchmarkManifestSHA256>6311cd0d9e19b1edce0a1ebc9d72c7d74710d6cdaf04c0a9e77c3a6a28c4c572</BenchmarkManifestSHA256>
+      <BenchmarkManifestSHA256>f32f2393768e6c6ddb1baa47702e4d1ca973fcd7e5ae2e26907a3e4c2743e35b</BenchmarkManifestSHA256>
       <Bytes>79610</Bytes>
       <SHA256>fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
@@ -153,8 +153,8 @@
       <EvidenceClassification>calculated</EvidenceClassification>
       <RelativePortalPath>magnetoreception_3d_explorer.html</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/magnetoreception_3d_explorer.html</PublicArtifactUrl>
-      <Bytes>261273</Bytes>
-      <SHA256>ba18d4869398c6ae26bb66b34516816bd8cc926944225d2783916e83f8bb1004</SHA256>
+      <Bytes>263619</Bytes>
+      <SHA256>e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064</SHA256>
       <EvidenceManifestRelativePath>evidence_manifest.json</EvidenceManifestRelativePath>
       <EvidenceManifestPublicUrl>https://aurascoper.github.io/oklo_shareable_portal/evidence_manifest.json</EvidenceManifestPublicUrl>
       <EvidenceManifestBytes>116876</EvidenceManifestBytes>

@@ -94,8 +94,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'magnetoreception_3d_explorer.html',
-      sha256: 'ba18d4869398c6ae26bb66b34516816bd8cc926944225d2783916e83f8bb1004',
-      bytes: 261273
+      sha256: 'e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064',
+      bytes: 263619
     },
     {
       path: 'evidence_manifest.json',
@@ -109,7 +109,7 @@ function verifyArtifactHashes() {
     },
     {
       path: 'benchmark_manifest.json',
-      sha256: '6311cd0d9e19b1edce0a1ebc9d72c7d74710d6cdaf04c0a9e77c3a6a28c4c572',
+      sha256: 'f32f2393768e6c6ddb1baa47702e4d1ca973fcd7e5ae2e26907a3e4c2743e35b',
       bytes: 17965
     }
   ];
@@ -128,7 +128,7 @@ function verifyArtifactHashes() {
   assert.ok(indexHtml.includes('fa0f0dc30c45681a...'), 'index.html missing POOLWATER-3D-INTERACTIVE-01 SHA prefix');
   assert.ok(indexHtml.includes('037e2050b70e92b7...'), 'index.html missing BIOFILMS-3D-CPM-01 SHA prefix');
   assert.ok(indexHtml.includes('e73622d6454a3a6a...'), 'index.html missing BIOFILMS-ROBIN-CYL-GIF-01 SHA prefix');
-  assert.ok(indexHtml.includes('ba18d4869398c6ae...'), 'index.html missing BIOTITE-MAGNETORECEPTION-4D-01 SHA prefix');
+  assert.ok(indexHtml.includes('e9e50a6857b699aa...'), 'index.html missing BIOTITE-MAGNETORECEPTION-4D-01 SHA prefix');
   console.log('PASS [1/13]: Gate-0 artifact hashes, byte counts, and manifests verified.');
   return expectedFiles;
 }
@@ -199,7 +199,7 @@ async function withChromeSession(chromeFlags, port, preferredDebugPort, fn) {
 
   try {
     let tabs = null;
-    for (let attempt = 0; attempt < 60; attempt++) {
+    for (let attempt = 0; attempt < 100; attempt++) {
       await new Promise(r => setTimeout(r, 200));
       try {
         tabs = await fetch(`http://127.0.0.1:${debugPort}/json`).then(r => r.json());
@@ -209,20 +209,38 @@ async function withChromeSession(chromeFlags, port, preferredDebugPort, fn) {
     const page = Array.isArray(tabs) ? tabs.find(t => t.type === 'page' && t.url && t.url.includes('index.html')) : null;
     assert.ok(page, `Failed to attach to index.html page target in Chrome on debugPort ${debugPort}`);
     const ws = new WebSocket(page.webSocketDebuggerUrl);
-    await new Promise(r => ws.addEventListener('open', r));
+    await new Promise((resolve, reject) => {
+      ws.addEventListener('open', resolve, { once: true });
+      ws.addEventListener('error', err => reject(new Error(`WebSocket connection error on debugPort ${debugPort}: ${err.message || err}`)), { once: true });
+    });
 
     let msgId = 0;
     const call = (method, params = {}) =>
-      new Promise(resolve => {
+      new Promise((resolve, reject) => {
         const cid = ++msgId;
+        const cleanup = () => {
+          ws.removeEventListener('message', handler);
+          ws.removeEventListener('error', errHandler);
+          ws.removeEventListener('close', closeHandler);
+        };
         const handler = ev => {
           const msg = JSON.parse(ev.data);
           if (msg.id === cid) {
-            ws.removeEventListener('message', handler);
+            cleanup();
             resolve(msg);
           }
         };
+        const errHandler = err => {
+          cleanup();
+          reject(new Error(`CDP WebSocket error during ${method}: ${err.message || err}`));
+        };
+        const closeHandler = () => {
+          cleanup();
+          reject(new Error(`CDP WebSocket closed unexpectedly during ${method}`));
+        };
         ws.addEventListener('message', handler);
+        ws.addEventListener('error', errHandler);
+        ws.addEventListener('close', closeHandler);
         ws.send(JSON.stringify({ id: cid, method, params }));
       });
 
@@ -680,6 +698,32 @@ async function runTests() {
           slZW.dispatchEvent(new Event('input'));
           const lblHyperBoundary = d.getElementById('lblHyperRot').textContent;
 
+          // Test pointer drag rotation and wheel zoom on #glField
+          const camBefore = w.verifyBiotite4dMagnetoreceptionGates().hyperplane_4d_state.camera;
+          gl.dispatchEvent(new w.PointerEvent('pointerdown', { clientX: 200, clientY: 200, pointerId: 1, bubbles: true }));
+          gl.dispatchEvent(new w.PointerEvent('pointermove', { clientX: 250, clientY: 160, pointerId: 1, bubbles: true }));
+          gl.dispatchEvent(new w.PointerEvent('pointerup', { clientX: 250, clientY: 160, pointerId: 1, bubbles: true }));
+          gl.dispatchEvent(new w.WheelEvent('wheel', { deltaY: -120, bubbles: true, cancelable: true }));
+          const camAfter = w.verifyBiotite4dMagnetoreceptionGates().hyperplane_4d_state.camera;
+          // Restore initial camera state (yaw=0.55, pitch=0.38, zoom=1.0)
+          gl.dispatchEvent(new w.PointerEvent('pointerdown', { clientX: 250, clientY: 160, pointerId: 1, bubbles: true }));
+          gl.dispatchEvent(new w.PointerEvent('pointermove', { clientX: 200, clientY: 200, pointerId: 1, bubbles: true }));
+          gl.dispatchEvent(new w.PointerEvent('pointerup', { clientX: 200, clientY: 200, pointerId: 1, bubbles: true }));
+          gl.dispatchEvent(new w.WheelEvent('wheel', { deltaY: 120, bubbles: true, cancelable: true }));
+
+          // Test dynamic responsive resizing across <375px mobile (350px) and >1920px desktop (1960px)
+          const origIfrWidth = ifr.style.width;
+          ifr.style.width = '350px';
+          w.dispatchEvent(new Event('resize'));
+          const mobileGlWidth = gl.width;
+          const mobileOverflow = d.documentElement.scrollWidth - d.documentElement.clientWidth;
+          ifr.style.width = '1960px';
+          w.dispatchEvent(new Event('resize'));
+          const desktopGlWidth = gl.width;
+          const desktopOverflow = d.documentElement.scrollWidth - d.documentElement.clientWidth;
+          ifr.style.width = origIfrWidth;
+          w.dispatchEvent(new Event('resize'));
+
           // Scrub to 240 deg, r270, scenario_b_nrm_1pct for steady state
           slW.value = '240';
           slW.dispatchEvent(new Event('input'));
@@ -710,7 +754,13 @@ async function runTests() {
             d4Audit,
             w45Val,
             lblHyperBoundary,
-            syncReadout
+            syncReadout,
+            camBefore,
+            camAfter,
+            mobileGlWidth,
+            mobileOverflow,
+            desktopGlWidth,
+            desktopOverflow
           });
         })()`);
         assert.strictEqual(magnetoState.tabActive, true);
@@ -725,10 +775,17 @@ async function runTests() {
         assert.strictEqual(magnetoState.gates4d.directional_torque_requires_anisotropy, true);
         assert.strictEqual(magnetoState.gates4d.isotropic_b2_generates_torque, false);
         assert.strictEqual(magnetoState.gates4d.biotite_table_rows, 6);
+        assert.strictEqual(magnetoState.gates4d.biotite_table_col_match, true, 'Expected all rows in #biotiteInclusionTable to have 6 <td> cells matching the 6 <th> columns');
         assert.strictEqual(magnetoState.gates4d.criterial_colors.accepted_verified, '#22c55e');
         assert.strictEqual(magnetoState.gates4d.criterial_colors.criterial_pruned, '#ef4444');
         assert.strictEqual(magnetoState.w45Val, 45, 'Expected #slider4dW to accept non-15-multiple angle 45 without quantization');
         assert.strictEqual(magnetoState.lblHyperBoundary, '-90 / 90 / -90 deg');
+        assert.ok(magnetoState.camAfter.yaw < magnetoState.camBefore.yaw, 'Expected pointer drag to update camera yaw');
+        assert.ok(magnetoState.camAfter.pitch < magnetoState.camBefore.pitch, 'Expected pointer drag to update camera pitch');
+        assert.ok(magnetoState.camAfter.zoom > magnetoState.camBefore.zoom, 'Expected wheel scroll to update camera zoom');
+        assert.ok(magnetoState.mobileGlWidth < magnetoState.desktopGlWidth, `Expected dynamic resize from 350px (${magnetoState.mobileGlWidth}px) to 1960px (${magnetoState.desktopGlWidth}px)`);
+        assert.ok(magnetoState.mobileOverflow <= 1, `Expected zero page-level horizontal overflow at <375px (350px), got ${magnetoState.mobileOverflow}`);
+        assert.ok(magnetoState.desktopOverflow <= 1, `Expected zero page-level horizontal overflow at >1920px (1960px), got ${magnetoState.desktopOverflow}`);
         // Verify all 7 regimes produce distinct, accurate SI values
         assert.ok(Math.abs(magnetoState.regimeAudit.scenario_b_nrm.umag - 0.005854412) < 1e-8);
         assert.ok(Math.abs(magnetoState.regimeAudit.scenario_b_nrm_1pct.umag - 0.579497) < 1e-6);

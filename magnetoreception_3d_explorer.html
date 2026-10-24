@@ -316,8 +316,40 @@
       gap: 10px;
       margin-top: 10px;
     }
+    .hyperplane-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .biomag-split-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: 14px;
+      margin-top: 12px;
+      align-items: start;
+    }
+    .card, .factorial-card, .ctrl-box, .kpi, .sys-col, .sys-node, .sys-edge {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
     @media (max-width: 1080px) {
-      .fact-controls { grid-template-columns: repeat(2, 1fr); }
+      .fact-controls { grid-template-columns: repeat(2, 1fr) !important; }
+      .hyperplane-grid { grid-template-columns: repeat(2, 1fr) !important; }
+      .biomag-split-grid { grid-template-columns: 1fr !important; }
+    }
+    @media (max-width: 720px) {
+      .wrap, html[data-embedded="1"] .wrap { padding: 8px 8px 20px; }
+      .controls-grid, .kpi-row, .fact-controls, .hyperplane-grid, .biomag-split-grid, .node-grid {
+        grid-template-columns: 1fr !important;
+      }
+      table.audit-table {
+        display: block;
+        overflow-x: auto;
+        max-width: 100%;
+        -webkit-overflow-scrolling: touch;
+      }
     }
     .milestone-list {
       display: grid;
@@ -502,7 +534,7 @@
             </div>
           </div>
 
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+          <div class="hyperplane-grid">
             <div class="ctrl-box" style="padding:6px 8px;background:var(--bg);">
               <label>
                 <span>4th-Dim <code>w = theta_B / t</code></span>
@@ -617,7 +649,7 @@
 
       <div class="fact-controls" id="decisionGatesGrid" style="grid-template-columns: repeat(5, 1fr); margin-top: 10px;"></div>
 
-      <div style="display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;margin-top:12px;align-items:start;">
+      <div class="biomag-split-grid">
         <div class="ctrl-box">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
             <strong>Synthetic Counterexample <code>cpm-sp-v1</code> 256-Seed Ledger (Source <code>841d052</code>; Prescribed Mortality Law)</strong>
@@ -2564,44 +2596,50 @@
             <tr>
               <td><strong>Magnetosome Chain (Biogenic Fe3O4)</strong></td>
               <td><code>${mc.reference_parameters}</code></td>
+              <td class="mono" style="color:var(--muted);">N/A (100% Biogenic Fe3O4)</td>
+              <td class="mono" style="color:var(--muted);">N/A (15x 25nm SD Chain)</td>
               <td class="mono" style="color:var(--green);">${mc.u_mag_over_kBT.toFixed(4)} (300 K) | 5.5051 (310 K)</td>
-              <td class="mono"><span class="badge green">MODELED (PROKARYOTIC OBSERVED)</span></td>
-              <td>Torque tau(theta) = -m*B*sin(theta) > k_B*T; prokaryotic compass verified, eukaryotic/fungal tether unresolved (EG-3).</td>
+              <td><span class="badge green">MODELED (PROKARYOTIC OBSERVED)</span> Torque tau(theta) = -m*B*sin(theta) &gt; k_B*T; prokaryotic compass verified, eukaryotic/fungal tether unresolved (EG-3).</td>
             </tr>
             <tr>
               <td><strong>Volume-Matched Inclusion-Free Paramagnetic Biotite</strong></td>
               <td><code>${bp.reference_parameters}</code></td>
               <td class="mono" style="color:var(--red);">Aniso: ${bp.u_mag_over_kBT.toExponential(4)} | Iso: ${bp.u_mag_iso_over_kBT.toExponential(4)}</td>
-              <td class="mono"><span class="badge red">CRITERIAL-PRUNED (9.65e7x WEAKER)</span></td>
-              <td>Not an Oklo reactor-zone mineral (EG-1: uraninite, bitumen, illite, chlorite); 8 orders of magnitude below k_B*T at 50 uT.</td>
+              <td class="mono" style="color:var(--muted);">N/A (0% Fe3O4 Reference)</td>
+              <td class="mono" style="color:var(--muted);">N/A (0% Fe3O4 Reference)</td>
+              <td><span class="badge red">CRITERIAL-PRUNED (9.65e7x WEAKER)</span> Not an Oklo reactor-zone mineral (EG-1: uraninite, bitumen, illite, chlorite); 8 orders of magnitude below k_B*T at 50 uT.</td>
             </tr>
             <tr>
               <td><strong>1 um^3 Biotite Flake Scenario A (Idealized Saturated SD Upper Bound)</strong></td>
               <td><code>${scA.assumption}</code></td>
-              <td class="mono" style="color:var(--amber);">0%: ${scA.inclusion_free_0pct_fe3o4.toExponential(4)} | 0.01%: ${scA.trace_0_01pct_fe3o4.toFixed(4)} | 1%: ${scA.minor_1pct_fe3o4.toFixed(4)}</td>
-              <td class="mono"><span class="badge amber">is_realistic_natural_default: ${scA.is_realistic_natural_default}</span></td>
-              <td>Requires prior ~0.3 to 1 T saturating field and 100% coherent alignment; not a natural default without rock-magnetic proof.</td>
+              <td class="mono" style="color:var(--amber);">${scA.inclusion_free_0pct_fe3o4.toExponential(4)}</td>
+              <td class="mono" style="color:var(--amber);">${scA.trace_0_01pct_fe3o4.toFixed(4)}</td>
+              <td class="mono" style="color:var(--amber);">${scA.minor_1pct_fe3o4.toFixed(4)}</td>
+              <td><span class="badge amber">is_realistic_natural_default: ${scA.is_realistic_natural_default}</span> Requires prior ~0.3 to 1 T saturating field and 100% coherent alignment; not a natural default without rock-magnetic proof.</td>
             </tr>
             <tr>
               <td><strong>1 um^3 Biotite Flake Scenario B (Partially Remanent Natural NRM)</strong></td>
               <td><code>${scB.assumption} (eta_NRM = ${scB.nrm_to_saturation_ratio})</code></td>
-              <td class="mono" style="color:var(--accent);">0%: ${scB.inclusion_free_0pct_fe3o4.toExponential(4)} | 0.01%: ${scB.trace_0_01pct_fe3o4.toExponential(4)} | 1%: ${scB.minor_1pct_fe3o4.toFixed(4)}</td>
-              <td class="mono"><span class="badge blue">is_realistic_natural_default: ${scB.is_realistic_natural_default}</span></td>
-              <td>Sub-thermal at 0.01% Vol (${scB.trace_0_01pct_fe3o4.toExponential(2)} k_B*T) and marginal at 1% Vol (${scB.minor_1pct_fe3o4.toFixed(2)} k_B*T); requires FORC/Day &amp; NRM/IRM characterization.</td>
+              <td class="mono" style="color:var(--accent);">${scB.inclusion_free_0pct_fe3o4.toExponential(4)}</td>
+              <td class="mono" style="color:var(--accent);">${scB.trace_0_01pct_fe3o4.toExponential(4)}</td>
+              <td class="mono" style="color:var(--accent);">${scB.minor_1pct_fe3o4.toFixed(4)}</td>
+              <td><span class="badge blue">is_realistic_natural_default: ${scB.is_realistic_natural_default}</span> Sub-thermal at 0.01% Vol (${scB.trace_0_01pct_fe3o4.toExponential(2)} k_B*T) and marginal at 1% Vol (${scB.minor_1pct_fe3o4.toFixed(2)} k_B*T); requires FORC/Day &amp; NRM/IRM characterization.</td>
             </tr>
             <tr>
               <td><strong>1 um^3 Biotite Flake Scenario C (Unblocked SP / Demagnetized MD)</strong></td>
               <td><code>chi_eff = ${scC.chi_eff_si} SI, Delta_chi_eff = ${scC.delta_chi_eff_si} SI (M_r = 0, quadratic in B)</code></td>
-              <td class="mono" style="color:var(--red);">Aniso: ${scC.anisotropic_u_mag_over_kBT.inclusion_free_0pct_fe3o4.toExponential(4)} / ${scC.anisotropic_u_mag_over_kBT.trace_0_01pct_fe3o4.toExponential(4)} / ${scC.anisotropic_u_mag_over_kBT.minor_1pct_fe3o4.toExponential(4)}<br>Iso: ${scC.isotropic_u_mag_over_kBT.inclusion_free_0pct_fe3o4.toExponential(4)} / ${scC.isotropic_u_mag_over_kBT.trace_0_01pct_fe3o4.toExponential(4)} / ${scC.isotropic_u_mag_over_kBT.minor_1pct_fe3o4.toExponential(4)}</td>
-              <td class="mono"><span class="badge red">is_realistic_natural_default: ${scC.is_realistic_natural_default}</span></td>
-              <td>Strictly sub-thermal (&lt; 0.01 k_B*T); directional torque requires Delta_chi_eff != 0 (isotropic B^2 energy generates zero uniform-field torque, dU/dtheta = 0).</td>
+              <td class="mono" style="color:var(--red);">Aniso: ${scC.anisotropic_u_mag_over_kBT.inclusion_free_0pct_fe3o4.toExponential(4)}<br>Iso: ${scC.isotropic_u_mag_over_kBT.inclusion_free_0pct_fe3o4.toExponential(4)}</td>
+              <td class="mono" style="color:var(--red);">Aniso: ${scC.anisotropic_u_mag_over_kBT.trace_0_01pct_fe3o4.toExponential(4)}<br>Iso: ${scC.isotropic_u_mag_over_kBT.trace_0_01pct_fe3o4.toExponential(4)}</td>
+              <td class="mono" style="color:var(--red);">Aniso: ${scC.anisotropic_u_mag_over_kBT.minor_1pct_fe3o4.toExponential(4)}<br>Iso: ${scC.isotropic_u_mag_over_kBT.minor_1pct_fe3o4.toExponential(4)}</td>
+              <td><span class="badge red">is_realistic_natural_default: ${scC.is_realistic_natural_default}</span> Strictly sub-thermal (&lt; 0.01 k_B*T); directional torque requires Delta_chi_eff != 0 (isotropic B^2 energy generates zero uniform-field torque, dU/dtheta = 0).</td>
             </tr>
             <tr>
               <td><strong>Endogenous Ferritin Core (Ferrihydrite)</strong></td>
               <td><code>${fc.reference_parameters}</code></td>
               <td class="mono" style="color:var(--red);">${fc.u_mag_over_kBT.toExponential(4)} (300 K)</td>
-              <td class="mono"><span class="badge red">CRITERIAL-PRUNED (MEISTER 2016)</span></td>
-              <td>5 orders of magnitude too weak for thermal compass torque or magnetogenetic channel gating at 50 uT.</td>
+              <td class="mono" style="color:var(--muted);">N/A (6nm Ferrihydrite Core)</td>
+              <td class="mono" style="color:var(--muted);">N/A (6nm Ferrihydrite Core)</td>
+              <td><span class="badge red">CRITERIAL-PRUNED (MEISTER 2016)</span> 5 orders of magnitude too weak for thermal compass torque or magnetogenetic channel gating at 50 uT.</td>
             </tr>
           `;
         }
@@ -3953,6 +3991,10 @@
         methods_bridge_radiotropism: encGate.methods_and_physical_constraints_bridge.is_evidence_for_radiotropism,
         methods_bridge_magnetoreception: encGate.methods_and_physical_constraints_bridge.is_evidence_for_biological_magnetoreception,
         biotite_table_rows: document.querySelectorAll('#biotiteInclusionBody tr').length,
+        biotite_table_col_match: (
+          document.querySelectorAll('#biotiteInclusionTable thead th').length === 6 &&
+          Array.from(document.querySelectorAll('#biotiteInclusionBody tr')).every(tr => tr.children.length === 6)
+        ),
         hyperplane_4d_state: {
           wDeg4d,
           rotXW,
@@ -3962,7 +4004,8 @@
           biotiteRegime,
           activeBiotiteUmagOverKbt: bioReg.u_mag_over_kBT,
           activeBiotiteCriterialClass: bioReg.criterialClass,
-          projectedV0: projV0
+          projectedV0: projV0,
+          camera: { yaw, pitch, zoom }
         },
         criterial_colors: {
           accepted_verified: '#22c55e',
@@ -4245,7 +4288,11 @@
       dragging = true;
       lastX = e.clientX;
       lastY = e.clientY;
-      glCanvas.setPointerCapture(e.pointerId);
+      try {
+        if (typeof glCanvas.setPointerCapture === 'function' && e.pointerId !== undefined) {
+          glCanvas.setPointerCapture(e.pointerId);
+        }
+      } catch (_) {}
     });
     glCanvas.addEventListener('pointermove', e => {
       if (!dragging) return;
@@ -4256,6 +4303,13 @@
       updateInterface();
     });
     glCanvas.addEventListener('pointerup', () => { dragging = false; });
+    glCanvas.addEventListener('pointercancel', () => { dragging = false; });
+    glCanvas.addEventListener('wheel', e => {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 1.08 : 0.92;
+      zoom = Math.max(0.4, Math.min(2.8, zoom * factor));
+      updateInterface();
+    }, { passive: false });
 
     try {
       initWebGL();

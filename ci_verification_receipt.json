@@ -1,6 +1,6 @@
 {
   "schema": "oklo_portal_ci_verification_receipt_v1",
-  "generated_at": "2026-10-24T00:33:12.831Z",
+  "generated_at": "2026-10-24T00:50:21.118Z",
   "gate0_files_verified": 14,
   "tests": {
     "lazy_init": "PASS",
@@ -9,7 +9,7 @@
       "glHeight": 630,
       "glHidden": false,
       "slHidden": true,
-      "kval": "1.033 ± 0.110",
+      "kval": "1.013 ± 0.109",
       "ntot": "(120 neutrons)"
     },
     "split_view_layout": {
@@ -164,6 +164,7 @@
         "methods_bridge_radiotropism": false,
         "methods_bridge_magnetoreception": false,
         "biotite_table_rows": 6,
+        "biotite_table_col_match": true,
         "hyperplane_4d_state": {
           "wDeg4d": 240,
           "rotXW": 25,
@@ -178,7 +179,12 @@
             1.8023508027159645,
             -1.3872312760403542,
             1.1993349639700384
-          ]
+          ],
+          "camera": {
+            "yaw": 0.55,
+            "pitch": 0.38,
+            "zoom": 0.9936000000000001
+          }
         },
         "criterial_colors": {
           "accepted_verified": "#22c55e",

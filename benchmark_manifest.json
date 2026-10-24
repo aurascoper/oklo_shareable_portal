@@ -103,8 +103,8 @@
     "BIOTITE-MAGNETORECEPTION-4D-01": {
       "relative_path": "magnetoreception_3d_explorer.html",
       "public_url": "https://aurascoper.github.io/oklo_shareable_portal/magnetoreception_3d_explorer.html",
-      "bytes": 261273,
-      "sha256": "ba18d4869398c6ae26bb66b34516816bd8cc926944225d2783916e83f8bb1004",
+      "bytes": 263619,
+      "sha256": "e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064",
       "evidence_manifest_relative_path": "evidence_manifest.json",
       "evidence_manifest_bytes": 116876,
       "evidence_manifest_sha256": "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf",
