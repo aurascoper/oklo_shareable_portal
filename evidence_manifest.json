@@ -1,0 +1,1264 @@
+{
+  "schema_version": "2.2.0",
+  "red_team_audit_revision": "2.3.0-redteam-hardened",
+  "project": "magnetoreception_3d_prototype",
+  "framework_title": "Biomagnetic Walk: Transport, Selection, and Phase Null Explorer",
+  "central_question": "Can a proposed field-dependent biological response be distinguished from spatial selection, growth effects, shared forcing, and model-imposed coupling?",
+  "branch": "feat/magnetoreception-3d-interface",
+  "verification_scope_disclaimer": "SOFTWARE & PROVENANCE AUDIT ONLY: Automated CI and regression suites verify UI state, manifest schema, counterfactual algebraic identities, and trajectory/biophysical calculation provenance. They do NOT validate biological magnetoreception hypotheses or fungal transduction claims.",
+  "architectural_separation": "Independent hypothesis-first research prototype repository separate from aurascoper/oklo_shareable_portal and aurascoper/Biofilms. Organizes the material around (1) Three Distinct Systems with per-node and per-edge evidence tags (OBSERVED_IN_VITRO, MODELED, HYPOTHESIZED, UNRESOLVED_TRANSDUCTION, ENGINEERED, CONTEXT-DEPENDENT, SYNTHETIC_COUNTEREXAMPLE, QUARANTINED), (2) the 4-Proposition Main Causal Gap (P1 -> P2 -> P3 -> P4) with edge-by-edge separation, and (3) the Biomagnetic Walk: Transport, Selection, and Phase Null Explorer testing Null H0-A (no active parcel displacement), Null H0-B (selection-only survivor shift), and Phase Coupling Controls across Gates 0 -> 1 -> 2 -> 3 -> 4.",
+  "edge_level_evidence_policy": {
+    "principle": "Evidence tags apply strictly to the exact directed edge or claim, never to a composite multi-step mechanism. Evidence for upstream radiation chemistry or in vitro spin chemistry does NOT validate downstream mitochondrial signaling, magnetic sensing in fungi, or active directional hyphal growth.",
+    "prohibited_coarse_badges": [
+      "OBSERVED / MODELED / HYPOTHESIZED"
+    ],
+    "mandatory_edge_chain": [
+      {
+        "edge_id": "EDGE_1_UPSTREAM_CHEM",
+        "from_node": "Ionizing Radiation / Photon Input",
+        "to_node": "Molecular Radical State (Melanin ESR/NADH or Purified Cryptochrome Trp-Triad)",
+        "evidence_tag": "OBSERVED_IN_VITRO",
+        "scope_note": "Dadachova et al. (2007) observed melanin ESR signal changes and ~4x NADH ferricyanide reduction under irradiation; Xu et al. (2021) and Maeda et al. (2012) observed magnetic sensitivity in isolated cryptochrome in vitro. Does not establish a fungal compass."
+      },
+      {
+        "edge_id": "EDGE_2_SPIN_RADICAL_MODEL",
+        "from_node": "Weak Geomagnetic Field B (25 to 65 uT)",
+        "to_node": "Flavin-Superoxide [FAD*- ... O2*-] or Melanin Radical-Pair Yield Shift",
+        "evidence_tag": "MODELED (FAD-O2*-) | HYPOTHESIZED (MELANIN)",
+        "scope_note": "Rishabh, Zadeh-Haghighi & Simon (2023, arXiv:2312.06597) modeled flavin-superoxide spin chemistry for planarian ROS regeneration, explicitly noting unresolved spin-relaxation and amplification assumptions and that in vivo operation in fungi/biofilms is undemonstrated. The Quantum Compass Mechanism in Cryptochromes (arXiv:2508.21350) details unresolved physiological coherence and radical-identity questions."
+      },
+      {
+        "edge_id": "EDGE_3_MITO_TRANSDUCTION",
+        "from_node": "Spin-Dependent Radical/Redox Yield Shift",
+        "to_node": "Localized Mitochondrial ETC / Bioenergetic Polarity Signal",
+        "evidence_tag": "UNRESOLVED_TRANSDUCTION",
+        "scope_note": "No direct causal evidence links a weak-field spin-chemistry yield change to mitochondrial signaling in fungi (Gassab et al. 2026). Requires temporal precedence (t_mito < t_tip), orthogonal readouts beyond MitoSOX fluorescence, and specific pathway intervention with vehicle, viability, and rescue controls."
+      },
+      {
+        "edge_id": "EDGE_4_DIRECTIONAL_GROWTH",
+        "from_node": "Mitochondrial / Cytosolic Redox Asymmetry",
+        "to_node": "Active Directional Hyphal Tip Growth (Beyond Spatial Selection H0-B)",
+        "evidence_tag": "CONTEXT-DEPENDENT / UNRESOLVED",
+        "scope_note": "Historical Chernobyl isolate directional-growth reports contrast with the 2024 Sandia Cs-137 null result. Differential survival (Null H0-B) must be excluded via tracked tip trajectories before claiming active radiotropism or magnetotropism."
+      }
+    ]
+  },
+  "channel_separation_principle": {
+    "radiation_channel": "Spatial radiation dose gradient (grad I_gamma, keV-MeV ionizing photons/particles) acts as an energy, radiolytic/redox, and position-dependent mortality/selection input channel.",
+    "magnetic_channel": "Magnetic flux density vector B (25 to 65 uT geomagnetic or mT engineered) acts as a directional spin-chemistry or mechanical torque information channel.",
+    "selection_vs_movement_principle": "SYNTHETIC COUNTEREXAMPLE (NOT EMPIRICAL FUNGAL EVIDENCE): In cpm-sp-v1 (source 841d052, 256 seeds, prescribed mortality law), dose-dependent removal of 5,511 of 10,752 parcels near the axis shifts survivor mean radius outward by up to +0.0493 r/R while every identified-parcel displacement interval delta_r_i = r_i(t_1) - r_i(t_0) spans zero. This proves spatial selection can mimic movement in a model; actual fungal dose-response, movement laws, and parcel-to-hyphal-tip mapping require wet-lab measurement."
+  },
+  "biomagnetic_walk_null_explorer": {
+    "provenance_source": "aurascoper/Biofilms c766e7b:diagnostics/fitness_phase/PREDICTION.md (execution source 841d052, config hash eb090aa3c0a971776a6e262713eb0cf5c130b53cf2b8d7720ad93dec19f50b01)",
+    "synthetic_counterexample_scope": {
+      "epistemic_tag": "SYNTHETIC_COUNTEREXAMPLE",
+      "model_vs_biology_distinction": "The cpm-sp-v1 simulation (5,511 removals among 10,752 parcels) is a synthetic counterexample demonstrating that spatial mortality can mimic outward movement in a cellular Potts model. It is NOT empirical evidence about actual fungi: the axial mortality law (alpha_Gy_inv) is prescribed, and the biological movement law, measured dose-response curve, and physical mapping from lattice parcels to fungal hyphal tips all require empirical grounding.",
+      "primary_biological_endpoints": [
+        "Time-resolved tracked hyphal-tip trajectories r_tip(t) and paired tip displacement vectors delta_r_i = r_i(t_1) - r_i(t_0) across live imaging",
+        "Explicitly logged hyphal-tip arrest, lysis, and cell-death/loss events (never silently dropping non-surviving tips)",
+        "Preregistered distribution of hyphal-tip orientation angles theta_tip (circular mean and resultant vector length) with biological replicates defined at the independent culture/plate level (never pixels, parcels, or time points)"
+      ]
+    },
+    "null_hypotheses": [
+      {
+        "null_id": "H0_A",
+        "title": "Null H0-A: No Active Directional Movement (Individual Trajectory / Tip Orientation Invariance)",
+        "statement": "The magnetic field or radiation gradient changes survival or basal growth, but does not alter the movement or directional-growth rule of an individual identifiable parcel (in silico) or tracked hyphal tip (in vivo).",
+        "statistic": "delta_r_i = r_i(t_1) - r_i(t_0) and tip orientation angle theta_tip(t) computed for the same identifiable trajectory i across time; deaths/disappearances are logged as separate selection events and never silently dropped without reporting evaluable/excluded counts.",
+        "rejection_criterion": "Requires the culture-level paired/sham-contrasted distribution of tracked displacements delta_r_i or tip orientation vectors to exclude zero outside the preregistered MEOI bound. A shift in the surviving population's mean radius does NOT reject H0-A."
+      },
+      {
+        "null_id": "H0_B",
+        "title": "Null H0-B: Apparent Spatial Shift Is Explained by Selection Alone",
+        "statement": "The endpoint spatial distribution of biomass is fully explained by position-dependent survival, division, or removal (mortality near the source axis), without any active directional transport.",
+        "statistic": "Contrast between observed survivor mean radius r_surv(t_1) and the initial radius r_surv(t_0) of those same survivors ( satisfying the exact algebraic identity r_surv(t_1) - r_surv(t_0) = mean(delta_r_i) ), plus the fixed-position selection counterfactual where movement is disabled.",
+        "rejection_criterion": "Requires a reproducible discrepancy between the observed endpoint distribution and a selection-only counterfactual calibrated to measured empirical position-dependent survival and growth rates."
+      }
+    ],
+    "cpm_sp_v1_growth_off_256_seeds": {
+      "study_id": "cpm-sp-v1",
+      "epistemic_tag": "SYNTHETIC_COUNTEREXAMPLE (PRESCRIBED MORTALITY LAW)",
+      "description": "SYNTHETIC IN-SILICO COUNTEREXAMPLE (not empirical fungal data): Growth OFF, 256 seeds (42..297), N=40, 6 parcels/species (10,752 total parcels), MCS 100, synthetic clock 60 s/MCS, prescribed axis dose rate 0.01 Gy/s, 95% seed-bootstrap intervals (5,000 samples, seed 9004).",
+      "hazard_commitments_survival_only": 5511,
+      "hazard_commitments_combined": 5511,
+      "hazard_commitments_baseline": 0,
+      "total_parcels": 10752,
+      "species_rows": [
+        {"species_id": 1, "name": "C. neoformans", "short": "CN", "alpha_Gy_inv": 0.01, "alive_diff": -1.74, "alive_ci95": [-1.88, -1.61], "surv_r_diff": 0.0086, "surv_r_ci95": [0.0019, 0.0153], "evaluable_seeds": 256, "excluded_seeds": 0, "init_surv_r_diff": 0.0075, "init_surv_r_ci95": [0.0003, 0.0145], "disp_diff": 0.0011, "disp_ci95": [-0.0025, 0.0047]},
+        {"species_id": 2, "name": "D. radiodurans", "short": "DR", "alpha_Gy_inv": 0.002, "alive_diff": -0.43, "alive_ci95": [-0.51, -0.35], "surv_r_diff": 0.0017, "surv_r_ci95": [-0.0017, 0.0052], "evaluable_seeds": 256, "excluded_seeds": 0, "init_surv_r_diff": 0.0004, "init_surv_r_ci95": [-0.0021, 0.0029], "disp_diff": 0.0013, "disp_ci95": [-0.0010, 0.0036]},
+        {"species_id": 3, "name": "C. sphaerospermum", "short": "CS", "alpha_Gy_inv": 0.015, "alive_diff": -2.62, "alive_ci95": [-2.76, -2.47], "surv_r_diff": 0.0192, "surv_r_ci95": [0.0103, 0.0282], "evaluable_seeds": 255, "excluded_seeds": 1, "init_surv_r_diff": 0.0210, "init_surv_r_ci95": [0.0111, 0.0305], "disp_diff": -0.0018, "disp_ci95": [-0.0061, 0.0026]},
+        {"species_id": 4, "name": "B. subtilis", "short": "BS", "alpha_Gy_inv": 0.04, "alive_diff": -4.48, "alive_ci95": [-4.62, -4.34], "surv_r_diff": 0.0382, "surv_r_ci95": [0.0240, 0.0525], "evaluable_seeds": 207, "excluded_seeds": 49, "init_surv_r_diff": 0.0434, "init_surv_r_ci95": [0.0284, 0.0581], "disp_diff": -0.0052, "disp_ci95": [-0.0112, 0.0005]},
+        {"species_id": 5, "name": "A. niger", "short": "AN", "alpha_Gy_inv": 0.02, "alive_diff": -3.18, "alive_ci95": [-3.32, -3.04], "surv_r_diff": 0.0191, "surv_r_ci95": [0.0095, 0.0290], "evaluable_seeds": 251, "excluded_seeds": 5, "init_surv_r_diff": 0.0212, "init_surv_r_ci95": [0.0102, 0.0320], "disp_diff": -0.0021, "disp_ci95": [-0.0068, 0.0026]},
+        {"species_id": 6, "name": "S. oneidensis", "short": "SO", "alpha_Gy_inv": 0.06, "alive_diff": -5.26, "alive_ci95": [-5.35, -5.16], "surv_r_diff": 0.0493, "surv_r_ci95": [0.0289, 0.0704], "evaluable_seeds": 145, "excluded_seeds": 111, "init_surv_r_diff": 0.0538, "init_surv_r_ci95": [0.0327, 0.0740], "disp_diff": -0.0045, "disp_ci95": [-0.0117, 0.0027]},
+        {"species_id": 7, "name": "O. intermedium AM7", "short": "OI", "alpha_Gy_inv": 0.03, "alive_diff": -3.82, "alive_ci95": [-3.97, -3.67], "surv_r_diff": 0.0356, "surv_r_ci95": [0.0221, 0.0489], "evaluable_seeds": 240, "excluded_seeds": 16, "init_surv_r_diff": 0.0359, "init_surv_r_ci95": [0.0219, 0.0500], "disp_diff": -0.0003, "disp_ci95": [-0.0056, 0.0049]}
+      ],
+      "controls_seeds_7000_7007": [
+        {"case": "fixed_baseline", "alive_range": "42 in every seed", "commitments_range": "0", "max_abs_disp": 0.0, "mean_radius_change": 0.0},
+        {"case": "fixed_survival", "alive_range": "19 to 24", "commitments_range": "18 to 23", "max_abs_disp": 0.0, "mean_radius_change": 0.0},
+        {"case": "moving_tropism_on", "alive_range": "19 to 23", "commitments_range": "19 to 23", "max_abs_disp": 0.155, "mean_radius_change": -0.028},
+        {"case": "moving_tropism_off", "alive_range": "19 to 23", "commitments_range": "19 to 23", "max_abs_disp": 0.159, "mean_radius_change": -0.029}
+      ]
+    },
+    "phase_locking_and_controls": {
+      "epistemic_tag": "SYNTHETIC_NEGATIVE_LESSON (CONFIRMED GRAPH/LINEAGE CONFOUND)",
+      "order_parameter_equation": "R(t) = |(1/N) * sum_{j=1..N} exp(i * phi_j(t))|",
+      "synthetic_parameters": "Mean period 20 MCS, Normal frequency SD 0.05 rad/MCS, explicit model coupling K = 0.5 / MCS; phase never feeds back into nonphase quantities.",
+      "structural_confounding_caveat": "NEGATIVE METHODOLOGICAL LESSON (NOT A BIOLOGICAL RESULT): Comparing 15/16 locked seeds in Growth-On against 0/256 in Growth-Off does NOT isolate a biological synchronizing mechanism because enabling growth simultaneously changes contact-graph connectivity (11.3 components -> 1 single component) and lineage structure (daughter phase inheritance). Any numerical comparison across growth states must include a matched-connectivity / fixed-lineage control alongside K=0 replay, phase-randomized, and independent-seed controls.",
+      "growth_off_v1_summary": {
+        "seeds_evaluable": "256 / 256",
+        "finite_window_locking": "0 / 256 (in both phase_only and combined)",
+        "coupling_supported": "0 / 256",
+        "spread_reduction_vs_zero_K_median": {"phase_only": 0.492, "combined": 0.350},
+        "endpoint_coherence_R": {"phase_only": 0.411, "combined": 0.379},
+        "mean_components": {"phase_only": 11.3, "combined": 9.7},
+        "mean_isolates": {"phase_only": 5.2, "combined": 5.4},
+        "interpretation": "On the fragmented growth-off contact graph (~10-11 components, ~5 isolates), K = 0.5 narrows frequency spread inside components but produces 0 / 256 global locking within 50-100 MCS."
+      },
+      "growth_on_v3_summary": {
+        "study_id": "cpm-sp-growth-v1",
+        "seeds_evaluable": "16 / 16 (seeds 42..57, MCS 200)",
+        "budget_closure_max_residual": 7.2e-9,
+        "finite_window_locking": "15 / 16 (in both phase_only and combined; Seed 44 fails 0.5 rad range bound at 0.755 rad phase_only / 0.848 rad combined)",
+        "coupling_supported": "15 / 16",
+        "spread_reduction_vs_zero_K_median": {"phase_only": 0.982, "combined": 0.982},
+        "endpoint_coherence_R": {"phase_only": 0.994, "combined": 0.994},
+        "mean_components": {"phase_only": 1, "combined": 1},
+        "mean_isolates": {"phase_only": 0, "combined": 0},
+        "interpretation": "With growth, division fills the lattice into a single connected component (1 component, 0 isolates) and explicit synthetic coupling K = 0.5 locks 15 of 16 seeds. Because growth changes graph connectivity and lineage structure simultaneously, this is a synthetic negative lesson on structural confounding, NOT biological synchronization."
+      },
+      "matched_connectivity_and_lineage_control": {
+        "control_id": "CTRL_MATCHED_TOPOLOGY_FIXED_LINEAGE",
+        "title": "Matched-Connectivity & Fixed-Lineage Control (Deconfounding Graph Percolation from Division)",
+        "design": "Hold the single-component contact-graph adjacency matrix A_ij and node cohort fixed (no division or lineage inheritance) and compare K = 0.5 against (a) fragmented 11-component topology at matched node count and (b) dividing lineage with K = 0.",
+        "finding": "Demonstrates that global locking requires both connected graph topology (1 component) and explicit coupling K > K_c: daughter phase inheritance alone on a connected graph (K = 0) yields zero frequency-spread reduction, while K = 0.5 on a matched static single-component graph reproduces locking without division."
+      },
+      "three_required_phase_controls": [
+        {
+          "control_id": "CTRL_UNCOUPLED_ZERO_K",
+          "title": "Control 1: Uncoupled Model Replay (K = 0) & Fixed-Lineage / Matched-Connectivity Audit",
+          "design": "Disable inter-parcel phase coupling (K = 0) while holding recorded parcel membership, contact connectivity, initial phases, natural frequencies, and daughter phase inheritance identical; additionally compare against a static matched-connectivity single-component graph without division.",
+          "finding": "In cpm-sp-growth-v1, comparing K = 0.5 against the exact K = 0 replay shows a 98.2% median reduction in effective-frequency spread, while the matched-connectivity static-graph control proves that graph percolation (11.3 -> 1 component) plus prescribed K = 0.5 explains the Growth-On vs. Growth-Off contrast."
+        },
+        {
+          "control_id": "CTRL_PHASE_SURROGATE",
+          "title": "Control 2: Phase-Randomized & Independent Cross-Seed Surrogate",
+          "design": "Shuffle initial phases on the fixed contact graph or pair phase trajectories across independent seeds to quantify how much apparent phase concentration R(t) arises by finite-sample chance, shared geometry, lineage co-ancestry, or common external forcing.",
+          "finding": "High R(t) measures phase concentration, not its physical source; phase-randomized and cross-seed surrogates separate shared environmental forcing and topology from direct inter-parcel interaction."
+        },
+        {
+          "control_id": "CTRL_BIOLOGICAL_BENCHMARK",
+          "title": "Control 3: Preregistered Biological Benchmark vs. Independent-Oscillator + Lineage Null",
+          "design": "Before any biological synchronization claim is permitted, preregister a primary synchronization statistic (e.g., Kuramoto R(t) and locking time distribution) on live-cell reporter time-series and test against an explicit uncoupled-oscillator + matched-connectivity + lineage-inheritance null model.",
+          "finding": "Currently unexecuted in wet lab; all cpm-sp-growth-v1 phase parameters are synthetic."
+        }
+      ]
+    },
+    "preregistered_angular_response_curves": {
+      "rationale": "A 180 deg field reversal alone does NOT universally separate magnetite from radical-pair sensing: superparamagnetic/induced-dipole oxides are 180 deg-invariant (proportional to B^2 sin(2*theta)), while a radical-pair response depends on molecular orientation, reaction-yield anisotropy, and the organism's downstream mapping into growth polarity. Each candidate mechanism's full angular response curve Y(theta_B) across [0 deg, 180 deg] must be preregistered and compared against the full measured curve.",
+      "sampled_angles_deg": [0, 30, 45, 60, 90, 120, 135, 150, 180],
+      "full_circle_extension_angles_deg": [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330],
+      "candidate_curve_models": [
+        {
+          "model_id": "M_C1_POLAR_MAGNETITE_TORQUE",
+          "mechanism_class": "Single-domain permanent dipole torque (tau = m x B)",
+          "harmonic_basis": "cos(theta_B)",
+          "functional_form": "Y(theta) = A_1 * cos(theta - theta_0) [First harmonic L=1; sign-inverting under 180 deg reversal: Y(180 deg) = -Y(0 deg)]",
+          "predicted_curve_values": [1.000, 0.866, 0.707, 0.500, 0.000, -0.500, -0.707, -0.866, -1.000],
+          "sign_at_0_vs_180": "Inverts sign (+1.000 at 0 deg -> -1.000 at 180 deg)",
+          "discriminating_curve_feature": "Dominant L=1 odd harmonic (cos theta); zero crossing near 90 deg relative to tether axis."
+        },
+        {
+          "model_id": "M_B1_AXIAL_RADICAL_PAIR",
+          "mechanism_class": "Centrosymmetric axial radical-pair inclination compass (e.g. canonical Trp-triad / FAD hyperfine tensor)",
+          "harmonic_basis": "cos(2*theta_B)",
+          "functional_form": "Y(theta) = A_2 * cos(2 * (theta - theta_0)) [Centered second harmonic L=2; symmetric under 180 deg inversion: Y(180 deg) = +Y(0 deg)]",
+          "predicted_curve_values": [1.000, 0.500, 0.000, -0.500, -1.000, -0.500, 0.000, 0.500, 1.000],
+          "sign_at_0_vs_180": "Invariant (+1.000 at 0 deg and +1.000 at 180 deg; opposite extremum -1.000 at 90 deg)",
+          "discriminating_curve_feature": "Dominant L=2 even harmonic (cos 2*theta) with period 180 deg and extrema separated by 90 deg."
+        },
+        {
+          "model_id": "M_B2_ANISOTROPIC_RADICAL_PAIR_MAPPED",
+          "mechanism_class": "Orientation-selective radical pair coupled to asymmetric cell-wall/membrane receptor & nonlinear polarity readout",
+          "harmonic_basis": "0.7*cos(2*theta_B) - 0.3*sin(2*theta_B)",
+          "functional_form": "Y(theta) = G_polarity( sum_{L=2,4} c_{L,m} Y_{L,m}(theta, phi) + grad_I_gamma_cross_term ) [Reference profile: 0.7*cos(2*theta) - 0.3*sin(2*theta)]",
+          "predicted_curve_values": [0.700, 0.090, -0.300, -0.610, -0.700, -0.090, 0.300, 0.610, 0.700],
+          "sign_at_0_vs_180": "Phase-shifted even profile (+0.700 at 0/180 deg, asymmetric at 30/60 vs 120/150 deg; depends on receptor alignment to grad I_gamma)",
+          "discriminating_curve_feature": "Asymmetric multi-harmonic angular profile across 30/45/60/120/135/150 deg; requires full 9-angle curve fit rather than 2-point 0/180 deg sign check."
+        },
+        {
+          "model_id": "M_C2_SUPERPARAMAGNETIC_INDUCED",
+          "mechanism_class": "Superparamagnetic / induced-dipole torque or gradient force",
+          "harmonic_basis": "sin(2*theta_B)",
+          "functional_form": "Y(theta) = A_sp * B^2 * sin(2 * (theta - theta_0)) [Quadratic B^2 L=2 odd-sine harmonic; 180 deg-periodic]",
+          "predicted_curve_values": [0.000, 0.866, 1.000, 0.866, 0.000, -0.866, -1.000, -0.866, 0.000],
+          "sign_at_0_vs_180": "Invariant under 180 deg reversal (Y(theta + 180 deg) = +Y(theta); 0.000 at 0/90/180 deg, +/-1.000 at 45/135 deg) despite being an iron-oxide particle mechanism",
+          "discriminating_curve_feature": "Demonstrates why 180 deg invariance alone cannot rule out iron-oxide mechanics; separated from radical pairs by sin(2*theta) 45/135 deg extrema, quadratic B^2 field-strength scaling, and Larmor RF diagnostic."
+        }
+      ]
+    },
+    "experimental_design_note": {
+      "planned_contrast_cells": 15,
+      "full_crossed_factorial_cells": 24,
+      "genotypes_per_row": [
+        "Wild-Type (WT Melanized)",
+        "Melanin-Deficient (Characterized Albino mutant, e.g. pks1Delta / lac1Delta)",
+        "Complemented Rescue"
+      ],
+      "primary_recommendation": "CHOOSE THE FULL 24-CELL CROSSED FACTORIAL (2 Radiation x 4 Magnetic-Field x 3 Genotype) whenever Radiation x Magnetic-Field (beta_RB) or Radiation x Magnetic-Field x Melanin-Genotype (beta_RBM) interactions are central hypotheses.",
+      "statistical_note": "Crossing the five rows with three genotypes yields 15 condition-by-genotype combinations (a resource-constrained planned-contrast subset). Because this 15-cell subset omits rotated (+90 deg), reversed (180 deg), and suppressed (<0.1 uT) magnetic fields under Sham radiation (0 Gy; Rows 1B, 1C, 1D = 9 cells), it cannot separate a radiation-dependent magnetic interaction (beta_RB, beta_RBM) from a general magnetic-field main effect (beta_B). The full 24-cell factorial is required to estimate those interactions.",
+      "estimability_and_aliasing_ledger": [
+        {
+          "contrast_or_parameter": "Baseline Genotype Main Effects (M | R=0, B=50 uT 0 deg) & Radiation x Genotype at Baseline Field (Row 2 - Row 1)",
+          "estimable_in_15_cell": true,
+          "estimable_in_24_cell": true,
+          "identification_note": "Directly identified by Rows 1 and 2 across WT, Albino, and Rescue (6 cells)."
+        },
+        {
+          "contrast_or_parameter": "Conditional Magnetic-Field Effects under Irradiation (B | R=1: Rows 3, 4, 5 vs. Row 2) & Conditional B x M | R=1",
+          "estimable_in_15_cell": true,
+          "estimable_in_24_cell": true,
+          "identification_note": "Identified within the irradiated stratum (Rows 2-5, 12 cells), but confounded with marginal magnetic effects if Sham-field cells are absent."
+        },
+        {
+          "contrast_or_parameter": "Marginal Magnetic Main Effect under Sham Radiation (B | R=0 for +90 deg, 180 deg, <0.1 uT; Rows 1B, 1C, 1D)",
+          "estimable_in_15_cell": false,
+          "estimable_in_24_cell": true,
+          "identification_note": "NOT ESTIMABLE in 15-cell design (omitted 9 sham-radiation field-manipulation cells); fully estimable in 24-cell factorial."
+        },
+        {
+          "contrast_or_parameter": "Two-Way Radiation x Magnetic Interaction (beta_RB) & Three-Way Radiation x Magnetic x Genotype Interaction (beta_RBM)",
+          "estimable_in_15_cell": false,
+          "estimable_in_24_cell": true,
+          "identification_note": "ALIASED in 15-cell design (rank 15 < 24). Omitted sham-radiation cells only permit a Stage-1 null screen (if B | R=1 is zero within +/-MEOI, no irradiated magnetic response exists); any non-null effect requires the full 24-cell factorial."
+        }
+      ]
+    },
+    "five_row_factorial_matrix": [
+      {
+        "row_id": "ROW_1",
+        "radiation_condition": "Sham radiation (0 Gy) [Full 24-cell design adds Rows 1B (+90 deg), 1C (180 deg), 1D (<0.1 uT) under 0 Gy]",
+        "magnetic_condition": "Baseline field (50 uT, 0 deg); energized antiparallel sham-coil control",
+        "melanin_status": "WT Melanized, Melanin-Deficient (Albino), Complemented Rescue (3 cells in 15-cell subset; 12 cells across 4 B-states in 24-cell full factorial)",
+        "primary_question": "Baseline growth, survival, morphology, and tip directionality across the three characterized genotypes.",
+        "separated_endpoints": "Movement: basal delta_r_i ~ 0 & tip orientation theta_tip | Selection: basal loss events | Growth: basal hyphal extension | Mechanism: basal redox/NAD(P)H"
+      },
+      {
+        "row_id": "ROW_2",
+        "radiation_condition": "Radiation (+grad I_gamma, Mapped Dose Profile)",
+        "magnetic_condition": "Baseline field (50 uT, 0 deg); matched antiparallel sham-coil control",
+        "melanin_status": "WT Melanized, Melanin-Deficient (Albino), Complemented Rescue (3 cells)",
+        "primary_question": "Radiation x melanin-genotype response (separating spatial selection H0-B from active movement H0-A).",
+        "separated_endpoints": "Tests H0-A vs. H0-B: separates melanized radioprotection (differential survival near axis) from active radiotropism (tracked tip delta_r_i & theta_tip)"
+      },
+      {
+        "row_id": "ROW_3",
+        "radiation_condition": "Radiation (+grad I_gamma, Fixed Geometry)",
+        "magnetic_condition": "Rotate field orientation (+90 deg, plus preregistered multi-angle sweep 0..180 deg) at fixed magnitude (50 uT)",
+        "melanin_status": "WT Melanized, Melanin-Deficient (Albino), Complemented Rescue (3 cells)",
+        "primary_question": "Orientation-dependent response orthogonal to fixed radiation gradient (requires Row 1B sham-radiation control in 24-cell design to isolate R x B).",
+        "separated_endpoints": "Tests whether tracked tip vector delta_r_i or orientation curve theta_tip(theta_B) rotates with B while radiation dose geometry is fixed"
+      },
+      {
+        "row_id": "ROW_4",
+        "radiation_condition": "Radiation (+grad I_gamma, Fixed Geometry)",
+        "magnetic_condition": "Reverse field direction (180 deg, +B -> -B) within full preregistered angular curve (0..180 deg) at 50 uT",
+        "melanin_status": "WT Melanized, Melanin-Deficient (Albino), Complemented Rescue (3 cells)",
+        "primary_question": "Specific model prediction: single-domain dipole torque (sign-inverting) vs. centrosymmetric axial radical-pair (invariant); evaluated via full angular curve Y(theta_B).",
+        "separated_endpoints": "Tests canonical polarity inversion at 0 vs. 180 deg alongside full 0..180 deg harmonic curve fit (since 180 deg alone does not universally separate mechanism classes)"
+      },
+      {
+        "row_id": "ROW_5",
+        "radiation_condition": "Radiation (+grad I_gamma, Fixed Geometry)",
+        "magnetic_condition": "Suppress field toward prespecified near-zero target (<0.1 uT across sample plane); matched sham coils",
+        "melanin_status": "WT Melanized, Melanin-Deficient (Albino), Complemented Rescue (3 cells)",
+        "primary_question": "Field necessity test versus radiation-only effects under mapped 3-axis field, thermal (+/-0.05 C), and vibration (<1e-4 g) controls.",
+        "separated_endpoints": "Tests whether geomagnetic field presence is necessary for any radiation-coupled directional or redox response (compared with Row 1D in 24-cell factorial)"
+      }
+    ],
+    "organism_and_genetic_validation_requirements": {
+      "principle": "Melanin-deficient ('Albino') mutants such as pks1Delta or lac1Delta cannot be treated as a clean one-variable melanin switch without prior organism-specific genetic, physiological, and redox validation. All strain selection and containment determinations remain subject to institutional biosafety review and microbial-genetics expertise.",
+      "mandatory_validation_gates": [
+        {
+          "check_id": "GEN_1_STRAIN_IDENTITY_AND_RESCUE",
+          "title": "1. Molecular Strain Identity & Isogenic Complementation",
+          "requirement": "Confirm targeted deletion (e.g., pks1Delta for DHN-melanin or lac1Delta for L-DOPA melanin in the chosen species) and single-copy chromosomal complementation (Rescue) in an isogenic background without secondary off-target mutations."
+        },
+        {
+          "check_id": "GEN_2_MELANIN_ASSAY_VERIFICATION",
+          "title": "2. Quantitative Melanin & ESR Paramagnetic Verification",
+          "requirement": "Demonstrate absence of melanin pigment and ESR semiquinone radical signal in the mutant, and quantitative restoration to Wild-Type levels in the Complemented Rescue strain under identical precursor/media conditions."
+        },
+        {
+          "check_id": "GEN_3_BASELINE_GROWTH_AND_MORPHOLOGY",
+          "title": "3. Baseline Growth, Hyphal Morphology & Cell-Wall Parity (Row 1)",
+          "requirement": "Verify that under Sham radiation and baseline field (Row 1), WT, Albino, and Rescue strains exhibit characterized, comparable basal hyphal extension rates, branching angles, and cell-wall osmotic/mechanical integrity."
+        },
+        {
+          "check_id": "GEN_4_STRESS_AND_REDOX_PHENOTYPING",
+          "title": "4. Baseline Oxidative Stress & Redox Phenotype Characterization",
+          "requirement": "Quantify basal NAD(P)H pools, superoxide dismutase/catalase activity, and exogenous H2O2 susceptibility across WT, Albino, and Rescue strains so pleiotropic antioxidant shifts are not misattributed to magnetic spin chemistry."
+        },
+        {
+          "check_id": "GEN_5_BIOSAFETY_AND_ORGANISM_GOVERNANCE",
+          "title": "5. Institutional Biosafety & Model-Organism Selection",
+          "requirement": "Select the experimental fungal model with domain microbial-genetics and institutional biosafety review before committing to the factorial matrix; preserve all institutional containment and regulatory determinations."
+        }
+      ]
+    },
+    "multiphysics_and_glmm_architecture": {
+      "roadmap_status": "STAGED_CANDIDATE_ROADMAP_NOT_CALIBRATED_COUPLED_MODEL",
+      "overview": "Defines a staged modeling roadmap rather than an already-calibrated coupled multiphysics model. Listing PDEs and mass-conservation checks does not establish coupled calibration, numerical convergence, or parameter identifiability. Experiments start with the simplest statistical/kinematic model needed to estimate survival, growth, and tracked tip directionality, adding flow, rheology, or magnetic pathway terms only when justified by geometry and data.",
+      "staged_parsimony_policy": {
+        "stage_1_minimum_viable_model": "Start with Layer D (hierarchical survival, growth, and tracked hyphal-tip orientation/displacement GLMM at culture/plate replicate level) under the explicit Layer C null (theta_i = 0, gamma_i = 0). No Navier-Stokes or Oldroyd-B coupling is required for static agar/microchamber assays.",
+        "stage_2_conditional_flow_and_rheology": "Activate Layer A (Darcy-Brinkman-Stokes flow) and Layer B (Oldroyd-B viscoelastic rheology) ONLY where perfused microfluidic/reactor geometry makes advection or shear detachment material AND independent rheometric calibration (G', G'' rheograms) and grid-convergence verification exist.",
+        "stage_3_conditional_pathway_coupling": "Introduce non-zero Layer C magnetic/redox coupling parameters (theta_i, gamma_i) ONLY after Gates A, B, and C demonstrate a reproducible, sham-controlled, genetically specific effect."
+      },
+      "layers": [
+        {
+          "layer_id": "LAYER_A",
+          "title": "Layer A [Conditional Roadmap]: Hydrodynamics & Reactive Transport (Darcy-Brinkman-Stokes)",
+          "equation": "div(u) = 0; rho*(du/dt + (u.grad)u) = -grad(p) + mu*laplacian(u) - (mu/K_perm)*u; dS/dt + div(u*S) = div(D_S*grad(S)) - r_S(S, X_i)",
+          "scope": "ROADMAP MODULE (activated only in perfused flow geometries): Couples Navier-Stokes free flow and Darcy-Brinkman porous biofilm flow with reactive transport. Requires independent velocity/mass-transfer calibration and grid convergence (< 1e-6 budget residual) before coupled use.",
+          "sources": [
+            "Kim & Yao (2026) A conservative micro-continuum-cellular automaton method for multispecies biofilm dynamics in complex flows (arXiv:2610.01565)"
+          ]
+        },
+        {
+          "layer_id": "LAYER_B",
+          "title": "Layer B [Conditional Roadmap]: Microbial Kinetics & Viscoelastic Rheology (Oldroyd-B)",
+          "equation": "dX_i/dt + div(u*X_i) = div(D_i*grad(X_i)) + mu_i*X_i - d_i*X_i + a_i - e_i; T + lambda_1*upper_convected_deriv(T) = 2*eta_0*(D + lambda_2*upper_convected_deriv(D))",
+          "scope": "ROADMAP MODULE (activated only when shear/rheology is material): Separates species growth (mu_i) and mortality (d_i, Null H0-B) from viscoelastic EPS relaxation (G', G''). Requires independent rheometer calibration rather than circular fitting from colony images.",
+          "sources": [
+            "Charlton et al. (2019) Viscoelastic biofilm streaming and detachment under shear (PMC6707926)",
+            "Li, Matous & Nerenberg (2022) Comparing generalized Newtonian and viscoelastic constitutive relations for biofilms (Biotechnol. Bioeng., doi:10.1002/bit.28056)"
+          ]
+        },
+        {
+          "layer_id": "LAYER_C",
+          "title": "Layer C [Hypothesis Gate]: Falsifiable Magnetic & Radiation Perturbation (Null theta_i = 0, gamma_i = 0)",
+          "equation": "mu_i = mu_{i,0}(S, O_2, T) + theta_i * f(B, grad B, I_gamma); v_bias,i = gamma_i * g(B, grad I_gamma); H_0: theta_i = 0, gamma_i = 0",
+          "scope": "DEFAULT NULL (theta_i = 0, gamma_i = 0): Parameterizes any candidate magnetic or radiation modulation of growth (theta_i) or directional tip bias (gamma_i). Terms remain fixed at zero until Gate A/B/C falsify the null via full angular curves and genetic controls.",
+          "sources": [
+            "Dadachova et al. (2007) PLoS ONE 2(5):e457 (doi:10.1371/journal.pone.0000457)",
+            "Maeda et al. (2012) PNAS 109(13):4774-4779 (doi:10.1073/pnas.1118959109)",
+            "Rishabh, Zadeh-Haghighi & Simon (2023) arXiv:2312.06597",
+            "Gassab et al. (2026) Quantum in Biology, Quantum for Biology, and Biology for Quantum (arXiv:2605.00205)"
+          ]
+        },
+        {
+          "layer_id": "LAYER_D",
+          "title": "Layer D [Primary Stage-1 Model]: Hierarchical GLMM & Circular Orientation Inference",
+          "equation": "g(E[Y_{ijk}(t)]) = beta_0 + beta_R*R + beta_B*B + beta_M*M + beta_RB*(R*B) + beta_RM*(R*M) + beta_BM*(B*M) + beta_RBM*(R*B*M) + b_batch + b_culture + f(t)",
+          "scope": "STAGE-1 PRIMARY INFERENCE ENGINE: Estimates survival, growth, and tracked hyphal-tip orientation/displacement with biological replicates at the culture/plate level (b_batch, b_culture). Full interaction terms (beta_RB, beta_RBM) require the 24-cell full factorial; in the 15-cell subset they are aliased and restricted to conditional within-radiation contrasts.",
+          "sources": [
+            "Lee, Green & Ryan (2017) Generalized linear mixed models for clustered/longitudinal biological assay data (arXiv:1709.06288)"
+          ],
+          "endpoint_models": [
+            {"endpoint": "Tracked hyphal-tip orientation theta_tip & displacement delta_r_i (Primary Biological Endpoint)", "model_family": "Projected normal / von Mises circular mixed model & Gaussian LMM with culture/plate random intercepts (b_batch, b_culture)"},
+            {"endpoint": "Attachment, detachment, or tip-arrest event counts", "model_family": "Poisson or Negative-Binomial GLMM (log link) accounting for culture-level overdispersion"},
+            {"endpoint": "Hyphal-tip / parcel survival & loss events (Null H0-B selection)", "model_family": "Binomial / discrete-time hazard GLMM (logit/cloglog link) reporting survival and loss separately"},
+            {"endpoint": "Repeated live-imaging trajectories & conditional rheology (G', G'')", "model_family": "Longitudinal mixed model with AR(1) / Matern temporal covariance f(t) at plate replicate level"},
+            {"endpoint": "Multispecies biofilm composition (when consortium assays are run)", "model_family": "Count / compositional mixed model paired with absolute abundance ledger"}
+          ]
+        }
+      ]
+    },
+    "decision_gates_0_to_4": [
+      {
+        "gate_id": "GATE_0",
+        "title": "Gate 0: Software, Dosimetry, 3-Axis Field Map & Strain Qualification",
+        "scope": "Verify trajectory ID tracking, explicit death/loss logging, 3-axis sample-plane B-field map (+/-1% uniformity, <0.5 uT/cm gradient), source-to-sample dose map, active antiparallel sham-coil thermal/vibration parity (+/-0.05 C, <1e-4 g), and organism-specific WT/Albino/Rescue genetic & baseline phenotype validation.",
+        "verdict_states": {
+          "PASS": "In-silico ledger verified in cpm-sp-v1/v3 (272/272 seeds restart-exact, budget residual 7.2e-9); wet-lab progression requires mapped field/dose & validated strains.",
+          "FAIL": "Any unlogged tip loss, field gradient >0.5 uT/cm, sham Delta_T >0.05 C, or uncharacterized mutant pleiotropy halts progression."
+        }
+      },
+      {
+        "gate_id": "GATE_1",
+        "title": "Gate 1 (Gate A): Radiation Response & Selection-vs-Movement Separation",
+        "scope": "Establish dose, dose-rate, spectrum, temperature, and growth/survival responses with sham irradiation and validated melanin-deficient/rescue controls. Compare tracked tip trajectories delta_r_i and tip orientation theta_tip against position-dependent mortality (Null H0-B). Never infer direction from colony size or endpoint survivor distribution.",
+        "verdict_states": {
+          "PASS_NULL_RETAINED": "In synthetic counterexample cpm-sp-v1 (256 seeds), survivor radius shifts +0.0493 r/R via prescribed mortality while all 7 displacement CIs span zero (H0-A/H0-B retained).",
+          "REJECT_NULL": "Requires culture-replicated tracked tip trajectories/orientations to exceed +/-MEOI and diverge from the empirical survival-weighted counterfactual."
+        }
+      },
+      {
+        "gate_id": "GATE_2",
+        "title": "Gate 2 (Gate B): Magnetic Dependence & Preregistered Full Angular Curve",
+        "scope": "Preregister the full angular (0..180 deg) and polarity response curve Y(theta_B) predicted by each candidate mechanism. Measure the 3-axis sample-plane field map and test rotation, reversal, and suppression (<0.1 uT) across both Sham and Irradiated states (24-cell factorial) to separate magnetic effects from heating, vibration, and source geometry.",
+        "verdict_states": {
+          "PASS": "Tracked tip orientation curve Y(theta_B) reproducibly follows a preregistered mechanism curve relative to antiparallel sham coils and passes all environmental exclusion bounds.",
+          "NULL_OR_INCONCLUSIVE": "Flat angular curve within [-MEOI, +MEOI] (magnetic null retained), or sham thermal/vibration/gradient tolerances breached."
+        }
+      },
+      {
+        "gate_id": "GATE_3",
+        "title": "Gate 3 (Gate C): Mechanistic Discrimination & Genetic/Biochemical Specificity",
+        "scope": "Require reproducible field-dependent outcomes across the full angular curve, validated genetic specificity (WT vs. characterized Albino vs. Complemented Rescue with baseline growth parity), and independent biochemical readouts before promoting any candidate route beyond HYPOTHESIZED.",
+        "verdict_states": {
+          "ROUTE_A_SUPPORTED": "Angular magnetic response and orthogonal biochemical readout abolished in validated Albino mutant and restored in Complemented Rescue.",
+          "ROUTE_B_SUPPORTED": "Magnetic curve persists in validated Albino mutant and tracks cryptochrome/flavin genetic or wavelength perturbations."
+        }
+      },
+      {
+        "gate_id": "GATE_4",
+        "title": "Gate 4 (Gate D): Causal Transduction, Orthogonal Readouts & Intervention Rescue",
+        "scope": "Combine temporal ordering (t_mito < t_tip, necessary check) with a validated orthogonal mitochondrial/redox readout (not MitoSOX alone; e.g., HPLC 2-OH-E+, mito-roGFP2-Orp1 + Delta_Psi_m control) and a specific pathway intervention (with vehicle, scavenger, viability, basal-growth, and rescue controls) plus matched-connectivity phase controls.",
+        "verdict_states": {
+          "PASS": "Orthogonal mediator shift precedes tip deflection (t_mito < t_tip), specific non-toxic intervention abolishes directional bias while preserving basal extension and viability, and washout/rescue restores the response.",
+          "FAIL_BYPRODUCT": "Redox shift is parallel/downstream (t_mito >= t_tip), MitoSOX artifact fails orthogonal check, or intervention nonspecifically impairs viability/basal growth."
+        }
+      }
+    ]
+  },
+  "main_causal_gap_propositions": [
+    {
+      "prop_id": "P1",
+      "proposition": "Proposition P1 (Radiation -> Melanin Chemistry): Ionizing radiation alters melanin ESR radical signals and NADH ferricyanide reduction.",
+      "evidence_tag": "OBSERVED_IN_VITRO (MELANIN ESR/NADH)",
+      "audit_scope": "Dadachova et al. (2007) reported radiation-associated changes in melanin ESR signals and ~4x increased NADH ferricyanide reduction in vitro / specific melanized fungi. RED-TEAM CONCLUSION: Observed chemical/metabolic effect; this is NOT proof that melanin functions as a magnetic compass or drives directional hyphal tropism.",
+      "claim_breakdown": [
+        {"subclaim": "Radiation alters melanin ESR signal & NADH reduction in vitro", "tag": "OBSERVED_IN_VITRO"},
+        {"subclaim": "Melanin acts as a geomagnetic compass receptor in fungi", "tag": "HYPOTHESIZED"}
+      ],
+      "sources": [
+        "Dadachova et al. (2007) PLoS ONE 2(5):e457 (doi:10.1371/journal.pone.0000457)",
+        "Robertson et al. (2012) PLoS ONE 7(11):e48674"
+      ]
+    },
+    {
+      "prop_id": "P2",
+      "proposition": "Proposition P2 (Weak B-Field -> Radical-Pair Spin Chemistry): Geomagnetic fields alter spin-correlated radical-pair reaction yields.",
+      "evidence_tag": "OBSERVED_IN_VITRO (CRY4) | MODELED (FAD-O2*-)",
+      "audit_scope": "Xu et al. (2021) demonstrated magnetic sensitivity of migratory songbird cryptochrome 4 in vitro. The review The Quantum Compass Mechanism in Cryptochromes (arXiv:2508.21350) identifies unresolved issues involving physiological conditions, radical identity, spin coherence, and downstream signaling. Separately, Rishabh, Zadeh-Haghighi & Simon (2023, arXiv:2312.06597) modeled a flavin-superoxide [FAD*- ... O2*-] mechanism for planarian regeneration ROS, explicitly noting unresolved radical-relaxation and amplification assumptions; it does NOT demonstrate operation in fungi or biofilms.",
+      "claim_breakdown": [
+        {"subclaim": "Avian/plant cryptochrome flavin-Trp magnetic sensitivity in vitro (Maeda 2012; Xu 2021)", "tag": "OBSERVED_IN_VITRO"},
+        {"subclaim": "Flavin-superoxide [FAD*- ... O2*-] planarian ROS amplification model (Rishabh et al. 2023)", "tag": "MODELED"},
+        {"subclaim": "In vivo spin coherence, radical identity & fungal radical-pair magnetoreception (arXiv:2508.21350)", "tag": "UNRESOLVED"}
+      ],
+      "sources": [
+        "Xu et al. (2021) Nature 594:535-540",
+        "Maeda et al. (2012) PNAS 109(13):4774-4779 (doi:10.1073/pnas.1118959109)",
+        "The Quantum Compass Mechanism in Cryptochromes (arXiv:2508.21350)",
+        "Rishabh, Zadeh-Haghighi & Simon (2023) arXiv:2312.06597 (planarian ROS model; unresolved relaxation/amplification)"
+      ]
+    },
+    {
+      "prop_id": "P3",
+      "proposition": "Proposition P3 (Redox / Spin Yield -> Mitochondrial Transduction): Spin-dependent yield shifts drive localized mitochondrial signaling.",
+      "evidence_tag": "UNRESOLVED_TRANSDUCTION",
+      "audit_scope": "RED-TEAM CONCLUSION: Unresolved. The proposed link from a magnetic-field-dependent spin-chemistry effect to a localized redox signal, mitochondrial bioenergetic response, and cellular polarity requires direct orthogonal evidence (beyond MitoSOX fluorescence) and specific causal interventions with vehicle, viability, and rescue controls.",
+      "claim_breakdown": [
+        {"subclaim": "Mitochondria respond to general cellular redox/Ca2+ perturbations", "tag": "OBSERVED"},
+        {"subclaim": "Geomagnetic radical-pair yield shifts transduce into localized fungal mitochondrial signaling", "tag": "UNRESOLVED_TRANSDUCTION"}
+      ],
+      "sources": [
+        "Gassab et al. (2026) Quantum in Biology, Quantum for Biology, and Biology for Quantum (arXiv:2605.00205)",
+        "Lam & Malkemper (2026) Physiol. Rev. (doi:10.1152/physrev.00032.2025)"
+      ]
+    },
+    {
+      "prop_id": "P4",
+      "proposition": "Proposition P4 (Transduction -> Directional Fungal Growth): Mitochondrial/redox asymmetry drives active directional hyphal growth.",
+      "evidence_tag": "CONTEXT-DEPENDENT / UNRESOLVED",
+      "audit_scope": "RED-TEAM CONCLUSION: Context-dependent / unresolved. Historical directional-growth reports (Zhdanova et al. 2004) contrast with a 2024 Sandia National Laboratories Cs-137 null result. Differential survival (synthetic counterexample cpm-sp-v1, Null H0-B) must be excluded via tracked tip trajectories and death logging before claiming active radiotropism or magnetotropism.",
+      "claim_breakdown": [
+        {"subclaim": "Spatial mortality mimics outward shift in synthetic cpm-sp-v1 model (5,511 / 10,752 deaths)", "tag": "SYNTHETIC_COUNTEREXAMPLE"},
+        {"subclaim": "Active radiotropism or magnetotropism in fungal hyphae", "tag": "CONTEXT-DEPENDENT / UNRESOLVED"}
+      ],
+      "sources": [
+        "Zhdanova et al. (2004) Mycol. Res. 108:1089-1096",
+        "Sandia National Laboratories (2024) Cs-137 Fungal Irradiation Report (null result)",
+        "aurascoper/Biofilms diagnostics/fitness_phase/PREDICTION.md (synthetic counterexample 841d052)"
+      ]
+    }
+  ],
+  "default_model_exclusions": [
+    "Whole-organism magnetic control (not physically or biologically established)",
+    "Endogenous ferritin mechanical or thermal channel gating (fails k_B*T and Fourier heat conduction bounds by >4 orders of magnitude; Meister 2016)",
+    "Treating synthetic cpm-sp-v1 parcel-selection results (5,511 / 10,752 removals under prescribed mortality) as empirical evidence about actual fungi",
+    "Interpreting 15/16 phase locking in cpm-sp-growth-v1 (K = 0.5 synthetic coupling + connectivity percolation) as biological synchronization",
+    "Using coarse whole-pathway badges ('OBSERVED / MODELED / HYPOTHESIZED') that transfer upstream chemical evidence onto unresolved downstream transduction",
+    "71 THz (4.22 um mid-IR) mitochondrial light-matter coupling preprint (quarantined as an unvalidated optical/vibrational hypothesis; not geomagnetic sensing)"
+  ],
+  "systems": [
+    {
+      "system_id": "system_1_radiation_melanin_mito",
+      "title": "System 1: Biological Response to Radiation (Per-Edge Tagged: Melanin -> Redox -> Mitochondria -> Tracked Growth vs. Selection)",
+      "summary": "Evaluates each individual edge from ionizing radiation to fungal melanin and separates synthetic/empirical position-dependent survival (Null H0-B) from active directional tip growth (Null H0-A).",
+      "nodes": [
+        {
+          "node_id": "s1_melanin_esr_nadh",
+          "label": "Node 1.1: Ionizing Radiation -> Melanin ESR Signal & 4x NADH Reduction",
+          "tag": "OBSERVED_IN_VITRO",
+          "detail": "Continuous ionizing radiation alters melanin electron spin resonance (ESR) paramagnetism and increases melanin-mediated NADH ferricyanide reduction ~4-fold in vitro; specific melanized fungi show radiation-associated metabolic changes. Does NOT establish a magnetic compass or downstream directional growth.",
+          "sources": [
+            "Dadachova et al. (2007) PLoS ONE 2(5):e457 (doi:10.1371/journal.pone.0000457)",
+            "Turick et al. (2002) Appl. Environ. Microbiol. 68:2436-2444",
+            "Robertson et al. (2012) PLoS ONE 7(11):e48674"
+          ]
+        },
+        {
+          "node_id": "s1_redox_intermediary",
+          "label": "Node 1.2: Melanin Electron Transfer -> Intracellular Cytosolic Redox / ROS Pool",
+          "tag": "HYPOTHESIZED",
+          "detail": "Proposed shuttling of radiation-mobilized electrons or radical intermediates from cell-wall/melanosome melanin into cytosolic electron acceptors, superoxide (O2*-), or H2O2 signaling pools in intact hyphae.",
+          "sources": [
+            "Casadevall, Cordero & Bryan (2017) Microbiol. Spectr. 5(2)",
+            "Dadachova & Casadevall (2008) Curr. Opin. Microbiol. 11:525-531"
+          ]
+        },
+        {
+          "node_id": "s1_mitochondrial_etc",
+          "label": "Node 1.3: Cytosolic Redox / ROS Pool -> Mitochondrial ETC, NAD(P)H & ATP Modulation",
+          "tag": "UNRESOLVED_TRANSDUCTION",
+          "detail": "Direct causal transduction from melanin or spin-pair ROS to mitochondrial ETC in intact hyphae is unresolved (Gassab et al. 2026). Requires temporal precedence (t_mito < t_tip), validated orthogonal readouts (HPLC 2-OH-E+, mito-roGFP2-Orp1, Delta_Psi_m controls), and non-toxic pathway intervention with rescue.",
+          "sources": [
+            "Gassab et al. (2026) arXiv:2605.00205",
+            "Robertson et al. (2012) PLoS ONE 7(11):e48674"
+          ]
+        },
+        {
+          "node_id": "s1_hyphal_tropism",
+          "label": "Node 1.4: Synthetic Selection Counterexample (cpm-sp-v1) vs. Measured Hyphal-Tip Orientation (theta_tip)",
+          "tag": "CONTEXT-DEPENDENT / UNRESOLVED",
+          "detail": "In the synthetic counterexample cpm-sp-v1 (256 seeds, prescribed mortality), axial deaths (5,511 / 10,752) shift survivor radius +0.0493 r/R with zero displacement. Empirically, Sandia (2024) found a null Cs-137 directional effect; wet-lab tests must measure tracked hyphal-tip trajectories, tip deaths, and orientation theta_tip at the culture replicate level.",
+          "sources": [
+            "aurascoper/Biofilms diagnostics/fitness_phase/PREDICTION.md (synthetic counterexample 841d052)",
+            "Sandia National Laboratories (2024) Cs-137 Fungal Irradiation Report (null result)",
+            "Zhdanova et al. (2004) Mycol. Res. 108:1089-1096"
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "edge_id": "E1_1",
+          "from": "s1_melanin_esr_nadh",
+          "to": "s1_redox_intermediary",
+          "claim": "Edge 1.1 -> 1.2: Radiation-excited cell-wall melanin transfers electrons into intracellular cytosolic redox mediators",
+          "evidence_tag": "HYPOTHESIZED"
+        },
+        {
+          "edge_id": "E1_2",
+          "from": "s1_redox_intermediary",
+          "to": "s1_mitochondrial_etc",
+          "claim": "Edge 1.2 -> 1.3: Melanin-derived redox shift selectively modulates localized mitochondrial ETC / bioenergetics",
+          "evidence_tag": "UNRESOLVED_TRANSDUCTION"
+        },
+        {
+          "edge_id": "E1_3",
+          "from": "s1_mitochondrial_etc",
+          "to": "s1_hyphal_tropism",
+          "claim": "Edge 1.3 -> 1.4: Mitochondrial asymmetry drives active directional hyphal-tip steering beyond differential survival (H0-B)",
+          "evidence_tag": "CONTEXT-DEPENDENT / UNRESOLVED"
+        }
+      ]
+    },
+    {
+      "system_id": "system_2_magnetic_sensing",
+      "title": "System 2: Candidate Magnetic Sensing Mechanisms (Per-Edge Tagged: Spin-Chemistry vs. Magnetite Torque)",
+      "summary": "Separates in vitro cryptochrome radical-pair chemistry (OBSERVED_IN_VITRO) from computational flavin-superoxide planarian models (MODELED), untested melanin spin compasses (HYPOTHESIZED), and unresolved fungal transduction (UNRESOLVED_TRANSDUCTION).",
+      "nodes": [
+        {
+          "node_id": "s2_route_a_melanin_spin",
+          "label": "Node 2.1 (Route A): Melanin Semiquinone Radical-Pair Geomagnetic Compass",
+          "tag": "HYPOTHESIZED",
+          "detail": "Melanin contains stable semiquinone free radicals (ESR observed), but whether weak geomagnetic fields (50 uT) alter melanin radical-pair recombination yields to provide a directional compass in fungi is an untested hypothesis.",
+          "sources": [
+            "Dadachova et al. (2007) PLoS ONE 2(5):e457 (melanin ESR paramagnetic signal only)",
+            "Lam & Malkemper (2026) Physiol. Rev. (doi:10.1152/physrev.00032.2025)"
+          ]
+        },
+        {
+          "node_id": "s2_route_b_flavin_superoxide",
+          "label": "Node 2.2 (Route B): Cryptochrome Flavin-Trp [OBSERVED_IN_VITRO] vs. Flavin-Superoxide [MODELED]",
+          "tag": "OBSERVED_IN_VITRO (CRY4) | MODELED (FAD-O2*-)",
+          "detail": "Purified avian Cry4a flavin-tryptophan radical pairs show magnetic sensitivity in vitro (Xu et al. 2021; Maeda et al. 2012), while physiological coherence and signaling remain unresolved (arXiv:2508.21350). Flavin-superoxide [FAD*- ... O2*-] is computationally modeled for planarian ROS (Rishabh et al. 2023, arXiv:2312.06597), with unresolved spin-relaxation and amplification assumptions and no demonstration in fungi.",
+          "sources": [
+            "Xu et al. (2021) Nature 594:535-540 (Cry4a in vitro magnetic sensitivity)",
+            "Maeda et al. (2012) PNAS 109(13):4774-4779",
+            "The Quantum Compass Mechanism in Cryptochromes (arXiv:2508.21350)",
+            "Rishabh, Zadeh-Haghighi & Simon (2023) arXiv:2312.06597 (computational planarian ROS model)",
+            "Gassab et al. (2026) arXiv:2605.00205"
+          ]
+        },
+        {
+          "node_id": "s2_route_c_magnetite",
+          "label": "Node 2.3 (Route C): Biogenic Single-Domain Magnetite (Fe3O4) Chain Torque",
+          "tag": "MODELED (EUKARYOTES) | OBSERVED (BACTERIA)",
+          "detail": "Chains of 10 to 20 single-domain Fe3O4 crystals (r ~ 25 nm) achieve mechanical torque tau = N*M_s*V*B*sin(theta) > k_B*T at 50 uT (established in magnetotactic bacteria; eukaryotic mechanoreceptor tethers and fungal biogenic chains remain unresolved).",
+          "sources": [
+            "Kirschvink & Gould (1981) Biosystems 13:181-201",
+            "Johnsen & Lohmann (2005) Nat. Rev. Neurosci. 6:703-712"
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "edge_id": "E2_A",
+          "from": "s2_route_a_melanin_spin",
+          "to": "s1_mitochondrial_etc",
+          "claim": "Edge 2.1 -> 1.3 (Route A): Hypothesized melanin radical-pair spin shift transduces into fungal mitochondrial redox signaling",
+          "evidence_tag": "UNRESOLVED_TRANSDUCTION"
+        },
+        {
+          "edge_id": "E2_B1",
+          "from": "photon_blue_excitation",
+          "to": "s2_route_b_flavin_superoxide",
+          "claim": "Edge 2.2a (Route B1): Photoinduced [FAD*- ... TrpH*+] singlet-triplet mixing in purified Cryptochrome 4 in vitro (Xu et al. 2021; Maeda et al. 2012)",
+          "evidence_tag": "OBSERVED_IN_VITRO"
+        },
+        {
+          "edge_id": "E2_B2",
+          "from": "s2_route_b_flavin_superoxide",
+          "to": "s1_redox_intermediary",
+          "claim": "Edge 2.2b (Route B2): Flavin-superoxide [FAD*- ... O2*-] spin-pair modulation & planarian ROS model (Rishabh et al. 2023, arXiv:2312.06597; fungal transduction unresolved)",
+          "evidence_tag": "MODELED"
+        },
+        {
+          "edge_id": "E2_C",
+          "from": "s2_route_c_magnetite",
+          "to": "s1_hyphal_tropism",
+          "claim": "Edge 2.3 -> 1.4 (Route C): Biogenic Fe3O4 torque -> fungal mechanosensitive channel gating -> hyphal tip steering",
+          "evidence_tag": "UNRESOLVED_TRANSDUCTION"
+        }
+      ]
+    },
+    {
+      "system_id": "system_3_engineered_mnp",
+      "title": "System 3: Engineered Magnetic Nanoparticle Interface (Synthetic Actuation vs. Ferritin Physical Bound)",
+      "summary": "Evaluates synthetic magnetic nanoparticles (MNPs/SPIONs) engineered to stimulate ion channels at millitesla fields, kept strictly separate from natural uT sensing and endogenous ferritin claims.",
+      "nodes": [
+        {
+          "node_id": "s3_synth_magnetomechanical",
+          "label": "Node 3.1: Synthetic Fe3O4 Nanodisc / m-Torquer Mechanotransduction (Piezo1 / TRPV4)",
+          "tag": "ENGINEERED",
+          "detail": "Exogenous synthetic Fe3O4 nanodiscs or torque arrays (35 to 100 nm) under 5 to 50 mT low-frequency fields generate piconewton forces/torques (>10 k_B*T) to gate Piezo1/TRPV4 channels and trigger Ca2+ influx.",
+          "sources": [
+            "Gregurec et al. (2020) ACS Nano 14:8036-8045",
+            "Lee et al. (2021) Nat. Mater. 20:1029-1036"
+          ]
+        },
+        {
+          "node_id": "s3_synth_magnetothermal",
+          "label": "Node 3.2: RF Magnetothermal Hysteresis Heating (TRPV1 -> Ca2+ -> Mitochondrial MCU)",
+          "tag": "ENGINEERED",
+          "detail": "Dense synthetic MNP clusters under 100 to 500 kHz RF fields (10 to 30 mT) heat local membranes above 42 C to gate TRPV1, driving Ca2+ uptake into mitochondria via MCU.",
+          "sources": [
+            "Chen et al. (2015) Science 347:1477-1480",
+            "Rabin (2002) Int. J. Hyperthermia 18:194-202"
+          ]
+        },
+        {
+          "node_id": "s3_ferritin_exclusion",
+          "label": "Node 3.3: Endogenous Ferritin Thermal & Mechanical Failure Bound",
+          "tag": "MODELED (REFUTED BOUND)",
+          "detail": "A 6 nm ferrihydrite ferritin core (~300 mu_B) yields tau / (k_B*T) ~ 3.3e-5 at 50 uT and < 1.3e-2 even at 20 mT, failing thermal noise bounds by >4 orders of magnitude.",
+          "sources": [
+            "Meister (2016) eLife 5:e17210"
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "edge_id": "E3_1",
+          "from": "s3_synth_magnetomechanical",
+          "to": "s1_mitochondrial_etc",
+          "claim": "Edge 3.1 -> Ca2+: Exogenous mT MNP torque (>10 k_B T) -> Piezo1/TRPV4 gating -> cytosolic/mitochondrial Ca2+ influx",
+          "evidence_tag": "ENGINEERED"
+        },
+        {
+          "edge_id": "E3_2",
+          "from": "s3_ferritin_exclusion",
+          "to": "s1_mitochondrial_etc",
+          "claim": "Edge 3.3 -> Channel Gating: Endogenous ferritin single-protein mechanical/thermal channel gating at 50 uT - 20 mT",
+          "evidence_tag": "REFUTED_THERMAL_BOUND"
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "id": "sensing_cryptochrome",
+      "layer": "natural_sensing",
+      "evidence_tag": "PER-EDGE: CRY4 [OBSERVED_IN_VITRO] | FAD-O2*- [MODELED] | TRANSDUCTION [UNRESOLVED]",
+      "title": "System 2 (Route B): Cryptochrome Flavin-Trp (In Vitro) & Flavin-Superoxide [FAD*- ... O2*-] (Modeled)",
+      "status": "UPSTREAM_CRY4_OBSERVED_IN_VITRO (Xu 2021; Maeda 2012) | FLAVIN_SUPEROXIDE_MODELED (Rishabh 2023 arXiv:2312.06597) | FUNGAL_TRANSDUCTION_UNRESOLVED (arXiv:2508.21350; Gassab 2026)",
+      "equation": "H_spin = g * mu_B * B . (S_1 + S_2) + sum_i S_1 . A_1i . I_1i; f_L = 1.40 MHz at 50 uT",
+      "typical_regime": "B = 25 to 65 uT (geomagnetic inclination/anisotropy curve); requires full 0..180 deg angular curve preregistration",
+      "edge_claims": [
+        {"edge": "Photon/Redox -> Cry4a [FAD*- ... TrpH*+] spin chemistry in vitro", "tag": "OBSERVED_IN_VITRO"},
+        {"edge": "Weak B-field -> [FAD*- ... O2*-] yield & planarian ROS model (Rishabh 2023)", "tag": "MODELED"},
+        {"edge": "Spin yield -> Mitochondrial ETC / fungal hyphal polarity signaling", "tag": "UNRESOLVED_TRANSDUCTION"}
+      ],
+      "sources": [
+        "Xu et al. (2021) Nature 594:535-540 (European robin Cry4a in vitro magnetic sensitivity)",
+        "Maeda et al. (2012) PNAS 109(13):4774-4779 (doi:10.1073/pnas.1118959109)",
+        "The Quantum Compass Mechanism in Cryptochromes (arXiv:2508.21350)",
+        "Rishabh, Zadeh-Haghighi & Simon (2023) arXiv:2312.06597 (flavin-superoxide planarian ROS model; unresolved relaxation/amplification)",
+        "Gassab et al. (2026) arXiv:2605.00205 & Lam & Malkemper (2026) Physiol. Rev. (doi:10.1152/physrev.00032.2025)"
+      ],
+      "unresolved_questions": [
+        "Fast spin relaxation (T_1, T_2 << 1 us) of tumbling superoxide and unresolved radical identity in vivo (arXiv:2508.21350; Rishabh et al. 2023)",
+        "Unresolved biological transduction chain from spin-dependent reaction yields to mitochondrial signaling and fungal hyphal directionality (Gassab et al. 2026)"
+      ]
+    },
+    {
+      "id": "sensing_melanin_redox",
+      "layer": "natural_sensing",
+      "evidence_tag": "PER-EDGE: ESR/NADH [OBSERVED_IN_VITRO] | B-COMPASS [HYPOTHESIZED] | TROPISM [UNRESOLVED]",
+      "title": "System 1 + 2 (Route A): Melanin ESR/NADH Radiation Chemistry vs. Hypothesized Magnetic Compass",
+      "status": "MELANIN_RADIATION_ESR_NADH_OBSERVED (Dadachova 2007) | MELANIN_MAGNETIC_COMPASS_HYPOTHESIZED | MITO_TRANSDUCTION_AND_TROPISM_UNRESOLVED (Sandia 2024 Null)",
+      "equation": "I_gamma -> Melanin [ESR / 4x NADH: OBSERVED] -?-> B-Spin Yield [HYPOTHESIZED] -?-> Mito ETC [UNRESOLVED] -?-> Tip theta_tip [UNRESOLVED]",
+      "typical_regime": "Ionizing dose gradient grad I_gamma + paramagnetic semiquinone centers (g ~ 2.004 ESR signal)",
+      "edge_claims": [
+        {"edge": "Ionizing radiation -> Melanin ESR signal & 4x NADH reduction (Dadachova 2007)", "tag": "OBSERVED_IN_VITRO"},
+        {"edge": "Weak B-field -> Melanin semiquinone radical-pair yield modulation", "tag": "HYPOTHESIZED"},
+        {"edge": "Melanin redox -> Mitochondrial ETC -> Active hyphal tip orientation (beyond H0-B selection)", "tag": "UNRESOLVED_TRANSDUCTION"}
+      ],
+      "sources": [
+        "Dadachova et al. (2007) PLoS ONE 2(5):e457 (doi:10.1371/journal.pone.0000457)",
+        "Robertson et al. (2012) PLoS ONE 7(11):e48674 (W. dermatitidis transcriptomics)",
+        "Sandia National Laboratories (2024) Cs-137 Fungal Irradiation Report (experimental null result)",
+        "aurascoper/Biofilms diagnostics/fitness_phase/PREDICTION.md (synthetic selection counterexample 841d052)"
+      ],
+      "unresolved_questions": [
+        "Whether radiation-excited melanin transfers electrons to mitochondrial ETC in intact hyphae (requires orthogonal readouts and rescue controls)",
+        "Whether weak magnetic fields alter melanin radical recombination and whether any colony shift survives exclusion of differential survival (H0-B)"
+      ]
+    },
+    {
+      "id": "sensing_magnetite",
+      "layer": "natural_sensing",
+      "evidence_tag": "PER-EDGE: BACTERIAL CHAIN [OBSERVED] | EUKARYOTIC TETHER [MODELED / UNRESOLVED]",
+      "title": "System 2 (Route C): Biogenic Magnetite (Fe3O4) Chain Torque Transduction",
+      "status": "ESTABLISHED_IN_MAGNETOTACTIC_BACTERIA | EUKARYOTIC_AND_FUNGAL_TRANSDUCTION_UNRESOLVED",
+      "equation": "tau = N_crystals * M_s * V_crystal * B * sin(theta); thermal_gate = tau / (k_B * T) > 1",
+      "typical_regime": "B = 25 to 65 uT (DC geomagnetic), single-domain Fe3O4 crystals (r ~ 25 nm, chain N = 15)",
+      "edge_claims": [
+        {"edge": "Single-domain Fe3O4 magnetosome chain torque > k_B T in magnetotactic bacteria", "tag": "OBSERVED"},
+        {"edge": "Biogenic Fe3O4 chain (15x 25nm) torque model at 50 uT (U_mag / k_B T = 5.69 at 300 K; 5.51 at 310 K)", "tag": "MODELED"},
+        {"edge": "Intracellular magnetite mechanoreceptor tether driving fungal hyphal steering", "tag": "UNRESOLVED_TRANSDUCTION"}
+      ],
+      "sources": [
+        "Kirschvink & Gould (1981) Biosystems 13:181-201",
+        "Johnsen & Lohmann (2005) Nat. Rev. Neurosci. 6:703-712",
+        "Eder et al. (2012) PNAS 109:12022-12027 (contamination controls required)"
+      ],
+      "unresolved_questions": [
+        "Anatomical identity of primary magnetoreceptor tethers in eukaryotes and absence of verified magnetosome chains in target fungi",
+        "Distinguishing single-domain polar torque from superparamagnetic induced torque via full 0..180 deg angular curves and contamination controls"
+      ]
+    },
+    {
+      "id": "sensing_induction",
+      "layer": "natural_sensing",
+      "evidence_tag": "OBSERVED (MARINE ELASMOBRANCHS ONLY)",
+      "title": "System 2 (Marine Reference): Electromagnetic Induction (Ampullae of Lorenzini)",
+      "status": "ESTABLISHED_IN_ELASMOBRANCHS (requires conductive seawater medium; not intracellular fungal/terrestrial)",
+      "equation": "EMF = integral (v x B) . dl; E_induced = v * B * sin(theta)",
+      "typical_regime": "v = 0.2 to 1.0 m/s in seawater (sigma ~ 4 S/m), canal length L = 5 to 20 cm, threshold ~ 5 nV/cm",
+      "edge_claims": [
+        {"edge": "Motional induction across conductive electrosensory canals in marine elasmobranchs", "tag": "OBSERVED"},
+        {"edge": "Intracellular induction in non-motile terrestrial/aquatic fungal hyphae", "tag": "REFUTED_SCALING_BOUND"}
+      ],
+      "sources": [
+        "Kalmijn (1971) J. Exp. Biol. 55:371-383",
+        "Newton, Gill & Kajiura (2019) J. R. Soc. Interface 16:20190262"
+      ],
+      "unresolved_questions": [
+        "Central neural decoding of motional vs. ocean-current induced electric fields in elasmobranchs"
+      ]
+    },
+    {
+      "id": "actuation_magnetomechanical",
+      "layer": "engineered_actuation",
+      "evidence_tag": "ENGINEERED (SYNTHETIC mT MNP) | FERRITIN REFUTED",
+      "title": "System 3: Exogenous MNP Magnetomechanical Torque & Force Gating (Piezo1 / TRPV4)",
+      "status": "DEMONSTRATED_WITH_SYNTHETIC_MNPS (refuted for endogenous ferritin by Meister 2016)",
+      "equation": "tau = m x B; F_grad = (m . grad) B; requires F >= 1 to 10 pN or tau >= 40 pN*nm for channel gating",
+      "typical_regime": "B = 5 to 50 mT (low-frequency rotating/alternating, 1 to 50 Hz) + synthetic Fe3O4 nanodiscs/clusters (r >= 25 to 100 nm)",
+      "edge_claims": [
+        {"edge": "Exogenous 35-100 nm Fe3O4 nanodisc torque (>10 k_B T at 5-50 mT) -> Piezo1/TRPV4 gating", "tag": "ENGINEERED"},
+        {"edge": "Endogenous 6 nm ferritin mechanical gating at 50 uT (3.3e-5 k_B T)", "tag": "REFUTED_THERMAL_BOUND"}
+      ],
+      "sources": [
+        "Meister (2016) eLife 5:e17210 (physical critique of ferritin magnetogenetics)",
+        "Gregurec et al. (2020) ACS Nano 14:8036-8045 (vortex nanodisc mechanotransduction)",
+        "Lee et al. (2021) Nat. Mater. 20:1029-1036 (m-Torquer nanoscale torque gating)"
+      ],
+      "unresolved_questions": [
+        "Targeted deep-tissue delivery and stable membrane tethering without immune clearance",
+        "Separating pure mechanical gating from local viscous or coil-heating artifacts"
+      ]
+    },
+    {
+      "id": "actuation_magnetothermal",
+      "layer": "engineered_actuation",
+      "evidence_tag": "ENGINEERED (RF CLUSTER HYSTERESIS)",
+      "title": "System 3: RF Magnetothermal Hysteresis Actuation (TRPV1 -> Ca2+ -> Mitochondrial MCU)",
+      "status": "DEMONSTRATED_AT_HIGH_MNP_CLUSTER_DENSITY (single-nanoparticle equilibrium delta_T is negligible)",
+      "equation": "P_vol = mu_0 * pi * chi_pp * f * H_0^2; gating TRPV1 (~42 C) triggers Ca2+ -> MCU -> TCA/OXPHOS modulation",
+      "typical_regime": "f = 100 to 500 kHz, B_RF = 10 to 30 mT; dense MNP clusters required to overcome Fourier heat diffusion",
+      "edge_claims": [
+        {"edge": "Dense synthetic MNP cluster RF hysteresis (100-500 kHz, 10-30 mT) -> local T > 42 C -> TRPV1 gating", "tag": "ENGINEERED"},
+        {"edge": "Single isolated ferritin/MNP steady-state cellular heating (Rabin 2002; Meister 2016)", "tag": "REFUTED_THERMAL_BOUND"}
+      ],
+      "sources": [
+        "Rabin (2002) Int. J. Hyperthermia 18:194-202 (nano-scale heat transfer bounds)",
+        "Chen et al. (2015) Science 347:1477-1480 (magnetothermal deep brain stimulation)"
+      ],
+      "unresolved_questions": [
+        "Nanoscale surface thermometry vs. macroscopic Fourier heat conduction limits",
+        "Preventing mitochondrial Ca2+ overload while modulating metabolic signaling"
+      ]
+    },
+    {
+      "id": "actuation_spion_targeting",
+      "layer": "engineered_actuation",
+      "evidence_tag": "ENGINEERED (HIGH-GRADIENT CAPTURE)",
+      "title": "System 3: High-Gradient Vascular SPION Capture & Drug Delivery",
+      "status": "PRECLINICAL_AND_SUPERFICIAL_TRANSLATION (depth-limited by Earnshaw theorem and gradient decay)",
+      "equation": "F_mag = V_np * delta_chi * grad(B^2) / (2 * mu_0) vs. F_drag = 6 * pi * eta * r_np * v_blood",
+      "typical_regime": "B = 0.2 to 1.5 T, |grad B| = 10 to 100 T/m (effective mainly within 1 to 5 cm of magnet pole face)",
+      "edge_claims": [
+        {"edge": "Superficial high-gradient (10-100 T/m) SPION capture against low-velocity microvessel drag", "tag": "ENGINEERED"},
+        {"edge": "Deep-tissue static magnetic trapping without active feedback (Earnshaw theorem)", "tag": "REFUTED_SCALING_BOUND"}
+      ],
+      "sources": [
+        "Pankhurst et al. (2003) J. Phys. D: Appl. Phys. 36:R167",
+        "Shapiro et al. (2015) Magn. Reson. Imaging 33:250-256"
+      ],
+      "unresolved_questions": [
+        "Overcoming Earnshaw's theorem for deep-tissue static magnetic trapping"
+      ]
+    },
+    {
+      "id": "quarantined_71thz_mitochondria",
+      "layer": "quarantined_hypothesis",
+      "evidence_tag": "QUARANTINED PREPRINT",
+      "title": "QUARANTINED: 71 THz (4.22 um Mid-IR) Mitochondrial Light-Matter Coupling Preprint",
+      "status": "UNVALIDATED_PREPRINT_HYPOTHESIS (excluded from default magnetoreception model)",
+      "equation": "f = 71 THz -> lambda = c / f = 4.22 um (photon energy h*nu = 0.294 eV ~ 11.4 k_B*T)",
+      "typical_regime": "Mid-infrared vibrational / photonic spectroscopy; NOT geomagnetic DC/ELF sensing",
+      "edge_claims": [
+        {"edge": "71 THz (4.22 um) mid-IR mitochondrial vibrational coupling preprint", "tag": "QUARANTINED"},
+        {"edge": "Coupling of 71 THz mid-IR mode to 50 uT DC geomagnetic sensing (1.40 MHz)", "tag": "REFUTED_SCALING_BOUND"}
+      ],
+      "sources": [
+        "bioRxiv preprint (Sept 2026) on 71 THz cellular/mitochondrial spectral feature (unvalidated)"
+      ],
+      "unresolved_questions": [
+        "Independent replication with rigorous water/CO2 infrared absorption controls (4.26 um CO2 asymmetric stretch)",
+        "No established physical coupling to geomagnetic microtesla fields"
+      ]
+    }
+  ],
+  "preregistration_protocol": {
+    "primary_outcome": "Preregistered distribution of tracked hyphal-tip orientation angles theta_tip(t) (circular mean and resultant vector length) and paired trajectory displacement vectors delta_r_i = r_i(t_1) - r_i(t_0) (Null H0-A), evaluated with biological replicates at the independent culture/plate level and with tip arrest/death/loss events reported separately against survival-weighted counterfactuals (Null H0-B). Pixels, parcels, and time points are never treated as independent biological replicates.",
+    "meoi_and_equivalence_bound": "Minimum biologically meaningful effect MEOI = 0.05 r/R (or angular deflection >= 15 deg on the full preregistered angular response curve); two one-sided TOST equivalence tests at alpha = 0.05 (90% CI strictly inside [-MEOI, +MEOI]) and 95% culture-level bootstrap/mixed-model intervals.",
+    "dosimetry_and_sham_controls": "Preregistered 3-axis sample-plane fluxgate field map (>=9-point grid, |Delta B|/|B| <= 1%, |grad B| <= 0.5 uT/cm, zeroed arm <0.1 uT); continuous coil-current I(t) & ohmic power telemetry in double-wrapped antiparallel Helmholtz sham coils; 4-point stage thermometry (|Delta T| <= 0.05 C); 3-axis vibration monitoring (a_RMS <= 1e-4 g); mapped source-to-sample photon dose rate & spectrum.",
+    "replicate_and_multiplicity_rules": "Blinded plate/chamber randomization, biological replicate blocking at the independent culture/inoculum level (b_batch, b_culture), and Holm-Bonferroni familywise error control across separated Movement/Orientation, Selection/Loss, Growth, and Biochemical Mechanism endpoints.",
+    "exposure_and_environmental_control_spec": {
+      "sample_plane_field_map": "3-axis fluxgate magnetometer scan across a >=9-point (3x3) or 25-point (5x5) sample-plane grid (B_x(x,y), B_y(x,y), B_z(x,y)) recorded pre- and post-run.",
+      "field_magnitude_and_gradient_tolerances": "Target |B| = 50.0 +/- 0.5 uT (spatial inhomogeneity <= 1% across plate footprint; parasitic spatial gradient |grad B| <= 0.5 uT/cm in uniform-field arms; vector angle within +/- 1.0 deg; near-zero suppression arm |B| < 0.1 uT at all grid points; AC ripple < 0.05 uT RMS).",
+      "coil_current_and_sham_state": "Bifilar (double-wrapped) 3-axis Helmholtz/Merritt coils with continuous current I_coil(t), voltage V_coil(t), and ohmic dissipation P = I^2*R logging in both parallel (active B) and antiparallel (cancelled B, matched heating) states.",
+      "temperature_and_vibration_limits": "4-point non-magnetic fiber-optic thermometry across sample stage (|Delta T_active_vs_sham| <= 0.05 C; absolute drift <= 0.10 C/hr) and 3-axis stage accelerometer (a_RMS <= 1e-4 g over 1 to 500 Hz, matched across coil states).",
+      "source_to_sample_dose_map": "2D/3D spatial dose-rate map I_gamma(x,y,z) and energy spectrum verified across culture geometry via NIST-traceable ion chamber / TLD / radiochromic film array, separating primary beam geometry from scatter.",
+      "run_exclusion_criteria": "Blinded automatic run exclusion prior to analysis if any grid point breaches |Delta B|/|B| > 2% (or >= 0.1 uT in suppressed arm), |grad B| > 0.5 uT/cm, |Delta T| > 0.05 C, stage vibration > 1e-4 g RMS, coil-current dropout, or dosimetry deviation > 3%."
+    },
+    "causal_mediation_and_orthogonal_readout_spec": {
+      "temporal_precedence_limitation": "t_mito < t_tip is a necessary temporal check, NOT sufficient proof of mitochondrial mediation (early redox shifts can represent a parallel stress branch or shared upstream input).",
+      "orthogonal_biochemical_readouts": "MitoSOX fluorescence alone is insufficient (confounded by mitochondrial membrane potential Delta_Psi_m and non-specific oxidation). Gate D requires orthogonal validation: (1) HPLC/LC-MS quantification of superoxide-specific 2-hydroxyethidium (2-OH-E+), (2) genetically encoded ratiometric sensors (mito-roGFP2-Orp1 / mito-Grx1-roGFP2) normalized against concurrent Delta_Psi_m (TMRM) and pH controls, and (3) bioenergetic O2 consumption / ATP:ADP ratio.",
+      "intervention_specificity_and_rescue": "Pathway perturbation must alter the proposed mediator without arresting basal hyphal extension or reducing cell viability, and must include: (1) matched vehicle control, (2) inactive analog / orthogonal scavenger control, (3) quantitative viability & basal growth-rate verification, and (4) pharmacological washout or genetic rescue restoring the directional response."
+    }
+  },
+  "factorial_experiments": [
+    {
+      "exp_id": "EXP_A",
+      "gate_order": "Gate A (Gate 1): Radiation Response & Selection-vs-Movement Separation",
+      "prerequisite_gate": "Gate 0 passed: mapped source-to-sample dose/spectrum, temperature (+/-0.05 C), and organism-specific WT / Albino / Complemented Rescue strain validation (identity, ESR, baseline growth parity).",
+      "title": "Gate A: Radiation Response & Melanin Genetics (Separating Selection H0-B from Tracked Tip Movement H0-A)",
+      "factors_varied": "Ionizing Radiation (Mapped +grad I_gamma vs. Sham 0 Gy) x Validated Melanin Genotype (WT Melanized vs. Characterized Albino Mutant vs. Complemented Rescue) at mapped ambient geomagnetic field (50.0 +/- 0.5 uT)",
+      "primary_readouts": "Primary biological endpoints at culture/plate replicate level: (1) Tracked hyphal-tip trajectories delta_r_i and orientation distribution theta_tip, (2) Explicit tip/cell death & loss counts vs. survival-weighted counterfactual (H0-B), (3) Basal hyphal extension rate, (4) Melanin ESR & NADH reduction",
+      "discriminating_outcome": "Establishes dose, dose-rate, spectrum, temperature, and survival/growth responses without inferring directionality from colony size or survivor radius shift (retaining cpm-sp-v1 as a synthetic counterexample)."
+    },
+    {
+      "exp_id": "EXP_B",
+      "gate_order": "Gate B (Gate 2): Magnetic Dependence & Preregistered Full Angular Curve",
+      "prerequisite_gate": "Preregistered full angular response curves Y(theta_B) (0..180 deg) for each candidate mechanism, 3-axis sample-plane field map (<=1% inhomogeneity, <=0.5 uT/cm gradient), active antiparallel sham coils, and thermal/vibration controls.",
+      "title": "Gate B: Preregistered Angular Curve (0..180 deg), Reversal & Suppression (<0.1 uT) in 24-Cell Factorial",
+      "factors_varied": "Magnetic Field Vector B (Full angular sweep 0, 30, 45, 60, 90, 120, 135, 150, 180 deg + Near-Zero <0.1 uT + Antiparallel Sham Coil) crossed with BOTH Sham (0 Gy) and Fixed Radiation (+grad I_gamma) in the 24-cell factorial",
+      "primary_readouts": "Full measured angular response curve of tracked hyphal-tip orientation theta_tip(theta_B) and displacement delta_r_i(theta_B) at the culture/plate replicate level, plus continuous B-map, coil-current, Delta_T, and vibration telemetry",
+      "discriminating_outcome": "Compares the full measured angular curve against preregistered mechanism curves (rather than relying on 0 vs. 180 deg sign alone) and separates radiation-dependent magnetic interactions (beta_RB) from general magnetic effects (beta_B)."
+    },
+    {
+      "exp_id": "EXP_C",
+      "gate_order": "Gate C (Gate 3): Mechanistic Discrimination & Genetic/Biochemical Specificity",
+      "prerequisite_gate": "Reproducible, sham-controlled magnetic-field angular response established in Gate B and organism-specific baseline parity verified for WT, Albino, and Rescue strains.",
+      "title": "Gate C: Mechanistic Discrimination Across Validated Genotypes & Independent Biochemical Readouts",
+      "factors_varied": "Validated Melanin Genotype (WT Melanized vs. Characterized Albino vs. Complemented Rescue) x Magnetic Angular Sweep / Suppression x Radiation (+/- I_gamma) in full 24-cell factorial",
+      "primary_readouts": "Full angular orientation curve theta_tip(theta_B) paired with independent biochemical readouts (ESR, HPLC 2-OH-E+, ratiometric mito-roGFP2-Orp1 / NAD(P)H FLIM) across WT, Albino, and Rescue cultures",
+      "discriminating_outcome": "Requires reproducible field-dependent outcomes, genetic abolition in Albino with restoration in Complemented Rescue (for Route A) or persistence with flavin/cryptochrome specificity (for Route B), and independent biochemical corroboration before promoting any route beyond HYPOTHESIZED."
+    },
+    {
+      "exp_id": "EXP_D",
+      "gate_order": "Gate D (Gate 4): Causal Transduction, Orthogonal Readouts & Intervention Rescue",
+      "prerequisite_gate": "Reproducible receptor-linked magnetic/radiation response established in Gates A-C.",
+      "title": "Gate D: Temporal Precedence (t_mito < t_tip), Orthogonal Readouts, Specific Intervention & Rescue",
+      "factors_varied": "Longitudinal live imaging (t = 0 to 120 min) + Validated Orthogonal Readouts (HPLC 2-OH-E+, mito-roGFP2-Orp1 + TMRM Delta_Psi_m control) + Specific Pathway Perturbation (with Vehicle, Scavenger, Viability, Basal-Growth & Rescue Controls) + Matched-Connectivity Phase Controls",
+      "primary_readouts": "Lag time between stimulus onset, orthogonal mitochondrial/redox shift (t_mito), and tip curvature (t_tip); basal hyphal extension & cell viability under perturbation/rescue; Kuramoto R(t) vs. K=0, matched-connectivity fixed-lineage, and phase-shuffled surrogates",
+      "discriminating_outcome": "Tests whether the orthogonal mediator changes before directionality (t_mito < t_tip) AND whether a specific intervention alters directional steering without impairing viability or basal growth, with restoration upon rescue/washout."
+    }
+  ],
+  "milestones": [
+    {
+      "id": "M1",
+      "title": "Milestone 1 (Gate 0 & Gate A): Preregistered Biological Endpoints, Exposure Maps & Selection Exclusion",
+      "criterion": "Define culture-level tracked hyphal-tip orientation (theta_tip), trajectories (delta_r_i), and logged tip deaths as primary biological endpoints; map 3-axis sample-plane B-field and radiation dose; validate WT/Albino/Rescue strains; and retain cpm-sp-v1 (5,511/10,752 deaths) strictly as a synthetic counterexample."
+    },
+    {
+      "id": "M2",
+      "title": "Milestone 2 (Gate B & Gate C): Full Angular Curve Discrimination & 24-Cell Factorial Specificity",
+      "criterion": "Preregister and compare full angular response curves (0..180 deg) under matched sham-coil, thermal (+/-0.05 C), and vibration (<1e-4 g) controls in the 24-cell factorial, requiring genetic specificity and orthogonal biochemical readouts before promoting any mechanism beyond HYPOTHESIZED."
+    },
+    {
+      "id": "M3",
+      "title": "Milestone 3 (Gate D): Orthogonal Causal Transduction, Specific Intervention Rescue & Matched-Topology Phase Audit",
+      "criterion": "Combine temporal precedence (t_mito < t_tip) with orthogonal superoxide/redox readouts (beyond MitoSOX) and specific pathway intervention + rescue that preserves viability and basal growth; benchmark any phase coherence against K=0, matched-connectivity fixed-lineage, and cross-seed surrogates."
+    }
+  ],
+  "cross_domain_epistemic_gates": {
+    "section_version": "1.3.0",
+    "integration_principle": "Preserves the cross-project four-gate epistemic architecture (EG-1 through EG-4) linking geochemical provenance, physical mechanism models, cellular transduction, and evolutionary origin while keeping Oklo and biotite provenance separate, labeling model-based interaction-energy calculations strictly as MODELED, separating idealized saturated blocked inclusion bounds from natural remanence and unblocked superparamagnetic regimes, preserving the anisotropy requirement for uniform-field torque, and enforcing the three-tier irradiation-vs-magnetoreception evidential hierarchy and the specimen-encoding and modality gate.",
+    "calculation_source_provenance": {
+      "repository_path": "/Users/aurascoper/.gemini/antigravity/scratch/oklo_stencil_benchmarks",
+      "package_name": "OkloStencilBenchmarks",
+      "package_version": "0.1.0",
+      "source_file": "src/track4_mineral_magnetoreception_gates.jl",
+      "source_file_sha256": "73360f11e48529a9cb6436b58332a2ea5ede8cf0022132bd9ef219176f2da39e",
+      "julia_source_commit": "c4048a6c84f98c73118500a6e6bfbbb0c363684b",
+      "verification_command": "julia --startup-file=no --project=/Users/aurascoper/.gemini/antigravity/scratch/oklo_stencil_benchmarks -e 'using Pkg; Pkg.test()'",
+      "passing_test_summary": "738 / 738 passed (0 failures, 0 errors)",
+      "software_evidence_boundary": "Passing the Julia and Python verification suites establishes only that the code implements the declared mathematical formulas, discrete conservation laws, and fail-closed schema/gate rules to the tested tolerances. It does NOT establish biological magnetoreception mechanisms, natural mineral parameters, cellular signal transduction, or evolutionary history.",
+      "superseded_verification_attempts": [
+        {
+          "attempt_id": "Attempt-1-task-5611",
+          "pre_commit_base": "df52dbd (initial Track 1-3 draft before first commit)",
+          "result": "581 / 640 passed (59 failed)",
+          "cause_and_resolution": "Resolved four pre-commit test specification mismatches: (1) Finding R0-1 analytical Float64 temperature difference is 25.481054 C (whereas 25.484736 C is the Float32-quantized difference); (2) 3D tile-roll seam corruption test required a 32x32x32 grid (2x2x2 tiles of 16^3) so internal seams exist along all three axes; (3) Track 2C central finite-difference step truncation (~4e-9 at eps=1e-6) was separated from the exact bilinear discrete adjoint identity <L(dU), g> == <dU, L^T(g)> (verified to atol=1e-14); and (4) Track 3 reactivity helper tests were aligned with Float64 vs. pre-rounded JSON inputs."
+        },
+        {
+          "attempt_id": "Attempt-2-task-5667",
+          "pre_commit_base": "df52dbde19c161f61270b3ecde06319548486259 (initial Track 4 draft)",
+          "result": "661 / 665 passed (4 failed)",
+          "cause_and_resolution": "Resolved two initial Track 4 test-assertion transcription discrepancies: (1) matched-volume paramagnetic biotite U_mag,aniso / (k_B * T) evaluates to 5.894344e-8 (above a draft 1e-10 threshold that omitted a factor of 10^3), and (2) free-electron g_e = 2.0023193 yields f_L = 1.401248 MHz (versus the g = 2.00 approximation 1.400811 MHz). Committed and verified at d325899e562fd83565c09a81c1551cb5f688f8f6 (665 / 665 passed)."
+        },
+        {
+          "attempt_id": "Attempt-3-task-5694",
+          "pre_commit_base": "d325899e562fd83565c09a81c1551cb5f688f8f6 (during 5-correction field-name refactor)",
+          "result": "657 / 691 passed (1 failed, 33 errored)",
+          "cause_and_resolution": "Intermediate test-runner invocation before aligning test/runtests.jl field names (`magnetosome_chain_model`, `biotite_paramagnetic_model`, `:EG2_MODELED_MECHANISM_ONLY_TRANSDUCTION_UNRESOLVED`) with the refactored Track 4 return signature. Resolved and verified at commit 67786024216ca55d1a4afd0ae8f049d8d016478d (695 / 695 passed)."
+        }
+      ]
+    },
+    "modeled_interaction_energy_comparison": {
+      "metric_name": "U_mag / (k_B * T)",
+      "field_key": "u_mag_over_kBT",
+      "evidence_type": "MODELED",
+      "biological_sensing_established_by_calculation": false,
+      "reference_conditions": {
+        "B_tesla": 5.0e-5,
+        "T_kelvin": 300.0,
+        "kBT_joules": 4.141947e-21
+      },
+      "models": {
+        "magnetosome_chain_model": {
+          "evidence_type": "MODELED",
+          "mineral": "magnetite_Fe3O4",
+          "reference_parameters": "N = 15 single-domain spheres, r = 25 nm, M_s = 4.8e5 A/m, V_total = 9.817e-22 m^3",
+          "u_mag_over_kBT": 5.688616,
+          "sensitivity_range_N5_to_25_r15_to_35nm": [0.40958, 26.016025],
+          "angular_response_model": {
+            "idealized_180deg_prediction": "sign_inverting_under_rigid_axial_tether",
+            "full_angular_law": "tau(theta) = -m * B * sin(theta); U(theta) = -m * B * cos(theta)",
+            "is_universal_binary_discriminator": false,
+            "tethering_assumptions": [
+              "Single-domain crystals rigidly coupled into a colinear permanent-moment chain",
+              "Chain rotation mechanically coupled to an asymmetric cellular structure or directional cytoskeleton",
+              "No antiparallel chain-collapse, superparamagnetic relaxation, or symmetric quadratic (tau^2) channel gating"
+            ]
+          }
+        },
+        "biotite_inclusion_free_paramagnetic_model": {
+          "evidence_type": "MODELED",
+          "mineral": "biotite_K_Mg_Fe_aluminosilicate",
+          "provenance_separation": "Comparative 2:1 phyllosilicate specimen (phlogopite-annite series); NOT a verified Oklo reactor-zone mineral (published Oklo reactor-zone phyllosilicates are illite and chlorite).",
+          "reference_parameters": "Volume-matched V = 9.817e-22 m^3, inclusion-free paramagnetic at 300 K (M_r = 0), chi_v = 1.0e-3 SI, Delta_chi = 2.5e-4 SI (Martin-Hernandez & Hirt 2003)",
+          "u_mag_over_kBT": 5.894344e-8,
+          "u_mag_iso_over_kBT": 2.357738e-7,
+          "magnetosome_to_biotite_u_mag_ratio": 9.650973e7,
+          "sensitivity_range_delta_chi_2e5_to_1_5e3_si": [4.715475e-9, 3.536606e-7],
+          "natural_1um3_flake_magnetite_inclusion_sensitivity": {
+            "magnetic_state_requirement": "A natural biotite specimen cannot be assigned to any inclusion regime without rock-magnetic characterization (FORC/Day hysteresis, NRM/IRM demagnetization, and low-field susceptibility vs. temperature; Dunlop & Ozdemir 1997). Saturation magnetization M_s requires fields (~0.3-1 T) vastly stronger than Earth's 50 uT field.",
+            "idealized_saturated_coherently_blocked_upper_bound": {
+              "is_realistic_natural_default": false,
+              "assumption": "100% single-domain blocked Fe3O4 carrying full saturation magnetization M_s = 4.8e5 A/m with all inclusion moments coherently aligned.",
+              "inclusion_free_0pct_fe3o4": 6.003953e-5,
+              "trace_0_01pct_fe3o4": 0.579497,
+              "minor_1pct_fe3o4": 57.943805
+            },
+            "partially_remanent_natural_nrm_blocked_regime": {
+              "is_realistic_natural_default": false,
+              "nrm_to_saturation_ratio": 0.01,
+              "assumption": "Blocked Fe3O4 inclusions carrying typical natural remanent magnetization M_NRM = 0.01 * M_s acquired in weak geomagnetic fields without artificial saturation.",
+              "inclusion_free_0pct_fe3o4": 6.003953e-5,
+              "trace_0_01pct_fe3o4": 5.854412e-3,
+              "minor_1pct_fe3o4": 0.579497
+            },
+            "unblocked_superparamagnetic_or_low_field_induced_regime": {
+              "is_realistic_natural_default": false,
+              "chi_eff_si": 3.0,
+              "delta_chi_eff_si": 0.5,
+              "directional_torque_requires_anisotropy": true,
+              "isotropic_b2_energy_generates_uniform_field_torque": false,
+              "anisotropy_requirement_note": "A B^2-dependent induced magnetic energy does not automatically imply directional sensing: an orientation-dependent torque in a uniform field requires magnetic anisotropy (Delta_chi_eff != 0) or another source of directional coupling; an isotropic induced response (chi_eff) depends only on |B|^2 and generates zero restoring torque (dU/dtheta = 0).",
+              "assumption": "Unblocked superparamagnetic (r < 10-15 nm, M_r = 0) or multi-domain demagnetized Fe3O4 inclusions responding only via low-field susceptibility (quadratic in B at 50 uT).",
+              "anisotropic_u_mag_over_kBT": {
+                "inclusion_free_0pct_fe3o4": 6.003953e-5,
+                "trace_0_01pct_fe3o4": 7.204143e-5,
+                "minor_1pct_fe3o4": 1.260230e-3
+              },
+              "isotropic_u_mag_over_kBT": {
+                "inclusion_free_0pct_fe3o4": 6.003953e-5,
+                "trace_0_01pct_fe3o4": 1.320809e-4,
+                "minor_1pct_fe3o4": 7.264183e-3
+              }
+            },
+            "irradiation_defect_transfer_boundary": {
+              "causal_summary": "Neutron fluence, spectrum, irradiation temperature, and material history can drive defect and precipitate evolution, altering magnetic-domain-wall pinning and measured magnetic properties. The direction and magnitude of changes in coercivity, remanence, permeability, and Barkhausen noise are material- and condition-dependent.",
+              "is_coercivity_or_remanence_shift_sign_universal": false,
+              "engineering_alloy_to_natural_biotite_transfer_calibrated": false,
+              "empirical_contrasts": [
+                "Park et al. (2004, Key Eng. Mater. 270-273:657, doi:10.4028/www.scientific.net/KEM.270-273.657): In neutron-irradiated A508 reactor pressure-vessel steel, coercivity increased by 16% at highest reported fluence while initial permeability and Barkhausen noise decreased alongside higher hardness and yield strength.",
+                "Shong et al. (ASTM STP15114S, doi:10.1520/STP15114S): In neutron-irradiated iron and nickel wires studied as magnetic indicators of material damage, coercivity and remanence predominantly decreased with irradiation dose."
+              ],
+              "three_tier_evidential_hierarchy": {
+                "tier_1_neutron_damage_material_properties": {
+                  "rank": 1,
+                  "evidential_status": "DIRECTLY_SUPPORTED",
+                  "summary": "Neutrons displace atoms, producing vacancies, interstitials, defect clusters, dislocation loops, cavities/voids, and microstructural evolution. In ferromagnetic steels and alloys, these defects impede magnetic-domain-wall motion and change measured Barkhausen noise, initial permeability, coercivity, and remanence.",
+                  "establishes_biological_sensing": false
+                },
+                "tier_2_shared_physical_ingredients_analogy": {
+                  "rank": 2,
+                  "evidential_status": "ANALOGY_ONLY_OPPOSITE_EXPLANATORY_DIRECTION",
+                  "summary": "Both materials irradiation and magnetoreception research can involve magnetic moments, electron spins, magnetic anisotropy, and thermal effects, which is relevant if a specimen contains a magnetic phase whose radiation response is measured.",
+                  "explanatory_direction_contrast": "Materials irradiation research asks how radiation-induced defects and microstructure alter an inorganic sample's physical or magnetic response; biological magnetoreception requires a living system to detect an external magnetic field and transduce it into a functional biological signal.",
+                  "establishes_biological_sensing": false
+                },
+                "tier_3_biological_radiotropism_and_magnetoreception": {
+                  "rank": 3,
+                  "evidential_status": "SEPARATE_BIOLOGICAL_HYPOTHESIS",
+                  "summary": "In biology, radiation can influence redox chemistry, growth, survival, and selection (Null H0-B), whereas radiotropism specifically implies a directional growth response (Null H0-A). Biological magnetoreception becomes relevant only if an organism shows a reproducible, sham-controlled, field-dependent response distinguishable from radiation damage, temperature effects, and survival bias, supported by organism-specific evidence for candidate mechanisms (cryptochrome radical pairs or biogenic magnetite).",
+                  "establishes_biological_sensing": false
+                }
+              },
+              "specimen_encoding_and_modality_gate": {
+                "core_diagnostic_question": "Does the image show neutron-induced defect/phase evolution or cellular morphology, or is it explicitly a magnetic characterization?",
+                "premature_to_connect_to_magnetoreception_without_gate": true,
+                "required_metadata_checks": [
+                  "Identify the specimen material and irradiation conditions (fluence, energy spectrum, irradiation temperature, and mechanical/magnetic history).",
+                  "Identify the visualization or imaging modality (e.g. bright-field TEM, underfocus/overfocus Fresnel-contrast TEM, in-situ tensile TEM with Gatan 672 holder, live-cell DIC optical microscopy, tomography, neutron imaging, phase-field simulation, or Lorentz TEM / electron holography).",
+                  "Identify what visual channels, colours, or annotations encode (chemical phases, precipitates, dislocation loops, nanoscale cavities/voids, cytoplasmic/vacuolar organelles, intracellular magnetosome chains, or measured magnetic domains)."
+                ],
+                "colour_channel_decision_branches": {
+                  "phases_precipitates_defects_or_rendering_categories": {
+                    "channel_meaning": "Purple and green (or other false-colour) regions represent chemical phases, precipitates, defects, particles, or rendering categories in an irradiated alloy",
+                    "domain_classification": "MATERIALS_SCIENCE_MICROSTRUCTURE_PROBLEM",
+                    "relevant_to_mineral_magnetism_eg2": false,
+                    "establishes_biological_sensing_eg3": false
+                  },
+                  "magnetic_domains_or_measured_magnetic_inclusions": {
+                    "channel_meaning": "Purple and green (or other false-colour) regions explicitly represent measured magnetic domains or magnetic inclusions",
+                    "domain_classification": "MINERAL_AND_MAGNETITE_PHYSICS_CONSTRAINT_ONLY",
+                    "relevant_to_mineral_magnetism_eg2": true,
+                    "establishes_biological_sensing_eg3": false
+                  }
+                },
+                "methods_and_physical_constraints_bridge": {
+                  "valid_research_use": "Source of methods and physical constraints for reasoning about which magnetic signatures are physically plausible in inorganic materials under radiation-induced defect, magnetic-domain, and phase evolution vs. which claims require independent biological evidence.",
+                  "is_evidence_for_radiotropism": false,
+                  "is_evidence_for_biological_magnetoreception": false
+                },
+                "reference_image_triage": {
+                  "in_situ_tem_dislocation_loops_and_cavities": {
+                    "modality": "SEM/FIB micro-tensile gauge preparation (~190 nm foil on Gatan 672 straining holder) + bright-field TEM (100 nm) and underfocus/overfocus Fresnel-contrast TEM (50 nm)",
+                    "visual_encoding": "Mechanical loading direction (blue arrows), crystallographic dislocation loops (red arrows, panel e), and nanoscale cavities/voids (red circles in underfocus panel f and overfocus panel g); does NOT encode magnetic domains and does NOT depict biological cells",
+                    "assigned_tier": "TIER_1_INORGANIC_IRRADIATION_MICROSTRUCTURE",
+                    "establishes_magnetoreception_or_radiotropism": false
+                  },
+                  "magnetotactic_bacterium_magnetosome_chain_tem": {
+                    "modality": "Whole-cell TEM (0.5 um scale bar, panel A), isolated magnetosome high-magnification TEM (50 nm scale bar, panel B), and organelle molecular schematic (panel C)",
+                    "visual_encoding": "Intracellular single-domain Fe3O4 magnetosome chain, lipid-bilayer magnetosome membrane vesicles (blue arrows), and magnetosome membrane proteins (Mam/Mms)",
+                    "assigned_tier": "PROKARYOTIC_BIOGENIC_MAGNETORECEPTION_REFERENCE",
+                    "establishes_fungal_radiotropism": false
+                  },
+                  "hyphal_tip_live_dic_timelapse": {
+                    "modality": "Live-cell differential interference contrast (DIC) optical time-lapse microscopy (0 s, 5 s, 10 s, 15 s; panels A-C)",
+                    "visual_encoding": "Apical cytoplasm (Cyt), vacuole (Vac), and rapid 15 s intracellular vesicle/organelle trafficking (dashed ellipses and white/yellow/orange arrowheads); does NOT encode magnetic domains or sham-controlled field-dependent directional tropism",
+                    "assigned_tier": "TIER_3_CELLULAR_MORPHOLOGY_BASELINE_ONLY",
+                    "establishes_magnetoreception_or_radiotropism": false
+                  }
+                }
+              },
+              "transfer_boundary_note": "Engineering-material irradiation studies support the general physical principle that radiation alters magnetic observables (EG-2 Tier 1/2 context), but do NOT provide calibrated parameters for magnetite inclusions in natural biotite or evidence for biological radiotropism/magnetoreception (EG-3/EG-4 Tier 3)."
+            }
+          }
+        },
+        "ferritin_core_model": {
+          "evidence_type": "MODELED",
+          "mineral": "ferrihydrite_ferritin_core",
+          "reference_parameters": "m = 300 Bohr magnetons (Meister 2016 eLife 5:e17210)",
+          "u_mag_over_kBT": 3.358569e-5
+        },
+        "cryptochrome_zeeman_timescale": {
+          "evidence_type": "MODELED",
+          "mechanism": "radical_pair_zeeman_precession",
+          "larmor_frequency_hz": 1.401248e6,
+          "inverse_larmor_angular_freq_s": 1.135802e-7,
+          "timescale_classification": "field_dependent_zeeman_precession_timescale",
+          "is_demonstrated_biological_coherence_threshold": false,
+          "coherence_caveat": "1 / omega_L (~113.6 ns at 50 uT) is a field-dependent physical Zeeman precession timescale, NOT a demonstrated minimum spin-coherence lifetime for a functioning biological compass; sensitivity depends jointly on radical lifetime, hyperfine anisotropy, spin relaxation (T1, T2), inter-radical couplings, and downstream signaling.",
+          "angular_response_model": {
+            "idealized_180deg_prediction": "invariant_under_idealized_axial_inclination_model",
+            "full_angular_law": "Singlet yield Phi_S(theta) depends on even powers of direction cosines under inversion-symmetric hyperfine Hamiltonians: Phi_S(theta) == Phi_S(pi - theta)",
+            "is_universal_binary_discriminator": false
+          }
+        }
+      }
+    },
+    "gates": [
+      {
+        "gate_id": "EG-1",
+        "title": "EG-1: Geochemical Provenance",
+        "what_promotion_requires": "Site-specific mineralogy, geological context, and source traceability",
+        "status": "Established for the documented Oklo organic matter and fission record; biotite-at-Oklo claim unverified",
+        "claim": "Paleoproterozoic (~1.95 Ga) natural fission reactor zones at Oklo (Gabon) coupled uraninite, hydrothermal water, liquid/solid bitumen, and clay phyllosilicates (illite and chlorite) to retain uranium and fissiogenic isotopes; separately, biotite (a K-Mg-Fe 2:1 mica) is hypothesized as a prebiotic interlayer scaffold (Hansma 2022) but is not verified as an Oklo reactor-zone mineral.",
+        "evidence_type": "OBSERVED_GEOLOGY_AND_UNVERIFIED_BIOTITE_LINK",
+        "oklo_documented_minerals": [
+          "uraninite",
+          "bituminous_organic_matter",
+          "illite",
+          "chlorite"
+        ],
+        "oklo_reactor_zone_biotite_verified": false,
+        "sources": [
+          "Nagy et al. (1991) Nature 354:472-475 (doi:10.1038/354472a0) - Organic matter and containment of uranium and fissiogenic isotopes at Oklo",
+          "Nagy et al. (1993) Geology 21:655-658 - Role of organic matter in the Proterozoic Oklo natural fission reactors",
+          "Gauthier-Lafaye et al. (1996) Geochim. Cosmochim. Acta 60:4831-4852 - Natural fission reactors in the Franceville basin (illite and chlorite hydrothermal clay halos)",
+          "Hansma (2022) Preprints 2022010022 (doi:10.20944/preprints202201.0022.v1) - Potassium at the Origins of Life: Did Biology Emerge From Biotite in Micaceous Clay? (comparative prebiotic hypothesis, not Oklo mineralogy)"
+        ],
+        "assumptions": [
+          "Petrographic and isotopic analyses of Oklo reactor zones (RZ1-RZ16) accurately characterize Paleoproterozoic hydrothermal clay halos.",
+          "Biotite is evaluated strictly as an independent comparative phyllosilicate specimen and prebiotic-scaffold hypothesis."
+        ],
+        "limitations": [
+          "Published Oklo reactor-zone clay assemblages document illite and Fe/Mg-chlorite; biotite is not verified as an Oklo reactor-zone phase.",
+          "Coexistence of uranium fission, water, and organic matter at ~1.95 Ga does not establish prebiotic abiogenesis or the origin of biological magnetoreception."
+        ],
+        "promotion_criteria": [
+          "Requires petrographic, XRD, or electron-microprobe verification of mineral phase identity in dated geological samples before attributing any reaction to a specific geological site.",
+          "Prohibits transferring reactions demonstrated on pyrite, magnetite, illite, or chlorite to biotite without mineral-specific experimental controls."
+        ]
+      },
+      {
+        "gate_id": "EG-2",
+        "title": "EG-2: Physical Mechanism",
+        "what_promotion_requires": "Validated equations, sourced material parameters, uncertainty ranges, and mechanism-specific predictions",
+        "status": "Modeled comparison; biological sensing not established by the calculation",
+        "claim": "At B = 50 uT and T = 300 K, a modeled 15-crystal single-domain magnetite (Fe3O4, r = 25 nm) chain has magnetic interaction-energy scale U_mag / (k_B * T) = 5.69 (MODELED), whereas a volume-matched inclusion-free paramagnetic biotite grain (Delta_chi = 2.5e-4 SI, M_r = 0) has U_mag,aniso / (k_B * T) = 5.89e-8 (MODELED, ranging from 4.72e-9 to 3.54e-7 across Delta_chi in [2.0e-5, 1.5e-3] SI), and free-electron Zeeman precession in cryptochrome occurs at f_L = 1.4012 MHz (1 / omega_L = 113.6 ns, MODELED physical timescale).",
+        "evidence_type": "MODELED",
+        "sources": [
+          "Kirschvink & Gould (1981) Biosystems 13:181-201 (doi:10.1016/0303-2647(81)90060-5) - Biogenic magnetite as a basis for magnetic field sensitivity in animals",
+          "Martin-Hernandez & Hirt (2003) Tectonophysics 367:13-28 - Paramagnetic susceptibility and anisotropy of single-crystal biotite, muscovite, and chlorite as a function of Fe content",
+          "Dunlop & Ozdemir (1997) Rock Magnetism: Fundamentals and Frontiers (Cambridge Univ. Press) - Domain state, superparamagnetic blocking, natural remanent magnetization (NRM << M_s), and low-field susceptibility of magnetite inclusions",
+          "Park et al. (2004) Key Eng. Mater. 270-273:657 (doi:10.4028/www.scientific.net/KEM.270-273.657) & Shong et al. (ASTM STP15114S, doi:10.1520/STP15114S) - Material- and condition-dependent neutron-irradiation shifts in coercivity (+16% in A508 steel vs. predominant decrease in Fe/Ni wires), remanence, permeability, and Barkhausen noise",
+          "Meister (2016) eLife 5:e17210 - Physical limits to magnetogenetics (endogenous ferritin core U_mag / k_B*T ~ 3.36e-5 at 50 uT)",
+          "Maeda et al. (2012) PNAS 109:4774-4779 & Xu et al. (2021) Nature 594:535-540 - In vitro magnetic sensitivity of photoinduced cryptochrome flavin-tryptophan radical pairs",
+          "Dadachova et al. (2007) PLoS ONE 2:e457 - Ionizing radiation changes melanin ESR signal and increases NADH ferricyanide reduction ~4x in vitro"
+        ],
+        "assumptions": [
+          "Magnetosome model assumes N = 15 colinear single-domain Fe3O4 spheres (r = 25 nm, M_s = 4.8e5 A/m) acting as a rigid dipole.",
+          "Biotite model assumes an inclusion-free paramagnetic single crystal (chi_v = 1.0e-3 SI, Delta_chi = 2.5e-4 SI) matched to the magnetosome chain volume (9.82e-22 m^3).",
+          "Magnetite-inclusion sensitivity in a 1 um^3 biotite flake explicitly separates three magnetic-state regimes: (A) an idealized upper bound where 100% of inclusion volume is coherently aligned, blocked single-domain Fe3O4 carrying full saturation magnetization M_s = 4.8e5 A/m (which requires prior saturating fields ~0.3-1 T >> 50 uT and is NOT a realistic natural default); (B) blocked inclusions carrying a typical natural remanent magnetization fraction (eta_NRM = M_NRM / M_s = 0.01); and (C) unblocked superparamagnetic (r < 10-15 nm, M_r = 0) or demagnetized multi-domain inclusions responding only via low-field susceptibility (chi_eff = 3.0 SI, Delta_chi_eff = 0.5 SI, scaling as B^2 / 2*mu_0).",
+          "In Scenario C and paramagnetic minerals, an orientation-dependent torque in a uniform field requires magnetic anisotropy (Delta_chi_eff != 0); an isotropic B^2-dependent induced energy depends only on |B|^2 and generates zero restoring torque (dU/dtheta = 0).",
+          "Radical-pair Larmor frequency assumes free-electron g = 2.00232 at B = 50 uT."
+        ],
+        "limitations": [
+          "U_mag / (k_B * T) is a model-based interaction-energy scale comparison, NOT a demonstration that a biological receptor detects or transduces a magnetic field.",
+          "In a 1 um^3 biotite flake at 50 uT, 0.01% to 1% Fe3O4 inclusions reach U_mag / k_B*T = 0.58 to 57.9 ONLY under the idealized coherently saturated upper bound (M = M_s). Under realistic natural remanence (M_NRM = 0.01 * M_s), U_mag / k_B*T is 5.85e-3 (at 0.01%) to 0.58 (at 1%); under unblocked superparamagnetic or low-field induced response (M_r = 0, quadratic in B), U_mag / k_B*T stays at 7.20e-5 to 1.26e-3 (anisotropic, torque-generating) and 1.32e-4 to 7.26e-3 (isotropic, non-directional). A specimen cannot be assigned to any inclusion regime without rock-magnetic characterization (FORC/Day hysteresis, NRM/IRM, and low-field susceptibility vs. T).",
+          "Neutron fluence, spectrum, irradiation temperature, and material history can drive defect and precipitate evolution, altering domain-wall pinning and magnetic observables, but the direction and magnitude of changes in coercivity, remanence, permeability, and Barkhausen noise are material- and condition-dependent (e.g., coercivity +16% in irradiated A508 steel vs. predominant decrease in irradiated Fe/Ni wires) and do NOT provide calibrated values for magnetite inclusions in natural biotite.",
+          "Three-tier evidential boundary: (1) neutron-induced defect and magnetic property changes in inorganic steels/alloys are directly supported; (2) shared physical ingredients (moments, spins, anisotropy, thermal scales) are only an analogy because the explanatory direction is opposite (how irradiation alters a sample vs. how a biological sensor transduces an external field); and (3) biological radiotropism/magnetoreception is a separate hypothesis requiring organism-specific, sham-controlled field-dependent evidence.",
+          "Specimen-encoding and modality gate: an image or visualization cannot be connected to mineral magnetism or magnetoreception without establishing (a) material and irradiation conditions, (b) imaging/simulation modality (e.g. BF/Fresnel TEM, Gatan 672 in-situ tensile TEM, DIC microscopy, phase-field simulation, or Lorentz TEM), and (c) whether visual channels/colours (such as purple and green regions) encode chemical phases/defects/rendering categories (materials science only) vs. measured magnetic domains/inclusions (relevant to mineral/magnetite physics in EG-2, but still not biological sensing in EG-3).",
+          "1 / omega_L = 113.6 ns is a field-dependent physical Zeeman precession timescale, NOT a demonstrated minimum biological spin-coherence lifetime.",
+          "A 180-degree field-reversal contrast (B -> -B) is a model-specific prediction under explicit tethering/symmetry assumptions, not a universal binary discriminator across all candidate mechanisms."
+        ],
+        "promotion_criteria": [
+          "Requires direct physical characterization of the candidate material (SQUID/VSM magnetometry, IRM acquisition, TEM/EDX for inclusions, or transient absorption / Mary ESR for radical pairs) with documented uncertainty bounds.",
+          "Requires passing the specimen-encoding gate (caption/metadata confirming specimen identity, irradiation conditions, modality, and explicit magnetic-domain vs. chemical-phase/defect encoding) before interpreting any micrograph as magnetic evidence.",
+          "Requires full angular response curves across field orientations (0 to 360 deg) and intensities rather than a single 180-degree point contrast."
+        ]
+      },
+      {
+        "gate_id": "EG-3",
+        "title": "EG-3: Cellular Transduction",
+        "what_promotion_requires": "Measured field-dependent cellular response and independently supported causal pathway",
+        "status": "Unresolved",
+        "claim": "Whether spin-dependent radical-pair yields, melanin redox shifts, or biogenic magnetic particles alter intracellular signaling (ROS, NAD(P)H, mitochondrial bioenergetics, or mechanosensitive channels) to drive active directional growth or behavior beyond position-dependent survival selection.",
+        "evidence_type": "UNRESOLVED_TRANSDUCTION",
+        "sources": [
+          "Gassab et al. (2026) arXiv:2605.00205 - Quantum in Biology, Quantum for Biology, and Biology for Quantum (unresolved downstream biological transduction chain)",
+          "Lam & Malkemper (2026) Physiol. Rev. (doi:10.1152/physrev.00032.2025) - Critical evaluation of magnetoreception transduction cascades",
+          "aurascoper/Biofilms cpm-sp-v1 (source 841d052) - Axial dose mortality removes 5,511 of 10,752 parcels and shifts survivor radius +0.0493 r/R while individual parcel displacement delta_r_i spans zero (Null H0-B)",
+          "Sandia National Laboratories (2024) Cs-137 Fungal Irradiation Report - Experimental null result for directional growth difference"
+        ],
+        "assumptions": [
+          "Any candidate cellular transduction pathway must operate above thermal, metabolic, and stochastic gene-expression noise under physiological conditions."
+        ],
+        "limitations": [
+          "Shared generic electron-transfer or redox chemistry between radiation protection (melanin) and spin-correlated radical pairs (cryptochrome) does not establish that melanin is a magnetic sensor.",
+          "Endpoint shifts in surviving cell or biomass distributions under a radiation gradient can arise purely from differential mortality (Null H0-B) without active movement (Null H0-A); likewise, short-window (0-15 s) DIC microscopy of apical cytoplasmic (Cyt) and vacuolar (Vac) organelle dynamics documents baseline cellular morphology rather than radiotropism or magnetoreception.",
+          "Downstream coupling from cryptochrome photo-reduction or superoxide yields to eukaryotic neural or hyphal polarity remains unresolved in vivo."
+        ],
+        "promotion_criteria": [
+          "Reject Null H0-A and Null H0-B by demonstrating sham-controlled, tracked per-parcel or per-tip directional displacement (delta_r_i != 0) under double-wrapped antiparallel Helmholtz sham coils and 3-axis sample magnetometry.",
+          "Demonstrate temporal precedence (biochemical/mitochondrial shift t_mito preceding morphological deflection t_tip) and loss-plus-rescue across Wild-Type, receptor-deficient (e.g. Albino or Cry-knockout), and complemented rescue genotypes."
+        ]
+      },
+      {
+        "gate_id": "EG-4",
+        "title": "EG-4: Evolutionary Origin",
+        "what_promotion_requires": "Comparative, phylogenetic, and ecological evidence connecting the mechanism to a heritable phenotype",
+        "status": "Unresolved",
+        "claim": "Whether ancient mineral-surface redox chemistry or natural radiation environments supplied homologous molecular machinery that was evolutionarily co-opted into a heritable, fitness-relevant magnetoreception phenotype.",
+        "evidence_type": "UNTESTED_EVOLUTIONARY_HYPOTHESIS",
+        "sources": [
+          "Kirschvink & Gould (1981) Biosystems 13:181-201 - Evolutionary pathways for magnetosome biomineralization",
+          "Lefevre & Bazylinski (2013) Microbiol. Mol. Biol. Rev. 77:497-526 - Ecology, diversity, and evolution of magnetotactic bacteria (mam/mms genomic islands)",
+          "Mei & Dvornyk (2015) PLoS ONE 10:e0135940 - Evolutionary history of the photolyase/cryptochrome superfamily"
+        ],
+        "assumptions": [
+          "Evolutionary exaptation of ancient iron-sulfur, heme, or flavoprotein redox cofactors into sensory pathways is biochemically plausible in principle."
+        ],
+        "limitations": [
+          "No phylogenetic, fossil, or geochemical evidence connects the ~1.95 Ga Oklo reactor zones or prebiotic biotite surfaces to the evolutionary origin of magnetosome gene clusters (mam/mms) or cryptochrome magnetoreceptors.",
+          "Giant magnetofossils (e.g. 2025 paleomagnetic studies) demonstrate ancient biomineralized magnetic structures compatible with field sensitivity, but their producer organisms and ancestral sensory linkages remain uncertain."
+        ],
+        "promotion_criteria": [
+          "Requires comparative phylogenetic reconstruction of homologous receptor and transduction genes across extant clades, paired with ecological dose/field constraints and experimental demonstration of heritable reproductive or survival benefit."
+        ]
+      }
+    ]
+  }
+}

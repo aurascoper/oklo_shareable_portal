@@ -35,7 +35,10 @@ end
             "POOLWATER_WORKFLOW_SPEC.md"                         => (17684,   "2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669"),
             "multispecies_biofilm_robin_cylindrical_4panel.gif"  => (2571435, "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997"),
             "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
-            "benchmark_manifest.json"                            => (12663,   "f3689098bd9a5a8cb03c0c82776cc1de57f0ad504b001a664b3be27dba76f98f"),
+            "magnetoreception_3d_explorer.html"                  => (263619,  "e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064"),
+            "evidence_manifest.json"                             => (116876,  "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf"),
+            "test_calculation_provenance_and_invariants.js"      => (38751,   "db751a8972ee125fe4e334cdc59c51f1f3c5784b03026119587b50a3cd65fb55"),
+            "benchmark_manifest.json"                            => (17965,   "f32f2393768e6c6ddb1baa47702e4d1ca973fcd7e5ae2e26907a3e4c2743e35b"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")
@@ -56,7 +59,10 @@ end
                        "biofilms_3d_explorer.html", "tecdoc643_reference_fixture.jl",
                        "poolwater_interactive.html", "POOLWATER_WORKFLOW_SPEC.md",
                        "multispecies_biofilm_robin_cylindrical_4panel.gif",
-                       "clonal_sector_expansion_reference.jpg")
+                       "clonal_sector_expansion_reference.jpg",
+                       "magnetoreception_3d_explorer.html",
+                       "evidence_manifest.json",
+                       "test_calculation_provenance_and_invariants.js")
                 @test occursin(exp_sha, manifest_info.text)
             end
         end
@@ -67,6 +73,7 @@ end
         @test occursin("Erithacus rubecula", index_info.text)
         @test occursin("multispecies_biofilm_robin_cylindrical_4panel.gif", index_info.text)
         @test occursin("clonal_sector_expansion_reference.jpg", index_info.text)
+        @test occursin("magnetoreception_3d_explorer.html", index_info.text)
         @test occursin("https://github.com/aurascoper/Biofilms", index_info.text)
 
         @test !occursin("file://", xml_info.text)
@@ -222,6 +229,8 @@ end
             "oklo_r0_fixture_readonly.html",
             "CONFORMANCE_FIXTURE_SPEC.md",
             "proto_biofilms_geyser_fission_research_program.md",
+            "magnetoreception_3d_explorer.html",
+            "evidence_manifest.json",
             "test_tecdoc643_viewer_regression.js",
         ]
 
@@ -262,6 +271,9 @@ end
             "oklo_r0_fixture_readonly.html",
             "CONFORMANCE_FIXTURE_SPEC.md",
             "proto_biofilms_geyser_fission_research_program.md",
+            "magnetoreception_3d_explorer.html",
+            "evidence_manifest.json",
+            "test_calculation_provenance_and_invariants.js",
             "test_tecdoc643_viewer_regression.js",
         ]
 
@@ -269,8 +281,67 @@ end
             txt = file_sha256_and_bytes(f).text
             @test !occursin("\u2014", txt)
             @test !occursin("\u2013", txt)
-            @test !occursin("&mdash;", txt)
-            @test !occursin("&ndash;", txt)
+            if f != "test_calculation_provenance_and_invariants.js"
+                @test !occursin("&mdash;", txt)
+                @test !occursin("&ndash;", txt)
+            end
         end
+    end
+
+    # --------------------------------------------------------------------------
+    # Gate 5: Biotite, Biomagnetite & Cryptochrome 4D Magnetoreception Gates
+    # --------------------------------------------------------------------------
+    @testset "Gate 5: Biotite, Biomagnetite & Cryptochrome 4D Magnetoreception Epistemic Gates EG-1..EG-4 & 3-Regime Sensitivity" begin
+        mag_html = file_sha256_and_bytes("magnetoreception_3d_explorer.html").text
+        ev_json = file_sha256_and_bytes("evidence_manifest.json").text
+        manifest_txt = file_sha256_and_bytes("benchmark_manifest.json").text
+
+        for gate_token in ["EG-1: Geochemical Provenance", "EG-2: Physical Mechanism", "EG-3: Cellular Transduction", "EG-4: Evolutionary Origin"]
+            @test occursin(gate_token, mag_html)
+            @test occursin(gate_token, ev_json)
+            @test occursin(gate_token, manifest_txt)
+        end
+
+        for ui_token in [
+            "hyperplane4dBox",
+            "slider4dW",
+            "selD4Action",
+            "selBiotiteRegime",
+            "lblHyperRot",
+            "lblD4Action",
+            "lblBiotiteUmag",
+            "btnExport4dPng",
+            "biotiteInclusionTable",
+            "verifyBiotite4dMagnetoreceptionGates",
+            "exportMagnetoreception4dPng",
+            "#22c55e",
+            "#ef4444",
+            "d4 - w",
+        ]
+            @test occursin(ui_token, mag_html)
+        end
+
+        # Verify 3-regime 1 um^3 biotite Fe3O4 inclusion physics algebra at B = 50 uT, T = 300 K
+        mu0 = 4.0e-7 * pi
+        kB = 1.380649e-23
+        T = 300.0
+        B = 50.0e-6
+        V = 1.0e-18
+        u_paramag_mid = (2.5e-4 * V * B^2 / (2.0 * mu0)) / (kB * T)
+        @test u_paramag_mid ≈ 6.00393000154484e-5 atol = 1e-10
+
+        # Scenario A: Single-domain remanent (M_s = 480 kA/m, f_inc = 1e-4)
+        u_rem_1e4 = ((1.0 - 1.0e-4) * u_paramag_mid) + (1.0e-4 * 4.8e5 * V * B) / (kB * T)
+        @test u_rem_1e4 ≈ 0.57949767458 atol = 1e-7
+
+        # Scenario B: Partially remanent natural NRM (eta_NRM = 0.01, f_inc = 1e-2)
+        u_nrm_1e2 = ((1.0 - 1.0e-2) * u_paramag_mid) + (1.0e-2 * 0.01 * 4.8e5 * V * B) / (kB * T)
+        @test u_nrm_1e2 ≈ 0.57949708019 atol = 1e-7
+
+        # Scenario C: Unblocked induced-anisotropy (Delta_chi_eff = 0.5, chi_eff = 3.0, f_inc = 1e-2)
+        u_c_aniso_1e2 = ((1.0 - 1.0e-2) * u_paramag_mid) + (1.0e-2 * 0.5 * V * B^2 / (2.0 * mu0)) / (kB * T)
+        u_c_iso_1e2 = ((1.0 - 1.0e-2) * u_paramag_mid) + (1.0e-2 * 3.0 * V * B^2 / (2.0 * mu0)) / (kB * T)
+        @test u_c_aniso_1e2 ≈ 0.00126022491 atol = 1e-8
+        @test u_c_iso_1e2 ≈ 0.00726415491 atol = 1e-8
     end
 end

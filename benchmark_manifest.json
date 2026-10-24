@@ -99,6 +99,22 @@
       "evidence_classification": "synthetic",
       "epistemic_status": "synthetic_four_panel_visualization (combined arm, growth=1, Seed 42, MCS 0..200, axis-clipped cylinder; synthetic dose_rate 0..0.01 Gy/s is not calibrated radiation transport; net_biomass_rate_proxy is growth_rate minus mortality_hazard in mixed currencies and not measured growth; causal interpretation requires matched Radiation OFF vs ON counterfactuals)",
       "frozen_gate0": false
+    },
+    "BIOTITE-MAGNETORECEPTION-4D-01": {
+      "relative_path": "magnetoreception_3d_explorer.html",
+      "public_url": "https://aurascoper.github.io/oklo_shareable_portal/magnetoreception_3d_explorer.html",
+      "bytes": 263619,
+      "sha256": "e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064",
+      "evidence_manifest_relative_path": "evidence_manifest.json",
+      "evidence_manifest_bytes": 116876,
+      "evidence_manifest_sha256": "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf",
+      "invariant_test_relative_path": "test_calculation_provenance_and_invariants.js",
+      "invariant_test_bytes": 38751,
+      "invariant_test_sha256": "db751a8972ee125fe4e334cdc59c51f1f3c5784b03026119587b50a3cd65fb55",
+      "source_module": "src/track4_mineral_magnetoreception_gates.jl",
+      "evidence_classification": "calculated",
+      "epistemic_status": "cross_domain_epistemic_gated_4d_viewer (EG-1..EG-4 enforced; 4D perspective tesseract w = t / theta_B in [0..360 deg] / D_4 hyperplane rotation; criterial separation of accepted verified candidates vs criterial-pruned candidates vs exploratory particles; 3-regime 1 um^3 biotite Fe3O4 inclusion sensitivity)",
+      "frozen_gate0": false
     }
   },
   "gate_1_normalized_contracts": {
@@ -147,6 +163,17 @@
         "grid_dimensions": [40, 40, 40],
         "mcs_steps": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
         "seconds_per_mcs": "NaN"
+      },
+      "BIOTITE_CRYSTAL_HYPERPLANE_4D": {
+        "axes": ["x", "y", "z", "w"],
+        "up_axis": "+z (c*-axis normal to (001) cleavage)",
+        "w_axis": "continuous_time_evolution_t_or_D4_x_S10_group_action (theta_B in [0, 360 deg])",
+        "projection_law": "perspective_4d_s4_1_over_d4_minus_w (d4 = 2.85)",
+        "criterial_separation": {
+          "accepted_verified": "#22c55e (solid green)",
+          "criterial_pruned": "#ef4444 (red dashed)",
+          "unverified_exploratory": "#38bdf8 / #f59e0b (amber/cyan particle)"
+        }
       }
     },
     "tecdoc643_recorded_benchmark": {
@@ -184,13 +211,17 @@
       "TECDOC643_NEUTRON_REF",
       "POINT_KINETICS_ALGEBRA",
       "POOL_NAVIER_STOKES_SYNTHETIC_DEMO",
-      "SURROGATE_LOOP_PIE_ISOLATED"
+      "SURROGATE_LOOP_PIE_ISOLATED",
+      "BIOTITE_BIOMAGNETITE_CRYPTOCHROME_4D"
     ],
     "forbidden_couplings": {
       "oklo_r0_analytic_voxels_to_pool_cfd": false,
       "toy_neutron_walk_claimed_as_live_openmc": false,
       "mtr_box_core_transferred_to_annular_mtr": false,
-      "biofilm_or_radiotropism_alters_reactor_kinetics_or_cgmp": false
+      "biofilm_or_radiotropism_alters_reactor_kinetics_or_cgmp": false,
+      "robin_boundary_condition_conflated_with_erithacus_rubecula": false,
+      "geological_biotite_conflated_with_biogenic_magnetite_compass": false,
+      "cryptochrome_rpm_conflated_with_melanin_radiotropism": false
     }
   },
   "gate_3_poolwater_dataset_contract": {
@@ -234,6 +265,26 @@
       "submodules": ["BiofilmRheology", "MagnetoreceptionHypotheses", "BiofilmInference"],
       "can_issue_cgmp_verdict": false,
       "alters_core_reactor_or_nca_separation": false
+    }
+  },
+  "gate_5_biotite_biomagnetite_4d_magnetoreception": {
+    "source_module": "src/track4_mineral_magnetoreception_gates.jl",
+    "section_version": "1.3.0",
+    "epistemic_gates": {
+      "EG-1": "EG-1: Geochemical Provenance (ESTABLISHED_BOUNDARY): Oklo Reactor Zones RZ1-RZ16 verified mineral inventory (uraninite, bituminous organic matter, illite, chlorite; Nagy 1991, 1993; Gauthier-Lafaye 1996) has oklo_reactor_zone_biotite_verified = false; biotite is evaluated strictly as an independent comparative 2:1 phyllosilicate and prebiotic-scaffold hypothesis (Hansma 2022), and Robin boundary condition (-D_eff dc/dr = P_eff(c - c_ext)) at cylinder wall r = R in aurascoper/Biofilms is strictly separated from European robin (Erithacus rubecula) avian magnetoreception.",
+      "EG-2": "EG-2: Physical Mechanism (SEPARATE_PHYSICAL_MECHANISMS): Biogenic single-domain Fe3O4 magnetosome chain (U_mag / (k_B T) = 5.688616 at 300 K, 5.5051 at 310 K; Crit = Accepted Verified) vs. inclusion-free paramagnetic biotite K(Mg,Fe)3AlSi3O10(F,OH)2 with (001) cleavage (U_aniso / (k_B T) = 5.894344e-8 at V = 9.8175e-22 m^3 and 6.003953e-5 at V = 1 um^3, B = 50 uT, T = 300 K; Crit = Pruned unless coupled to single-domain Fe3O4 inclusions) vs. cryptochrome-4 [FADdot- ... TrpHdot+] radical-pair spin mixing (f_L = 1.401248 MHz, 1/omega_L = 113.58 ns physical Zeeman timescale, not biological coherence threshold; separated from melanin radiotropism). Includes 3-tier irradiation hierarchy (Park et al. 2004 A508 RPV steel +16% H_c vs. Shong et al. ASTM STP15114S Fe/Ni wire H_c/B_r decrease) and specimen-encoding gate.",
+      "EG-3": "EG-3: Cellular Transduction (UNRESOLVED_TRANSDUCTION_GAP): Even if a mineral inclusion or radical pair experiences magnetic torque or spin-state modulation (EG-2), coupling to fungal hyphal tip redirection, mitochondrial bioenergetics, or radiotrophic growth remains unestablished (Sandia 2024 Cs-137 null; aurascoper/Biofilms cpm-sp-v1 256-seed selective axial mortality H0-B +0.0493 r/R vs. null directed parcel displacement H0-A delta_r_i = 0).",
+      "EG-4": "EG-4: Evolutionary Origin (UNTESTED_EVOLUTIONARY_HYPOTHESIS): Prebiotic mineral surface ordering on biotite or hydrothermal clays (H5) and evolved biogenic magnetosome (mam/mms) or cryptochrome (Cry4a) magnetoreception (H6) have no established phylogenetic or biochemical evolutionary bridge, and every curve/trajectory is explicitly tagged ([MEASURED], [CALCULATED], [SYNTHETIC], [COUNTERFACTUAL_BOUND]) with criterial separation (Accepted Verified vs Criterial-Pruned vs Unverified Exploratory)."
+    },
+    "biotite_1um3_inclusion_regimes_at_50uT_300K": {
+      "is_realistic_natural_default": false,
+      "inclusion_fractions": [0.0, 0.0001, 0.01],
+      "pure_paramagnetic_biotite_aniso_kBT": 0.00006003953,
+      "scenario_A_saturated_sd_upper_bound_kBT": [0.00006003953, 0.579497, 57.943805],
+      "scenario_B_natural_nrm_blocked_kBT": [0.00006003953, 0.005854412, 0.579497],
+      "scenario_C_unblocked_sp_anisotropic_kBT": [0.00006003953, 0.00007204143, 0.00126023],
+      "scenario_C_unblocked_sp_isotropic_kBT": [0.00006003953, 0.0001320809, 0.007264183],
+      "scenario_C_directional_torque_from_isotropic_term_kBT": 0.0
     }
   }
 }

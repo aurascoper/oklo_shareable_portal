@@ -107,8 +107,8 @@
       <SpecSHA256>2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669</SpecSHA256>
       <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
       <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
-      <BenchmarkManifestBytes>12663</BenchmarkManifestBytes>
-      <BenchmarkManifestSHA256>f3689098bd9a5a8cb03c0c82776cc1de57f0ad504b001a664b3be27dba76f98f</BenchmarkManifestSHA256>
+      <BenchmarkManifestBytes>17965</BenchmarkManifestBytes>
+      <BenchmarkManifestSHA256>f32f2393768e6c6ddb1baa47702e4d1ca973fcd7e5ae2e26907a3e4c2743e35b</BenchmarkManifestSHA256>
       <Bytes>79610</Bytes>
       <SHA256>fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
@@ -143,6 +143,26 @@
       <WorkflowScript>diagnostics/fitness_phase/pv_workflow.py</WorkflowScript>
       <Bytes>2571435</Bytes>
       <SHA256>e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997</SHA256>
+      <OfflineSelfContained>true</OfflineSelfContained>
+    </Artifact>
+
+    <Artifact id="BIOTITE-MAGNETORECEPTION-4D-01">
+      <Title>Biotite, Biomagnetite and Cryptochrome 4D Magnetoreception Explorer</Title>
+      <Requirement>Cross-Domain Epistemic Gating (EG-1 to EG-4), 4D Spatiotemporal Visualization Invariants, and 3-Regime Biotite Inclusion Sensitivity</Requirement>
+      <EpistemicStatus>cross_domain_epistemic_gated_4d_viewer (EG-1 Geochemical Provenance separates Oklo RZ1-RZ16 verified mineral inventory with oklo_reactor_zone_biotite_verified = false from comparative biotite and separates Robin boundary condition at cylinder wall r = R from European robin Erithacus rubecula magnetoreception; EG-2 Physical Mechanism separates paramagnetic biotite mica K(Mg,Fe)3AlSi3O10(F,OH)2 with (001) cleavage and 5.8943e-8 k_B T volume-matched / 6.0040e-5 k_B T at 1 um^3, 50 uT, 300 K from biogenic single-domain Fe3O4 magnetosomes and cryptochrome [FADdot- ... TrpHdot+] spin chemistry, and evaluates 3-regime Fe3O4 inclusion sensitivity across f_inc in [0, 1e-4, 1e-2] plus 3-tier irradiation hierarchy and specimen-encoding gate; EG-3 Cellular Transduction records unresolved transduction gap to fungal hyphal or mitochondrial response; EG-4 Evolutionary Origin records untested evolutionary bridge between prebiotic mineral surface ordering H5 and evolved magnetoreception H6 while enforcing 4D perspective tesseract projection with criterial separation)</EpistemicStatus>
+      <EvidenceClassification>calculated</EvidenceClassification>
+      <RelativePortalPath>magnetoreception_3d_explorer.html</RelativePortalPath>
+      <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/magnetoreception_3d_explorer.html</PublicArtifactUrl>
+      <Bytes>263619</Bytes>
+      <SHA256>e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064</SHA256>
+      <EvidenceManifestRelativePath>evidence_manifest.json</EvidenceManifestRelativePath>
+      <EvidenceManifestPublicUrl>https://aurascoper.github.io/oklo_shareable_portal/evidence_manifest.json</EvidenceManifestPublicUrl>
+      <EvidenceManifestBytes>116876</EvidenceManifestBytes>
+      <EvidenceManifestSHA256>4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf</EvidenceManifestSHA256>
+      <InvariantTestRelativePath>test_calculation_provenance_and_invariants.js</InvariantTestRelativePath>
+      <InvariantTestBytes>38751</InvariantTestBytes>
+      <InvariantTestSHA256>db751a8972ee125fe4e334cdc59c51f1f3c5784b03026119587b50a3cd65fb55</InvariantTestSHA256>
+      <SourceModule>src/track4_mineral_magnetoreception_gates.jl</SourceModule>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
 

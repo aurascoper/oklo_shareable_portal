@@ -1,7 +1,7 @@
 {
   "schema": "oklo_portal_ci_verification_receipt_v1",
-  "generated_at": "2026-10-23T05:58:17.502Z",
-  "gate0_files_verified": 11,
+  "generated_at": "2026-10-24T00:50:21.118Z",
+  "gate0_files_verified": 14,
   "tests": {
     "lazy_init": "PASS",
     "tecdoc643_3d_webgl": {
@@ -9,7 +9,7 @@
       "glHeight": 630,
       "glHidden": false,
       "slHidden": true,
-      "kval": "0.911 ± 0.107",
+      "kval": "1.013 ± 0.109",
       "ntot": "(120 neutrons)"
     },
     "split_view_layout": {
@@ -87,6 +87,189 @@
       "speciesCount": 7,
       "allDisplacementCisSpanZero": true
     },
+    "biotite_magnetoreception_4d_viewer": {
+      "glWidth": 726,
+      "glHeight": 448,
+      "gates4d": {
+        "section_version": "1.3.0",
+        "source_file": "src/track4_mineral_magnetoreception_gates.jl",
+        "source_file_sha256": "73360f11e48529a9cb6436b58332a2ea5ede8cf0022132bd9ef219176f2da39e",
+        "julia_source_commit": "c4048a6c84f98c73118500a6e6bfbbb0c363684b",
+        "gate_ids": [
+          "EG-1",
+          "EG-2",
+          "EG-3",
+          "EG-4"
+        ],
+        "oklo_documented_minerals": [
+          "uraninite",
+          "bituminous_organic_matter",
+          "illite",
+          "chlorite"
+        ],
+        "oklo_reactor_zone_biotite_verified": false,
+        "biological_sensing_established_by_calculation": false,
+        "magnetosome_u_mag_over_kBT_300K": 5.688616,
+        "biotite_inclusion_free_u_mag_over_kBT": 5.894344e-8,
+        "biotite_inclusion_free_iso_u_mag_over_kBT": 2.357738e-7,
+        "magnetosome_to_biotite_ratio": 96509730,
+        "ferritin_u_mag_over_kBT": 0.00003358569,
+        "cryptochrome_larmor_hz": 1401248,
+        "scenario_A_sd_upper_bound": {
+          "is_realistic_natural_default": false,
+          "assumption": "100% single-domain blocked Fe3O4 carrying full saturation magnetization M_s = 4.8e5 A/m with all inclusion moments coherently aligned.",
+          "inclusion_free_0pct_fe3o4": 0.00006003953,
+          "trace_0_01pct_fe3o4": 0.579497,
+          "minor_1pct_fe3o4": 57.943805
+        },
+        "scenario_B_natural_nrm": {
+          "is_realistic_natural_default": false,
+          "nrm_to_saturation_ratio": 0.01,
+          "assumption": "Blocked Fe3O4 inclusions carrying typical natural remanent magnetization M_NRM = 0.01 * M_s acquired in weak geomagnetic fields without artificial saturation.",
+          "inclusion_free_0pct_fe3o4": 0.00006003953,
+          "trace_0_01pct_fe3o4": 0.005854412,
+          "minor_1pct_fe3o4": 0.579497
+        },
+        "scenario_C_unblocked_sp": {
+          "is_realistic_natural_default": false,
+          "chi_eff_si": 3,
+          "delta_chi_eff_si": 0.5,
+          "directional_torque_requires_anisotropy": true,
+          "isotropic_b2_energy_generates_uniform_field_torque": false,
+          "anisotropy_requirement_note": "A B^2-dependent induced magnetic energy does not automatically imply directional sensing: an orientation-dependent torque in a uniform field requires magnetic anisotropy (Delta_chi_eff != 0) or another source of directional coupling; an isotropic induced response (chi_eff) depends only on |B|^2 and generates zero restoring torque (dU/dtheta = 0).",
+          "assumption": "Unblocked superparamagnetic (r < 10-15 nm, M_r = 0) or multi-domain demagnetized Fe3O4 inclusions responding only via low-field susceptibility (quadratic in B at 50 uT).",
+          "anisotropic_u_mag_over_kBT": {
+            "inclusion_free_0pct_fe3o4": 0.00006003953,
+            "trace_0_01pct_fe3o4": 0.00007204143,
+            "minor_1pct_fe3o4": 0.00126023
+          },
+          "isotropic_u_mag_over_kBT": {
+            "inclusion_free_0pct_fe3o4": 0.00006003953,
+            "trace_0_01pct_fe3o4": 0.0001320809,
+            "minor_1pct_fe3o4": 0.007264183
+          }
+        },
+        "all_scenarios_realistic_default_false": true,
+        "directional_torque_requires_anisotropy": true,
+        "isotropic_b2_generates_torque": false,
+        "three_tier_hierarchy_keys": [
+          "tier_1_neutron_damage_material_properties",
+          "tier_2_shared_physical_ingredients_analogy",
+          "tier_3_biological_radiotropism_and_magnetoreception"
+        ],
+        "colour_channel_branches": [
+          "phases_precipitates_defects_or_rendering_categories",
+          "magnetic_domains_or_measured_magnetic_inclusions"
+        ],
+        "methods_bridge_radiotropism": false,
+        "methods_bridge_magnetoreception": false,
+        "biotite_table_rows": 6,
+        "biotite_table_col_match": true,
+        "hyperplane_4d_state": {
+          "wDeg4d": 240,
+          "rotXW": 25,
+          "rotYW": 15,
+          "rotZW": 0,
+          "d4Action": "r270",
+          "biotiteRegime": "scenario_b_nrm_1pct",
+          "activeBiotiteUmagOverKbt": 0.579497,
+          "activeBiotiteCriterialClass": "exploratory",
+          "projectedV0": [
+            -1.569525594945493,
+            1.8023508027159645,
+            -1.3872312760403542,
+            1.1993349639700384
+          ],
+          "camera": {
+            "yaw": 0.55,
+            "pitch": 0.38,
+            "zoom": 0.9936000000000001
+          }
+        },
+        "criterial_colors": {
+          "accepted_verified": "#22c55e",
+          "criterial_pruned": "#ef4444",
+          "exploratory_unverified": "#38bdf8"
+        }
+      },
+      "walkGates": {
+        "schema_version": "2.2.0",
+        "red_team_audit_revision": "2.3.0-redteam-hardened",
+        "verification_scope_disclaimer": "SOFTWARE & PROVENANCE AUDIT ONLY: Automated CI and regression suites verify UI state, manifest schema, counterfactual algebraic identities, and trajectory/biophysical calculation provenance. They do NOT validate biological magnetoreception hypotheses or fungal transduction claims.",
+        "hazard_commitments": 5511,
+        "total_parcels": 10752,
+        "species_count": 7,
+        "all_displacement_cis_span_zero": true,
+        "all_survivor_radius_decompositions_exact": true,
+        "growth_off_locked": "0 / 256 (in both phase_only and combined)",
+        "growth_on_locked": "15 / 16 (in both phase_only and combined; Seed 44 fails 0.5 rad range bound at 0.755 rad phase_only / 0.848 rad combined)",
+        "has_matched_connectivity_control": true,
+        "planned_contrast_cells": 15,
+        "full_crossed_factorial_cells": 24,
+        "estimability_rows": 4,
+        "angular_curve_models": 4,
+        "strain_validation_gates": 5,
+        "five_row_count": 5,
+        "total_system_edges": 9,
+        "multiphysics_roadmap_status": "STAGED_CANDIDATE_ROADMAP_NOT_CALIBRATED_COUPLED_MODEL",
+        "multiphysics_layers": [
+          "LAYER_A",
+          "LAYER_B",
+          "LAYER_C",
+          "LAYER_D"
+        ]
+      },
+      "pngExport": {
+        "width": 1920,
+        "height": 1080,
+        "dataUrlLength": 498410,
+        "renderMode": "3d",
+        "wDeg4d": 240,
+        "d4Action": "r270",
+        "biotiteRegime": "scenario_b_nrm_1pct",
+        "biotiteUmagOverKbt": 0.579497,
+        "hasEmDash": false,
+        "hasEnDash": false
+      },
+      "multiModeExport": {
+        "3d": {
+          "width": 1920,
+          "height": 1080,
+          "dataUrlLength": 498410,
+          "renderMode": "3d",
+          "wDeg4d": 240,
+          "d4Action": "r270",
+          "biotiteRegime": "scenario_b_nrm_1pct",
+          "biotiteUmagOverKbt": 0.579497,
+          "hasEmDash": false,
+          "hasEnDash": false
+        },
+        "2d": {
+          "width": 1920,
+          "height": 1080,
+          "dataUrlLength": 498522,
+          "renderMode": "2d",
+          "wDeg4d": 240,
+          "d4Action": "r270",
+          "biotiteRegime": "scenario_b_nrm_1pct",
+          "biotiteUmagOverKbt": 0.579497,
+          "hasEmDash": false,
+          "hasEnDash": false
+        },
+        "biomag_walk": {
+          "width": 1920,
+          "height": 1080,
+          "dataUrlLength": 499330,
+          "renderMode": "biomag_walk",
+          "wDeg4d": 240,
+          "d4Action": "r270",
+          "biotiteRegime": "scenario_b_nrm_1pct",
+          "biotiteUmagOverKbt": 0.579497,
+          "hasEmDash": false,
+          "hasEnDash": false
+        }
+      }
+    },
     "biofilms_disabled_webgl_fallback": {
       "glHidden": true,
       "slHidden": false,
@@ -103,6 +286,14 @@
       "btn3dDisabled": true,
       "kpiTemp": "328.3 K",
       "gatesPass": true
+    },
+    "biotite_magnetoreception_disabled_webgl_fallback": {
+      "glHidden": true,
+      "fbHidden": false,
+      "fbWidth": 726,
+      "fbHeight": 448,
+      "btn3dDisabled": true,
+      "gates4dPass": true
     }
   }
 }

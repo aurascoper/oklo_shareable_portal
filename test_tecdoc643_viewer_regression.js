@@ -93,9 +93,24 @@ function verifyArtifactHashes() {
       bytes: 159146
     },
     {
+      path: 'magnetoreception_3d_explorer.html',
+      sha256: 'e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064',
+      bytes: 263619
+    },
+    {
+      path: 'evidence_manifest.json',
+      sha256: '4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf',
+      bytes: 116876
+    },
+    {
+      path: 'test_calculation_provenance_and_invariants.js',
+      sha256: 'db751a8972ee125fe4e334cdc59c51f1f3c5784b03026119587b50a3cd65fb55',
+      bytes: 38751
+    },
+    {
       path: 'benchmark_manifest.json',
-      sha256: 'f3689098bd9a5a8cb03c0c82776cc1de57f0ad504b001a664b3be27dba76f98f',
-      bytes: 12663
+      sha256: 'f32f2393768e6c6ddb1baa47702e4d1ca973fcd7e5ae2e26907a3e4c2743e35b',
+      bytes: 17965
     }
   ];
 
@@ -113,11 +128,35 @@ function verifyArtifactHashes() {
   assert.ok(indexHtml.includes('fa0f0dc30c45681a...'), 'index.html missing POOLWATER-3D-INTERACTIVE-01 SHA prefix');
   assert.ok(indexHtml.includes('037e2050b70e92b7...'), 'index.html missing BIOFILMS-3D-CPM-01 SHA prefix');
   assert.ok(indexHtml.includes('e73622d6454a3a6a...'), 'index.html missing BIOFILMS-ROBIN-CYL-GIF-01 SHA prefix');
-  console.log('PASS [1/11]: Gate-0 artifact hashes, byte counts, and manifests verified.');
+  assert.ok(indexHtml.includes('e9e50a6857b699aa...'), 'index.html missing BIOTITE-MAGNETORECEPTION-4D-01 SHA prefix');
+  console.log('PASS [1/13]: Gate-0 artifact hashes, byte counts, and manifests verified.');
   return expectedFiles;
 }
 
-function startStaticServer(port) {
+const net = require('net');
+
+function getFreePort(preferred = 0) {
+  return new Promise((resolve, reject) => {
+    const srv = net.createServer();
+    srv.unref();
+    srv.on('error', () => {
+      const fallback = net.createServer();
+      fallback.unref();
+      fallback.on('error', reject);
+      fallback.listen(0, '127.0.0.1', () => {
+        const p = fallback.address().port;
+        fallback.close(() => resolve(p));
+      });
+    });
+    srv.listen(preferred, '127.0.0.1', () => {
+      const p = srv.address().port;
+      srv.close(() => resolve(p));
+    });
+  });
+}
+
+async function startStaticServer(preferredPort) {
+  const actualPort = await getFreePort(preferredPort);
   return new Promise(resolve => {
     const server = http.createServer((req, res) => {
       const u = req.url.split('?')[0].split('#')[0];
@@ -138,11 +177,12 @@ function startStaticServer(port) {
       res.writeHead(200, { 'Content-Type': mime });
       res.end(fs.readFileSync(fp));
     });
-    server.listen(port, '127.0.0.1', () => resolve(server));
+    server.listen(actualPort, '127.0.0.1', () => resolve({ server, port: actualPort }));
   });
 }
 
-async function withChromeSession(chromeFlags, port, debugPort, fn) {
+async function withChromeSession(chromeFlags, port, preferredDebugPort, fn) {
+  const debugPort = await getFreePort(preferredDebugPort);
   const userDataDir = `/tmp/oklo-test-chrome-${debugPort}-${Date.now()}`;
   const chrome = spawn(CHROME_BIN, [
     '--headless=new',
@@ -159,36 +199,54 @@ async function withChromeSession(chromeFlags, port, debugPort, fn) {
 
   try {
     let tabs = null;
-    for (let attempt = 0; attempt < 30; attempt++) {
+    for (let attempt = 0; attempt < 100; attempt++) {
       await new Promise(r => setTimeout(r, 200));
       try {
         tabs = await fetch(`http://127.0.0.1:${debugPort}/json`).then(r => r.json());
-        if (tabs && tabs.some(t => t.type === 'page' && t.url.includes('index.html'))) break;
+        if (Array.isArray(tabs) && tabs.some(t => t.type === 'page' && t.url && t.url.includes('index.html'))) break;
       } catch (_) {}
     }
-    const page = tabs.find(t => t.type === 'page' && t.url.includes('index.html'));
-    assert.ok(page, 'Failed to attach to index.html page target in Chrome');
+    const page = Array.isArray(tabs) ? tabs.find(t => t.type === 'page' && t.url && t.url.includes('index.html')) : null;
+    assert.ok(page, `Failed to attach to index.html page target in Chrome on debugPort ${debugPort}`);
     const ws = new WebSocket(page.webSocketDebuggerUrl);
-    await new Promise(r => ws.addEventListener('open', r));
+    await new Promise((resolve, reject) => {
+      ws.addEventListener('open', resolve, { once: true });
+      ws.addEventListener('error', err => reject(new Error(`WebSocket connection error on debugPort ${debugPort}: ${err.message || err}`)), { once: true });
+    });
 
     let msgId = 0;
     const call = (method, params = {}) =>
-      new Promise(resolve => {
+      new Promise((resolve, reject) => {
         const cid = ++msgId;
+        const cleanup = () => {
+          ws.removeEventListener('message', handler);
+          ws.removeEventListener('error', errHandler);
+          ws.removeEventListener('close', closeHandler);
+        };
         const handler = ev => {
           const msg = JSON.parse(ev.data);
           if (msg.id === cid) {
-            ws.removeEventListener('message', handler);
+            cleanup();
             resolve(msg);
           }
         };
+        const errHandler = err => {
+          cleanup();
+          reject(new Error(`CDP WebSocket error during ${method}: ${err.message || err}`));
+        };
+        const closeHandler = () => {
+          cleanup();
+          reject(new Error(`CDP WebSocket closed unexpectedly during ${method}`));
+        };
         ws.addEventListener('message', handler);
+        ws.addEventListener('error', errHandler);
+        ws.addEventListener('close', closeHandler);
         ws.send(JSON.stringify({ id: cid, method, params }));
       });
 
     await call('Runtime.enable');
     const evalJson = async expr => {
-      const res = await call('Runtime.evaluate', { expression: expr, returnByValue: true });
+      const res = await call('Runtime.evaluate', { expression: expr, returnByValue: true, awaitPromise: true });
       if (res.result && res.result.exceptionDetails) {
         throw new Error(res.result.exceptionDetails.exception.description || 'Runtime.evaluate error');
       }
@@ -198,14 +256,18 @@ async function withChromeSession(chromeFlags, port, debugPort, fn) {
     await fn(evalJson);
     ws.close();
   } finally {
-    chrome.kill();
+    try {
+      chrome.kill('SIGKILL');
+    } catch (_) {}
+    try {
+      fs.rmSync(userDataDir, { recursive: true, force: true });
+    } catch (_) {}
   }
 }
 
 async function runTests() {
   const verifiedFiles = verifyArtifactHashes();
-  const port = 8776;
-  const server = await startStaticServer(port);
+  const { server, port } = await startStaticServer(8776);
   const receipt = {
     schema: 'oklo_portal_ci_verification_receipt_v1',
     generated_at: new Date().toISOString(),
@@ -225,26 +287,34 @@ async function runTests() {
           const ifrNw = document.getElementById('iframeNw');
           const ifrPool = document.getElementById('iframePool');
           const ifrBio = document.getElementById('iframeBio');
+          const ifrMag = document.getElementById('iframeMagneto');
           const cNw = document.getElementById('cardNw');
           const cPool = document.getElementById('cardPool');
+          const cMag = document.getElementById('cardMagneto');
           return JSON.stringify({
             nwSrc: ifrNw.getAttribute('src'),
             nwDataSrc: ifrNw.getAttribute('data-src'),
             poolSrc: ifrPool.getAttribute('src'),
             poolDataSrc: ifrPool.getAttribute('data-src'),
             bioSrc: ifrBio.getAttribute('src'),
+            magSrc: ifrMag.getAttribute('src'),
+            magDataSrc: ifrMag.getAttribute('data-src'),
             nwHiddenClass: cNw.classList.contains('is-hidden'),
-            poolHiddenClass: cPool.classList.contains('is-hidden')
+            poolHiddenClass: cPool.classList.contains('is-hidden'),
+            magHiddenClass: cMag.classList.contains('is-hidden')
           });
         })()`);
         assert.strictEqual(tab1State.nwSrc, null, 'iframeNw should not load eagerly while on Tab 1');
         assert.strictEqual(tab1State.poolSrc, null, 'iframePool should not load eagerly while on Tab 1');
         assert.strictEqual(tab1State.bioSrc, null, 'iframeBio should not load eagerly while on Tab 1');
+        assert.strictEqual(tab1State.magSrc, null, 'iframeMagneto should not load eagerly while on Tab 1');
         assert.strictEqual(tab1State.nwDataSrc, 'tecdoc643_neutron_walk.html');
         assert.strictEqual(tab1State.poolDataSrc, 'poolwater_interactive.html');
+        assert.strictEqual(tab1State.magDataSrc, 'magnetoreception_3d_explorer.html');
         assert.strictEqual(tab1State.nwHiddenClass, true);
         assert.strictEqual(tab1State.poolHiddenClass, true);
-        console.log('PASS [2/11]: Hidden-tab lazy initialization verified (iframeNw, iframePool, iframeBio deferred on Tab 1).');
+        assert.strictEqual(tab1State.magHiddenClass, true);
+        console.log('PASS [2/13]: Hidden-tab lazy initialization verified (iframeNw, iframePool, iframeBio, iframeMagneto deferred on Tab 1).');
         receipt.tests.lazy_init = 'PASS';
 
         // Test 3: Normal 3-D WebGL rendering on Tab 2 (unmodified Gate-0 tecdoc643_neutron_walk.html)
@@ -271,7 +341,7 @@ async function runTests() {
         assert.ok(nw3dState.glWidth > 400 && nw3dState.glHeight > 300, `Expected non-zero 3-D canvas size, got ${nw3dState.glWidth}x${nw3dState.glHeight}`);
         assert.notStrictEqual(nw3dState.kval, '\u2014', 'Tally k-eff should be computed');
         assert.ok(!nw3dState.ntot.includes('(0 neutrons)'), `Expected live neutron tally, got ${nw3dState.ntot}`);
-        console.log(`PASS [3/11]: TECDOC-643 3-D WebGL rendering verified on unmodified Gate-0 HTML (gl=${nw3dState.glWidth}x${nw3dState.glHeight}, k=${nw3dState.kval}).`);
+        console.log(`PASS [3/13]: TECDOC-643 3-D WebGL rendering verified on unmodified Gate-0 HTML (gl=${nw3dState.glWidth}x${nw3dState.glHeight}, k=${nw3dState.kval}).`);
         receipt.tests.tecdoc643_3d_webgl = nw3dState;
 
         // Test 4: Tab 3 Side-by-Side Split-View Layout (4D Spacetime + TECDOC-643 Neutron Walk)
@@ -293,7 +363,7 @@ async function runTests() {
         assert.strictEqual(splitState.c4dHidden, false);
         assert.strictEqual(splitState.cNwHidden, false);
         assert.strictEqual(splitState.cPoolHidden, true);
-        console.log('PASS [4/11]: Tab 3 Side-by-Side Split-View layout verified (card4d + cardNw visible).');
+        console.log('PASS [4/13]: Tab 3 Side-by-Side Split-View layout verified (card4d + cardNw visible).');
         receipt.tests.split_view_layout = splitState;
 
         // Test 5: Biofilms 3-D Explorer WebGL rendering, 256-Seed 4-Arm TOST & #btnEnsSelection (cpm-sp-v1 H0-B vs H0-A + 15/16 phase-locking)
@@ -351,7 +421,7 @@ async function runTests() {
         assert.strictEqual(bio3dState.statsAudit.allSeedKeyOrderInvariant, true);
         assert.strictEqual(bio3dState.statsAudit.allCiMatchReference, true);
         assert.strictEqual(bio3dState.statsAudit.allContrastsWithinEquivalenceBound, true);
-        console.log(`PASS [5/11]: Biofilms 3-D WebGL, 256-Seed 4-Arm TOST & #btnEnsSelection (cpm-sp-v1 H0-B vs H0-A + 15/16 phase-locking) verified (${bio3dState.glWidth}x${bio3dState.glHeight}, 256 seeds).`);
+        console.log(`PASS [5/13]: Biofilms 3-D WebGL, 256-Seed 4-Arm TOST & #btnEnsSelection (cpm-sp-v1 H0-B vs H0-A + 15/16 phase-locking) verified (${bio3dState.glWidth}x${bio3dState.glHeight}, 256 seeds).`);
         receipt.tests.biofilms_3d_and_256_seed_tost = {
           glWidth: bio3dState.glWidth,
           glHeight: bio3dState.glHeight,
@@ -433,8 +503,8 @@ async function runTests() {
         assert.ok(poolState.chipFieldUnavail.includes('UNAVAILABLE'));
         assert.strictEqual(poolState.auditHidden, false);
         assert.ok(poolState.auditWidth > 400);
-        console.log(`PASS [6/11]: Pool-Water Interactive 3-D WebGL & Gate 0-4 acceptance suite verified (${poolState.glWidth}x${poolState.glHeight}, 6x7 lattice=42 cells, worth=${poolState.gates.gate1_bladeWorthPcm} pcm, 2M sigma=${poolState.gates.gate1_twoPointWorthSigmaPcm} pcm, max|div u|=${poolState.gates.gate3_maxAbsVelocityDivergence}).`);
-        console.log(`PASS [7/11]: Pool-Water explicit UNAVAILABLE field honesty & Audit plotter verified (${poolState.chipFieldUnavail}).`);
+        console.log(`PASS [6/13]: Pool-Water Interactive 3-D WebGL & Gate 0-4 acceptance suite verified (${poolState.glWidth}x${poolState.glHeight}, 6x7 lattice=42 cells, worth=${poolState.gates.gate1_bladeWorthPcm} pcm, 2M sigma=${poolState.gates.gate1_twoPointWorthSigmaPcm} pcm, max|div u|=${poolState.gates.gate3_maxAbsVelocityDivergence}).`);
+        console.log(`PASS [7/13]: Pool-Water explicit UNAVAILABLE field honesty & Audit plotter verified (${poolState.chipFieldUnavail}).`);
         receipt.tests.poolwater_3d_and_gates = poolState.gates;
 
         // Test 8: Coupled Comparison (Tab 7) rapid tab switching, synchronization gate, and independent state restoration on uncheck while timeline playback is active
@@ -518,7 +588,7 @@ async function runTests() {
         assert.strictEqual(coupledState.nwBladeRestored, '0', 'Unchecking #chkSyncBlade must restore Neutron Walk pre-sync blade position (0%)');
         assert.strictEqual(coupledState.nwBladeTxtRestored, '0%');
         assert.strictEqual(coupledState.poolTimeAfterUncheck, '3', 'Blade sync/uncheck must never mutate Pool timeline slider');
-        console.log(`PASS [8/11]: Coupled Comparison synchronization gate & uncheck restoration verified (synced=${coupledState.nwBladeTxtSynced}, restored Pool=${coupledState.poolBladeRestored}% / NW=${coupledState.nwBladeTxtRestored}, timeIdx=${coupledState.poolTimeAfterUncheck}).`);
+        console.log(`PASS [8/13]: Coupled Comparison synchronization gate & uncheck restoration verified (synced=${coupledState.nwBladeTxtSynced}, restored Pool=${coupledState.poolBladeRestored}% / NW=${coupledState.nwBladeTxtRestored}, timeIdx=${coupledState.poolTimeAfterUncheck}).`);
         receipt.tests.coupled_comparison_sync = coupledState;
 
         // Test 9: Multispecies Biofilm Spatial Model (Synthetic visualization) card, 4-panel Robin cylindrical GIF, 4-mode counterfactual plotter, and narrow mobile viewport (< 500 px) layout
@@ -568,8 +638,216 @@ async function runTests() {
         assert.strictEqual(robinCardState.audit.noHorizontalCardOverflow, true);
         assert.strictEqual(robinCardState.audit.speciesCount, 7);
         assert.strictEqual(robinCardState.audit.allDisplacementCisSpanZero, true);
-        console.log(`PASS [9/11]: Multispecies Biofilm Spatial Model (Synthetic visualization) card, 4-panel Robin cylindrical GIF (${robinCardState.audit.gifWidth}x${robinCardState.audit.gifHeight}), 3-outcome counterfactual plotter, & 375px mobile layout verified.`);
+        console.log(`PASS [9/13]: Multispecies Biofilm Spatial Model (Synthetic visualization) card, 4-panel Robin cylindrical GIF (${robinCardState.audit.gifWidth}x${robinCardState.audit.gifHeight}), 3-outcome counterfactual plotter, & 375px mobile layout verified.`);
         receipt.tests.multispecies_biofilm_robin_gif_card = robinCardState.audit;
+
+        // Test 10: Biotite, Biomagnetite & Cryptochrome 4D Magnetoreception Viewer (Tab 10) WebGL, EG-1..EG-4, 4D Hyperplane Scrubber, and 1920x1080 PNG Export
+        await evalJson(`(() => { setView('magneto'); return 'true'; })()`);
+        await new Promise(r => setTimeout(r, 1500));
+        const magnetoState = await evalJson(`(() => {
+          const ifr = document.getElementById('iframeMagneto');
+          const d = ifr.contentDocument;
+          const w = ifr.contentWindow;
+          const gl = d.getElementById('glField');
+          const fb = d.getElementById('canvas2d');
+          const gates4dInit = w.verifyBiotite4dMagnetoreceptionGates();
+          const walkGates = w.verifyBiomagneticWalkIntegrity();
+
+          // Probe all 7 biotite inclusion regimes in #selBiotiteRegime
+          const selReg = d.getElementById('selBiotiteRegime');
+          const regimeAudit = {};
+          for (const opt of Array.from(selReg.options)) {
+            selReg.value = opt.value;
+            selReg.dispatchEvent(new Event('change'));
+            const g = w.verifyBiotite4dMagnetoreceptionGates();
+            regimeAudit[opt.value] = {
+              umag: g.hyperplane_4d_state.activeBiotiteUmagOverKbt,
+              criterialClass: g.hyperplane_4d_state.activeBiotiteCriterialClass,
+              lblUmag: d.getElementById('lblBiotiteUmag').textContent
+            };
+          }
+
+          // Probe all 8 D_4 group actions in #selD4Action
+          const selD4 = d.getElementById('selD4Action');
+          const d4Audit = {};
+          for (const opt of Array.from(selD4.options)) {
+            selD4.value = opt.value;
+            selD4.dispatchEvent(new Event('change'));
+            const g = w.verifyBiotite4dMagnetoreceptionGates();
+            d4Audit[opt.value] = {
+              v0: g.hyperplane_4d_state.projectedV0,
+              lblD4: d.getElementById('lblD4Action').textContent
+            };
+          }
+
+          // Probe non-15-multiple w-angle (45 deg), boundary w-angle (360 deg), and extreme (-90, +90) hyperplane rotations
+          const slW = d.getElementById('slider4dW');
+          const slXW = d.getElementById('sliderXW');
+          const slYW = d.getElementById('sliderYW');
+          const slZW = d.getElementById('sliderZW');
+          slW.value = '45';
+          slW.dispatchEvent(new Event('input'));
+          const w45Val = Number(slW.value);
+          slW.value = '360';
+          slW.dispatchEvent(new Event('input'));
+          slXW.value = '-90';
+          slXW.dispatchEvent(new Event('input'));
+          slYW.value = '90';
+          slYW.dispatchEvent(new Event('input'));
+          slZW.value = '-90';
+          slZW.dispatchEvent(new Event('input'));
+          const lblHyperBoundary = d.getElementById('lblHyperRot').textContent;
+
+          // Test pointer drag rotation and wheel zoom on #glField
+          const camBefore = w.verifyBiotite4dMagnetoreceptionGates().hyperplane_4d_state.camera;
+          gl.dispatchEvent(new w.PointerEvent('pointerdown', { clientX: 200, clientY: 200, pointerId: 1, bubbles: true }));
+          gl.dispatchEvent(new w.PointerEvent('pointermove', { clientX: 250, clientY: 160, pointerId: 1, bubbles: true }));
+          gl.dispatchEvent(new w.PointerEvent('pointerup', { clientX: 250, clientY: 160, pointerId: 1, bubbles: true }));
+          gl.dispatchEvent(new w.WheelEvent('wheel', { deltaY: -120, bubbles: true, cancelable: true }));
+          const camAfter = w.verifyBiotite4dMagnetoreceptionGates().hyperplane_4d_state.camera;
+          // Restore initial camera state (yaw=0.55, pitch=0.38, zoom=1.0)
+          gl.dispatchEvent(new w.PointerEvent('pointerdown', { clientX: 250, clientY: 160, pointerId: 1, bubbles: true }));
+          gl.dispatchEvent(new w.PointerEvent('pointermove', { clientX: 200, clientY: 200, pointerId: 1, bubbles: true }));
+          gl.dispatchEvent(new w.PointerEvent('pointerup', { clientX: 200, clientY: 200, pointerId: 1, bubbles: true }));
+          gl.dispatchEvent(new w.WheelEvent('wheel', { deltaY: 120, bubbles: true, cancelable: true }));
+
+          // Test dynamic responsive resizing across <375px mobile (350px) and >1920px desktop (1960px)
+          const origIfrWidth = ifr.style.width;
+          ifr.style.width = '350px';
+          w.dispatchEvent(new Event('resize'));
+          const mobileGlWidth = gl.width;
+          const mobileOverflow = d.documentElement.scrollWidth - d.documentElement.clientWidth;
+          ifr.style.width = '1960px';
+          w.dispatchEvent(new Event('resize'));
+          const desktopGlWidth = gl.width;
+          const desktopOverflow = d.documentElement.scrollWidth - d.documentElement.clientWidth;
+          ifr.style.width = origIfrWidth;
+          w.dispatchEvent(new Event('resize'));
+
+          // Scrub to 240 deg, r270, scenario_b_nrm_1pct for steady state
+          slW.value = '240';
+          slW.dispatchEvent(new Event('input'));
+          slXW.value = '25';
+          slXW.dispatchEvent(new Event('input'));
+          slYW.value = '15';
+          slYW.dispatchEvent(new Event('input'));
+          slZW.value = '0';
+          slZW.dispatchEvent(new Event('input'));
+          selD4.value = 'r270';
+          selD4.dispatchEvent(new Event('change'));
+          selReg.value = 'scenario_b_nrm_1pct';
+          selReg.dispatchEvent(new Event('change'));
+          const gates4d = w.verifyBiotite4dMagnetoreceptionGates();
+          const syncReadout = d.getElementById('readout4dSynchronized').textContent;
+
+          return JSON.stringify({
+            tabActive: document.getElementById('tabMagneto').classList.contains('active'),
+            embedded: d.documentElement.getAttribute('data-embedded'),
+            glWidth: gl.width,
+            glHeight: gl.height,
+            glHidden: gl.hidden,
+            fbHidden: fb.hidden,
+            gates4dInit,
+            gates4d,
+            walkGates,
+            regimeAudit,
+            d4Audit,
+            w45Val,
+            lblHyperBoundary,
+            syncReadout,
+            camBefore,
+            camAfter,
+            mobileGlWidth,
+            mobileOverflow,
+            desktopGlWidth,
+            desktopOverflow
+          });
+        })()`);
+        assert.strictEqual(magnetoState.tabActive, true);
+        assert.strictEqual(magnetoState.embedded, '1');
+        assert.strictEqual(magnetoState.glHidden, false);
+        assert.ok(magnetoState.glWidth > 400 && magnetoState.glHeight > 350, `Expected sized Biotite 4D WebGL canvas, got ${magnetoState.glWidth}x${magnetoState.glHeight}`);
+        assert.strictEqual(magnetoState.gates4d.section_version, '1.3.0');
+        assert.deepStrictEqual(magnetoState.gates4d.gate_ids, ['EG-1', 'EG-2', 'EG-3', 'EG-4']);
+        assert.strictEqual(magnetoState.gates4d.oklo_reactor_zone_biotite_verified, false);
+        assert.strictEqual(magnetoState.gates4d.biological_sensing_established_by_calculation, false);
+        assert.strictEqual(magnetoState.gates4d.all_scenarios_realistic_default_false, true);
+        assert.strictEqual(magnetoState.gates4d.directional_torque_requires_anisotropy, true);
+        assert.strictEqual(magnetoState.gates4d.isotropic_b2_generates_torque, false);
+        assert.strictEqual(magnetoState.gates4d.biotite_table_rows, 6);
+        assert.strictEqual(magnetoState.gates4d.biotite_table_col_match, true, 'Expected all rows in #biotiteInclusionTable to have 6 <td> cells matching the 6 <th> columns');
+        assert.strictEqual(magnetoState.gates4d.criterial_colors.accepted_verified, '#22c55e');
+        assert.strictEqual(magnetoState.gates4d.criterial_colors.criterial_pruned, '#ef4444');
+        assert.strictEqual(magnetoState.w45Val, 45, 'Expected #slider4dW to accept non-15-multiple angle 45 without quantization');
+        assert.strictEqual(magnetoState.lblHyperBoundary, '-90 / 90 / -90 deg');
+        assert.ok(magnetoState.camAfter.yaw < magnetoState.camBefore.yaw, 'Expected pointer drag to update camera yaw');
+        assert.ok(magnetoState.camAfter.pitch < magnetoState.camBefore.pitch, 'Expected pointer drag to update camera pitch');
+        assert.ok(magnetoState.camAfter.zoom > magnetoState.camBefore.zoom, 'Expected wheel scroll to update camera zoom');
+        assert.ok(magnetoState.mobileGlWidth < magnetoState.desktopGlWidth, `Expected dynamic resize from 350px (${magnetoState.mobileGlWidth}px) to 1960px (${magnetoState.desktopGlWidth}px)`);
+        assert.ok(magnetoState.mobileOverflow <= 1, `Expected zero page-level horizontal overflow at <375px (350px), got ${magnetoState.mobileOverflow}`);
+        assert.ok(magnetoState.desktopOverflow <= 1, `Expected zero page-level horizontal overflow at >1920px (1960px), got ${magnetoState.desktopOverflow}`);
+        // Verify all 7 regimes produce distinct, accurate SI values
+        assert.ok(Math.abs(magnetoState.regimeAudit.scenario_b_nrm.umag - 0.005854412) < 1e-8);
+        assert.ok(Math.abs(magnetoState.regimeAudit.scenario_b_nrm_1pct.umag - 0.579497) < 1e-6);
+        assert.ok(Math.abs(magnetoState.regimeAudit.scenario_a_sat.umag - 0.579497) < 1e-6);
+        assert.ok(Math.abs(magnetoState.regimeAudit.scenario_a_sat_1pct.umag - 57.943805) < 1e-5);
+        assert.strictEqual(magnetoState.regimeAudit.scenario_a_sat_1pct.criterialClass, 'exploratory');
+        assert.ok(Math.abs(magnetoState.regimeAudit.scenario_c_aniso.umag - 0.00126023) < 1e-8);
+        assert.ok(Math.abs(magnetoState.regimeAudit.scenario_c_iso.umag - 0.007264183) < 1e-8);
+        assert.ok(Math.abs(magnetoState.regimeAudit.pure_paramag.umag - 5.894344e-8) < 1e-13);
+        // Verify D_4 reflections transform projectedV0=(-1,-1,-1,-1) (sx, sy, sd2 move v0; sd1 fixes x=z diagonal and updates lblD4)
+        assert.notDeepStrictEqual(magnetoState.d4Audit.sx.v0, magnetoState.d4Audit.e.v0, 'Expected D_4 reflection sx to transform 4D vertex v0');
+        assert.notDeepStrictEqual(magnetoState.d4Audit.sy.v0, magnetoState.d4Audit.e.v0, 'Expected D_4 reflection sy to transform 4D vertex v0');
+        assert.deepStrictEqual(magnetoState.d4Audit.sd1.v0, magnetoState.d4Audit.e.v0, 'Expected D_4 diagonal reflection sd1 (x<->z) to fix diagonal vertex v0=(-1,-1,-1,-1)');
+        assert.strictEqual(magnetoState.d4Audit.sd1.lblD4, 's_d1 (+45 Diag)');
+        assert.notDeepStrictEqual(magnetoState.d4Audit.sd2.v0, magnetoState.d4Audit.e.v0, 'Expected D_4 reflection sd2 to transform 4D vertex v0');
+        assert.strictEqual(magnetoState.walkGates.total_parcels, 10752);
+        assert.strictEqual(magnetoState.walkGates.species_count, 7);
+        assert.strictEqual(magnetoState.walkGates.all_displacement_cis_span_zero, true);
+        assert.strictEqual(magnetoState.walkGates.all_survivor_radius_decompositions_exact, true);
+        assert.strictEqual(magnetoState.walkGates.has_matched_connectivity_control, true);
+        assert.strictEqual(magnetoState.walkGates.planned_contrast_cells, 15);
+        assert.strictEqual(magnetoState.walkGates.full_crossed_factorial_cells, 24);
+        assert.ok(magnetoState.syncReadout.includes('240') && magnetoState.syncReadout.includes('r270') && magnetoState.syncReadout.includes('5.7950e-1'));
+
+        // Rapidly switch between setView('magneto'), setView('coupled'), and setView('robingif') and export PNG across all 3 render modes
+        const multiModeExportRes = await evalJson(`(async () => {
+          setView('coupled');
+          setView('robingif');
+          setView('magneto');
+          const d = document.getElementById('iframeMagneto').contentDocument;
+          const w = document.getElementById('iframeMagneto').contentWindow;
+          const modes = [
+            { mode: '3d', btn: 'btnRender3d' },
+            { mode: '2d', btn: 'btnRender2d' },
+            { mode: 'biomag_walk', btn: 'btnRenderBiomagWalk' }
+          ];
+          const results = {};
+          for (const m of modes) {
+            d.getElementById(m.btn).click();
+            results[m.mode] = await w.exportMagnetoreception4dPng();
+          }
+          d.getElementById('btnRender3d').click();
+          return JSON.stringify(results);
+        })()`);
+        for (const modeKey of ['3d', '2d', 'biomag_walk']) {
+          const res = multiModeExportRes[modeKey];
+          assert.strictEqual(res.width, 1920);
+          assert.strictEqual(res.height, 1080);
+          assert.ok(res.dataUrlLength > 50000, `Expected non-empty 1920x1080 PNG data URL in mode ${modeKey}, got length ${res.dataUrlLength}`);
+          assert.strictEqual(res.hasEmDash, false, `Expected zero em-dashes in mode ${modeKey}`);
+          assert.strictEqual(res.hasEnDash, false, `Expected zero en-dashes in mode ${modeKey}`);
+        }
+        const pngExportRes = multiModeExportRes['3d'];
+        console.log(`PASS [10/13]: Biotite, Biomagnetite & Cryptochrome 4D Magnetoreception Viewer WebGL (${magnetoState.glWidth}x${magnetoState.glHeight}), EG-1..EG-4, 7-regime & 8-element D_4 4D scrubber, & 3-mode 1920x1080 PNG export verified.`);
+        receipt.tests.biotite_magnetoreception_4d_viewer = {
+          glWidth: magnetoState.glWidth,
+          glHeight: magnetoState.glHeight,
+          gates4d: magnetoState.gates4d,
+          walkGates: magnetoState.walkGates,
+          pngExport: pngExportRes,
+          multiModeExport: multiModeExportRes
+        };
       }
     );
 
@@ -600,7 +878,7 @@ async function runTests() {
         assert.ok(bioFallback.slWidth > 400 && bioFallback.slHeight > 350);
         assert.strictEqual(bioFallback.btn3dDisabled, true);
         assert.strictEqual(bioFallback.kpiOcc, '4,888');
-        console.log(`PASS [10/11]: Biofilms 3-D disabled-WebGL 2-D Slice fallback verified (${bioFallback.slWidth}x${bioFallback.slHeight}, sites=${bioFallback.kpiOcc}).`);
+        console.log(`PASS [11/13]: Biofilms 3-D disabled-WebGL 2-D Slice fallback verified (${bioFallback.slWidth}x${bioFallback.slHeight}, sites=${bioFallback.kpiOcc}).`);
         receipt.tests.biofilms_disabled_webgl_fallback = bioFallback;
 
         await evalJson(`(() => { setView('pool'); return 'true'; })()`);
@@ -627,8 +905,34 @@ async function runTests() {
         assert.ok(poolFallback.slWidth > 400 && poolFallback.slHeight > 350);
         assert.strictEqual(poolFallback.btn3dDisabled, true);
         assert.strictEqual(poolFallback.gatesPass, true);
-        console.log(`PASS [11/11]: Pool-Water Interactive disabled-WebGL 2-D Cut-Plane fallback verified (${poolFallback.slWidth}x${poolFallback.slHeight}, T_max=${poolFallback.kpiTemp}).`);
+        console.log(`PASS [12/13]: Pool-Water Interactive disabled-WebGL 2-D Cut-Plane fallback verified (${poolFallback.slWidth}x${poolFallback.slHeight}, T_max=${poolFallback.kpiTemp}).`);
         receipt.tests.poolwater_disabled_webgl_fallback = poolFallback;
+
+        await evalJson(`(() => { setView('magneto'); return 'true'; })()`);
+        await new Promise(r => setTimeout(r, 1500));
+        const magnetoFallback = await evalJson(`(() => {
+          const ifr = document.getElementById('iframeMagneto');
+          const d = ifr.contentDocument;
+          const w = ifr.contentWindow;
+          const gl = d.getElementById('glField');
+          const fb = d.getElementById('canvas2d');
+          const gates4d = w.verifyBiotite4dMagnetoreceptionGates();
+          return JSON.stringify({
+            glHidden: gl.hidden,
+            fbHidden: fb.hidden,
+            fbWidth: fb.width,
+            fbHeight: fb.height,
+            btn3dDisabled: d.getElementById('btnRender3d').disabled,
+            gates4dPass: gates4d.all_scenarios_realistic_default_false && gates4d.biotite_table_rows === 6 && gates4d.gate_ids.length === 4
+          });
+        })()`);
+        assert.strictEqual(magnetoFallback.glHidden, true);
+        assert.strictEqual(magnetoFallback.fbHidden, false);
+        assert.ok(magnetoFallback.fbWidth > 400 && magnetoFallback.fbHeight > 350);
+        assert.strictEqual(magnetoFallback.btn3dDisabled, true);
+        assert.strictEqual(magnetoFallback.gates4dPass, true);
+        console.log(`PASS [13/13]: Biotite 4D Magnetoreception disabled-WebGL 2-D Cross-Section fallback verified (${magnetoFallback.fbWidth}x${magnetoFallback.fbHeight}).`);
+        receipt.tests.biotite_magnetoreception_disabled_webgl_fallback = magnetoFallback;
       }
     );
 
