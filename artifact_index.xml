@@ -107,8 +107,8 @@
       <SpecSHA256>ebbd2647583018d8c1f4699652481bbc6ee4e72c86e9ea536a8c4e0059afbd80</SpecSHA256>
       <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
       <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
-      <BenchmarkManifestBytes>18093</BenchmarkManifestBytes>
-      <BenchmarkManifestSHA256>473d4d043d9f02298b4c3576b77577fbfbc2ba0cb72993fdbc30365627f264f6</BenchmarkManifestSHA256>
+      <BenchmarkManifestBytes>19627</BenchmarkManifestBytes>
+      <BenchmarkManifestSHA256>f98fe0d72b4d6cc2eef299fad3a5719972f801892445b07fd21b330c59a13205</BenchmarkManifestSHA256>
       <Bytes>79610</Bytes>
       <SHA256>fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
@@ -160,9 +160,26 @@
       <EvidenceManifestBytes>116876</EvidenceManifestBytes>
       <EvidenceManifestSHA256>4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf</EvidenceManifestSHA256>
       <InvariantTestRelativePath>test_calculation_provenance_and_invariants.js</InvariantTestRelativePath>
-      <InvariantTestBytes>38751</InvariantTestBytes>
-      <InvariantTestSHA256>db751a8972ee125fe4e334cdc59c51f1f3c5784b03026119587b50a3cd65fb55</InvariantTestSHA256>
+      <InvariantTestBytes>43823</InvariantTestBytes>
+      <InvariantTestSHA256>1ab6e20b1b601d81d84893168a97076a3a26a66e426a0ce835568b8cff534755</InvariantTestSHA256>
       <SourceModule>src/track4_mineral_magnetoreception_gates.jl</SourceModule>
+      <OfflineSelfContained>true</OfflineSelfContained>
+    </Artifact>
+
+    <Artifact id="REACTOR-POOL-BIOFILM-3D-01">
+      <Title>Coordinated 3D Open-Pool Reactor and Biofilm Coupon Explorer</Title>
+      <Requirement>Coordinated 3D Macro Pool Cutaway and Micro Coupon Biofilm Explorer with Uncoupled Solvers, Default lambda_etc = 0.0, Seven Null-Model Comparisons, and Provenance on Demand</Requirement>
+      <EpistemicStatus>coordinated_3d_pool_and_biofilm_explorer (solvers kept strictly separate with solver_level_coupled_validation_claimed = false; Stage 1 primary radiolysis yields from Jay-Gerin 2025 and Buxton 1988 on synthetic Boussinesq geometry with cfd_piv_status = UNAVAILABLE; Stage 2 coupon EPS sorption with Fein et al. 1997 protonation pKa = 4.82, 6.90, 9.40 and provisional Co-60 binding affinities log K_Co = 1.60, 2.50, 3.20 plus Coccomyxa actinabiotis Ag-110m lab 4.5e5 mL/g and 360 m^3 pool ~310 MBq benchmarks; Stage 3 uncalibrated CPM field consumer with default lambda_etc = 0.0 and seconds_per_mcs = NaN; 7 null-model comparisons including regime-dependent equal-dose schedules and Control 5b illustrative sensitivity analysis)</EpistemicStatus>
+      <EvidenceClassification>calculated</EvidenceClassification>
+      <RelativePortalPath>reactor_pool_biofilm_explorer.html</RelativePortalPath>
+      <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/reactor_pool_biofilm_explorer.html</PublicArtifactUrl>
+      <Bytes>105721</Bytes>
+      <SHA256>e3d738cdb6c7045d386b61b72fa2f3930365fde6a97cf72c38a5a5dbd807fc0f</SHA256>
+      <SourceRepository>aurascoper/reactor-pool-biofilms</SourceRepository>
+      <ExecutionSourceCommitSHA>903f278</ExecutionSourceCommitSHA>
+      <PRRTSpatialCPMClinicalMainCommit>507fc19c507505233268e058b7b5d7a0bd4e378c</PRRTSpatialCPMClinicalMainCommit>
+      <PRRTSpatialCPMRemotePR31Head>2db2a7b558ea736c61cc459fd6a72c4afa36e3c5</PRRTSpatialCPMRemotePR31Head>
+      <PRRTSpatialCPMLocalUnpushedHead>8182c30ab46d3b6a8cee7c853c18f7a44766a59d</PRRTSpatialCPMLocalUnpushedHead>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
 

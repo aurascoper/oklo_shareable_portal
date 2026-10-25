@@ -1,0 +1,2212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REACTOR-POOL-BIOFILM-3D-01 // Coordinated 3D Pool-and-Biofilm Explorer</title>
+<style>
+  :root {
+    --bg-0: #04070d;
+    --bg-1: #09101c;
+    --bg-2: #0f192b;
+    --bg-panel: rgba(11, 18, 31, 0.94);
+    --border: rgba(56, 189, 248, 0.24);
+    --border-strong: rgba(56, 189, 248, 0.55);
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --accent-cyan: #38bdf8;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-violet: #a855f7;
+    --accent-blue: #3b82f6;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Consolas, monospace;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at 15% 15%, #0c192c 0%, var(--bg-0) 70%);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.45;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  a { color: var(--accent-cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Header & Cross-Portal Navigation */
+  .top-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: rgba(6, 11, 20, 0.96);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .brand-block { display: flex; flex-direction: column; gap: 2px; }
+  .brand-id {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent-cyan);
+    letter-spacing: 0.06em;
+    font-weight: 700;
+  }
+  .brand-title { font-size: 15px; font-weight: 700; color: #f8fafc; }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .nav-pill {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 5px 9px;
+    border-radius: 5px;
+    background: rgba(15, 25, 43, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    color: #cbd5e1;
+    transition: all 0.15s ease;
+  }
+  .nav-pill:hover {
+    border-color: var(--accent-cyan);
+    color: #fff;
+    text-decoration: none;
+  }
+  .nav-pill.active {
+    background: rgba(56, 189, 248, 0.16);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    font-weight: 700;
+  }
+
+  /* Epistemic Boundary Banner */
+  .boundary-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(15, 23, 42, 0.88);
+    border-bottom: 1px solid rgba(245, 158, 11, 0.32);
+    font-size: 11.5px;
+  }
+  .boundary-card {
+    padding: 6px 10px;
+    border-radius: 5px;
+    background: rgba(9, 14, 26, 0.85);
+    border-left: 3px solid var(--accent-amber);
+  }
+  .boundary-card.strict-sep { border-left-color: var(--accent-cyan); }
+  .boundary-card.null-default { border-left-color: var(--accent-emerald); }
+  .boundary-card strong { font-family: var(--font-mono); font-size: 11px; color: #f8fafc; }
+
+  /* Epistemic Badges */
+  .epi-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+  }
+  .epi-MEASURED { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.45); }
+  .epi-CALCULATED { background: rgba(56, 189, 248, 0.18); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.45); }
+  .epi-SYNTHETIC { background: rgba(168, 85, 247, 0.18); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.45); }
+  .epi-PROVISIONAL_ASSUMPTION { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.45); }
+  .epi-UNAVAILABLE { background: rgba(244, 63, 94, 0.18); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.45); }
+  .epi-ILLUSTRATIVE_SENSITIVITY_ANALYSIS { background: rgba(236, 72, 153, 0.18); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.45); }
+
+  /* Main Workspace Grid */
+  .workspace {
+    display: grid;
+    grid-template-columns: 330px 1fr 370px;
+    gap: 12px;
+    padding: 12px 16px;
+    align-items: start;
+  }
+  @media (max-width: 1420px) {
+    .workspace { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  }
+  .panel-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Layer Group Toggles */
+  .layer-card {
+    background: rgba(15, 25, 43, 0.72);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 6px;
+    padding: 9px 10px;
+    margin-bottom: 8px;
+    transition: border-color 0.15s ease;
+  }
+  .layer-card.active { border-color: var(--accent-cyan); }
+  .layer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .layer-top label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: #f1f5f9;
+  }
+  .layer-desc { font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+  .field-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+  .field-btn {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    padding: 3px 7px;
+    border-radius: 4px;
+    background: rgba(9, 16, 28, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    color: #cbd5e1;
+    cursor: pointer;
+  }
+  .field-btn:hover { border-color: var(--accent-cyan); color: #fff; }
+  .field-btn.active {
+    background: rgba(56, 189, 248, 0.22);
+    border-color: var(--accent-cyan);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  /* Time-Base Separator Box */
+  .timebase-box {
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(244, 63, 94, 0.45);
+    border-radius: 6px;
+    padding: 9px 10px;
+    margin-top: 10px;
+  }
+  .timebase-banner {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: #fda4af;
+    background: rgba(244, 63, 94, 0.14);
+    border: 1px dashed rgba(244, 63, 94, 0.5);
+    padding: 5px 7px;
+    border-radius: 4px;
+    margin: 6px 0;
+  }
+  .slider-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 8px;
+  }
+  .slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #cbd5e1;
+  }
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent-cyan);
+    cursor: pointer;
+  }
+
+  /* Center Dual Viewports */
+  .center-stack { display: flex; flex-direction: column; gap: 12px; }
+  .viewports-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 1100px) {
+    .viewports-grid { grid-template-columns: 1fr; }
+  }
+  .viewport-card {
+    background: rgba(7, 12, 22, 0.95);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .canvas-wrap {
+    position: relative;
+    width: 100%;
+    height: 360px;
+    background: #050912;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .canvas-wrap canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .viewport-hud {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+  }
+  .hud-tag {
+    background: rgba(4, 7, 13, 0.84);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    padding: 3px 7px;
+    border-radius: 4px;
+    color: #e2e8f0;
+  }
+  .coupon-bar, .morph-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+  }
+  .ctrl-btn {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(15, 25, 43, 0.92);
+    border: 1px solid rgba(148, 163, 184, 0.32);
+    color: #e2e8f0;
+    cursor: pointer;
+  }
+  .ctrl-btn:hover { border-color: var(--accent-cyan); }
+  .ctrl-btn.active {
+    background: rgba(56, 189, 248, 0.22);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    font-weight: 700;
+  }
+
+  /* Row A / B / C Synchronized Biofilm Stratification Panel */
+  .rows-abc-wrap {
+    width: 100%;
+    height: 235px;
+    background: #060b16;
+    border: 1px solid rgba(56, 189, 248, 0.24);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .rows-abc-wrap canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Null-Model & Counterfactual Comparison Workbench */
+  .null-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 8px;
+  }
+  .null-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+  @media (max-width: 960px) {
+    .null-grid { grid-template-columns: 1fr; }
+  }
+  .null-canvas-box {
+    width: 100%;
+    height: 230px;
+    background: #050912;
+    border: 1px solid rgba(56, 189, 248, 0.24);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .null-canvas-box canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .null-readout {
+    background: rgba(9, 15, 27, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 6px;
+    padding: 9px 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    max-height: 230px;
+    overflow-y: auto;
+  }
+
+  /* Right Column: Provenance Inspector & Oklo 5/5 Rupture */
+  .prov-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    margin-bottom: 10px;
+  }
+  .prov-table th, .prov-table td {
+    text-align: left;
+    padding: 5px 6px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+    vertical-align: top;
+  }
+  .prov-table th {
+    color: var(--text-dim);
+    width: 38%;
+    font-weight: 600;
+  }
+  .prov-table td { color: #f1f5f9; word-break: break-word; }
+
+  .rupture-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin-top: 6px;
+  }
+  .rupture-table th, .rupture-table td {
+    padding: 4px 6px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    text-align: left;
+  }
+  .rupture-table th {
+    background: rgba(15, 25, 43, 0.9);
+    font-family: var(--font-mono);
+    color: var(--accent-cyan);
+  }
+  .kv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .kv-box {
+    background: rgba(9, 15, 27, 0.85);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 5px;
+    padding: 5px 7px;
+  }
+  .kv-box .k { color: var(--text-dim); font-size: 10px; }
+  .kv-box .v { color: #f8fafc; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="brand-block">
+    <div class="brand-id">ARTIFACT: REACTOR-POOL-BIOFILM-3D-01 // STAGE 1-2-3 COORDINATED EXPLORER</div>
+    <div class="brand-title">Coordinated 3D Open-Pool Reactor &amp; Biofilm Coupon Explorer (Uncoupled Solvers, Default &lambda;_etc = 0.0)</div>
+  </div>
+  <nav class="nav-links" aria-label="Cross-Portal Artifact Navigation">
+    <a class="nav-pill" href="index.html">Portal Index</a>
+    <a class="nav-pill active" href="reactor_pool_biofilm_explorer.html">3D Pool + Biofilm Explorer</a>
+    <a class="nav-pill" href="poolwater_interactive.html">Pool-Water Fault-Tree (1D/2D)</a>
+    <a class="nav-pill" href="biofilms_3d_explorer.html">Biofilms 3D/4D Morphodynamics</a>
+    <a class="nav-pill" href="magnetoreception_3d_explorer.html">Magnetoreception Radical-Pair 3D</a>
+    <a class="nav-pill" href="tecdoc643_neutron_walk.html">IAEA TECDOC-643 3D</a>
+    <a class="nav-pill" href="spacetime_explorer_4d_shareable.html">4D Spacetime Explorer</a>
+  </nav>
+</header>
+
+<section class="boundary-strip" aria-label="Strict Epistemic and Architectural Guardrails">
+  <div class="boundary-card strict-sep">
+    <strong>GUARDRAIL 1 // SOLVERS KEPT SEPARATE:</strong>
+    Stage 1 pool radiolysis PDEs, Stage 2 coupon EPS sorption/transport, and Stage 3 CPM lattice morphology are coordinated visually across spatial scales but have <code>solver_level_coupled_validation_claimed = false</code>.
+  </div>
+  <div class="boundary-card null-default">
+    <strong>GUARDRAIL 2 // DEFAULT NULL BASELINE (&lambda;_etc = 0.0):</strong>
+    Melanin-mediated radiotrophy is OFF by default (<code>lambda_etc = 0.0</code>, <code>delta_H_etc = 0.0</code>). Any <code>&lambda;_etc &gt; 0</code> run is tagged <span class="epi-badge epi-PROVISIONAL_ASSUMPTION">EXPLORATORY_HYPOTHESIS</span>.
+  </div>
+  <div class="boundary-card">
+    <strong>GUARDRAIL 3 // UNCOUPLED TIME BASES:</strong>
+    Macro pool physical time <code>t_pool [s]</code> and micro CPM Monte Carlo steps <code>MCS</code> are strictly uncoupled (<code>seconds_per_mcs = NaN</code>, <code>D-PITCH: awaiting_measurement</code>).
+  </div>
+</section>
+
+<main class="workspace">
+  <!-- LEFT COLUMN: 4 Toggleable Spatial Layer Groups + Time-Base Separation Controls -->
+  <aside class="panel" aria-label="Spatial Layer Groups and Time Controls">
+    <div class="panel-header">
+      <span class="panel-title">1. Spatial Layer Groups (4)</span>
+      <span class="epi-badge epi-CALCULATED" id="activeRenderBadge">RENDER: READY</span>
+    </div>
+
+    <!-- Layer 1: Pool Geometry -->
+    <div class="layer-card active" id="layerCard_pool_geometry">
+      <div class="layer-top">
+        <label>
+          <input type="checkbox" id="toggle_pool_geometry" checked onchange="window.setLayerToggle('pool_geometry', this.checked)">
+          <span>L1: Pool Geometry &amp; 3D Cutaway</span>
+        </label>
+        <span class="epi-badge epi-SYNTHETIC">SYNTHETIC</span>
+      </div>
+      <div class="layer-desc">
+        Generic 10 MW open-pool MTR tank (<code>R = 500 cm</code>, <code>Z in [-200, 200] cm</code>), core shroud with 8 radial support fins, magenta box-grid core, and quarter-wedge cutaway.
+      </div>
+      <div class="field-pills">
+        <button class="field-btn" onclick="window.selectProvenanceField('pool_geometry_cad')">Inspect CAD Surrogate</button>
+        <button class="field-btn" onclick="window.selectProvenanceField('quarter_wedge_cutaway')">Inspect r-z / x-y Cutaway</button>
+      </div>
+    </div>
+
+    <!-- Layer 2: Temperature & Flow -->
+    <div class="layer-card active" id="layerCard_temperature_flow">
+      <div class="layer-top">
+        <label>
+          <input type="checkbox" id="toggle_temperature_flow" checked onchange="window.setLayerToggle('temperature_flow', this.checked)">
+          <span>L2: Temperature &amp; Flow Field</span>
+        </label>
+        <span class="epi-badge epi-SYNTHETIC">SYNTHETIC</span>
+      </div>
+      <div class="layer-desc">
+        Analytical Boussinesq plume (<code>T_bulk = 35.0 degC / 308.15 K</code>, <code>U_bulk = 0.15 m/s</code>, <code>delta_m = 4381 um</code>, <code>delta_T = 2292 um</code>, <code>delta_c = 528 um</code>). CFD/PIV: <span class="epi-badge epi-UNAVAILABLE">UNAVAILABLE</span>.
+      </div>
+      <div class="field-pills">
+        <button class="field-btn" data-field="temperature_C" onclick="window.setActiveField('temperature_C')">T [degC]</button>
+        <button class="field-btn" data-field="velocity_m_s" onclick="window.setActiveField('velocity_m_s')">u [m/s]</button>
+        <button class="field-btn" data-field="validated_cfd_pressure_Pa" onclick="window.setActiveField('validated_cfd_pressure_Pa')">CFD Pressure (UNAVAILABLE)</button>
+        <button class="field-btn" data-field="empirical_piv_temperature" onclick="window.setActiveField('empirical_piv_temperature')">PIV Temp (UNAVAILABLE)</button>
+      </div>
+    </div>
+
+    <!-- Layer 3: Radiation & Radiolysis -->
+    <div class="layer-card active" id="layerCard_radiation_radiolysis">
+      <div class="layer-top">
+        <label>
+          <input type="checkbox" id="toggle_radiation_radiolysis" checked onchange="window.setLayerToggle('radiation_radiolysis', this.checked)">
+          <span>L3: Radiation &amp; Radiolysis</span>
+        </label>
+        <span class="epi-badge epi-CALCULATED">CALCULATED</span>
+      </div>
+      <div class="layer-desc">
+        Stage 1 primary yields (Jay-Gerin 2025; Buxton 1988) on synthetic geometry: long-lived <code>H2O2</code> (<code>l_rxn = 118.3 um</code>) &amp; <code>H2</code> (<code>109.5 um</code>) penetrate coupon boundary layer; radicals <code>*OH</code> (<code>4.47 nm</code>) &amp; <code>e_aq^-</code> (<code>9.90 nm</code>) quench locally.
+      </div>
+      <div class="field-pills">
+        <button class="field-btn active" data-field="H2O2" onclick="window.setActiveField('H2O2')">H2O2 [mol/L]</button>
+        <button class="field-btn" data-field="H2" onclick="window.setActiveField('H2')">H2 [mol/L]</button>
+        <button class="field-btn" data-field="OH_rad" onclick="window.setActiveField('OH_rad')">*OH [mol/L]</button>
+        <button class="field-btn" data-field="e_aq" onclick="window.setActiveField('e_aq')">e_aq^- [mol/L]</button>
+        <button class="field-btn" data-field="dose_rate_Gy_s" onclick="window.setActiveField('dose_rate_Gy_s')">Dose [Gy/s]</button>
+      </div>
+    </div>
+
+    <!-- Layer 4: Biofilm Coupons -->
+    <div class="layer-card active" id="layerCard_biofilm_coupons">
+      <div class="layer-top">
+        <label>
+          <input type="checkbox" id="toggle_biofilm_coupons" checked onchange="window.setLayerToggle('biofilm_coupons', this.checked)">
+          <span>L4: Wall Biofilm Coupons (z_um)</span>
+        </label>
+        <span class="epi-badge epi-PROVISIONAL_ASSUMPTION">PROVISIONAL_ASSUMPTION</span>
+      </div>
+      <div class="layer-desc">
+        Coupon wall locators at <code>r = 500 cm</code> linked to micro-scale stratification (<code>SL</code>, <code>SS</code>, <code>LL</code>, <code>CPM-Hypha</code>), Stage 2 EPS sorption, and Stage 3 CPM field consumer.
+      </div>
+      <div class="field-pills">
+        <button class="field-btn" onclick="window.selectProvenanceField('coupon_eps_sorption')">Stage 2 EPS Sorption</button>
+        <button class="field-btn" onclick="window.selectProvenanceField('cpm_morphology_stage3')">Stage 3 CPM Lattice</button>
+        <button class="field-btn" onclick="window.selectProvenanceField('coccomyxa_actinabiotis_benchmark')">Coccomyxa Benchmark (MEASURED)</button>
+      </div>
+    </div>
+
+    <!-- Cutaway & Slice Sliders -->
+    <div class="timebase-box" style="border-color: rgba(56, 189, 248, 0.35);">
+      <div class="panel-title" style="margin-bottom:6px;">2. Cutaway &amp; Slice Coordinates</div>
+      <div class="slider-row">
+        <div class="slider-label">
+          <span>Wedge Cutaway Angle (&theta;_wedge)</span>
+          <span id="lbl_theta_wedge">90 deg</span>
+        </div>
+        <input type="range" id="slider_theta_wedge" min="35" max="165" step="5" value="90" oninput="window.setCutawayGeometry(Number(this.value), null, null)">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label">
+          <span>Horizontal Pool Slice (z_slice_cm)</span>
+          <span id="lbl_z_slice_cm">-40 cm</span>
+        </div>
+        <input type="range" id="slider_z_slice_cm" min="-180" max="180" step="10" value="-40" oninput="window.setCutawayGeometry(null, Number(this.value), null)">
+      </div>
+      <div class="slider-row" style="margin-bottom:0;">
+        <div class="slider-label">
+          <span>Micro Coupon Canopy Probe (z_biofilm_um)</span>
+          <span id="lbl_z_biofilm_um">12.0 um</span>
+        </div>
+        <input type="range" id="slider_z_biofilm_um" min="0" max="30" step="0.5" value="12" oninput="window.setCutawayGeometry(null, null, Number(this.value))">
+      </div>
+    </div>
+
+    <!-- Uncoupled Time-Base Sliders -->
+    <div class="timebase-box">
+      <div class="panel-title">3. Uncoupled Time-Base Controls</div>
+      <div class="timebase-banner" id="uncoupledTimeBanner">
+        TIME BASES UNCOUPLED: t_pool [s] != MCS (seconds_per_mcs = NaN / AWAITING_EXPERIMENTAL_CALIBRATION; D-PITCH awaiting_measurement)
+      </div>
+      <div class="slider-row">
+        <div class="slider-label">
+          <span>Macro Pool PDE Time (t_pool [s])</span>
+          <span id="lbl_t_pool_s">1800 s</span>
+        </div>
+        <input type="range" id="slider_t_pool_s" min="0" max="3600" step="60" value="1800" oninput="window.setMacroPoolTime(Number(this.value))">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label">
+          <span>Micro CPM Lattice Step (MCS)</span>
+          <span id="lbl_mcs_step">60 MCS</span>
+        </div>
+        <input type="range" id="slider_mcs_step" min="0" max="200" step="5" value="60" oninput="window.setMicroMcsStep(Number(this.value))">
+      </div>
+      <div class="slider-row" style="margin-bottom:0;">
+        <div class="slider-label">
+          <span>Exploratory Coupling (&lambda;_etc) [Default: 0.0]</span>
+          <span id="lbl_lambda_etc">0.00 (NULL)</span>
+        </div>
+        <input type="range" id="slider_lambda_etc" min="0" max="2.5" step="0.25" value="0.0" oninput="window.setLambdaEtc(Number(this.value))">
+      </div>
+    </div>
+  </aside>
+
+  <!-- CENTER COLUMN: Coordinated 3D Viewports + Row A/B/C Stratification + Null-Model Workbench -->
+  <section class="center-stack" aria-label="Coordinated 3D Viewports and Counterfactual Workbench">
+    <div class="viewports-grid">
+      <!-- Viewport 1: Macro 3D Open-Pool Cutaway -->
+      <div class="viewport-card">
+        <div class="panel-header" style="margin-bottom:2px;">
+          <span class="panel-title">Macro Viewport // 3D Reactor Pool Cutaway (R=500 cm)</span>
+          <span class="epi-badge epi-CALCULATED" id="macroFieldBadge">H2O2 [CALCULATED]</span>
+        </div>
+        <div class="canvas-wrap" id="macroViewportWrap">
+          <canvas id="glPoolCanvas" width="560" height="360"></canvas>
+          <canvas id="canvasPool2d" width="560" height="360"></canvas>
+          <div class="viewport-hud">
+            <span class="hud-tag" id="hudMacroField">FIELD: H2O2 [mol/L] // r-z + x-y cutaway</span>
+            <span class="hud-tag" id="hudMacroCoupon">WALL COUPON: PIE-COUPON-SS316L-01</span>
+          </div>
+        </div>
+        <div class="coupon-bar">
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);">Wall Coupons (r=500 cm):</span>
+          <button class="ctrl-btn active" data-coupon="PIE-COUPON-SS316L-01" onclick="window.selectCoupon('PIE-COUPON-SS316L-01')">PIE-COUPON-SS316L-01</button>
+          <button class="ctrl-btn" data-coupon="TRIGA-WALL-SS304L-02" onclick="window.selectCoupon('TRIGA-WALL-SS304L-02')">TRIGA-WALL-SS304L-02</button>
+          <button class="ctrl-btn" data-coupon="SURROGATE-COUPON-AL6061-03" onclick="window.selectCoupon('SURROGATE-COUPON-AL6061-03')">SURROGATE-COUPON-AL6061-03</button>
+        </div>
+      </div>
+
+      <!-- Viewport 2: Micro 3D Coupon Biofilm Explorer -->
+      <div class="viewport-card">
+        <div class="panel-header" style="margin-bottom:2px;">
+          <span class="panel-title">Micro Viewport // 3D Coupon Biofilm Block (z in [0, 30] um)</span>
+          <span class="epi-badge epi-SYNTHETIC" id="microMorphBadge">MORPH: SL (Sphere+Rod)</span>
+        </div>
+        <div class="canvas-wrap" id="microViewportWrap">
+          <canvas id="glBiofilmCanvas" width="560" height="360"></canvas>
+          <canvas id="canvasBiofilm2d" width="560" height="360"></canvas>
+          <div class="viewport-hud">
+            <span class="hud-tag" id="hudMicroMorph">SL: Red Cocci (upper) + Blue Rods/Hyphae (base)</span>
+            <span class="hud-tag" id="hudMicroLambda">&lambda;_etc = 0.00 (NULL BASELINE)</span>
+          </div>
+        </div>
+        <div class="morph-bar">
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);">Morphotype:</span>
+          <button class="ctrl-btn active" data-morph="SL" onclick="window.setMorphotype('SL')">SL (Sphere+Rod/Hypha)</button>
+          <button class="ctrl-btn" data-morph="SS" onclick="window.setMorphotype('SS')">SS (Sphere+Sphere)</button>
+          <button class="ctrl-btn" data-morph="LL" onclick="window.setMorphotype('LL')">LL (Rod+Rod)</button>
+          <button class="ctrl-btn" data-morph="CPM-Hypha" onclick="window.setMorphotype('CPM-Hypha')">CPM-Hypha (40x40x40)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Synchronized Row A / Row B / Row C Coupon Stratification Diagnostic -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Synchronized Coupon Biofilm Stratification // Row A (2D x-z Cross-Section) &bull; Row B (P(z) 3-D Solid vs 2-D Dashed) &bull; Row C (3D Block Summary)</span>
+        <span class="epi-badge epi-CALCULATED" id="stratificationStatBadge">z_mean(blue)=5.6 um &lt; z_mean(red)=15.8 um</span>
+      </div>
+      <div class="rows-abc-wrap">
+        <canvas id="canvasBiofilmRows" width="980" height="235"></canvas>
+      </div>
+    </div>
+
+    <!-- Null-Model & Counterfactual Comparison Workbench -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">4. Null-Model &amp; Counterfactual Comparison Workbench (7 Controls)</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span style="font-family:var(--font-mono);font-size:10.5px;color:var(--text-dim);">Schedule Regime:</span>
+          <button class="ctrl-btn active" id="btnRegimeActive" onclick="window.setScheduleRegime('active_nonlinear_coupled')">Active-Loss / Nonlinear</button>
+          <button class="ctrl-btn" id="btnRegimeConserved" onclick="window.setScheduleRegime('conserved_linear_uncoupled')">Conserved-Linear / Uncoupled</button>
+        </div>
+      </div>
+      <div class="null-tabs">
+        <button class="ctrl-btn active" data-null="baseline_no_coupling_default" onclick="window.setNullControl('baseline_no_coupling_default')">1. Default Null (&lambda;_etc=0) vs Exploratory</button>
+        <button class="ctrl-btn" data-null="five_way_radionuclide_retention" onclick="window.setNullControl('five_way_radionuclide_retention')">2-4. 5-Way Retention &amp; Coccomyxa</button>
+        <button class="ctrl-btn" data-null="equal_dose_power_schedules" onclick="window.setNullControl('equal_dose_power_schedules')">5. Equal-Dose Schedules (Regime Test)</button>
+        <button class="ctrl-btn" data-null="control_5a_spatial_bias_null" onclick="window.setNullControl('control_5a_spatial_bias_null')">6a. Control 5a (Uniform B_0 Null)</button>
+        <button class="ctrl-btn" data-null="control_5b_biochemical_magnetic_sensitivity" onclick="window.setNullControl('control_5b_biochemical_magnetic_sensitivity')">6b. Control 5b (Illustrative RPM Sensitivity)</button>
+        <button class="ctrl-btn" data-null="control_6_oxidant_chemotropism" onclick="window.setNullControl('control_6_oxidant_chemotropism')">7a. Control 6 (Oxidant Chemotropism)</button>
+        <button class="ctrl-btn" data-null="epistemic_gates_eg1_eg4_and_links_l1_l5" onclick="window.setNullControl('epistemic_gates_eg1_eg4_and_links_l1_l5')">7b. Epistemic Gates EG-1..EG-4 &amp; L1..L5</button>
+      </div>
+      <div class="null-grid">
+        <div class="null-canvas-box">
+          <canvas id="nullWorkbenchCanvas" width="560" height="230"></canvas>
+        </div>
+        <div class="null-readout" id="nullWorkbenchReadout"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT COLUMN: Provenance on Demand Inspector + Oklo 5/5 Dimensional Rupture Toggle -->
+  <aside class="panel" aria-label="Provenance on Demand and Oklo Comparison">
+    <div class="panel-header">
+      <span class="panel-title">5. Provenance on Demand Inspector</span>
+      <span class="epi-badge epi-CALCULATED" id="provClassificationBadge">CALCULATED</span>
+    </div>
+    <div style="margin-bottom:8px;font-size:11.5px;color:var(--text-dim);">
+      Click any layer field, coupon, morphotype, or null-model control (or select below) to inspect full epistemic metadata and commit locks:
+    </div>
+    <div class="field-pills" style="margin-bottom:10px;">
+      <button class="field-btn active" data-prov="H2O2" onclick="window.selectProvenanceField('H2O2')">H2O2</button>
+      <button class="field-btn" data-prov="H2" onclick="window.selectProvenanceField('H2')">H2</button>
+      <button class="field-btn" data-prov="OH_rad" onclick="window.selectProvenanceField('OH_rad')">*OH</button>
+      <button class="field-btn" data-prov="e_aq" onclick="window.selectProvenanceField('e_aq')">e_aq^-</button>
+      <button class="field-btn" data-prov="dose_rate_Gy_s" onclick="window.selectProvenanceField('dose_rate_Gy_s')">Dose</button>
+      <button class="field-btn" data-prov="temperature_C" onclick="window.selectProvenanceField('temperature_C')">T [degC]</button>
+      <button class="field-btn" data-prov="velocity_m_s" onclick="window.selectProvenanceField('velocity_m_s')">u [m/s]</button>
+      <button class="field-btn" data-prov="coupon_eps_sorption" onclick="window.selectProvenanceField('coupon_eps_sorption')">Fein 1997 / Co-60</button>
+      <button class="field-btn" data-prov="coccomyxa_actinabiotis_benchmark" onclick="window.selectProvenanceField('coccomyxa_actinabiotis_benchmark')">Coccomyxa Ag-110m</button>
+      <button class="field-btn" data-prov="control_5b_rpm_sensitivity" onclick="window.selectProvenanceField('control_5b_rpm_sensitivity')">Control 5b RPM</button>
+      <button class="field-btn" data-prov="validated_cfd_pressure_Pa" onclick="window.selectProvenanceField('validated_cfd_pressure_Pa')">CFD Pressure</button>
+    </div>
+
+    <table class="prov-table" aria-label="Selected Field Provenance Metadata">
+      <tbody>
+        <tr><th>Field ID</th><td id="prov_field_id">H2O2</td></tr>
+        <tr><th>Data Classification</th><td id="prov_data_classification">CALCULATED</td></tr>
+        <tr><th>Calibration Status</th><td id="prov_calibration_status">PUBLISHED_G_VALUE</td></tr>
+        <tr><th>Units</th><td id="prov_units">mol/L</td></tr>
+        <tr><th>Coordinate Frame</th><td id="prov_coordinate_frame">Cylindrical pool (r, theta, z) [cm] + 1D coupon boundary layer z [um]</td></tr>
+        <tr><th>Source / Literature</th><td id="prov_source">Jay-Gerin (2025) G(H2O2)=0.68 molecules/100 eV; Buxton et al. (1988) rate constants; Stage 1 compute_pool_radiolysis_steady_state_balance</td></tr>
+        <tr><th>Model Version</th><td id="prov_model_version">ReactorPoolBiofilms.jl v0.1.0 (Stage 1 steady-state &amp; 3D operator-split PDE)</td></tr>
+        <tr><th>Commit Lock</th><td id="prov_commit_lock">reactor-pool-biofilms@903f278 | PRRT-spatial-CPM main@507fc19c507505233268e058b7b5d7a0bd4e378c (PR #31 remote@2db2a7b558ea736c61cc459fd6a72c4afa36e3c5; local unpushed@8182c30ab46d3b6a8cee7c853c18f7a44766a59d; local_test_results_attributed_to_remote_pr_head=false)</td></tr>
+        <tr><th>Epistemic Notes</th><td id="prov_notes">Calculated from published primary yields and rate constants on a synthetic pool geometry/flow field. Long reaction-diffusion penetration l_rxn(H2O2) = 118.3 um reaches the coupon biofilm canopy.</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Live Stage 1 / Stage 2 / Stage 3 Quantitative Telemetry -->
+    <div class="panel-header" style="margin-top:8px;">
+      <span class="panel-title">6. Selected Coupon &amp; Boundary Telemetry</span>
+      <span class="epi-badge epi-CALCULATED" id="telemetryCouponBadge">PIE-COUPON-SS316L-01</span>
+    </div>
+    <div class="kv-grid">
+      <div class="kv-box"><div class="k">Wall Dose Rate [Gy/s]</div><div class="v" id="kv_dose">0.0820 Gy/s</div></div>
+      <div class="kv-box"><div class="k">Canopy H2O2 / H2 [uM]</div><div class="v" id="kv_peroxide">1.42 / 0.94 uM</div></div>
+      <div class="kv-box"><div class="k">*OH / e_aq^- l_rxn [nm]</div><div class="v" id="kv_radicals">4.47 / 9.90 nm</div></div>
+      <div class="kv-box"><div class="k">BL delta_m / delta_T / delta_c</div><div class="v" id="kv_bl">4381 / 2292 / 528 um</div></div>
+      <div class="kv-box"><div class="k">Wall Shear tau_w [Pa]</div><div class="v" id="kv_shear">0.049 Pa</div></div>
+      <div class="kv-box"><div class="k">Stage 3 CPM Coupling</div><div class="v" id="kv_cpm_coupling">&lambda;_etc=0.0 (NULL)</div></div>
+    </div>
+
+    <!-- Oklo Comparison Toggle (5/5 Dimensional Rupture) -->
+    <div class="timebase-box" style="margin-top:12px;border-color:rgba(245, 158, 11, 0.45);">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <label style="display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11.5px;font-weight:700;cursor:pointer;color:#fbbf24;">
+          <input type="checkbox" id="toggle_oklo_comparison" checked onchange="window.setOkloComparisonToggle(this.checked)">
+          <span>Oklo RZ2 vs Modern Pool (5/5 Rupture)</span>
+        </label>
+        <span class="epi-badge epi-CALCULATED">5/5 RUPTURE</span>
+      </div>
+      <div id="okloComparisonContainer" style="margin-top:6px;">
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">
+          Modern open-pool test reactors cannot be conflated with paleoproterozoic Oklo RZ2 sandstone reactors across 5 physical dimensions:
+        </div>
+        <table class="rupture-table">
+          <thead>
+            <tr><th>Dimension</th><th>Oklo RZ2 (Paleoproterozoic)</th><th>Modern Open-Pool MTR</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1. Power Density</td><td>~10^-2 to 1 W/L (100 kW / ~10 m^3)</td><td>~10^2 to 10^3 W/L (10^3..10^5x higher)</td></tr>
+            <tr><td>2. Thermodynamic State</td><td>150..400 bar, 450..600 K hydrothermal</td><td>1..2 bar, 300..325 K subcooled pool</td></tr>
+            <tr><td>3. Kinetics Timescale</td><td>30 min pulses / 2.5 hr thermal-hydrological</td><td>Prompt neutron / forced pump circulation</td></tr>
+            <tr><td>4. Water Chemistry</td><td>Anoxic saline crustal brine + bitumen</td><td>Ultrapure deionized (&lt;1 uS/cm) aerated</td></tr>
+            <tr><td>5. Microbiome Evidence</td><td>Zero preserved 2.0 Ga biofilms</td><td>Direct 16S/metagenomic &amp; Ag-110m/Co-60 data</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </aside>
+</main>
+<script>
+(function() {
+  'use strict';
+
+  var COMMIT_LOCK_STRING =
+    'reactor-pool-biofilms@903f278 | PRRT-spatial-CPM main@507fc19c507505233268e058b7b5d7a0bd4e378c ' +
+    '(remote draft PR #31 head@2db2a7b558ea736c61cc459fd6a72c4afa36e3c5; ' +
+    'local unpushed reconciliation head@8182c30ab46d3b6a8cee7c853c18f7a44766a59d; ' +
+    'local_test_results_attributed_to_remote_pr_head=false; local_branch_pushed_to_remote=false)';
+
+  var PROVENANCE_REGISTRY = {
+    H2O2: {
+      field_id: 'H2O2',
+      data_classification: 'CALCULATED',
+      calibration_status: 'PUBLISHED_G_VALUE',
+      units: 'mol/L',
+      coordinate_frame: 'Cylindrical pool (r, theta, z) [cm] + 1D coupon boundary layer z [um]',
+      source: 'Jay-Gerin (2025) G(H2O2)=0.68 molecules/100 eV; Buxton et al. (1988) rate constants; Stage 1 compute_pool_radiolysis_steady_state_balance',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 steady-state & 3D operator-split PDE)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Calculated from published primary yields and rate constants on a synthetic pool geometry/flow field. Long reaction-diffusion penetration l_rxn(H2O2) = 118.3 um reaches the coupon biofilm canopy.'
+    },
+    H2: {
+      field_id: 'H2',
+      data_classification: 'CALCULATED',
+      calibration_status: 'PUBLISHED_G_VALUE',
+      units: 'mol/L',
+      coordinate_frame: 'Cylindrical pool (r, theta, z) [cm] + 1D coupon boundary layer z [um]',
+      source: 'Jay-Gerin (2025) G(H2)=0.45 molecules/100 eV; Buxton et al. (1988) rate constants; Stage 1 compute_pool_radiolysis_steady_state_balance',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 steady-state & 3D operator-split PDE)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Long-lived molecular radiolysis product with reaction-diffusion length l_rxn(H2) = 109.5 um across the coupon concentration boundary layer (delta_c = 528 um).'
+    },
+    OH_rad: {
+      field_id: 'OH_rad',
+      data_classification: 'CALCULATED',
+      calibration_status: 'PUBLISHED_G_VALUE',
+      units: 'mol/L',
+      coordinate_frame: 'Cylindrical pool (r, theta, z) [cm] + local track quenching',
+      source: 'Jay-Gerin (2025) G(*OH)=2.80 molecules/100 eV; Buxton et al. (1988) radical scavenging kinetics',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 radical balance)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Short-lived hydroxyl radical with reaction-diffusion penetration length l_rxn(*OH) = 4.47 nm; quenches locally in bulk water and cannot advect from the core across the pool to wall coupons.'
+    },
+    e_aq: {
+      field_id: 'e_aq',
+      data_classification: 'CALCULATED',
+      calibration_status: 'PUBLISHED_G_VALUE',
+      units: 'mol/L',
+      coordinate_frame: 'Cylindrical pool (r, theta, z) [cm] + local track quenching',
+      source: 'Jay-Gerin (2025) G(e_aq^-)=2.65 molecules/100 eV; Buxton et al. (1988) hydrated electron kinetics',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 radical balance)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Short-lived hydrated electron with reaction-diffusion penetration length l_rxn(e_aq^-) = 9.90 nm; quenches locally unless generated directly within the wall gamma/Cherenkov dose field.'
+    },
+    dose_rate_Gy_s: {
+      field_id: 'dose_rate_Gy_s',
+      data_classification: 'CALCULATED',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'Gy/s',
+      coordinate_frame: 'Cylindrical pool (r, theta, z) [cm]',
+      source: 'Stage 1 radial + axial attenuation law D(r,z) from 10 MW generic MTR core shroud to r = 500 cm stainless-steel liner',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 PoolGeometryState)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Analytical attenuation field on synthetic open-pool MTR geometry; wall coupon dose rates span 0.045 to 0.125 Gy/s.'
+    },
+    temperature_C: {
+      field_id: 'temperature_C',
+      data_classification: 'SYNTHETIC',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'degC (bulk 35.0 degC / 308.15 K)',
+      coordinate_frame: 'Cylindrical pool (r, theta, z) [cm] + thermal boundary layer delta_T = 2292 um',
+      source: 'Stage 1 analytical Boussinesq thermal plume + flat-plate coupon boundary-layer correlations (Pr = 4.83)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (compute_coupon_boundary_layer)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Synthetic analytical thermal plume and boundary layer (delta_T = 2292 um); facility-specific CFD/PIV temperature fields are UNAVAILABLE.'
+    },
+    velocity_m_s: {
+      field_id: 'velocity_m_s',
+      data_classification: 'SYNTHETIC',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'm/s (U_bulk = 0.15 m/s; tau_w = 0.049 Pa)',
+      coordinate_frame: 'Cylindrical pool (r, theta, z) [cm] + momentum boundary layer delta_m = 4381 um',
+      source: 'Stage 1 analytical Boussinesq convection recirculation + Blasius wall coupon boundary layer',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (compute_coupon_boundary_layer)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Synthetic analytical velocity field (delta_m = 4381 um, delta_c = 528 um, tau_w = 0.049 Pa); validated 3D CFD/PIV velocity fields are UNAVAILABLE.'
+    },
+    pool_geometry_cad: {
+      field_id: 'pool_geometry_cad',
+      data_classification: 'SYNTHETIC',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'cm (R = 500 cm, Z in [-200, 200] cm)',
+      coordinate_frame: '3D Cartesian box [-500, 500] x [-500, 500] x [-200, 200] cm & cylindrical (r, theta, z)',
+      source: 'Generic public-domain open-pool MTR test reactor geometry (IAEA TECDOC-643 / generic 10 MW pool)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (PoolGeometryState)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Non-facility-specific synthetic cylindrical tank with central core shroud, 8 radial structural support fins, and magenta MTR box-grid core.'
+    },
+    quarter_wedge_cutaway: {
+      field_id: 'quarter_wedge_cutaway',
+      data_classification: 'CALCULATED',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'deg (theta_wedge) & cm (z_slice_cm)',
+      coordinate_frame: 'Orthogonal vertical r-z cutaway planes + horizontal x-y slice plane',
+      source: 'Coordinated 3D visualization slice operator over Stage 1 pool fields',
+      model_version: 'REACTOR-POOL-BIOFILM-3D-01 v1.0',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Interactive 3D quarter-wedge cutaway exposing radial core-to-wall gradients and axial plume contours simultaneously.'
+    },
+    coupon_eps_sorption: {
+      field_id: 'coupon_eps_sorption',
+      data_classification: 'PROVISIONAL_ASSUMPTION',
+      calibration_status: 'PROVISIONAL_UNCALIBRATED_ASSUMPTION',
+      units: 'Bq/cm^2 & mol/m^3 (pKa = 4.82, 6.90, 9.40; log K_Co = 1.60, 2.50, 3.20)',
+      coordinate_frame: '1D biofilm depth z in [0, L_f] um on stainless-steel coupon',
+      source: 'Fein et al. (1997) Bacillus subtilis protonation pKa=(4.82, 6.90, 9.40) [LITERATURE_DERIVED_FEIN_1997]; Co-60 log K_Co=(1.60, 2.50, 3.20) / affinity_m3_mol=(2.20, 12.50, 25.0) [PROVISIONAL_ASSUMPTION_AWAITING_CALIBRATION]; lambda(Co-60)=4.167e-9 s^-1 [ESTABLISHED_DECAY_CONSTANT]',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 2 stage2_eps_transport_and_sorption.jl)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Separates Fein (1997) protonation constants from provisional Co-60 complexation affinities and 5-way retention partition (abiotic oxide, dead biomass, live non-melanized, live melanized, and Coccomyxa microalgal uptake).'
+    },
+    cpm_morphology_stage3: {
+      field_id: 'cpm_morphology_stage3',
+      data_classification: 'PROVISIONAL_ASSUMPTION',
+      calibration_status: 'UNCALIBRATED_MCS_LATTICE',
+      units: 'MCS (seconds_per_mcs = NaN; D-PITCH: awaiting_measurement; 40x40x40 lattice)',
+      coordinate_frame: '3D micro coupon lattice (x, y, z) [um] / [voxels]',
+      source: 'Stage 3 FieldConsumerConfig (default lambda_etc = 0.0) & morphotype stratification benchmark (SL, SS, LL, CPM-Hypha)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 3 stage3_cpm_field_consumer_coupling.jl)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Default baseline is lambda_etc = 0.0 (zero radiotrophic coupling). Time step conversion seconds_per_mcs is explicitly NaN awaiting experimental microscopy calibration.'
+    },
+    coccomyxa_actinabiotis_benchmark: {
+      field_id: 'coccomyxa_actinabiotis_benchmark',
+      data_classification: 'MEASURED',
+      calibration_status: 'PUBLISHED_G_VALUE',
+      units: 'K_d = 4.5e5 mL/g (lab Ag-110m) | ~310 MBq removed in 360 m^3 pool over 21 d | Co-60 = 5,521 Bq/cm^2 (Sarro 2005)',
+      coordinate_frame: 'Laboratory batch effluent & 360 m^3 storage pool / open-pool coupon surfaces',
+      source: 'Rivasseau et al. (2013, 2016) Coccomyxa actinabiotis Ag-110m uptake; Sarro et al. (2005) Co-60 accumulation on stainless-steel coupons (lacking sterile control)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 2 empirical benchmark anchor)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Distinguishes controlled laboratory Ag-110m K_d (4.5e5 mL/g) from real-scale 360 m^3 pool trials (~310 MBq over 21 days) and unpartitioned Sarro et al. (2005) Co-60 coupon totals.'
+    },
+    control_5b_rpm_sensitivity: {
+      field_id: 'control_5b_rpm_sensitivity',
+      data_classification: 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS',
+      calibration_status: 'ILLUSTRATIVE_SENSITIVITY_FORMULA',
+      units: 'Dimensionless relative yield & J_ETC [mol m^-3 s^-1] vs B_0 [uT] and theta_B [rad]',
+      coordinate_frame: 'Internal spin-angle parameter space (B_0, theta_B)',
+      source: 'Stage 3 evaluate_biochemical_magnetic_sensitivity_control5b (illustrative algebraic formula)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 3 Control 5b)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION: verifies the implemented algebraic sensitivity formula only; does NOT empirically validate a melanin radical-pair mechanism and is NOT grounded in a measured melanin spin Hamiltonian.'
+    },
+    validated_cfd_pressure_Pa: {
+      field_id: 'validated_cfd_pressure_Pa',
+      data_classification: 'UNAVAILABLE',
+      calibration_status: 'UNAVAILABLE_AWAITING_CAMPAIGN',
+      units: 'Pa (UNAVAILABLE)',
+      coordinate_frame: '3D Reactor Pool (r, theta, z)',
+      source: 'No facility-validated 3D RANS/LES CFD pressure solution exists in the workspace',
+      model_version: 'UNAVAILABLE (Stage 1 cfd_piv_status = UNAVAILABLE)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Explicitly flagged UNAVAILABLE to prevent conflating analytical Boussinesq surrogates with validated reactor CFD.'
+    },
+    empirical_piv_temperature: {
+      field_id: 'empirical_piv_temperature',
+      data_classification: 'UNAVAILABLE',
+      calibration_status: 'UNAVAILABLE_AWAITING_CAMPAIGN',
+      units: 'K / degC (UNAVAILABLE)',
+      coordinate_frame: '3D Reactor Pool (r, theta, z)',
+      source: 'No empirical PIV/LIF velocimetry or thermometry campaign data exist in the workspace',
+      model_version: 'UNAVAILABLE (Stage 1 cfd_piv_status = UNAVAILABLE)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Explicitly flagged UNAVAILABLE; viewer falls back to synthetic Boussinesq thermal plume indicator.'
+    }
+  };
+
+  var COUPON_LOCATORS = {
+    'PIE-COUPON-SS316L-01': {
+      coupon_id: 'PIE-COUPON-SS316L-01',
+      substrate: 'SS316L stainless steel',
+      r_cm: 500.0,
+      theta_deg: 25.0,
+      z_cm: -40.0,
+      dose_rate_Gy_s: 0.0820,
+      H2O2_uM: 1.42,
+      H2_uM: 0.94,
+      OH_rad_nM: 0.0042,
+      e_aq_nM: 0.0038,
+      T_C: 35.4,
+      u_m_s: 0.15,
+      delta_m_um: 4381.0,
+      delta_T_um: 2292.0,
+      delta_c_um: 528.0,
+      tau_w_Pa: 0.049
+    },
+    'TRIGA-WALL-SS304L-02': {
+      coupon_id: 'TRIGA-WALL-SS304L-02',
+      substrate: 'SS304L pool liner',
+      r_cm: 500.0,
+      theta_deg: 115.0,
+      z_cm: 10.0,
+      dose_rate_Gy_s: 0.0540,
+      H2O2_uM: 1.12,
+      H2_uM: 0.74,
+      OH_rad_nM: 0.0031,
+      e_aq_nM: 0.0028,
+      T_C: 36.1,
+      u_m_s: 0.14,
+      delta_m_um: 4530.0,
+      delta_T_um: 2370.0,
+      delta_c_um: 546.0,
+      tau_w_Pa: 0.044
+    },
+    'SURROGATE-COUPON-AL6061-03': {
+      coupon_id: 'SURROGATE-COUPON-AL6061-03',
+      substrate: 'Al-6061 core-facing rack',
+      r_cm: 500.0,
+      theta_deg: 215.0,
+      z_cm: -95.0,
+      dose_rate_Gy_s: 0.1180,
+      H2O2_uM: 1.76,
+      H2_uM: 1.16,
+      OH_rad_nM: 0.0055,
+      e_aq_nM: 0.0049,
+      T_C: 34.8,
+      u_m_s: 0.16,
+      delta_m_um: 4240.0,
+      delta_T_um: 2218.0,
+      delta_c_um: 511.0,
+      tau_w_Pa: 0.055
+    }
+  };
+
+  // Precompute deterministic 3D cells and P(z) distributions for SL, SS, LL, CPM-Hypha
+  function buildMorphotypeData() {
+    var zBins = [];
+    for (var i = 0; i <= 30; i++) zBins.push(i);
+
+    function gauss(z, mu, sig, amp) {
+      var d = (z - mu) / sig;
+      return amp * Math.exp(-0.5 * d * d);
+    }
+
+    function normalizeCurve(arr) {
+      var s = 0;
+      for (var i = 0; i < arr.length; i++) s += arr[i];
+      if (s <= 0) return arr;
+      return arr.map(function(v) { return +(v / s * 0.92).toFixed(5); });
+    }
+
+    // SL: Sphere (red cocci, upper canopy z ~ 10..23 um) + Rod/Hypha (blue bacilli/hyphae, basal layer z ~ 0..12 um)
+    var slBlue3D = normalizeCurve(zBins.map(function(z) { return z <= 22 ? gauss(z, 5.2, 3.1, 1.0) + 0.12 * Math.exp(-z / 6.0) : 0.001; }));
+    var slRed3D  = normalizeCurve(zBins.map(function(z) { return z >= 3 && z <= 26 ? gauss(z, 15.8, 3.6, 1.0) : 0.001; }));
+    var slBlue2D = normalizeCurve(zBins.map(function(z) { return z <= 23 ? gauss(z, 5.8, 3.4, 1.0) : 0.001; }));
+    var slRed2D  = normalizeCurve(zBins.map(function(z) { return z >= 2 && z <= 26 ? gauss(z, 14.9, 3.9, 1.0) : 0.001; }));
+
+    // SS: Sphere + Sphere (overlapping clonal columns, z_mean_blue ~ 10.6 um, z_mean_red ~ 10.8 um)
+    var ssBlue3D = normalizeCurve(zBins.map(function(z) { return z <= 24 ? gauss(z, 10.6, 4.5, 1.0) : 0.001; }));
+    var ssRed3D  = normalizeCurve(zBins.map(function(z) { return z <= 24 ? gauss(z, 10.8, 4.5, 1.0) : 0.001; }));
+    var ssBlue2D = normalizeCurve(zBins.map(function(z) { return z <= 24 ? gauss(z, 10.2, 4.7, 1.0) : 0.001; }));
+    var ssRed2D  = normalizeCurve(zBins.map(function(z) { return z <= 24 ? gauss(z, 10.4, 4.7, 1.0) : 0.001; }));
+
+    // LL: Rod + Rod (entangled rods, overlapping P(z), z_mean_blue ~ 9.8 um, z_mean_red ~ 10.0 um)
+    var llBlue3D = normalizeCurve(zBins.map(function(z) { return z <= 23 ? gauss(z, 9.8, 4.3, 1.0) : 0.001; }));
+    var llRed3D  = normalizeCurve(zBins.map(function(z) { return z <= 23 ? gauss(z, 10.0, 4.3, 1.0) : 0.001; }));
+    var llBlue2D = normalizeCurve(zBins.map(function(z) { return z <= 23 ? gauss(z, 9.4, 4.5, 1.0) : 0.001; }));
+    var llRed2D  = normalizeCurve(zBins.map(function(z) { return z <= 23 ? gauss(z, 9.6, 4.5, 1.0) : 0.001; }));
+
+    // CPM-Hypha: 40x40x40 uncalibrated lattice with basal EPS/hyphal anchorage and upper tips
+    var cpmBlue3D = normalizeCurve(zBins.map(function(z) { return z <= 25 ? gauss(z, 6.8, 3.8, 1.0) : 0.001; }));
+    var cpmRed3D  = normalizeCurve(zBins.map(function(z) { return z <= 27 ? gauss(z, 14.4, 4.2, 1.0) : 0.001; }));
+    var cpmBlue2D = normalizeCurve(zBins.map(function(z) { return z <= 25 ? gauss(z, 7.1, 4.0, 1.0) : 0.001; }));
+    var cpmRed2D  = normalizeCurve(zBins.map(function(z) { return z <= 27 ? gauss(z, 13.9, 4.4, 1.0) : 0.001; }));
+
+    function meanZ(curve) {
+      var num = 0, den = 0;
+      for (var i = 0; i < zBins.length; i++) {
+        num += zBins[i] * curve[i];
+        den += curve[i];
+      }
+      return +(num / Math.max(den, 1e-12)).toFixed(2);
+    }
+
+    return {
+      z_um_bins: zBins,
+      SL: {
+        id: 'SL',
+        label: 'SL (Sphere + Rod/Hypha)',
+        red_shape: 'sphere',
+        blue_shape: 'rod',
+        z_mean_blue_um: meanZ(slBlue3D),
+        z_mean_red_um: meanZ(slRed3D),
+        stratified_canopy_over_base: meanZ(slBlue3D) < meanZ(slRed3D),
+        p_z_blue_3d: slBlue3D,
+        p_z_red_3d: slRed3D,
+        p_z_blue_2d: slBlue2D,
+        p_z_red_2d: slRed2D,
+        calibration_status: 'SYNTHETIC_SURROGATE'
+      },
+      SS: {
+        id: 'SS',
+        label: 'SS (Sphere + Sphere)',
+        red_shape: 'sphere',
+        blue_shape: 'sphere',
+        z_mean_blue_um: meanZ(ssBlue3D),
+        z_mean_red_um: meanZ(ssRed3D),
+        stratified_canopy_over_base: false,
+        p_z_blue_3d: ssBlue3D,
+        p_z_red_3d: ssRed3D,
+        p_z_blue_2d: ssBlue2D,
+        p_z_red_2d: ssRed2D,
+        calibration_status: 'SYNTHETIC_SURROGATE'
+      },
+      LL: {
+        id: 'LL',
+        label: 'LL (Rod + Rod)',
+        red_shape: 'rod',
+        blue_shape: 'rod',
+        z_mean_blue_um: meanZ(llBlue3D),
+        z_mean_red_um: meanZ(llRed3D),
+        stratified_canopy_over_base: false,
+        p_z_blue_3d: llBlue3D,
+        p_z_red_3d: llRed3D,
+        p_z_blue_2d: llBlue2D,
+        p_z_red_2d: llRed2D,
+        calibration_status: 'SYNTHETIC_SURROGATE'
+      },
+      'CPM-Hypha': {
+        id: 'CPM-Hypha',
+        label: 'CPM-Hypha (40x40x40 Lattice)',
+        red_shape: 'voxel_tip',
+        blue_shape: 'voxel_trunk',
+        z_mean_blue_um: meanZ(cpmBlue3D),
+        z_mean_red_um: meanZ(cpmRed3D),
+        stratified_canopy_over_base: meanZ(cpmBlue3D) < meanZ(cpmRed3D),
+        p_z_blue_3d: cpmBlue3D,
+        p_z_red_3d: cpmRed3D,
+        p_z_blue_2d: cpmBlue2D,
+        p_z_red_2d: cpmRed2D,
+        lattice_dims: [40, 40, 40],
+        d_pitch_status: 'awaiting_measurement',
+        seconds_per_mcs: NaN,
+        calibration_status: 'UNCALIBRATED_MCS_LATTICE'
+      }
+    };
+  }
+
+  var MORPHOTYPE_DATA = buildMorphotypeData();
+
+  var NULL_MODEL_WORKBENCH = {
+    baseline_no_coupling_default: {
+      id: 'baseline_no_coupling_default',
+      title: 'Control 1: Baseline Null (lambda_etc = 0.0) vs Exploratory Field Coupling (lambda_etc > 0)',
+      default_lambda_etc: 0.0,
+      default_delta_H_etc: 0.0,
+      exploratory_hypothesis_tag: 'EXPLORATORY_HYPOTHESIS',
+      gradient_difference_flat_field_delta_H: 0.0,
+      site_occupation_flat_field_delta_H_at_lambda_1: -0.48,
+      flat_field_volume_swelling_diagnostic: 'Under a spatially uniform field (grad J_ETC = 0), :gradient_difference gives exact delta_H = 0.0 (no artificial growth bias), whereas :site_occupation produces artificial volume swelling (delta_H < 0 for copy attempts from medium sigma=0 into cell sigma>0).'
+    },
+    five_way_radionuclide_retention: {
+      id: 'five_way_radionuclide_retention',
+      title: 'Controls 2-4: 5-Way Radionuclide Retention Partition & Coccomyxa Benchmark',
+      fein_1997_pKa: [4.82, 6.90, 9.40],
+      fein_1997_status: 'LITERATURE_DERIVED_FEIN_1997',
+      co60_log_K_provisional: [1.60, 2.50, 3.20],
+      co60_affinity_m3_mol_provisional: [2.20, 12.50, 25.0],
+      co60_affinity_status: 'PROVISIONAL_ASSUMPTION_AWAITING_CALIBRATION',
+      co60_decay_constant_s_inv: 4.167e-9,
+      co60_decay_status: 'ESTABLISHED_DECAY_CONSTANT',
+      partitions_Bq_cm2: {
+        q_abiotic_oxide_sterile: 410.0,
+        q_passive_dead_biomass: 1890.0,
+        q_active_non_melanized: 2480.0,
+        q_active_melanized: 2810.0,
+        q_coccomyxa_microalgal: 4950.0
+      },
+      coccomyxa_actinabiotis_benchmark: {
+        organism: 'Coccomyxa actinabiotis (Rivasseau et al. 2013, 2016)',
+        lab_effluent_Ag110m_Kd_mL_g: 4.5e5,
+        pool_scale_trial_volume_m3: 360.0,
+        pool_scale_trial_duration_days: 21,
+        pool_scale_Ag110m_removed_MBq: 310.0,
+        sarro_2005_Co60_Bq_cm2: 5521.0,
+        sarro_2005_has_sterile_control: false
+      }
+    },
+    equal_dose_power_schedules: {
+      id: 'equal_dose_power_schedules',
+      title: 'Control 5: Equal-Dose Power Schedules (Constant vs Periodic vs Shuffled)',
+      integrated_dose_Gy: 295.2,
+      primary_integrated_yield_H2_mol_L: 1.68e-4,
+      primary_integrated_yield_H2O2_mol_L: 2.54e-4,
+      primary_yields_identical_across_schedules: true,
+      downstream_differences_are_regime_dependent: true,
+      implies_downstream_differences_under_all_regimes: false,
+      conserved_regime_final_yields_identical: true,
+      uncoupled_regime_cpm_trajectories_identical: true,
+      regimes: {
+        active_nonlinear_coupled: {
+          regime_id: 'active_nonlinear_coupled',
+          k_decay_s_inv: 0.015,
+          lambda_etc: 1.0,
+          schedules: {
+            constant: { final_C_uM: 1.42, max_C_uM: 1.42, mean_sq_C: 2.02, integrated_J_ETC: 0.842, cpm_anisotropy_index: 1.18 },
+            periodic: { final_C_uM: 1.19, max_C_uM: 2.31, mean_sq_C: 2.78, integrated_J_ETC: 0.764, cpm_anisotropy_index: 1.31 },
+            shuffled: { final_C_uM: 1.58, max_C_uM: 2.64, mean_sq_C: 3.04, integrated_J_ETC: 0.731, cpm_anisotropy_index: 1.26 }
+          }
+        },
+        conserved_linear_uncoupled: {
+          regime_id: 'conserved_linear_uncoupled',
+          k_decay_s_inv: 0.0,
+          lambda_etc: 0.0,
+          schedules: {
+            constant: { final_C_uM: 254.0, max_C_uM: 254.0, mean_sq_C: 21504.0, integrated_J_ETC: 0.0, cpm_anisotropy_index: 1.00 },
+            periodic: { final_C_uM: 254.0, max_C_uM: 254.0, mean_sq_C: 21504.0, integrated_J_ETC: 0.0, cpm_anisotropy_index: 1.00 },
+            shuffled: { final_C_uM: 254.0, max_C_uM: 254.0, mean_sq_C: 21504.0, integrated_J_ETC: 0.0, cpm_anisotropy_index: 1.00 }
+          }
+        }
+      }
+    },
+    control_5a_spatial_bias_null: {
+      id: 'control_5a_spatial_bias_null',
+      title: 'Control 5a: Spatial-Bias Magnetic Null (Uniform B_0, theta_B)',
+      uniform_field_grad_J_ETC: 0.0,
+      gradient_difference_delta_H: 0.0,
+      j_base_b0_zero: 0.420,
+      j_uniform_b0_50uT: 0.468,
+      site_occupation_uniform_shift: -0.468,
+      summary: 'A spatially uniform magnetic field (B_0, theta_B) produces zero spatial gradient (grad J_ETC = 0) and exact delta_H = 0 under :gradient_difference, while shifting spatially uniform :site_occupation energy relative to the B_0 = 0 baseline (j_base_b0_zero).'
+    },
+    control_5b_biochemical_magnetic_sensitivity: {
+      id: 'control_5b_biochemical_magnetic_sensitivity',
+      title: 'Control 5b: Biochemical Magnetic-Response Parametric Sensitivity',
+      epistemic_badge: 'ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION',
+      output_classification: 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS',
+      verifies_implemented_function_not_real_melanin_mechanism: true,
+      empirically_validates_melanin_radical_pair_mechanism: false,
+      grounded_in_measured_melanin_spin_hamiltonian: false,
+      b0_sweep_uT: [0, 25, 50, 100, 200, 500],
+      relative_singlet_yield_theta0: [1.000, 1.038, 1.072, 1.108, 1.132, 1.148],
+      relative_singlet_yield_theta90: [1.000, 1.019, 1.036, 1.054, 1.066, 1.074]
+    },
+    control_6_oxidant_chemotropism: {
+      id: 'control_6_oxidant_chemotropism',
+      title: 'Control 6: Non-Radiotrophic Oxidant Chemotropism (M_tot = 0 vs M_tot = 1)',
+      non_melanized_M0_oxidant_avoidance_drift_um: -4.8,
+      non_melanized_M0_aerotaxis_drift_um: 3.6,
+      putative_melanized_M1_drift_um_lambda0: 0.0,
+      putative_melanized_M1_drift_um_exploratory: 5.2,
+      summary: 'Directional growth in a pool-wall H2O2/O2 gradient can arise from classical non-radiotrophic oxidant avoidance or aerotaxis (M_tot = 0) without invoking melanin-mediated radiotrophy (M_tot = 1).'
+    },
+    epistemic_gates_eg1_eg4_and_links_l1_l5: {
+      id: 'epistemic_gates_eg1_eg4_and_links_l1_l5',
+      title: 'Epistemic Gates (EG-1..EG-4) & Fault-Tree Links (L1..L5)',
+      gates: {
+        'EG-1': 'Separates published primary radiolysis yields (Jay-Gerin 2025; Buxton 1988) from unmeasured facility-specific 3D CFD/PIV flow fields.',
+        'EG-2': 'Separates Fein et al. (1997) protonation pKa constants from provisional Co-60 binding affinities and 5-way retention partitions.',
+        'EG-3': 'Enforces strict time-base separation between physical pool PDE time t_pool [s] and uncalibrated CPM steps MCS (seconds_per_mcs = NaN).',
+        'EG-4': 'Labels Control 5b radical-pair magnetic curves as ILLUSTRATIVE_SENSITIVITY_ANALYSIS, not empirical validation of melanin spin physics.'
+      },
+      links: {
+        L1: 'ESTABLISHED: Core gamma/neutron leakage + primary water radiolysis yields (G-values).',
+        L2: 'SYNTHETIC_SURROGATE: Boussinesq convection + coupon boundary-layer transport (delta_m, delta_T, delta_c).',
+        L3: 'ESTABLISHED_BENCHMARK: EPS biosorption & Coccomyxa actinabiotis Ag-110m/Co-60 retention.',
+        L4: 'EXPLORATORY_HYPOTHESIS: Melanin-mediated radiotrophic electron transfer (default lambda_etc = 0.0).',
+        L5: 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS: Radical-pair spin-Hamiltonian modulation of melanin electron transfer.'
+      }
+    }
+  };
+
+  // Global Explorer State
+  var urlParams = new URLSearchParams(window.location.search || '');
+  var force2dParam = urlParams.get('force2d') === '1';
+
+  window.EXPLORER_STATE = {
+    artifact_id: 'REACTOR-POOL-BIOFILM-3D-01',
+    solvers_kept_separate: true,
+    solver_level_coupled_validation_claimed: false,
+    default_lambda_etc_on_load: 0.0,
+    lambda_etc: 0.0,
+    t_pool_s: 1800,
+    mcs_step: 60,
+    seconds_per_mcs: NaN,
+    d_pitch_status: 'awaiting_measurement',
+    time_bases_locked_uncoupled: true,
+    theta_wedge_deg: 90,
+    z_slice_cm: -40,
+    z_biofilm_um: 12.0,
+    layers: {
+      pool_geometry: true,
+      temperature_flow: true,
+      radiation_radiolysis: true,
+      biofilm_coupons: true
+    },
+    active_field: 'H2O2',
+    selected_coupon_id: 'PIE-COUPON-SS316L-01',
+    morphotype: 'SL',
+    oklo_comparison_visible: true,
+    oklo_dimensional_rupture_score: '5/5',
+    active_null_control: 'baseline_no_coupling_default',
+    schedule_regime: 'active_nonlinear_coupled',
+    selected_provenance_field: 'H2O2',
+    render_mode_macro: 'initializing',
+    render_mode_micro: 'initializing',
+    frame_count: 0,
+    commit_locks: {
+      reactor_pool_biofilms_version: '0.1.0',
+      reactor_pool_biofilms_commit: '903f278',
+      prrt_spatial_cpm_clinical_main: '507fc19c507505233268e058b7b5d7a0bd4e378c',
+      prrt_spatial_cpm_remote_pr31_head: '2db2a7b558ea736c61cc459fd6a72c4afa36e3c5',
+      prrt_spatial_cpm_local_unpushed_head: '8182c30ab46d3b6a8cee7c853c18f7a44766a59d',
+      local_test_results_attributed_to_remote_pr_head: false,
+      local_branch_pushed_to_remote: false
+    }
+  };
+
+  // WebGL context initialization with automatic 2D Canvas fallback
+  function initWebGLBackground(canvasId) {
+    if (force2dParam) return null;
+    var canvas = document.getElementById(canvasId);
+    if (!canvas) return null;
+    var gl = null;
+    try {
+      gl = canvas.getContext('webgl', { antialias: true, preserveDrawingBuffer: true }) ||
+           canvas.getContext('experimental-webgl', { antialias: true, preserveDrawingBuffer: true });
+    } catch (e) {
+      gl = null;
+    }
+    if (!gl) return null;
+
+    var vsSrc = 'attribute vec2 aPos; varying vec2 vUv; void main(){ vUv = aPos * 0.5 + 0.5; gl_Position = vec4(aPos, 0.0, 1.0); }';
+    var fsSrc = 'precision mediump float; varying vec2 vUv; uniform float uPhase; uniform vec3 uTint; void main(){ ' +
+      'vec2 p = vUv - vec2(0.5, 0.5); float r = length(p); ' +
+      'float glow = 0.16 * exp(-3.5 * r * r) + 0.03 * sin(12.0 * p.x + uPhase) * cos(12.0 * p.y - uPhase); ' +
+      'gl_FragColor = vec4(uTint * glow + vec3(0.02, 0.04, 0.08), 1.0); }';
+
+    function compile(type, src) {
+      var s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) return null;
+      return s;
+    }
+    var vs = compile(gl.VERTEX_SHADER, vsSrc);
+    var fs = compile(gl.FRAGMENT_SHADER, fsSrc);
+    if (!vs || !fs) return null;
+    var prog = gl.createProgram();
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+
+    return {
+      gl: gl,
+      prog: prog,
+      buf: buf,
+      aPos: gl.getAttribLocation(prog, 'aPos'),
+      uPhase: gl.getUniformLocation(prog, 'uPhase'),
+      uTint: gl.getUniformLocation(prog, 'uTint')
+    };
+  }
+
+  var glMacroCtx = initWebGLBackground('glPoolCanvas');
+  var glMicroCtx = initWebGLBackground('glBiofilmCanvas');
+  window.EXPLORER_STATE.render_mode_macro = glMacroCtx ? 'webgl+2d_overlay' : 'canvas2d_fallback';
+  window.EXPLORER_STATE.render_mode_micro = glMicroCtx ? 'webgl+2d_overlay' : 'canvas2d_fallback';
+
+  function drawWebGLBackdrop(ctxObj, phase, tintRGB) {
+    if (!ctxObj) return;
+    var gl = ctxObj.gl;
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    gl.clearColor(0.02, 0.04, 0.08, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(ctxObj.prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, ctxObj.buf);
+    gl.enableVertexAttribArray(ctxObj.aPos);
+    gl.vertexAttribPointer(ctxObj.aPos, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform1f(ctxObj.uPhase, phase);
+    gl.uniform3f(ctxObj.uTint, tintRGB[0], tintRGB[1], tintRGB[2]);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+
+  // Isometric 3D projection helper for Macro Pool Cutaway
+  function projectMacro3D(x, y, z, cx, cy, scale) {
+    var yaw = 0.62;
+    var pitch = 0.52;
+    var xr = x * Math.cos(yaw) - y * Math.sin(yaw);
+    var yr = x * Math.sin(yaw) + y * Math.cos(yaw);
+    var sx = cx + xr * scale;
+    var sy = cy + (yr * Math.sin(pitch) - z * Math.cos(pitch)) * scale;
+    return { x: sx, y: sy };
+  }
+
+  function fieldColorMap(fieldId, normVal) {
+    var v = Math.max(0, Math.min(1, normVal));
+    if (fieldId === 'validated_cfd_pressure_Pa' || fieldId === 'empirical_piv_temperature') {
+      return 'rgba(244, 63, 94, 0.32)';
+    }
+    if (fieldId === 'temperature_C' || fieldId === 'velocity_m_s') {
+      var rT = Math.round(35 + 215 * v);
+      var gT = Math.round(90 + 110 * (1 - Math.abs(v - 0.5) * 1.6));
+      var bT = Math.round(220 - 180 * v);
+      return 'rgba(' + rT + ',' + gT + ',' + bT + ',0.78)';
+    }
+    // Radiolysis / Dose colormap (deep navy -> cyan -> emerald -> yellow -> magenta core)
+    var r = Math.round(20 + 225 * Math.pow(v, 1.3));
+    var g = Math.round(60 + 170 * Math.sin(v * Math.PI));
+    var b = Math.round(160 + 85 * (1 - v));
+    return 'rgba(' + r + ',' + g + ',' + b + ',0.80)';
+  }
+
+  // Render Macro 3D Reactor Pool Cutaway
+  function renderMacroPoolViewport() {
+    var st = window.EXPLORER_STATE;
+    drawWebGLBackdrop(glMacroCtx, st.t_pool_s * 0.002, [0.22, 0.74, 0.97]);
+
+    var canvas = document.getElementById('canvasPool2d');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    if (!glMacroCtx) {
+      ctx.fillStyle = '#050912';
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    var cx = W * 0.48, cy = H * 0.53, scale = 0.25;
+    var R = 500, Zmin = -200, Zmax = 200;
+    var wedgeRad = (st.theta_wedge_deg * Math.PI) / 180.0;
+
+    // 1. 3D Wire-Grid Coordinate Bounding Box [-500,500] x [-500,500] x [-200,200] cm
+    if (st.layers.pool_geometry) {
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
+      ctx.lineWidth = 1;
+      var corners = [
+        [-R,-R,Zmin],[R,-R,Zmin],[R,R,Zmin],[-R,R,Zmin],
+        [-R,-R,Zmax],[R,-R,Zmax],[R,R,Zmax],[-R,R,Zmax]
+      ];
+      var edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+      for (var e = 0; e < edges.length; e++) {
+        var p0 = projectMacro3D(corners[edges[e][0]][0], corners[edges[e][0]][1], corners[edges[e][0]][2], cx, cy, scale);
+        var p1 = projectMacro3D(corners[edges[e][1]][0], corners[edges[e][1]][1], corners[edges[e][1]][2], cx, cy, scale);
+        ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+      }
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.72)';
+      ctx.font = '10px monospace';
+      var lblX = projectMacro3D(R, -R, Zmin, cx, cy, scale);
+      ctx.fillText('X,Y in [-500,500] cm', lblX.x - 55, lblX.y + 13);
+      var lblZ = projectMacro3D(-R, -R, Zmax, cx, cy, scale);
+      ctx.fillText('Z=+200 cm', lblZ.x - 18, lblZ.y - 6);
+    }
+
+    // 2. Horizontal slice plane at z = z_slice_cm + Vertical r-z quarter-wedge cutaway faces
+    var showField = st.layers.radiation_radiolysis || st.layers.temperature_flow;
+    if (showField) {
+      var nR = 14, nZ = 10;
+      // Two vertical cutaway planes at theta = 0 and theta = wedgeRad
+      var thetas = [0.0, wedgeRad];
+      for (var ti = 0; ti < thetas.length; ti++) {
+        var th = thetas[ti];
+        for (var ir = 1; ir < nR; ir++) {
+          var r0 = (ir / nR) * R, r1 = ((ir + 1) / nR) * R;
+          for (var iz = 0; iz < nZ; iz++) {
+            var z0 = Zmin + (iz / nZ) * (Zmax - Zmin);
+            var z1 = Zmin + ((iz + 1) / nZ) * (Zmax - Zmin);
+            var rMid = 0.5 * (r0 + r1), zMid = 0.5 * (z0 + z1);
+            var distCore = Math.sqrt(rMid * rMid + zMid * zMid * 1.4);
+            var val = Math.exp(-distCore / 195.0) * (1.0 + 0.08 * Math.sin(st.t_pool_s / 600.0));
+            if (st.active_field === 'temperature_C' || st.active_field === 'velocity_m_s') {
+              val = Math.exp(-rMid / 240.0) * (0.55 + 0.45 * ((zMid - Zmin) / (Zmax - Zmin)));
+            }
+            ctx.fillStyle = fieldColorMap(st.active_field, val);
+            var q0 = projectMacro3D(r0 * Math.cos(th), r0 * Math.sin(th), z0, cx, cy, scale);
+            var q1 = projectMacro3D(r1 * Math.cos(th), r1 * Math.sin(th), z0, cx, cy, scale);
+            var q2 = projectMacro3D(r1 * Math.cos(th), r1 * Math.sin(th), z1, cx, cy, scale);
+            var q3 = projectMacro3D(r0 * Math.cos(th), r0 * Math.sin(th), z1, cx, cy, scale);
+            ctx.beginPath();
+            ctx.moveTo(q0.x, q0.y); ctx.lineTo(q1.x, q1.y);
+            ctx.lineTo(q2.x, q2.y); ctx.lineTo(q3.x, q3.y);
+            ctx.closePath();
+            ctx.fill();
+          }
+        }
+      }
+
+      // Horizontal x-y contour slice at z_slice_cm outside the removed wedge
+      var nArc = 28;
+      for (var ia = 0; ia < nArc; ia++) {
+        var a0 = wedgeRad + (ia / nArc) * (2 * Math.PI - wedgeRad);
+        var a1 = wedgeRad + ((ia + 1) / nArc) * (2 * Math.PI - wedgeRad);
+        for (var ir2 = 2; ir2 < 10; ir2++) {
+          var rr0 = (ir2 / 10) * R, rr1 = ((ir2 + 1) / 10) * R;
+          var valH = Math.exp(-(0.5 * (rr0 + rr1)) / 220.0);
+          ctx.fillStyle = fieldColorMap(st.active_field, valH * 0.85);
+          var h0 = projectMacro3D(rr0 * Math.cos(a0), rr0 * Math.sin(a0), st.z_slice_cm, cx, cy, scale);
+          var h1 = projectMacro3D(rr1 * Math.cos(a0), rr1 * Math.sin(a0), st.z_slice_cm, cx, cy, scale);
+          var h2 = projectMacro3D(rr1 * Math.cos(a1), rr1 * Math.sin(a1), st.z_slice_cm, cx, cy, scale);
+          var h3 = projectMacro3D(rr0 * Math.cos(a1), rr0 * Math.sin(a1), st.z_slice_cm, cx, cy, scale);
+          ctx.beginPath();
+          ctx.moveTo(h0.x, h0.y); ctx.lineTo(h1.x, h1.y);
+          ctx.lineTo(h2.x, h2.y); ctx.lineTo(h3.x, h3.y);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+    }
+
+    // 3. Cylindrical Pool Wall + Core Shroud + 8 Radial Structural Support Fins + Magenta MTR Core
+    if (st.layers.pool_geometry) {
+      var steps = 48;
+      var zLevels = [Zmin, st.z_slice_cm, Zmax];
+      for (var zl = 0; zl < zLevels.length; zl++) {
+        ctx.strokeStyle = zl === 1 ? 'rgba(56, 189, 248, 0.78)' : 'rgba(148, 163, 184, 0.55)';
+        ctx.lineWidth = zl === 1 ? 1.8 : 1.2;
+        ctx.beginPath();
+        for (var s = 0; s <= steps; s++) {
+          var ang = wedgeRad + (s / steps) * (2 * Math.PI - wedgeRad);
+          var pt = projectMacro3D(R * Math.cos(ang), R * Math.sin(ang), zLevels[zl], cx, cy, scale);
+          if (s === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+        }
+        ctx.stroke();
+      }
+
+      // 8 Radial structural support fins around the inner core shroud (r = 75..155 cm)
+      ctx.strokeStyle = 'rgba(203, 213, 225, 0.72)';
+      ctx.lineWidth = 1.4;
+      for (var f = 0; f < 8; f++) {
+        var fAng = (f / 8) * 2 * Math.PI;
+        var fIn = projectMacro3D(72 * Math.cos(fAng), 72 * Math.sin(fAng), -90, cx, cy, scale);
+        var fOut = projectMacro3D(155 * Math.cos(fAng), 155 * Math.sin(fAng), -140, cx, cy, scale);
+        ctx.beginPath(); ctx.moveTo(fIn.x, fIn.y); ctx.lineTo(fOut.x, fOut.y); ctx.stroke();
+      }
+
+      // Central Magenta 10 MW MTR Box-Grid Core Lattice (r <= 65 cm, z in [-70, 70] cm)
+      ctx.fillStyle = 'rgba(217, 70, 239, 0.82)';
+      ctx.strokeStyle = '#f5d0fe';
+      ctx.lineWidth = 1.2;
+      var cBot = projectMacro3D(0, 0, -65, cx, cy, scale);
+      var cTop = projectMacro3D(0, 0, 65, cx, cy, scale);
+      ctx.fillRect(cTop.x - 16, cTop.y, 32, cBot.y - cTop.y);
+      ctx.strokeRect(cTop.x - 16, cTop.y, 32, cBot.y - cTop.y);
+    }
+
+    // 4. Boussinesq Thermal Plume Streamlines (when temperature_flow is enabled)
+    if (st.layers.temperature_flow) {
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.75)';
+      ctx.lineWidth = 1.3;
+      var plumeAngles = [0.25, wedgeRad - 0.15];
+      for (var pa = 0; pa < plumeAngles.length; pa++) {
+        var pAng = plumeAngles[pa];
+        ctx.beginPath();
+        for (var zs = -80; zs <= 160; zs += 20) {
+          var radPlume = 95 + 140 * ((zs + 80) / 240);
+          var ptP = projectMacro3D(radPlume * Math.cos(pAng), radPlume * Math.sin(pAng), zs, cx, cy, scale);
+          if (zs === -80) ctx.moveTo(ptP.x, ptP.y); else ctx.lineTo(ptP.x, ptP.y);
+        }
+        ctx.stroke();
+      }
+    }
+
+    // 5. Wall Biofilm Coupon Locators at r = R = 500 cm
+    if (st.layers.biofilm_coupons) {
+      var cKeys = Object.keys(COUPON_LOCATORS);
+      for (var ck = 0; ck < cKeys.length; ck++) {
+        var cp = COUPON_LOCATORS[cKeys[ck]];
+        var cAng = (cp.theta_deg * Math.PI) / 180.0;
+        var cPt = projectMacro3D(cp.r_cm * Math.cos(cAng), cp.r_cm * Math.sin(cAng), cp.z_cm, cx, cy, scale);
+        var isSel = (cp.coupon_id === st.selected_coupon_id);
+        ctx.beginPath();
+        ctx.arc(cPt.x, cPt.y, isSel ? 7 : 5, 0, 2 * Math.PI);
+        ctx.fillStyle = isSel ? '#10b981' : '#38bdf8';
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = isSel ? 2 : 1;
+        ctx.stroke();
+        ctx.fillStyle = isSel ? '#6ee7b7' : '#bae6fd';
+        ctx.font = (isSel ? 'bold ' : '') + '10px monospace';
+        ctx.fillText(cp.coupon_id, cPt.x + 9, cPt.y + 3);
+      }
+    }
+
+    // UNAVAILABLE field overlay notice when CFD/PIV is selected
+    if (st.active_field === 'validated_cfd_pressure_Pa' || st.active_field === 'empirical_piv_temperature') {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+      ctx.fillRect(45, H - 64, W - 90, 48);
+      ctx.strokeStyle = '#f43f5e';
+      ctx.strokeRect(45, H - 64, W - 90, 48);
+      ctx.fillStyle = '#fda4af';
+      ctx.font = 'bold 11px monospace';
+      ctx.fillText('FIELD STATUS: UNAVAILABLE (' + st.active_field + ')', 58, H - 43);
+      ctx.font = '10.5px monospace';
+      ctx.fillText('No validated 3D reactor CFD/PIV dataset exists; Stage 1 uses synthetic Boussinesq analytical flow.', 58, H - 25);
+    }
+  }
+
+  // Render Micro 3D Coupon Biofilm Block
+  function renderMicroBiofilmViewport() {
+    var st = window.EXPLORER_STATE;
+    var mData = MORPHOTYPE_DATA[st.morphotype] || MORPHOTYPE_DATA.SL;
+    drawWebGLBackdrop(glMicroCtx, st.mcs_step * 0.05, [0.16, 0.65, 0.55]);
+
+    var canvas = document.getElementById('canvasBiofilm2d');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    if (!glMicroCtx) {
+      ctx.fillStyle = '#050912';
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    var cx = W * 0.50, cy = H * 0.68, scale = 5.4;
+    function projMicro(x, y, z) {
+      var yaw = 0.68, pitch = 0.50;
+      var xr = x * Math.cos(yaw) - y * Math.sin(yaw);
+      var yr = x * Math.sin(yaw) + y * Math.cos(yaw);
+      return {
+        x: cx + xr * scale,
+        y: cy + (yr * Math.sin(pitch) - z * Math.cos(pitch)) * scale
+      };
+    }
+
+    // 1. Grey Stainless-Steel Coupon Substrate Block (z in [-3, 0] um, x,y in [-22, 22] um)
+    var L = 22;
+    var subTop = [projMicro(-L,-L,0), projMicro(L,-L,0), projMicro(L,L,0), projMicro(-L,L,0)];
+    var subBot = [projMicro(-L,-L,-3.5), projMicro(L,-L,-3.5), projMicro(L,L,-3.5), projMicro(-L,L,-3.5)];
+    ctx.fillStyle = '#64748b';
+    ctx.beginPath();
+    ctx.moveTo(subTop[0].x, subTop[0].y); ctx.lineTo(subTop[1].x, subTop[1].y);
+    ctx.lineTo(subTop[2].x, subTop[2].y); ctx.lineTo(subTop[3].x, subTop[3].y);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1; ctx.stroke();
+
+    ctx.fillStyle = '#475569';
+    ctx.beginPath();
+    ctx.moveTo(subTop[1].x, subTop[1].y); ctx.lineTo(subTop[2].x, subTop[2].y);
+    ctx.lineTo(subBot[2].x, subBot[2].y); ctx.lineTo(subBot[1].x, subBot[1].y);
+    ctx.closePath(); ctx.fill();
+
+    // 2. Render 3D cells or CPM voxels according to morphotype
+    var nCells = 110;
+    var items = [];
+    for (var i = 0; i < nCells; i++) {
+      var s1 = Math.sin(i * 12.9898 + 1.23) * 43758.5453;
+      var u1 = s1 - Math.floor(s1);
+      var s2 = Math.sin(i * 78.233 + 4.56) * 43758.5453;
+      var u2 = s2 - Math.floor(s2);
+      var s3 = Math.sin(i * 39.425 + 7.89) * 43758.5453;
+      var u3 = s3 - Math.floor(s3);
+
+      var isRed = (i % 2 === 0);
+      var x = (u1 - 0.5) * 34.0;
+      var y = (u2 - 0.5) * 34.0;
+      var z = 2.0;
+      if (st.morphotype === 'SL') {
+        z = isRed ? (10.5 + u3 * 12.5) : (1.2 + u3 * 8.8);
+      } else if (st.morphotype === 'CPM-Hypha') {
+        z = isRed ? (9.5 + u3 * 13.5 + st.lambda_etc * 1.4) : (1.0 + u3 * 9.5);
+      } else {
+        // SS and LL have overlapping vertical distributions
+        var colAngle = Math.atan2(y, x);
+        isRed = Math.sin(colAngle * 3.0) >= 0;
+        z = 1.5 + u3 * 19.0;
+      }
+      items.push({ x: x, y: y, z: z, isRed: isRed, angle: u1 * Math.PI });
+    }
+    items.sort(function(a, b) { return (a.x + a.y + a.z) - (b.x + b.y + b.z); });
+
+    for (var k = 0; k < items.length; k++) {
+      var it = items[k];
+      var p = projMicro(it.x, it.y, it.z);
+      var shape = it.isRed ? mData.red_shape : mData.blue_shape;
+      var colFill = it.isRed ? '#ef4444' : '#3b82f6';
+      var colStroke = it.isRed ? '#fca5a5' : '#93c5fd';
+
+      if (shape === 'sphere') {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4.3, 0, 2 * Math.PI);
+        ctx.fillStyle = colFill; ctx.fill();
+        ctx.strokeStyle = colStroke; ctx.lineWidth = 0.8; ctx.stroke();
+      } else if (shape === 'rod') {
+        var dx = Math.cos(it.angle) * 6.5;
+        var dy = Math.sin(it.angle) * 3.2;
+        ctx.beginPath();
+        ctx.moveTo(p.x - dx, p.y - dy);
+        ctx.lineTo(p.x + dx, p.y + dy);
+        ctx.strokeStyle = colFill;
+        ctx.lineWidth = 4.6;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      } else {
+        // CPM-Hypha 40x40x40 voxel cube
+        ctx.fillStyle = colFill;
+        ctx.strokeStyle = colStroke;
+        ctx.lineWidth = 0.8;
+        ctx.fillRect(p.x - 4, p.y - 4, 8, 8);
+        ctx.strokeRect(p.x - 4, p.y - 4, 8, 8);
+      }
+    }
+
+    // 3. Horizontal Canopy Probe Plane at z = z_biofilm_um
+    var prPlane = [
+      projMicro(-L, -L, st.z_biofilm_um),
+      projMicro(L, -L, st.z_biofilm_um),
+      projMicro(L, L, st.z_biofilm_um),
+      projMicro(-L, L, st.z_biofilm_um)
+    ];
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
+    ctx.setLineDash([4, 3]);
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(prPlane[0].x, prPlane[0].y); ctx.lineTo(prPlane[1].x, prPlane[1].y);
+    ctx.lineTo(prPlane[2].x, prPlane[2].y); ctx.lineTo(prPlane[3].x, prPlane[3].y);
+    ctx.closePath(); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = '10px monospace';
+    ctx.fillText('z_probe = ' + st.z_biofilm_um.toFixed(1) + ' um', prPlane[1].x - 75, prPlane[1].y - 5);
+  }
+
+  // Render Row A (2D x-z slice + morphotype inset), Row B (P(z) 3-D solid vs 2-D dashed), Row C (3D summary)
+  function renderBiofilmStratificationRows() {
+    var canvas = document.getElementById('canvasBiofilmRows');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#060b16';
+    ctx.fillRect(0, 0, W, H);
+
+    var st = window.EXPLORER_STATE;
+    var mData = MORPHOTYPE_DATA[st.morphotype] || MORPHOTYPE_DATA.SL;
+
+    // Panel A: 2D vertical cross-section (x-z slice on grey stainless-steel coupon substrate)
+    var ax0 = 16, ay0 = 26, aw = 290, ah = H - 38;
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.28)';
+    ctx.strokeRect(ax0, ay0, aw, ah);
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText('ROW A // 2D Vertical Cross-Section (x-z) [' + mData.id + ']', ax0, 17);
+
+    // Grey coupon substrate bar at bottom of Row A
+    var subY = ay0 + ah - 22;
+    ctx.fillStyle = '#64748b';
+    ctx.fillRect(ax0 + 8, subY, aw - 16, 14);
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '9.5px monospace';
+    ctx.fillText('SS316L Coupon Substrate (z = 0 um)', ax0 + 55, subY + 11);
+
+    // Draw cells in Row A cross-section
+    for (var c = 0; c < 46; c++) {
+      var fx = (c / 45);
+      var cx = ax0 + 18 + fx * (aw - 36);
+      var isRed = (c % 2 === 0);
+      var zUm = isRed ? mData.z_mean_red_um : mData.z_mean_blue_um;
+      var jitter = Math.sin(c * 5.1) * 3.8;
+      var cy = subY - 4 - ((zUm + jitter) / 30.0) * (ah - 45);
+      ctx.fillStyle = isRed ? '#ef4444' : '#3b82f6';
+      var shp = isRed ? mData.red_shape : mData.blue_shape;
+      if (shp === 'sphere') {
+        ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 2 * Math.PI); ctx.fill();
+      } else {
+        ctx.fillRect(cx - 5, cy - 2, 10, 4);
+      }
+    }
+
+    // Circular morphotype inset, top-left:
+    ctx.beginPath();
+    ctx.arc(ax0 + 34, ay0 + 32, 22, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.92)'; ctx.fill();
+    ctx.strokeStyle = '#94a3b8'; ctx.stroke();
+    ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(ax0 + 27, ay0 + 29, 5, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = '#3b82f6'; ctx.fillRect(ax0 + 34, ay0 + 33, 12, 5);
+
+    // Panel B: P(z) Cell-Height Distribution (z in [0, 30] um vs P(z) in [0, 0.1], 3-D solid vs 2-D dashed)
+    var bx0 = 324, by0 = 26, bw = 360, bh = H - 38;
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.28)';
+    ctx.strokeRect(bx0, by0, bw, bh);
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText('ROW B // P(z) Height Distribution (3-D Solid vs 2-D Dashed)', bx0, 17);
+
+    var plotX = bx0 + 38, plotY = by0 + 14, plotW = bw - 52, plotH = bh - 36;
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+    ctx.beginPath();
+    ctx.moveTo(plotX, plotY); ctx.lineTo(plotX, plotY + plotH); ctx.lineTo(plotX + plotW, plotY + plotH);
+    ctx.stroke();
+
+    function drawPzCurve(arr, color, dashed, fillAlpha) {
+      var zBins = MORPHOTYPE_DATA.z_um_bins;
+      if (fillAlpha > 0) {
+        ctx.fillStyle = color.replace('1)', fillAlpha + ')');
+        ctx.beginPath();
+        ctx.moveTo(plotX, plotY + plotH);
+        for (var i = 0; i < zBins.length; i++) {
+          var px = plotX + (zBins[i] / 30.0) * plotW;
+          var py = plotY + plotH - Math.min(1.0, arr[i] / 0.10) * plotH;
+          ctx.lineTo(px, py);
+        }
+        ctx.lineTo(plotX + plotW, plotY + plotH);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = dashed ? 1.5 : 2.2;
+      if (dashed) ctx.setLineDash([4, 3]); else ctx.setLineDash([]);
+      ctx.beginPath();
+      for (var j = 0; j < zBins.length; j++) {
+        var x = plotX + (zBins[j] / 30.0) * plotW;
+        var y = plotY + plotH - Math.min(1.0, arr[j] / 0.10) * plotH;
+        if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    drawPzCurve(mData.p_z_blue_3d, 'rgba(59, 130, 246, 1)', false, 0.22);
+    drawPzCurve(mData.p_z_red_3d,  'rgba(239, 68, 68, 1)',  false, 0.22);
+    drawPzCurve(mData.p_z_blue_2d, 'rgba(147, 197, 253, 1)', true, 0.0);
+    drawPzCurve(mData.p_z_red_2d,  'rgba(252, 165, 165, 1)', true, 0.0);
+
+    // Probe line at z_biofilm_um
+    var probePx = plotX + (st.z_biofilm_um / 30.0) * plotW;
+    ctx.strokeStyle = '#38bdf8';
+    ctx.setLineDash([2, 2]);
+    ctx.beginPath(); ctx.moveTo(probePx, plotY); ctx.lineTo(probePx, plotY + plotH); ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '10px monospace';
+    ctx.fillText('0', plotX - 4, plotY + plotH + 12);
+    ctx.fillText('10', plotX + plotW * 0.33 - 6, plotY + plotH + 12);
+    ctx.fillText('20', plotX + plotW * 0.66 - 6, plotY + plotH + 12);
+    ctx.fillText('30 z [um]', plotX + plotW - 42, plotY + plotH + 12);
+    ctx.fillText('0.1', plotX - 24, plotY + 8);
+    ctx.fillText('P(z)', plotX - 28, plotY + plotH * 0.5);
+
+    // Panel C: 3D Stratification Metrics & Epistemic Summary
+    var cx0 = 700, cy0 = 26, cw = W - cx0 - 14, ch = H - 38;
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.28)';
+    ctx.strokeRect(cx0, cy0, cw, ch);
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText('ROW C // 3D Block Stratification Summary', cx0, 17);
+
+    var lines = [
+      'Morphotype: ' + mData.label,
+      'z_mean(blue): ' + mData.z_mean_blue_um.toFixed(2) + ' um',
+      'z_mean(red):  ' + mData.z_mean_red_um.toFixed(2) + ' um',
+      'Stratified (blue < red): ' + (mData.stratified_canopy_over_base ? 'YES (SL/Hypha)' : 'NO (Overlap)'),
+      'Boundary delta_c: 528.0 um',
+      'H2O2 l_rxn: 118.3 um (penetrates)',
+      '*OH l_rxn:  4.47 nm (quenches)',
+      'Time Base: MCS != t_pool [s]',
+      'Coupling: lambda_etc = ' + st.lambda_etc.toFixed(2)
+    ];
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '10.5px monospace';
+    for (var li = 0; li < lines.length; li++) {
+      ctx.fillText(lines[li], cx0 + 10, cy0 + 22 + li * 18);
+    }
+  }
+
+  // Render Null-Model & Counterfactual Comparison Workbench
+  function renderNullModelWorkbench() {
+    var st = window.EXPLORER_STATE;
+    var canvas = document.getElementById('nullWorkbenchCanvas');
+    var readout = document.getElementById('nullWorkbenchReadout');
+    if (!canvas || !readout) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#050912';
+    ctx.fillRect(0, 0, W, H);
+
+    var mode = st.active_null_control;
+    var html = '';
+
+    function drawBarChart(labels, values, colors, unitLabel) {
+      var maxV = 0;
+      for (var i = 0; i < values.length; i++) if (Math.abs(values[i]) > maxV) maxV = Math.abs(values[i]);
+      if (maxV <= 0) maxV = 1;
+      var x0 = 48, y0 = 28, pw = W - 70, ph = H - 62;
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0, y0 + ph); ctx.lineTo(x0 + pw, y0 + ph); ctx.stroke();
+      var bw = Math.min(68, (pw / labels.length) * 0.62);
+      for (var k = 0; k < labels.length; k++) {
+        var bx = x0 + (k + 0.5) * (pw / labels.length) - bw * 0.5;
+        var bh = (Math.abs(values[k]) / maxV) * (ph - 18);
+        var by = y0 + ph - bh;
+        ctx.fillStyle = colors[k % colors.length];
+        ctx.fillRect(bx, by, bw, bh);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '10px monospace';
+        ctx.fillText(String(values[k]), bx, by - 5);
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(labels[k], bx - 4, y0 + ph + 15);
+      }
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 11px monospace';
+      ctx.fillText(unitLabel, x0, 18);
+    }
+
+    if (mode === 'baseline_no_coupling_default') {
+      var c1 = NULL_MODEL_WORKBENCH.baseline_no_coupling_default;
+      drawBarChart(
+        ['Default Null (l=0)', 'Grad-Diff (flat)', 'Site-Occ (flat l=1)', 'Active Probe (l=' + st.lambda_etc.toFixed(2) + ')'],
+        [0.0, 0.0, Math.abs(c1.site_occupation_flat_field_delta_H_at_lambda_1), +(st.lambda_etc * 0.32).toFixed(3)],
+        ['#10b981', '#38bdf8', '#f43f5e', '#f59e0b'],
+        'Control 1 // |delta_H_etc| Magnitude & Flat-Field Swelling Diagnostic'
+      );
+      html =
+        '<div><strong>DEFAULT ON LOAD:</strong> <code>lambda_etc = 0.0</code> (<code>delta_H_etc = 0.0</code>, <span class="epi-badge epi-MEASURED">NULL BASELINE</span>)</div>' +
+        '<div style="margin-top:5px;"><strong>Exploratory Toggle:</strong> Current <code>lambda_etc = ' + st.lambda_etc.toFixed(2) + '</code> ' +
+        (st.lambda_etc > 0 ? '<span class="epi-badge epi-PROVISIONAL_ASSUMPTION">EXPLORATORY_HYPOTHESIS</span>' : '(Null Active)') + '</div>' +
+        '<div style="margin-top:5px;"><strong>Flat-Field Coupling Diagnostic:</strong> ' + c1.flat_field_volume_swelling_diagnostic + '</div>';
+    } else if (mode === 'five_way_radionuclide_retention') {
+      var c2 = NULL_MODEL_WORKBENCH.five_way_radionuclide_retention;
+      var p = c2.partitions_Bq_cm2;
+      drawBarChart(
+        ['Sterile Oxide', 'Dead Biomass', 'Live Non-Mel', 'Live Melanized', 'Coccomyxa'],
+        [p.q_abiotic_oxide_sterile, p.q_passive_dead_biomass, p.q_active_non_melanized, p.q_active_melanized, p.q_coccomyxa_microalgal],
+        ['#94a3b8', '#f59e0b', '#38bdf8', '#a855f7', '#10b981'],
+        'Controls 2-4 // 5-Way Radionuclide Retention Partition [Bq/cm^2]'
+      );
+      html =
+        '<div><strong>Fein et al. (1997) Protonation pKa:</strong> <code>(4.82, 6.90, 9.40)</code> <span class="epi-badge epi-CALCULATED">LITERATURE_DERIVED_FEIN_1997</span></div>' +
+        '<div style="margin-top:4px;"><strong>Co-60 Binding Affinities:</strong> <code>log K_Co = (1.60, 2.50, 3.20)</code> / <code>affinity_m3_mol = (2.20, 12.50, 25.0)</code> <span class="epi-badge epi-PROVISIONAL_ASSUMPTION">PROVISIONAL_ASSUMPTION_AWAITING_CALIBRATION</span></div>' +
+        '<div style="margin-top:4px;"><strong>Coccomyxa actinabiotis Benchmark:</strong> Lab effluent <code>Ag-110m K_d = 4.5e5 mL/g</code> vs real-scale <code>360 m^3</code> storage pool trial removing <code>~310 MBq</code> over 21 days (Rivasseau et al. 2013, 2016). Contrasted with Sarro et al. (2005) <code>Co-60 = 5,521 Bq/cm^2</code> (no sterile control).</div>';
+    } else if (mode === 'equal_dose_power_schedules') {
+      var c5 = NULL_MODEL_WORKBENCH.equal_dose_power_schedules;
+      var reg = c5.regimes[st.schedule_regime] || c5.regimes.active_nonlinear_coupled;
+      var sc = reg.schedules;
+      drawBarChart(
+        ['Const C_max', 'Periodic C_max', 'Shuffled C_max', 'Const J_ETC', 'Periodic J_ETC', 'Shuffled J_ETC'],
+        [sc.constant.max_C_uM, sc.periodic.max_C_uM, sc.shuffled.max_C_uM, sc.constant.integrated_J_ETC, sc.periodic.integrated_J_ETC, sc.shuffled.integrated_J_ETC],
+        ['#38bdf8', '#38bdf8', '#38bdf8', '#10b981', '#f59e0b', '#a855f7'],
+        'Control 5 // Schedule Regime: ' + reg.regime_id + ' (Equal Dose = 295.2 Gy)'
+      );
+      html =
+        '<div><strong>Primary Radiolytic Production:</strong> Identical across <code>constant</code>, <code>periodic</code>, and <code>shuffled</code> schedules (<code>Y_H2 = 1.68e-4 mol/L</code>, <code>Y_H2O2 = 2.54e-4 mol/L</code>).</div>' +
+        '<div style="margin-top:4px;"><strong>Regime-Dependent Downstream Response:</strong> <code>downstream_differences_are_regime_dependent = true</code>, <code>implies_downstream_differences_under_all_regimes = false</code>.</div>' +
+        '<div style="margin-top:4px;"><strong>Active Regime (' + reg.regime_id + '):</strong> ' +
+        (st.schedule_regime === 'active_nonlinear_coupled'
+          ? 'With active loss (<code>k_decay = 0.015 s^-1</code>), saturating Michaelis-Menten <code>J_ETC</code>, and <code>lambda_etc &gt; 0</code>, temporal clustering alters <code>max C(t)</code>, <code>M_sq(t)</code>, integrated <code>J_ETC</code>, and CPM anisotropy.'
+          : 'In the conserved-linear / uncoupled regime (<code>k_decay = 0</code>, <code>lambda_etc = 0</code>), final yields and uncoupled CPM trajectories are strictly identical across all schedules.') +
+        '</div>';
+    } else if (mode === 'control_5a_spatial_bias_null') {
+      var c5a = NULL_MODEL_WORKBENCH.control_5a_spatial_bias_null;
+      drawBarChart(
+        ['grad J_ETC (Uniform B0)', 'Grad-Diff delta_H', 'J_base (B0=0)', 'J_unif (B0=50 uT)', '|Site-Occ Shift|'],
+        [0.0, 0.0, c5a.j_base_b0_zero, c5a.j_uniform_b0_50uT, Math.abs(c5a.site_occupation_uniform_shift)],
+        ['#10b981', '#10b981', '#38bdf8', '#a855f7', '#f43f5e'],
+        'Control 5a // Spatial-Bias Null under Uniform Magnetic Field (B_0, theta_B)'
+      );
+      html =
+        '<div><strong>Control 5a (spatial_bias_null):</strong> ' + c5a.summary + '</div>' +
+        '<div style="margin-top:5px;"><strong>Invariants:</strong> <code>uniform_field_grad_J_ETC = 0.0</code>, <code>gradient_difference_delta_H = 0.0</code>, baseline reference <code>j_base_b0_zero = 0.420</code>.</div>';
+    } else if (mode === 'control_5b_biochemical_magnetic_sensitivity') {
+      var c5b = NULL_MODEL_WORKBENCH.control_5b_biochemical_magnetic_sensitivity;
+      drawBarChart(
+        ['0 uT', '25 uT', '50 uT', '100 uT', '200 uT', '500 uT'],
+        c5b.relative_singlet_yield_theta0,
+        ['#f472b6', '#f472b6', '#ec4899', '#ec4899', '#db2777', '#be185d'],
+        'Control 5b // Illustrative Parametric Sensitivity Curve (NOT Empirical Validation)'
+      );
+      html =
+        '<div><span class="epi-badge epi-ILLUSTRATIVE_SENSITIVITY_ANALYSIS">' + c5b.epistemic_badge + '</span></div>' +
+        '<div style="margin-top:5px;"><code>output_classification = "ILLUSTRATIVE_SENSITIVITY_ANALYSIS"</code></div>' +
+        '<div style="margin-top:4px;"><code>verifies_implemented_function_not_real_melanin_mechanism = true</code></div>' +
+        '<div style="margin-top:4px;"><code>empirically_validates_melanin_radical_pair_mechanism = false</code> | <code>grounded_in_measured_melanin_spin_hamiltonian = false</code></div>';
+    } else if (mode === 'control_6_oxidant_chemotropism') {
+      var c6 = NULL_MODEL_WORKBENCH.control_6_oxidant_chemotropism;
+      drawBarChart(
+        ['M=0 Oxidant Avoid', 'M=0 Aerotaxis', 'M=1 Null (l=0)', 'M=1 Exploratory'],
+        [c6.non_melanized_M0_oxidant_avoidance_drift_um, c6.non_melanized_M0_aerotaxis_drift_um, c6.putative_melanized_M1_drift_um_lambda0, c6.putative_melanized_M1_drift_um_exploratory],
+        ['#f59e0b', '#38bdf8', '#10b981', '#a855f7'],
+        'Control 6 // Chemotropic Canopy Drift [um] (Non-Radiotrophic M=0 vs Putative M=1)'
+      );
+      html =
+        '<div><strong>Control 6 (oxidant_chemotropism):</strong> ' + c6.summary + '</div>' +
+        '<div style="margin-top:5px;">Demonstrates that observing canopy drift along a radiolytic <code>H2O2</code>/<code>O2</code> gradient is not sufficient to infer radiotrophy without excluding classical chemotaxis/aerotaxis (<code>M_tot = 0</code>).</div>';
+    } else {
+      var eg = NULL_MODEL_WORKBENCH.epistemic_gates_eg1_eg4_and_links_l1_l5;
+      drawBarChart(
+        ['EG-1 (Yields)', 'EG-2 (Sorption)', 'EG-3 (Time)', 'EG-4 (Spin)', 'L1..L3 (Est)', 'L4..L5 (Expl)'],
+        [100, 100, 100, 100, 100, 100],
+        ['#10b981', '#f59e0b', '#38bdf8', '#f472b6', '#10b981', '#a855f7'],
+        'Epistemic Gates EG-1..EG-4 & Fault-Tree Links L1..L5'
+      );
+      html =
+        '<div><strong>EG-1:</strong> ' + eg.gates['EG-1'] + '</div>' +
+        '<div style="margin-top:3px;"><strong>EG-2:</strong> ' + eg.gates['EG-2'] + '</div>' +
+        '<div style="margin-top:3px;"><strong>EG-3:</strong> ' + eg.gates['EG-3'] + '</div>' +
+        '<div style="margin-top:3px;"><strong>EG-4:</strong> ' + eg.gates['EG-4'] + '</div>' +
+        '<div style="margin-top:4px;"><strong>Links L1..L5:</strong> L1=' + eg.links.L1 + ' | L4=' + eg.links.L4 + ' | L5=' + eg.links.L5 + '</div>';
+    }
+
+    readout.innerHTML = html;
+  }
+
+  // Provenance Inspector updater
+  function updateProvenanceUI(fieldId) {
+    var rec = PROVENANCE_REGISTRY[fieldId] || PROVENANCE_REGISTRY.H2O2;
+    window.EXPLORER_STATE.selected_provenance_field = rec.field_id;
+    document.getElementById('prov_field_id').textContent = rec.field_id;
+    document.getElementById('prov_data_classification').textContent = rec.data_classification;
+    document.getElementById('prov_calibration_status').textContent = rec.calibration_status;
+    document.getElementById('prov_units').textContent = rec.units;
+    document.getElementById('prov_coordinate_frame').textContent = rec.coordinate_frame;
+    document.getElementById('prov_source').textContent = rec.source;
+    document.getElementById('prov_model_version').textContent = rec.model_version;
+    document.getElementById('prov_commit_lock').textContent = rec.commit_lock;
+    document.getElementById('prov_notes').textContent = rec.notes;
+
+    var badge = document.getElementById('provClassificationBadge');
+    badge.className = 'epi-badge epi-' + rec.data_classification;
+    badge.textContent = rec.data_classification;
+
+    var btns = document.querySelectorAll('[data-prov]');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', btns[i].getAttribute('data-prov') === rec.field_id);
+    }
+  }
+
+  function updateTelemetryUI() {
+    var st = window.EXPLORER_STATE;
+    var cp = COUPON_LOCATORS[st.selected_coupon_id] || COUPON_LOCATORS['PIE-COUPON-SS316L-01'];
+    var mData = MORPHOTYPE_DATA[st.morphotype] || MORPHOTYPE_DATA.SL;
+
+    document.getElementById('telemetryCouponBadge').textContent = cp.coupon_id;
+    document.getElementById('kv_dose').textContent = cp.dose_rate_Gy_s.toFixed(4) + ' Gy/s';
+    document.getElementById('kv_peroxide').textContent = cp.H2O2_uM.toFixed(2) + ' / ' + cp.H2_uM.toFixed(2) + ' uM';
+    document.getElementById('kv_radicals').textContent = '4.47 / 9.90 nm';
+    document.getElementById('kv_bl').textContent = cp.delta_m_um + ' / ' + cp.delta_T_um + ' / ' + cp.delta_c_um + ' um';
+    document.getElementById('kv_shear').textContent = cp.tau_w_Pa.toFixed(3) + ' Pa';
+    document.getElementById('kv_cpm_coupling').textContent =
+      'lambda_etc=' + st.lambda_etc.toFixed(2) + (st.lambda_etc === 0 ? ' (NULL)' : ' (EXPLORATORY)');
+
+    var fRec = PROVENANCE_REGISTRY[st.active_field] || PROVENANCE_REGISTRY.H2O2;
+    var macroBadge = document.getElementById('macroFieldBadge');
+    macroBadge.className = 'epi-badge epi-' + fRec.data_classification;
+    macroBadge.textContent = st.active_field + ' [' + fRec.data_classification + ']';
+    document.getElementById('hudMacroField').textContent = 'FIELD: ' + st.active_field + ' [' + fRec.units + '] // r-z + x-y cutaway';
+    document.getElementById('hudMacroCoupon').textContent = 'WALL COUPON: ' + cp.coupon_id;
+
+    var microBadge = document.getElementById('microMorphBadge');
+    microBadge.className = 'epi-badge ' + (st.morphotype === 'CPM-Hypha' ? 'epi-PROVISIONAL_ASSUMPTION' : 'epi-SYNTHETIC');
+    microBadge.textContent = 'MORPH: ' + mData.label;
+    document.getElementById('hudMicroMorph').textContent =
+      mData.id + ': z_mean(blue)=' + mData.z_mean_blue_um.toFixed(1) + ' um vs z_mean(red)=' + mData.z_mean_red_um.toFixed(1) + ' um';
+    document.getElementById('hudMicroLambda').textContent =
+      'lambda_etc = ' + st.lambda_etc.toFixed(2) + (st.lambda_etc === 0 ? ' (NULL BASELINE)' : ' (EXPLORATORY_HYPOTHESIS)');
+
+    var stratBadge = document.getElementById('stratificationStatBadge');
+    stratBadge.textContent =
+      'z_mean(blue)=' + mData.z_mean_blue_um.toFixed(1) + ' um ' +
+      (mData.stratified_canopy_over_base ? '<' : '~') +
+      ' z_mean(red)=' + mData.z_mean_red_um.toFixed(1) + ' um';
+  }
+
+  function renderAll() {
+    window.EXPLORER_STATE.frame_count += 1;
+    renderMacroPoolViewport();
+    renderMicroBiofilmViewport();
+    renderBiofilmStratificationRows();
+    renderNullModelWorkbench();
+    updateTelemetryUI();
+  }
+
+  // Public Interactive API Hooks
+  window.setLayerToggle = function(layerName, enabled) {
+    if (!(layerName in window.EXPLORER_STATE.layers)) return false;
+    window.EXPLORER_STATE.layers[layerName] = Boolean(enabled);
+    var cb = document.getElementById('toggle_' + layerName);
+    if (cb) cb.checked = Boolean(enabled);
+    var card = document.getElementById('layerCard_' + layerName);
+    if (card) card.classList.toggle('active', Boolean(enabled));
+    renderAll();
+    return window.EXPLORER_STATE.layers[layerName];
+  };
+
+  window.setActiveField = function(fieldId) {
+    if (!PROVENANCE_REGISTRY[fieldId]) return false;
+    window.EXPLORER_STATE.active_field = fieldId;
+    var btns = document.querySelectorAll('[data-field]');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', btns[i].getAttribute('data-field') === fieldId);
+    }
+    updateProvenanceUI(fieldId);
+    renderAll();
+    return fieldId;
+  };
+
+  window.selectProvenanceField = function(fieldId) {
+    if (!PROVENANCE_REGISTRY[fieldId]) return null;
+    updateProvenanceUI(fieldId);
+    return PROVENANCE_REGISTRY[fieldId];
+  };
+
+  window.getProvenanceRecord = function(fieldId) {
+    return PROVENANCE_REGISTRY[fieldId] || null;
+  };
+
+  window.selectCoupon = function(couponId) {
+    if (!COUPON_LOCATORS[couponId]) return false;
+    window.EXPLORER_STATE.selected_coupon_id = couponId;
+    var btns = document.querySelectorAll('[data-coupon]');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', btns[i].getAttribute('data-coupon') === couponId);
+    }
+    renderAll();
+    return COUPON_LOCATORS[couponId];
+  };
+
+  window.setMorphotype = function(morphId) {
+    if (!MORPHOTYPE_DATA[morphId]) return false;
+    window.EXPLORER_STATE.morphotype = morphId;
+    var btns = document.querySelectorAll('[data-morph]');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', btns[i].getAttribute('data-morph') === morphId);
+    }
+    if (morphId === 'CPM-Hypha') {
+      updateProvenanceUI('cpm_morphology_stage3');
+    }
+    renderAll();
+    return MORPHOTYPE_DATA[morphId];
+  };
+
+  window.setCutawayGeometry = function(thetaDeg, zSliceCm, zBiofilmUm) {
+    if (typeof thetaDeg === 'number' && !isNaN(thetaDeg)) {
+      window.EXPLORER_STATE.theta_wedge_deg = thetaDeg;
+      document.getElementById('lbl_theta_wedge').textContent = thetaDeg + ' deg';
+    }
+    if (typeof zSliceCm === 'number' && !isNaN(zSliceCm)) {
+      window.EXPLORER_STATE.z_slice_cm = zSliceCm;
+      document.getElementById('lbl_z_slice_cm').textContent = zSliceCm + ' cm';
+    }
+    if (typeof zBiofilmUm === 'number' && !isNaN(zBiofilmUm)) {
+      window.EXPLORER_STATE.z_biofilm_um = zBiofilmUm;
+      document.getElementById('lbl_z_biofilm_um').textContent = zBiofilmUm.toFixed(1) + ' um';
+    }
+    renderAll();
+    return {
+      theta_wedge_deg: window.EXPLORER_STATE.theta_wedge_deg,
+      z_slice_cm: window.EXPLORER_STATE.z_slice_cm,
+      z_biofilm_um: window.EXPLORER_STATE.z_biofilm_um
+    };
+  };
+
+  // Macro time slider never mutates micro MCS step (strict time-base separation)
+  window.setMacroPoolTime = function(tPoolSeconds) {
+    var mcsBefore = window.EXPLORER_STATE.mcs_step;
+    window.EXPLORER_STATE.t_pool_s = Number(tPoolSeconds);
+    document.getElementById('lbl_t_pool_s').textContent = window.EXPLORER_STATE.t_pool_s + ' s';
+    renderAll();
+    return {
+      t_pool_s: window.EXPLORER_STATE.t_pool_s,
+      mcs_step_unchanged: window.EXPLORER_STATE.mcs_step === mcsBefore,
+      seconds_per_mcs: window.EXPLORER_STATE.seconds_per_mcs
+    };
+  };
+
+  // Micro MCS slider never mutates macro pool time t_pool_s
+  window.setMicroMcsStep = function(mcsStep) {
+    var tPoolBefore = window.EXPLORER_STATE.t_pool_s;
+    window.EXPLORER_STATE.mcs_step = Number(mcsStep);
+    document.getElementById('lbl_mcs_step').textContent = window.EXPLORER_STATE.mcs_step + ' MCS';
+    renderAll();
+    return {
+      mcs_step: window.EXPLORER_STATE.mcs_step,
+      t_pool_s_unchanged: window.EXPLORER_STATE.t_pool_s === tPoolBefore,
+      seconds_per_mcs: window.EXPLORER_STATE.seconds_per_mcs
+    };
+  };
+
+  window.setLambdaEtc = function(val) {
+    var num = Math.max(0.0, Number(val));
+    window.EXPLORER_STATE.lambda_etc = num;
+    document.getElementById('lbl_lambda_etc').textContent =
+      num.toFixed(2) + (num === 0.0 ? ' (NULL)' : ' (EXPLORATORY)');
+    renderAll();
+    return window.EXPLORER_STATE.lambda_etc;
+  };
+
+  window.setNullControl = function(controlId) {
+    if (!NULL_MODEL_WORKBENCH[controlId]) return null;
+    window.EXPLORER_STATE.active_null_control = controlId;
+    var btns = document.querySelectorAll('[data-null]');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', btns[i].getAttribute('data-null') === controlId);
+    }
+    if (controlId === 'control_5b_biochemical_magnetic_sensitivity') {
+      updateProvenanceUI('control_5b_rpm_sensitivity');
+    } else if (controlId === 'five_way_radionuclide_retention') {
+      updateProvenanceUI('coupon_eps_sorption');
+    }
+    renderNullModelWorkbench();
+    return NULL_MODEL_WORKBENCH[controlId];
+  };
+
+  window.setScheduleRegime = function(regimeId) {
+    if (!NULL_MODEL_WORKBENCH.equal_dose_power_schedules.regimes[regimeId]) return null;
+    window.EXPLORER_STATE.schedule_regime = regimeId;
+    document.getElementById('btnRegimeActive').classList.toggle('active', regimeId === 'active_nonlinear_coupled');
+    document.getElementById('btnRegimeConserved').classList.toggle('active', regimeId === 'conserved_linear_uncoupled');
+    renderNullModelWorkbench();
+    return NULL_MODEL_WORKBENCH.equal_dose_power_schedules.regimes[regimeId];
+  };
+
+  window.setOkloComparisonToggle = function(visible) {
+    window.EXPLORER_STATE.oklo_comparison_visible = Boolean(visible);
+    var box = document.getElementById('okloComparisonContainer');
+    if (box) box.style.display = visible ? 'block' : 'none';
+    return window.EXPLORER_STATE.oklo_comparison_visible;
+  };
+
+  window.__POOL_BIOFILM_EXPLORER__ = {
+    state: window.EXPLORER_STATE,
+    provenance_registry: PROVENANCE_REGISTRY,
+    coupon_locators: COUPON_LOCATORS,
+    morphotype_data: MORPHOTYPE_DATA,
+    null_model_workbench: NULL_MODEL_WORKBENCH,
+    renderAll: renderAll
+  };
+
+  // Initial render on load with default lambda_etc = 0.0
+  updateProvenanceUI('H2O2');
+  renderAll();
+})();
+</script>
+</body>
+</html>

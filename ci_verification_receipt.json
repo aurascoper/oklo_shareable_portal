@@ -1,7 +1,7 @@
 {
   "schema": "oklo_portal_ci_verification_receipt_v1",
-  "generated_at": "2026-10-25T04:02:24.189Z",
-  "gate0_files_verified": 14,
+  "generated_at": "2026-10-25T17:11:57.543Z",
+  "gate0_files_verified": 15,
   "tests": {
     "lazy_init": "PASS",
     "tecdoc643_3d_webgl": {
@@ -9,7 +9,7 @@
       "glHeight": 630,
       "glHidden": false,
       "slHidden": true,
-      "kval": "0.749 ± 0.102",
+      "kval": "0.911 ± 0.107",
       "ntot": "(120 neutrons)"
     },
     "split_view_layout": {
@@ -270,6 +270,17 @@
         }
       }
     },
+    "reactor_pool_biofilm_3d_explorer": {
+      "glPoolWidth": 560,
+      "glPoolHeight": 360,
+      "glBioWidth": 560,
+      "glBioHeight": 360,
+      "renderModeMacro": "webgl+2d_overlay",
+      "renderModeMicro": "webgl+2d_overlay",
+      "defaultLambdaEtc": 0,
+      "solversKeptSeparate": true,
+      "coupledValidationClaimed": false
+    },
     "biofilms_disabled_webgl_fallback": {
       "glHidden": true,
       "slHidden": false,
@@ -294,6 +305,16 @@
       "fbHeight": 448,
       "btn3dDisabled": true,
       "gates4dPass": true
+    },
+    "reactor_pool_biofilm_disabled_webgl_fallback": {
+      "renderModeMacro": "canvas2d_fallback",
+      "renderModeMicro": "canvas2d_fallback",
+      "cPool2dWidth": 560,
+      "cPool2dHeight": 360,
+      "cBio2dWidth": 560,
+      "cBio2dHeight": 360,
+      "frameCount": 1,
+      "gatesPass": true
     }
   }
 }

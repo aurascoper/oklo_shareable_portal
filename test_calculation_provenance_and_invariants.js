@@ -743,6 +743,76 @@ function verifyPerEdgeEvidenceAndRedTeamPolicies() {
   console.log('PASS [Red-Team Policies 6/6]: Per-edge evidence tags (9 system edges, 8 mechanism edge-chains), HTML/JSON manifest parity, EG-1..EG-4 gates, 3-tier irradiation/magnetoreception hierarchy, specimen-encoding gate, and zero em/en-dash & NDA hygiene verified.');
 }
 
+function verifyReactorPoolBiofilmCoordinatedExplorer() {
+  const explorerPath = path.join(ROOT, 'reactor_pool_biofilm_explorer.html');
+  assert.ok(fs.existsSync(explorerPath), 'Missing reactor_pool_biofilm_explorer.html');
+  const html = fs.readFileSync(explorerPath, 'utf8');
+
+  // 1. Dash & NDA hygiene
+  const forbiddenNdaRegex = /(\bmurr\b|missouri\s+university\s+research\s+reactor|institutional-scrubbed|thomas\s+mccoy|\br-103\b|rur-26|\bap-dc-001\b|specialist\s+ii|177lu|lu-177|lutetium|chelat|\bdota\b|\bpsma\b|radiopharm|\bmayo\b|mhealth|m-health)/i;
+  assert.strictEqual(html.includes('\u2014'), false, 'reactor_pool_biofilm_explorer.html contains forbidden em-dash');
+  assert.strictEqual(html.includes('\u2013'), false, 'reactor_pool_biofilm_explorer.html contains forbidden en-dash');
+  assert.strictEqual(/(&mdash;|&ndash;|&#8211;|&#8212;|&#x2013;|&#x2014;)/i.test(html), false, 'reactor_pool_biofilm_explorer.html contains forbidden HTML dash entity');
+  assert.strictEqual(forbiddenNdaRegex.test(html), false, 'reactor_pool_biofilm_explorer.html contains forbidden NDA keyword');
+
+  // 2. Cross-portal navigation links
+  for (const href of ['index.html', 'poolwater_interactive.html', 'biofilms_3d_explorer.html', 'magnetoreception_3d_explorer.html']) {
+    assert.ok(html.includes(`href="${href}"`), `Missing cross-portal link to ${href}`);
+  }
+
+  // 3. Strict architectural & scientific boundaries
+  assert.ok(html.includes('solvers_kept_separate: true'), 'Missing solvers_kept_separate: true');
+  assert.ok(html.includes('solver_level_coupled_validation_claimed: false'), 'Missing solver_level_coupled_validation_claimed: false');
+  assert.ok(html.includes('default_lambda_etc_on_load: 0.0'), 'Missing default_lambda_etc_on_load: 0.0');
+  assert.ok(html.includes('lambda_etc: 0.0'), 'Missing default lambda_etc: 0.0');
+  assert.ok(html.includes('seconds_per_mcs: NaN'), 'Missing seconds_per_mcs: NaN');
+  assert.ok(html.includes("d_pitch_status: 'awaiting_measurement'"), 'Missing d_pitch_status: awaiting_measurement');
+  assert.ok(html.includes('TIME BASES UNCOUPLED: t_pool [s] != MCS'), 'Missing uncoupled time-base banner');
+
+  // 4. Four toggleable spatial layers & morphotype stratification
+  for (const layer of ['pool_geometry', 'temperature_flow', 'radiation_radiolysis', 'biofilm_coupons']) {
+    assert.ok(html.includes(`toggle_${layer}`), `Missing layer toggle ${layer}`);
+  }
+  for (const morph of ['SL', 'SS', 'LL', 'CPM-Hypha']) {
+    assert.ok(html.includes(`data-morph="${morph}"`), `Missing morphotype button ${morph}`);
+  }
+
+  // 5. Seven null-model controls & regime-dependent equal-dose schedules
+  for (const nullId of [
+    'baseline_no_coupling_default',
+    'five_way_radionuclide_retention',
+    'equal_dose_power_schedules',
+    'control_5a_spatial_bias_null',
+    'control_5b_biochemical_magnetic_sensitivity',
+    'control_6_oxidant_chemotropism',
+    'epistemic_gates_eg1_eg4_and_links_l1_l5'
+  ]) {
+    assert.ok(html.includes(`data-null="${nullId}"`), `Missing null-model control ${nullId}`);
+  }
+  assert.ok(html.includes('downstream_differences_are_regime_dependent: true'), 'Missing downstream_differences_are_regime_dependent: true');
+  assert.ok(html.includes('implies_downstream_differences_under_all_regimes: false'), 'Missing implies_downstream_differences_under_all_regimes: false');
+  assert.ok(html.includes('conserved_regime_final_yields_identical: true'), 'Missing conserved_regime_final_yields_identical: true');
+  assert.ok(html.includes('uncoupled_regime_cpm_trajectories_identical: true'), 'Missing uncoupled_regime_cpm_trajectories_identical: true');
+  assert.ok(html.includes('ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION'), 'Missing Control 5b epistemic badge');
+  assert.ok(html.includes('verifies_implemented_function_not_real_melanin_mechanism: true'), 'Missing Control 5b verification scope');
+  assert.ok(html.includes('empirically_validates_melanin_radical_pair_mechanism: false'), 'Missing Control 5b empirical validation guard');
+  assert.ok(html.includes('grounded_in_measured_melanin_spin_hamiltonian: false'), 'Missing Control 5b spin Hamiltonian guard');
+
+  // 6. Provenance registry & commit locks
+  for (const commitHash of [
+    '903f278',
+    '507fc19c507505233268e058b7b5d7a0bd4e378c',
+    '2db2a7b558ea736c61cc459fd6a72c4afa36e3c5',
+    '8182c30ab46d3b6a8cee7c853c18f7a44766a59d'
+  ]) {
+    assert.ok(html.includes(commitHash), `Missing commit lock ${commitHash}`);
+  }
+  assert.ok(html.includes('local_test_results_attributed_to_remote_pr_head: false'), 'Missing local_test_results_attributed_to_remote_pr_head: false');
+  assert.ok(html.includes('local_branch_pushed_to_remote: false'), 'Missing local_branch_pushed_to_remote: false');
+
+  console.log('PASS [Coordinated 3D Pool-and-Biofilm Explorer 7/7]: 4 spatial layers, uncoupled t_pool/MCS time bases, default lambda_etc=0.0, 4 morphotypes (SL/SS/LL/CPM-Hypha), 7 null-model comparisons, Control 5b guards, and provenance commit locks verified.');
+}
+
 function runAll() {
   verifyBiophysicalCalculationProvenance();
   verifyTrajectoryCounterfactualInvariants();
@@ -750,6 +820,7 @@ function runAll() {
   verifyAngularResponseCurves();
   verifyDesignMatrixEstimabilityAndAliasing();
   verifyPerEdgeEvidenceAndRedTeamPolicies();
+  verifyReactorPoolBiofilmCoordinatedExplorer();
   console.log('ALL SCIENTIFIC PROVENANCE, TRAJECTORY COUNTERFACTUAL, AND ESTIMABILITY TESTS PASSED.');
 }
 
@@ -758,3 +829,4 @@ if (require.main === module) {
 }
 
 module.exports = { runAll };
+

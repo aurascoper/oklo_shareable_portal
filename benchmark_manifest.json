@@ -109,11 +109,31 @@
       "evidence_manifest_bytes": 116876,
       "evidence_manifest_sha256": "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf",
       "invariant_test_relative_path": "test_calculation_provenance_and_invariants.js",
-      "invariant_test_bytes": 38751,
-      "invariant_test_sha256": "db751a8972ee125fe4e334cdc59c51f1f3c5784b03026119587b50a3cd65fb55",
+      "invariant_test_bytes": 43823,
+      "invariant_test_sha256": "1ab6e20b1b601d81d84893168a97076a3a26a66e426a0ce835568b8cff534755",
       "source_module": "src/track4_mineral_magnetoreception_gates.jl",
       "evidence_classification": "calculated",
       "epistemic_status": "cross_domain_epistemic_gated_4d_viewer (EG-1..EG-4 enforced; 4D perspective tesseract w = t / theta_B in [0..360 deg] / D_4 hyperplane rotation; criterial separation of accepted verified candidates vs criterial-pruned candidates vs exploratory particles; 3-regime 1 um^3 biotite Fe3O4 inclusion sensitivity)",
+      "frozen_gate0": false
+    },
+    "REACTOR-POOL-BIOFILM-3D-01": {
+      "relative_path": "reactor_pool_biofilm_explorer.html",
+      "public_url": "https://aurascoper.github.io/oklo_shareable_portal/reactor_pool_biofilm_explorer.html",
+      "bytes": 105721,
+      "sha256": "e3d738cdb6c7045d386b61b72fa2f3930365fde6a97cf72c38a5a5dbd807fc0f",
+      "source_repo": "aurascoper/reactor-pool-biofilms",
+      "source_commit": "903f278",
+      "prrt_spatial_cpm_clinical_main_commit": "507fc19c507505233268e058b7b5d7a0bd4e378c",
+      "prrt_spatial_cpm_remote_pr31_head": "2db2a7b558ea736c61cc459fd6a72c4afa36e3c5",
+      "prrt_spatial_cpm_local_unpushed_head": "8182c30ab46d3b6a8cee7c853c18f7a44766a59d",
+      "local_test_results_attributed_to_remote_pr_head": false,
+      "local_branch_pushed_to_remote": false,
+      "solvers_kept_separate": true,
+      "solver_level_coupled_validation_claimed": false,
+      "default_lambda_etc": 0.0,
+      "seconds_per_mcs": "NaN",
+      "evidence_classification": "calculated",
+      "epistemic_status": "coordinated_3d_pool_and_biofilm_explorer (Stage 1 radiolysis yields on synthetic Boussinesq geometry, Stage 2 coupon EPS sorption with Fein 1997 pKa and provisional Co-60 affinities, Stage 3 uncalibrated CPM field consumer with default lambda_etc = 0.0, 7 null-model comparisons, and provenance on demand)",
       "frozen_gate0": false
     }
   },
@@ -212,7 +232,8 @@
       "POINT_KINETICS_ALGEBRA",
       "POOL_NAVIER_STOKES_SYNTHETIC_DEMO",
       "SURROGATE_LOOP_PIE_ISOLATED",
-      "BIOTITE_BIOMAGNETITE_CRYPTOCHROME_4D"
+      "BIOTITE_BIOMAGNETITE_CRYPTOCHROME_4D",
+      "REACTOR_POOL_BIOFILM_COORDINATED_3D"
     ],
     "forbidden_couplings": {
       "oklo_r0_analytic_voxels_to_pool_cfd": false,
@@ -221,7 +242,9 @@
       "biofilm_or_radiotropism_alters_reactor_kinetics_or_cgmp": false,
       "robin_boundary_condition_conflated_with_erithacus_rubecula": false,
       "geological_biotite_conflated_with_biogenic_magnetite_compass": false,
-      "cryptochrome_rpm_conflated_with_melanin_radiotropism": false
+      "cryptochrome_rpm_conflated_with_melanin_radiotropism": false,
+      "solver_level_coupled_pool_biofilm_validation_claimed": false,
+      "melanin_radiotrophy_default_lambda_etc_nonzero": false
     }
   },
   "gate_3_poolwater_dataset_contract": {

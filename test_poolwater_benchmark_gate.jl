@@ -36,9 +36,10 @@ end
             "multispecies_biofilm_robin_cylindrical_4panel.gif"  => (2571435, "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997"),
             "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
             "magnetoreception_3d_explorer.html"                  => (263619,  "e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064"),
+            "reactor_pool_biofilm_explorer.html"                 => (105721,  "e3d738cdb6c7045d386b61b72fa2f3930365fde6a97cf72c38a5a5dbd807fc0f"),
             "evidence_manifest.json"                             => (116876,  "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf"),
-            "test_calculation_provenance_and_invariants.js"      => (38751,   "db751a8972ee125fe4e334cdc59c51f1f3c5784b03026119587b50a3cd65fb55"),
-            "benchmark_manifest.json"                            => (18093,   "473d4d043d9f02298b4c3576b77577fbfbc2ba0cb72993fdbc30365627f264f6"),
+            "test_calculation_provenance_and_invariants.js"      => (43823,   "1ab6e20b1b601d81d84893168a97076a3a26a66e426a0ce835568b8cff534755"),
+            "benchmark_manifest.json"                            => (19627,   "f98fe0d72b4d6cc2eef299fad3a5719972f801892445b07fd21b330c59a13205"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")
@@ -61,6 +62,7 @@ end
                        "multispecies_biofilm_robin_cylindrical_4panel.gif",
                        "clonal_sector_expansion_reference.jpg",
                        "magnetoreception_3d_explorer.html",
+                       "reactor_pool_biofilm_explorer.html",
                        "evidence_manifest.json",
                        "test_calculation_provenance_and_invariants.js")
                 @test occursin(exp_sha, manifest_info.text)
@@ -74,6 +76,7 @@ end
         @test occursin("multispecies_biofilm_robin_cylindrical_4panel.gif", index_info.text)
         @test occursin("clonal_sector_expansion_reference.jpg", index_info.text)
         @test occursin("magnetoreception_3d_explorer.html", index_info.text)
+        @test occursin("reactor_pool_biofilm_explorer.html", index_info.text)
         @test occursin("https://github.com/aurascoper/Biofilms", index_info.text)
 
         @test !occursin("file://", xml_info.text)
@@ -230,6 +233,7 @@ end
             "CONFORMANCE_FIXTURE_SPEC.md",
             "proto_biofilms_geyser_fission_research_program.md",
             "magnetoreception_3d_explorer.html",
+            "reactor_pool_biofilm_explorer.html",
             "evidence_manifest.json",
             "test_tecdoc643_viewer_regression.js",
         ]
@@ -281,6 +285,7 @@ end
             "CONFORMANCE_FIXTURE_SPEC.md",
             "proto_biofilms_geyser_fission_research_program.md",
             "magnetoreception_3d_explorer.html",
+            "reactor_pool_biofilm_explorer.html",
             "evidence_manifest.json",
             "test_calculation_provenance_and_invariants.js",
             "test_tecdoc643_viewer_regression.js",
@@ -354,4 +359,29 @@ end
         @test u_c_aniso_1e2 ≈ 0.00126022491 atol = 1e-8
         @test u_c_iso_1e2 ≈ 0.00726415491 atol = 1e-8
     end
+
+    # --------------------------------------------------------------------------
+    # Gate 6: Coordinated 3D Open-Pool Reactor & Biofilm Coupon Explorer
+    # --------------------------------------------------------------------------
+    @testset "Gate 6: Coordinated 3D Pool-and-Biofilm Explorer (REACTOR-POOL-BIOFILM-3D-01)" begin
+        rpb_html = file_sha256_and_bytes("reactor_pool_biofilm_explorer.html").text
+        manifest_txt = file_sha256_and_bytes("benchmark_manifest.json").text
+
+        @test occursin("REACTOR-POOL-BIOFILM-3D-01", rpb_html)
+        @test occursin("REACTOR-POOL-BIOFILM-3D-01", manifest_txt)
+        @test occursin("solvers_kept_separate: true", rpb_html)
+        @test occursin("solver_level_coupled_validation_claimed: false", rpb_html)
+        @test occursin("default_lambda_etc_on_load: 0.0", rpb_html)
+        @test occursin("seconds_per_mcs: NaN", rpb_html)
+        @test occursin("TIME BASES UNCOUPLED: t_pool [s] != MCS", rpb_html)
+        @test occursin("downstream_differences_are_regime_dependent: true", rpb_html)
+        @test occursin("implies_downstream_differences_under_all_regimes: false", rpb_html)
+        @test occursin("ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION", rpb_html)
+        @test occursin("507fc19c507505233268e058b7b5d7a0bd4e378c", rpb_html)
+        @test occursin("2db2a7b558ea736c61cc459fd6a72c4afa36e3c5", rpb_html)
+        @test occursin("8182c30ab46d3b6a8cee7c853c18f7a44766a59d", rpb_html)
+        @test occursin("local_test_results_attributed_to_remote_pr_head: false", rpb_html)
+        @test occursin("local_branch_pushed_to_remote: false", rpb_html)
+    end
 end
+
