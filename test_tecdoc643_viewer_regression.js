@@ -79,8 +79,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'POOLWATER_WORKFLOW_SPEC.md',
-      sha256: 'ebbd2647583018d8c1f4699652481bbc6ee4e72c86e9ea536a8c4e0059afbd80',
-      bytes: 17706
+      sha256: 'e17ef1951fed038cca0e8b395b1d6348990e281d3649e90019eba2fb5a6d1659',
+      bytes: 22168
     },
     {
       path: 'multispecies_biofilm_robin_cylindrical_4panel.gif',
@@ -99,8 +99,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'reactor_pool_biofilm_explorer.html',
-      sha256: 'e3d738cdb6c7045d386b61b72fa2f3930365fde6a97cf72c38a5a5dbd807fc0f',
-      bytes: 105721
+      sha256: '15f3659f8f6e052e394eaa3255ef9200dca99f3be66038a7366b5c213e4f9552',
+      bytes: 143361
     },
     {
       path: 'evidence_manifest.json',
@@ -109,13 +109,13 @@ function verifyArtifactHashes() {
     },
     {
       path: 'test_calculation_provenance_and_invariants.js',
-      sha256: '1ab6e20b1b601d81d84893168a97076a3a26a66e426a0ce835568b8cff534755',
-      bytes: 43823
+      sha256: 'c2342bacb34036a7c1e0a5d623a4ae2b321a43072e064b9947511def450b110a',
+      bytes: 45665
     },
     {
       path: 'benchmark_manifest.json',
-      sha256: 'f98fe0d72b4d6cc2eef299fad3a5719972f801892445b07fd21b330c59a13205',
-      bytes: 19627
+      sha256: '8a91ecb71a6e7e784555b87dda5de2be43090b4faac46b3e0abef756bb3189f7',
+      bytes: 21262
     }
   ];
 
@@ -134,7 +134,7 @@ function verifyArtifactHashes() {
   assert.ok(indexHtml.includes('037e2050b70e92b7...'), 'index.html missing BIOFILMS-3D-CPM-01 SHA prefix');
   assert.ok(indexHtml.includes('e73622d6454a3a6a...'), 'index.html missing BIOFILMS-ROBIN-CYL-GIF-01 SHA prefix');
   assert.ok(indexHtml.includes('e9e50a6857b699aa...'), 'index.html missing BIOTITE-MAGNETORECEPTION-4D-01 SHA prefix');
-  assert.ok(indexHtml.includes('e3d738cdb6c7045d...'), 'index.html missing REACTOR-POOL-BIOFILM-3D-01 SHA prefix');
+  assert.ok(indexHtml.includes('15f3659f8f6e052e...'), 'index.html missing REACTOR-POOL-BIOFILM-COORDINATED-3D-01 SHA prefix');
   console.log('PASS [1/15]: Gate-0 artifact hashes, byte counts, and manifests verified.');
   return expectedFiles;
 }
@@ -884,23 +884,53 @@ async function runTests() {
           const defaultSecondsPerMcsIsNaN = Number.isNaN(st.seconds_per_mcs);
           const renderModeMacro = st.render_mode_macro;
           const renderModeMicro = st.render_mode_micro;
+          const webglContextCreated = st.webgl_context_created;
+          const fallbackTriggered = st.fallback_triggered;
+          const boundaryCheck = api.verifyScientificBoundaries();
+          const stateFromHook = api.getState();
 
-          // Exercise all 4 spatial layer toggles
+          // Exercise all 4 spatial layer toggles via api.setLayerToggle
           const layerKeys = ['pool_geometry', 'temperature_flow', 'radiation_radiolysis', 'biofilm_coupons'];
           const layerToggleAudit = {};
           for (const lk of layerKeys) {
-            w.setLayerToggle(lk, false);
+            api.setLayerToggle(lk, false);
             const offVal = st.layers[lk];
-            w.setLayerToggle(lk, true);
+            api.setLayerToggle(lk, true);
             const onVal = st.layers[lk];
             layerToggleAudit[lk] = { offVal, onVal };
           }
 
-          // Exercise all 4 morphotypes (SL, SS, LL, CPM-Hypha)
+          // Edge case: all 4 layers off + UNAVAILABLE field selected simultaneously (must not throw)
+          for (const lk of layerKeys) api.setLayerToggle(lk, false);
+          w.setActiveField('validated_cfd_pressure_Pa');
+          const allOffUnavailableClassification = d.getElementById('prov_data_classification').textContent;
+          for (const lk of layerKeys) api.setLayerToggle(lk, true);
+          w.setActiveField('H2O2');
+
+          // Exercise camera presets & full slice ranges (-200..200 cm, 0..100 um)
+          const camPresets = ['Wedge Cutaway', 'Orbit', 'Isometric', 'Top Core', 'Coupon Micro-Zoom'];
+          const camAudit = {};
+          for (const cpName of camPresets) {
+            const cRes = w.setCameraView(cpName);
+            camAudit[cpName] = Boolean(cRes && st.camera_preset === cpName);
+          }
+          w.setCameraView('Wedge Cutaway');
+          w.setBiofilmDepthRange(100);
+          w.setCutawayGeometry(120, -200, 85.0);
+          const rangeTestAt100 = {
+            theta: st.theta_wedge_deg,
+            zSliceCm: st.z_slice_cm,
+            zBioUm: st.z_biofilm_um,
+            depthRange: st.biofilm_depth_range_um
+          };
+          w.setBiofilmDepthRange(30);
+          w.setCutawayGeometry(90, -40, 12.0);
+
+          // Exercise all 4 morphotypes (SL, SS, LL, CPM-Hypha) via api.setMorphotype
           const morphKeys = ['SL', 'SS', 'LL', 'CPM-Hypha'];
           const morphAudit = {};
           for (const mk of morphKeys) {
-            const m = w.setMorphotype(mk);
+            const m = api.setMorphotype(mk);
             morphAudit[mk] = {
               active: st.morphotype === mk,
               z_mean_blue_um: m.z_mean_blue_um,
@@ -909,7 +939,7 @@ async function runTests() {
               badgeText: d.getElementById('microMorphBadge').textContent
             };
           }
-          w.setMorphotype('SL');
+          api.setMorphotype('SL');
 
           // Exercise uncoupled time sliders (macro pool time [s] vs micro CPM step [MCS])
           const macroRes = w.setMacroPoolTime(2400);
@@ -930,7 +960,7 @@ async function runTests() {
           w.setMacroPoolTime(1800);
           w.setMicroMcsStep(60);
 
-          // Exercise all 7 null-model comparisons and both equal-dose schedule regimes
+          // Exercise all 7 null-model comparisons and both equal-dose schedule regimes via api
           const nullKeys = [
             'baseline_no_coupling_default',
             'five_way_radionuclide_retention',
@@ -942,34 +972,55 @@ async function runTests() {
           ];
           const nullAudit = {};
           for (const nk of nullKeys) {
-            const rec = w.setNullControl(nk);
+            const rec = api.setNullControl(nk);
             nullAudit[nk] = {
               active: st.active_null_control === nk,
               hasRecord: Boolean(rec && rec.id === nk),
               readoutLen: d.getElementById('nullWorkbenchReadout').textContent.length
             };
           }
-          w.setScheduleRegime('conserved_linear_uncoupled');
+          api.setScheduleRegime('conserved_linear_uncoupled');
           const linearRegimeActive = st.schedule_regime === 'conserved_linear_uncoupled';
-          w.setScheduleRegime('active_nonlinear_coupled');
+          api.setScheduleRegime('active_nonlinear_coupled');
           const nonlinearRegimeActive = st.schedule_regime === 'active_nonlinear_coupled';
-          w.setNullControl('baseline_no_coupling_default');
+          api.setNullControl('baseline_no_coupling_default');
 
-          // Exercise Provenance on Demand across fields
+          // Exercise Provenance on Demand across fields via api.selectProvenanceField and api.getProvenanceRecord
           const provKeys = ['H2O2', 'temperature_C', 'coupon_eps_sorption', 'cpm_morphology_stage3', 'coccomyxa_actinabiotis_benchmark', 'control_5b_rpm_sensitivity', 'validated_cfd_pressure_Pa'];
           const provAudit = {};
           for (const pk of provKeys) {
-            w.selectProvenanceField(pk);
+            api.selectProvenanceField(pk);
+            const recObj = api.getProvenanceRecord(pk);
             provAudit[pk] = {
               fieldId: d.getElementById('prov_field_id').textContent,
+              label: d.getElementById('prov_label').textContent,
+              hasLabelInRecord: Boolean(recObj && recObj.label && recObj.label.length > 3),
               classification: d.getElementById('prov_data_classification').textContent,
               commitLock: d.getElementById('prov_commit_lock').textContent
             };
           }
-          w.selectProvenanceField('H2O2');
+          api.selectProvenanceField('H2O2');
+
+          // Sample canvas pixels to prove non-blank rendering on all 2D/overlay canvases
+          function countNonBlankPixels(cnv) {
+            const ctx2 = cnv.getContext('2d');
+            const img = ctx2.getImageData(0, 0, cnv.width, cnv.height).data;
+            let nonBlank = 0;
+            for (let i = 0; i < img.length; i += 160) {
+              if (img[i] > 10 || img[i + 1] > 15 || img[i + 2] > 25) nonBlank++;
+            }
+            return nonBlank;
+          }
+          const poolPixelsNonBlank = countNonBlankPixels(cPool2d);
+          const bioPixelsNonBlank = countNonBlankPixels(cBio2d);
+          const rowsPixelsNonBlank = countNonBlankPixels(cRows);
 
           return JSON.stringify({
             tabActive: document.getElementById('tabPoolBiofilm').classList.contains('active'),
+            artifactId: stateFromHook.artifact_id,
+            boundaryAllPassed: boundaryCheck.all_passed,
+            webglContextCreated,
+            fallbackTriggered,
             glPoolWidth: glPool.width,
             glPoolHeight: glPool.height,
             cPool2dWidth: cPool2d.width,
@@ -980,6 +1031,9 @@ async function runTests() {
             cBio2dHeight: cBio2d.height,
             cRowsWidth: cRows.width,
             cRowsHeight: cRows.height,
+            poolPixelsNonBlank,
+            bioPixelsNonBlank,
+            rowsPixelsNonBlank,
             renderModeMacro,
             renderModeMicro,
             defaultLambdaEtc,
@@ -992,6 +1046,9 @@ async function runTests() {
             equalDoseRegimeDependent: api.null_model_workbench.equal_dose_power_schedules.downstream_differences_are_regime_dependent,
             conservedRegimeIdentical: api.null_model_workbench.equal_dose_power_schedules.conserved_regime_final_yields_identical,
             layerToggleAudit,
+            allOffUnavailableClassification,
+            camAudit,
+            rangeTestAt100,
             morphAudit,
             macroAt2400,
             microAt120,
@@ -1002,15 +1059,29 @@ async function runTests() {
           });
         })()`);
         assert.strictEqual(poolBiofilmState.tabActive, true);
+        assert.strictEqual(poolBiofilmState.artifactId, 'REACTOR-POOL-BIOFILM-COORDINATED-3D-01');
+        assert.strictEqual(poolBiofilmState.boundaryAllPassed, true);
+        assert.strictEqual(poolBiofilmState.webglContextCreated, true);
+        assert.strictEqual(poolBiofilmState.fallbackTriggered, false);
         assert.strictEqual(poolBiofilmState.renderModeMacro, 'webgl+2d_overlay');
         assert.strictEqual(poolBiofilmState.renderModeMicro, 'webgl+2d_overlay');
         assert.ok(poolBiofilmState.glPoolWidth > 350 && poolBiofilmState.glPoolHeight > 280, `Expected sized Pool 3D WebGL canvas, got ${poolBiofilmState.glPoolWidth}x${poolBiofilmState.glPoolHeight}`);
         assert.ok(poolBiofilmState.glBioWidth > 350 && poolBiofilmState.glBioHeight > 240, `Expected sized Biofilm 3D WebGL canvas, got ${poolBiofilmState.glBioWidth}x${poolBiofilmState.glBioHeight}`);
         assert.ok(poolBiofilmState.cRowsWidth > 350 && poolBiofilmState.cRowsHeight > 200, `Expected sized Row A/B/C canvas, got ${poolBiofilmState.cRowsWidth}x${poolBiofilmState.cRowsHeight}`);
+        assert.ok(poolBiofilmState.poolPixelsNonBlank > 50, 'Expected non-blank pixels on Macro Pool canvas');
+        assert.ok(poolBiofilmState.bioPixelsNonBlank > 50, 'Expected non-blank pixels on Micro Biofilm canvas');
+        assert.ok(poolBiofilmState.rowsPixelsNonBlank > 50, 'Expected non-blank pixels on Row A/B/C Stratification canvas');
         assert.strictEqual(poolBiofilmState.defaultLambdaEtc, 0.0, 'Melanin-mediated radiotrophy coupling lambda_etc must default to 0.0');
         assert.strictEqual(poolBiofilmState.defaultSolversSeparate, true, 'Solvers must remain strictly separate at the solver level');
         assert.strictEqual(poolBiofilmState.defaultCoupledClaimed, false, 'Must never claim solver-level coupled validation');
         assert.strictEqual(poolBiofilmState.defaultSecondsPerMcsIsNaN, true, 'seconds_per_mcs must be NaN (never convert t_pool [s] to MCS)');
+        assert.strictEqual(poolBiofilmState.allOffUnavailableClassification, 'UNAVAILABLE');
+        for (const cpName of ['Wedge Cutaway', 'Orbit', 'Isometric', 'Top Core', 'Coupon Micro-Zoom']) {
+          assert.strictEqual(poolBiofilmState.camAudit[cpName], true, `Camera preset ${cpName} failed`);
+        }
+        assert.strictEqual(poolBiofilmState.rangeTestAt100.zSliceCm, -200);
+        assert.strictEqual(poolBiofilmState.rangeTestAt100.zBioUm, 85.0);
+        assert.strictEqual(poolBiofilmState.rangeTestAt100.depthRange, 100);
         assert.strictEqual(poolBiofilmState.morphotypesCount, 4);
         assert.strictEqual(poolBiofilmState.nullControlsCount, 7);
         assert.strictEqual(poolBiofilmState.equalDosePrimaryIdentical, true);
@@ -1035,9 +1106,12 @@ async function runTests() {
           assert.strictEqual(poolBiofilmState.nullAudit[nk].hasRecord, true);
           assert.ok(poolBiofilmState.nullAudit[nk].readoutLen > 50, `Expected populated readout for null control ${nk}`);
         }
+        for (const pk of Object.keys(poolBiofilmState.provAudit)) {
+          assert.strictEqual(poolBiofilmState.provAudit[pk].hasLabelInRecord, true, `Provenance record ${pk} missing label`);
+        }
         assert.strictEqual(poolBiofilmState.provAudit.validated_cfd_pressure_Pa.classification, 'UNAVAILABLE');
         assert.strictEqual(poolBiofilmState.provAudit.control_5b_rpm_sensitivity.classification, 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS');
-        console.log(`PASS [11/15]: Coordinated 3D Pool-and-Biofilm Explorer WebGL (Pool=${poolBiofilmState.glPoolWidth}x${poolBiofilmState.glPoolHeight}, Biofilm=${poolBiofilmState.glBioWidth}x${poolBiofilmState.glBioHeight}), 4 layers, 4 morphotypes, uncoupled time bases, 7 null controls, & Provenance on Demand verified.`);
+        console.log(`PASS [11/15]: Coordinated 3D Pool-and-Biofilm Explorer WebGL (Pool=${poolBiofilmState.glPoolWidth}x${poolBiofilmState.glPoolHeight}, Biofilm=${poolBiofilmState.glBioWidth}x${poolBiofilmState.glBioHeight}), 4 layers, 5 camera views, 4 morphotypes, uncoupled time bases, 7 null controls, & Provenance on Demand verified.`);
         receipt.tests.reactor_pool_biofilm_3d_explorer = {
           glPoolWidth: poolBiofilmState.glPoolWidth,
           glPoolHeight: poolBiofilmState.glPoolHeight,
@@ -1144,19 +1218,24 @@ async function runTests() {
           const cPool2d = d.getElementById('canvasPool2d');
           const cBio2d = d.getElementById('canvasBiofilm2d');
           const st = w.EXPLORER_STATE;
+          const bCheck = w.__POOL_BIOFILM_EXPLORER__.verifyScientificBoundaries();
           return JSON.stringify({
             renderModeMacro: st.render_mode_macro,
             renderModeMicro: st.render_mode_micro,
+            webglContextCreated: st.webgl_context_created,
+            fallbackTriggered: st.fallback_triggered,
             cPool2dWidth: cPool2d.width,
             cPool2dHeight: cPool2d.height,
             cBio2dWidth: cBio2d.width,
             cBio2dHeight: cBio2d.height,
             frameCount: st.frame_count,
-            gatesPass: st.solvers_kept_separate && !st.solver_level_coupled_validation_claimed && st.lambda_etc === 0.0 && Number.isNaN(st.seconds_per_mcs)
+            gatesPass: bCheck.all_passed && st.solvers_kept_separate && !st.solver_level_coupled_validation_claimed && st.lambda_etc === 0.0 && Number.isNaN(st.seconds_per_mcs)
           });
         })()`);
         assert.strictEqual(poolBiofilmFallback.renderModeMacro, 'canvas2d_fallback');
         assert.strictEqual(poolBiofilmFallback.renderModeMicro, 'canvas2d_fallback');
+        assert.strictEqual(poolBiofilmFallback.webglContextCreated, false);
+        assert.strictEqual(poolBiofilmFallback.fallbackTriggered, true);
         assert.ok(poolBiofilmFallback.cPool2dWidth > 350 && poolBiofilmFallback.cPool2dHeight > 280);
         assert.ok(poolBiofilmFallback.cBio2dWidth > 350 && poolBiofilmFallback.cBio2dHeight > 240);
         assert.ok(poolBiofilmFallback.frameCount >= 1);

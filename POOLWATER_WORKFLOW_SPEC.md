@@ -22,6 +22,7 @@ Core architectural principle: we migrate the **workflow, evidence qualification,
 | **R10 4D Spatiotemporal Explorer** ([`spacetime_explorer_4d_shareable.html`](spacetime_explorer_4d_shareable.html), `R10-4D-SHAREABLE-HTML`) | Time-scrubber UI, synchronized field inspection, viewport and timeline patterns | That its prescribed analytical 3D Gaussian advection-diffusion-decay pulse is a validated transient PDE solution |
 | **Biofilms 3D Cellular Potts Explorer** ([`biofilms_3d_explorer.html`](biofilms_3d_explorer.html), `BIOFILMS-3D-CPM-01`) | Demarcated optional research view: $40 \times 40 \times 40$ uncalibrated lattice (`Seed 42`, `MCS 0..100`), 256-seed 4-arm radial null (`full`, `no_rad`, `no_mel`, `null`), `cpm-sp-v1` selection-vs-displacement audit, and `15/16` synthetic phase-locking audit | That uncalibrated Potts parcels (`D-PITCH: awaiting_measurement`, `seconds_per_mcs = NaN`) represent calibrated biofilm rheology, directional radiotropism, or an operating MTR pool biofilm issue |
 | **Pool-Water Interactive Viewer** ([`poolwater_interactive.html`](poolwater_interactive.html), `POOLWATER-3D-INTERACTIVE-01`) | Offline dataset-driven 3D core-and-pool visualization with time scrubbing (`t = 0..600 s`), cut planes, synthetic Boussinesq natural-convection temperature and velocity fields, core power/flux overlays, explicit `UNAVAILABLE` field handling, and TECDOC-643 benchmark verification | That synthetic demonstration fields are a live coupled 4D RANS/LES CFD + Monte Carlo neutron-transport calculation |
+| **Coordinated 3D Pool & Biofilm Explorer** ([`reactor_pool_biofilm_explorer.html`](reactor_pool_biofilm_explorer.html), `REACTOR-POOL-BIOFILM-COORDINATED-3D-01` / `REACTOR-POOL-BIOFILM-3D-01`) | Coordinated 3D macro pool quarter-wedge cutaway (`r-z` + `x-y` slices, `X,Y in [-500,500] cm`, `Z in [-200,200] cm`) and micro coupon biofilm stratification (`SL`, `SS`, `LL`, `CPM-Hypha`, Rows A/B/C, `P(z)` 3-D solid vs 2-D dashed), 4 spatial layers, Provenance Inspector, and 7-control Null-Model Workbench synchronized with `ReactorPoolBiofilms.jl` (`v0.1.0`, commit `903f278`) | That visual co-registration implies solver-level coupled validation (`solvers_kept_separate = true`, `solver_level_coupled_validation_claimed = false`), physical calibration of `MCS` to `t_pool [s]` (`seconds_per_mcs = NaN`), or empirical validation of melanin radical-pair spin mechanics |
 
 ---
 
@@ -35,6 +36,7 @@ All existing benchmark and reference artifacts are pinned by commit SHA, byte co
 - [`CONFORMANCE_FIXTURE_SPEC.md`](CONFORMANCE_FIXTURE_SPEC.md): `20,743` bytes, SHA-256 `587745ede6c6997a298f8f0a4e01127823de1b7c606383cfa49b87db0cc60d0c` (`frozen_conformance_specification`, untouched).
 - [`biofilms_3d_explorer.html`](biofilms_3d_explorer.html): `869,267` bytes, SHA-256 `037e2050b70e92b77075b3b913aeed615457d6a1cb09a0fe85f4d6b14d96366d` (`uncalibrated_model_snapshot_reference`, generated from `/tmp/build_biofilms_3d_explorer.py`).
 - [`tecdoc643_reference_fixture.jl`](tecdoc643_reference_fixture.jl): `6,018` bytes, SHA-256 `ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d` (`transcribed_unverified_reference_fixture`, Generic IAEA-TECDOC-643 Vol. 1 10 MW MTR benchmark; illustrative OpenMC proof of concept; not modeled on any operating reactor. Upstream raw reference digest `813c9e9fb33e47d9ceead8ea8f08bf07122583cf4292aab651d4f919a572a849`, `5,951` bytes).
+- [`reactor_pool_biofilm_explorer.html`](reactor_pool_biofilm_explorer.html): `143,361` bytes, SHA-256 `15f3659f8f6e052e394eaa3255ef9200dca99f3be66038a7366b5c213e4f9552` (`coordinated_3d_pool_and_biofilm_explorer`, artifact ID `REACTOR-POOL-BIOFILM-COORDINATED-3D-01` / `REACTOR-POOL-BIOFILM-3D-01`).
 
 ### Gate 1: Normalize the Benchmark Contract
 [`benchmark_manifest.json`](benchmark_manifest.json) defines schema `oklo_tecdoc_poolwater_benchmark_contract_v1`, normalizing:
@@ -60,12 +62,13 @@ Inside [`poolwater_interactive.html`](poolwater_interactive.html), four independ
 - [`index.html`](index.html) adds:
   - **View 6 (`Pool-Water Interactive Viewer`)**: Full-width embedded view of [`poolwater_interactive.html`](poolwater_interactive.html).
   - **View 7 (`Coupled Comparison`)**: Side-by-side comparison of [`poolwater_interactive.html`](poolwater_interactive.html) and [`tecdoc643_neutron_walk.html`](tecdoc643_neutron_walk.html) with an explicit synchronization gate bar (`#coupledSyncBar`) that only synchronizes the shared IAEA-TECDOC-643 blade-withdrawal geometry/scenario ($0\%..100\%$) when requested and labels the time basis as `INDEPENDENT_REFERENCE_PANELS`.
+  - **View 9 (`3D Pool + Biofilm Coordinated Explorer`)**: Embedded and standalone view of [`reactor_pool_biofilm_explorer.html`](reactor_pool_biofilm_explorer.html) (`REACTOR-POOL-BIOFILM-COORDINATED-3D-01` / `REACTOR-POOL-BIOFILM-3D-01`).
 
 ### Gate 4: Test and Release
-- Automated regression test suite (`test_tecdoc643_viewer_regression.js` and `test_poolwater_benchmark_gate.jl`) verifies:
-  1. Byte-for-byte SHA-256 integrity of all Gate-0 frozen artifacts (`oklo_r0_fixture_readonly.html`, `spacetime_explorer_4d_shareable.html`, `CONFORMANCE_FIXTURE_SPEC.md`, `tecdoc643_neutron_walk.html`) and all newly integrated artifacts (`biofilms_3d_explorer.html`, `poolwater_interactive.html`, `tecdoc643_reference_fixture.jl`, `benchmark_manifest.json`, `artifact_index.xml`).
+- Automated regression test suite (`test_tecdoc643_viewer_regression.js`, `test_calculation_provenance_and_invariants.js`, and `test_poolwater_benchmark_gate.jl`) verifies:
+  1. Byte-for-byte SHA-256 integrity of all Gate-0 frozen artifacts (`oklo_r0_fixture_readonly.html`, `spacetime_explorer_4d_shareable.html`, `CONFORMANCE_FIXTURE_SPEC.md`, `tecdoc643_neutron_walk.html`) and all newly integrated artifacts (`biofilms_3d_explorer.html`, `poolwater_interactive.html`, `reactor_pool_biofilm_explorer.html`, `tecdoc643_reference_fixture.jl`, `benchmark_manifest.json`, `artifact_index.xml`).
   2. Exact reproduction of recorded TECDOC-643 benchmark values (`18,634.7141 +/- 120.3752 pcm` sweep worth, `340.254042 d` linear $k_{\text{eff}} = 1$ crossing, `-3,214.2242 pcm` Day 0 to Day 5 reactivity drop) and provenance boundaries in both Julia (`--startup-file=no --compile=min --heap-size-hint=4G`) and headless Chrome.
-  3. Divergence-free mass conservation ($\max |\nabla \cdot \mathbf{u}| < 10^{-9}\text{ s}^{-1}$), thermal energy balance consistency, and explicit `UNAVAILABLE` handling for missing fields in [`poolwater_interactive.html`](poolwater_interactive.html).
+  3. Divergence-free mass conservation ($\max |\nabla \cdot \mathbf{u}| < 10^{-9}\text{ s}^{-1}$), thermal energy balance consistency, and explicit `UNAVAILABLE` handling for missing fields in [`poolwater_interactive.html`](poolwater_interactive.html) and [`reactor_pool_biofilm_explorer.html`](reactor_pool_biofilm_explorer.html).
   4. Strict compliance across all portal files (zero institutional identifiers, zero em-dashes, zero en-dashes).
   5. Machine-readable verification receipt written to [`ci_verification_receipt.json`](ci_verification_receipt.json).
 
@@ -103,4 +106,21 @@ The portal's optional research views (`BIOFILMS-3D-CPM-01` in [`biofilms_3d_expl
 3. **Exported `RadioPharmacology.jl` Interface Symbols**:
    - Submodules: `BiofilmRheology`, `MagnetoreceptionHypotheses`, `BiofilmInference`
    - Functions: `ingest_biofilms_3d_cpm_ensemble_benchmark()`, `simulate_surrogate_loop_pie_materials_campaign()`, `simulate_biofilm_porous_rheology_coupling()`, `evaluate_radical_pair_magnetoreception_hypothesis()`, `simulate_biofilm_factorial_glmm()`, `simulate_4d_reactor_pool_kinetics()`, `build_magnetoreception_relationship_table()`, `build_magnetoreception_epistemic_matrix()`, `build_4d_reactor_pool_epistemic_matrix()`, `verify_research_cgmp_firewall()`.
+
+---
+
+## 6. Coordinated 3D Pool & Biofilm Explorer (`REACTOR-POOL-BIOFILM-COORDINATED-3D-01`)
+
+[`reactor_pool_biofilm_explorer.html`](reactor_pool_biofilm_explorer.html) (`143,361` bytes, SHA-256 `15f3659f8f6e052e394eaa3255ef9200dca99f3be66038a7366b5c213e4f9552`, artifact ID `REACTOR-POOL-BIOFILM-COORDINATED-3D-01`, alias `REACTOR-POOL-BIOFILM-3D-01`) provides a coordinated 3D macro-to-micro explorer linking [`poolwater_interactive.html`](poolwater_interactive.html), [`biofilms_3d_explorer.html`](biofilms_3d_explorer.html), and [`magnetoreception_3d_explorer.html`](magnetoreception_3d_explorer.html) with the three-stage `ReactorPoolBiofilms.jl` (`v0.1.0`, commit `903f278`) architecture while keeping their underlying solvers strictly separate (`solvers_kept_separate = true`, `solver_level_coupled_validation_claimed = false`):
+
+1. **4 Independently Toggleable Spatial Layers**:
+   - `pool_geometry`: 3D cylindrical tank (`R = 500 cm`, `Z in [-200, 200] cm`), core shroud, 8 radial support fins, and magenta 10 MW MTR box-grid core (`SYNTHETIC_SURROGATE`).
+   - `temperature_flow`: Boussinesq convection plume and wall boundary layers (`delta_m = 4381 um`, `delta_T = 2292 um`, `delta_c = 528 um`, `tau_w = 0.049 Pa`; `SYNTHETIC_SURROGATE`; validated 3D CFD/PIV marked `UNAVAILABLE`).
+   - `radiation_radiolysis`: Dose rate `D(r,z)` and radiolysis species `H2O2`, `H2`, `*OH`, `e_aq^-` (`PUBLISHED_G_VALUE` from Jay-Gerin 2025 & Buxton et al. 1988; `l_rxn(H2O2) = 118.3 um` vs `l_rxn(*OH) = 4.47 nm`).
+   - `biofilm_coupons`: Wall coupon stations (`PIE-COUPON-SS316L-01`, `TRIGA-WALL-SS304L-02`, `SURROGATE-COUPON-AL6061-03`), Stage 2 EPS sorption (Fein et al. 1997 `pKa = (4.82, 6.90, 9.40)` vs provisional Co-60 affinities), and Stage 3 3D morphotype stratification (`SL`, `SS`, `LL`, `CPM-Hypha`).
+2. **Coordinated 3D Cutaway, Camera Presets & Uncoupled Dual Time Scrubbers**:
+   - Synchronized camera presets (`Wedge Cutaway`, `Orbit`, `Isometric`, `Top Core`, `Coupon Micro-Zoom`), pointer drag orbit, and slice sliders (`theta_wedge in [30, 180] deg`, `z_slice_cm in [-200, 200] cm`, `z_biofilm_um in [0, 30] / [0, 100] um`).
+   - Strictly uncoupled time scrubbers (`t_pool [s]` vs `MCS`, `seconds_per_mcs = NaN`, `D-PITCH: awaiting_measurement`).
+3. **Null-Model & Counterfactual Comparison Workbench (Controls 1 through 6)**:
+   - Default `lambda_etc = 0.0` (`delta_H_etc = 0.0`) on load; 5-way radionuclide retention partition + `Coccomyxa actinabiotis` benchmark (`K_d = 4.5e5 mL/g`, `~310 MBq` in `360 m^3` over 21 d); regime-dependent equal-dose power-schedule control (`295.2 Gy`); Control 5a spatial-bias magnetic null; Control 5b illustrative sensitivity curve (`ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION`); Control 6 non-radiotrophic oxidant chemotropism (`M_tot = 0` vs `M_tot = 1`); and Oklo RZ2 5/5 dimensional rupture table.
 

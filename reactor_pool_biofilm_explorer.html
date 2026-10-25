@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REACTOR-POOL-BIOFILM-3D-01 // Coordinated 3D Pool-and-Biofilm Explorer</title>
+<title>REACTOR-POOL-BIOFILM-COORDINATED-3D-01 (REACTOR-POOL-BIOFILM-3D-01) // Coordinated 3D Pool-and-Biofilm Explorer</title>
 <style>
   :root {
     --bg-0: #04070d;
@@ -266,7 +266,9 @@
     border: 1px solid rgba(56, 189, 248, 0.25);
     border-radius: 6px;
     overflow: hidden;
+    cursor: grab;
   }
+  .canvas-wrap:active { cursor: grabbing; }
   .canvas-wrap canvas {
     position: absolute;
     top: 0;
@@ -325,6 +327,7 @@
     border: 1px solid rgba(56, 189, 248, 0.24);
     border-radius: 6px;
     overflow: hidden;
+    cursor: pointer;
   }
   .rows-abc-wrap canvas {
     width: 100%;
@@ -431,7 +434,7 @@
 
 <header class="top-header">
   <div class="brand-block">
-    <div class="brand-id">ARTIFACT: REACTOR-POOL-BIOFILM-3D-01 // STAGE 1-2-3 COORDINATED EXPLORER</div>
+    <div class="brand-id">ARTIFACT: REACTOR-POOL-BIOFILM-COORDINATED-3D-01 (REACTOR-POOL-BIOFILM-3D-01) // STAGE 1-2-3 COORDINATED EXPLORER</div>
     <div class="brand-title">Coordinated 3D Open-Pool Reactor &amp; Biofilm Coupon Explorer (Uncoupled Solvers, Default &lambda;_etc = 0.0)</div>
   </div>
   <nav class="nav-links" aria-label="Cross-Portal Artifact Navigation">
@@ -546,9 +549,23 @@
       </div>
     </div>
 
-    <!-- Cutaway & Slice Sliders -->
+    <!-- Cutaway, Coordinated Camera & Slice Sliders -->
     <div class="timebase-box" style="border-color: rgba(56, 189, 248, 0.35);">
-      <div class="panel-title" style="margin-bottom:6px;">2. Cutaway &amp; Slice Coordinates</div>
+      <div class="panel-title" style="margin-bottom:6px;">2. Coordinated Camera &amp; Slice Controls</div>
+      <div class="field-pills" style="margin-bottom:6px;">
+        <button class="field-btn active" data-cam="Wedge Cutaway" onclick="window.setCameraView('Wedge Cutaway')">Wedge Cutaway</button>
+        <button class="field-btn" data-cam="Orbit" onclick="window.setCameraView('Orbit')">Orbit</button>
+        <button class="field-btn" data-cam="Isometric" onclick="window.setCameraView('Isometric')">Isometric</button>
+        <button class="field-btn" data-cam="Top Core" onclick="window.setCameraView('Top Core')">Top Core</button>
+        <button class="field-btn" data-cam="Coupon Micro-Zoom" onclick="window.setCameraView('Coupon Micro-Zoom')">Coupon Micro-Zoom</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-family:var(--font-mono);font-size:10.5px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:#cbd5e1;">
+          <input type="checkbox" id="toggle_sync_camera" checked onchange="window.setSyncCameraRotation(this.checked)">
+          <span>Sync Macro/Micro Camera Rotation</span>
+        </label>
+        <span id="lbl_camera_preset" style="color:var(--accent-cyan);">Wedge Cutaway</span>
+      </div>
       <div class="slider-row">
         <div class="slider-label">
           <span>Wedge Cutaway Angle (&theta;_wedge)</span>
@@ -561,14 +578,18 @@
           <span>Horizontal Pool Slice (z_slice_cm)</span>
           <span id="lbl_z_slice_cm">-40 cm</span>
         </div>
-        <input type="range" id="slider_z_slice_cm" min="-180" max="180" step="10" value="-40" oninput="window.setCutawayGeometry(null, Number(this.value), null)">
+        <input type="range" id="slider_z_slice_cm" min="-200" max="200" step="10" value="-40" oninput="window.setCutawayGeometry(null, Number(this.value), null)">
       </div>
       <div class="slider-row" style="margin-bottom:0;">
         <div class="slider-label">
-          <span>Micro Coupon Canopy Probe (z_biofilm_um)</span>
+          <span>Micro Coupon Depth (z_biofilm_um)</span>
           <span id="lbl_z_biofilm_um">12.0 um</span>
         </div>
         <input type="range" id="slider_z_biofilm_um" min="0" max="30" step="0.5" value="12" oninput="window.setCutawayGeometry(null, null, Number(this.value))">
+        <div class="field-pills" style="margin-top:4px;">
+          <button class="field-btn active" id="btnDepth30" onclick="window.setBiofilmDepthRange(30)">Canopy [0, 30] um</button>
+          <button class="field-btn" id="btnDepth100" onclick="window.setBiofilmDepthRange(100)">Full Depth [0, 100] um</button>
+        </div>
       </div>
     </div>
 
@@ -697,7 +718,7 @@
       <span class="epi-badge epi-CALCULATED" id="provClassificationBadge">CALCULATED</span>
     </div>
     <div style="margin-bottom:8px;font-size:11.5px;color:var(--text-dim);">
-      Click any layer field, coupon, morphotype, or null-model control (or select below) to inspect full epistemic metadata and commit locks:
+      Click any layer field, 3D viewport element, coupon, morphotype, or null-model control (or select below) to inspect full epistemic metadata and commit locks:
     </div>
     <div class="field-pills" style="margin-bottom:10px;">
       <button class="field-btn active" data-prov="H2O2" onclick="window.selectProvenanceField('H2O2')">H2O2</button>
@@ -716,6 +737,7 @@
     <table class="prov-table" aria-label="Selected Field Provenance Metadata">
       <tbody>
         <tr><th>Field ID</th><td id="prov_field_id">H2O2</td></tr>
+        <tr><th>Label</th><td id="prov_label">Hydrogen Peroxide Radiolysis Field (H2O2)</td></tr>
         <tr><th>Data Classification</th><td id="prov_data_classification">CALCULATED</td></tr>
         <tr><th>Calibration Status</th><td id="prov_calibration_status">PUBLISHED_G_VALUE</td></tr>
         <tr><th>Units</th><td id="prov_units">mol/L</td></tr>
@@ -783,6 +805,7 @@
   var PROVENANCE_REGISTRY = {
     H2O2: {
       field_id: 'H2O2',
+      label: 'Hydrogen Peroxide Radiolysis Field (H2O2)',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
       units: 'mol/L',
@@ -794,6 +817,7 @@
     },
     H2: {
       field_id: 'H2',
+      label: 'Molecular Hydrogen Radiolysis Field (H2)',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
       units: 'mol/L',
@@ -805,6 +829,7 @@
     },
     OH_rad: {
       field_id: 'OH_rad',
+      label: 'Hydroxyl Radical Field (*OH)',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
       units: 'mol/L',
@@ -816,6 +841,7 @@
     },
     e_aq: {
       field_id: 'e_aq',
+      label: 'Hydrated Electron Field (e_aq^-)',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
       units: 'mol/L',
@@ -827,6 +853,7 @@
     },
     dose_rate_Gy_s: {
       field_id: 'dose_rate_Gy_s',
+      label: 'Ionizing Dose Rate Field D(r,z) [Gy/s]',
       data_classification: 'CALCULATED',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'Gy/s',
@@ -838,6 +865,7 @@
     },
     temperature_C: {
       field_id: 'temperature_C',
+      label: 'Synthetic Boussinesq Thermal Plume T(r,z) [degC]',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'degC (bulk 35.0 degC / 308.15 K)',
@@ -849,6 +877,7 @@
     },
     velocity_m_s: {
       field_id: 'velocity_m_s',
+      label: 'Synthetic Convection & Boundary-Layer Velocity u(r,z) [m/s]',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'm/s (U_bulk = 0.15 m/s; tau_w = 0.049 Pa)',
@@ -860,6 +889,7 @@
     },
     pool_geometry_cad: {
       field_id: 'pool_geometry_cad',
+      label: '3D Cylindrical Pool Tank, Core Shroud & 8 Support Fins',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'cm (R = 500 cm, Z in [-200, 200] cm)',
@@ -871,17 +901,19 @@
     },
     quarter_wedge_cutaway: {
       field_id: 'quarter_wedge_cutaway',
+      label: '3D Quarter-Wedge Cutaway & Orthogonal r-z / x-y Slice Operator',
       data_classification: 'CALCULATED',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'deg (theta_wedge) & cm (z_slice_cm)',
       coordinate_frame: 'Orthogonal vertical r-z cutaway planes + horizontal x-y slice plane',
       source: 'Coordinated 3D visualization slice operator over Stage 1 pool fields',
-      model_version: 'REACTOR-POOL-BIOFILM-3D-01 v1.0',
+      model_version: 'REACTOR-POOL-BIOFILM-COORDINATED-3D-01 v1.0',
       commit_lock: COMMIT_LOCK_STRING,
-      notes: 'Interactive 3D quarter-wedge cutaway exposing radial core-to-wall gradients and axial plume contours simultaneously.'
+      notes: 'Interactive 3D quarter-wedge cutaway exposing radial core-to-wall gradients, iso-contour lines, and axial plume contours simultaneously.'
     },
     coupon_eps_sorption: {
       field_id: 'coupon_eps_sorption',
+      label: 'Stage 2 EPS Protonation & Provisional Co-60 Biosorption',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'PROVISIONAL_UNCALIBRATED_ASSUMPTION',
       units: 'Bq/cm^2 & mol/m^3 (pKa = 4.82, 6.90, 9.40; log K_Co = 1.60, 2.50, 3.20)',
@@ -893,6 +925,7 @@
     },
     cpm_morphology_stage3: {
       field_id: 'cpm_morphology_stage3',
+      label: 'Stage 3 3D Cellular Potts & Morphotype Stratification Lattice',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
       units: 'MCS (seconds_per_mcs = NaN; D-PITCH: awaiting_measurement; 40x40x40 lattice)',
@@ -902,8 +935,81 @@
       commit_lock: COMMIT_LOCK_STRING,
       notes: 'Default baseline is lambda_etc = 0.0 (zero radiotrophic coupling). Time step conversion seconds_per_mcs is explicitly NaN awaiting experimental microscopy calibration.'
     },
+    morphotype_SL: {
+      field_id: 'morphotype_SL',
+      label: 'Morphotype SL: Sphere (Cocci) + Long Rod/Hypha Stratification',
+      data_classification: 'SYNTHETIC',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'P(z) in [0, 0.1] vs z in [0, 30] um',
+      coordinate_frame: '3D micro coupon block (x, y, z) [um] & vertical slice x-z',
+      source: '3D vs 2D multispecies mechanical packing benchmark (blue rods/hyphae base vs red cocci upper canopy)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 / biofilms_3d_explorer.html',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Demonstrates shape-driven vertical stratification (z_mean(blue) < z_mean(red)) arising purely from 3D mechanical packing without radiotrophic coupling (lambda_etc = 0.0).'
+    },
+    morphotype_SS: {
+      field_id: 'morphotype_SS',
+      label: 'Morphotype SS: Symmetric Sphere + Sphere Clonal Columns',
+      data_classification: 'SYNTHETIC',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'P(z) in [0, 0.1] vs z in [0, 30] um',
+      coordinate_frame: '3D micro coupon block (x, y, z) [um] & vertical slice x-z',
+      source: '3D vs 2D symmetric cocci-cocci clonal column control benchmark',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 / biofilms_3d_explorer.html',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Symmetric sphere-sphere control showing side-by-side clonal sectors with overlapping vertical height distributions (z_mean(blue) ~ z_mean(red)).'
+    },
+    morphotype_LL: {
+      field_id: 'morphotype_LL',
+      label: 'Morphotype LL: Symmetric Long Rod + Long Rod Entangled Canopy',
+      data_classification: 'SYNTHETIC',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'P(z) in [0, 0.1] vs z in [0, 30] um',
+      coordinate_frame: '3D micro coupon block (x, y, z) [um] & vertical slice x-z',
+      source: '3D vs 2D symmetric rod-rod entangled packing control benchmark',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 / biofilms_3d_explorer.html',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Symmetric rod-rod control showing entangled horizontal and vertical rod domains with overlapping P(z) curves (z_mean(blue) ~ z_mean(red)).'
+    },
+    'PIE-COUPON-SS316L-01': {
+      field_id: 'PIE-COUPON-SS316L-01',
+      label: 'Wall Coupon Locator PIE-COUPON-SS316L-01 (SS316L Stainless Steel)',
+      data_classification: 'CALCULATED',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'r = 500 cm, theta = 25 deg, z = -40 cm | D = 0.0820 Gy/s | H2O2 = 1.42 uM',
+      coordinate_frame: 'Cylindrical pool wall r = R_pool = 500 cm + local coupon normal z [um]',
+      source: 'Stage 1 PoolGeometryState & compute_coupon_boundary_layer at mid-core below-midplane station',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 -> Stage 2 boundary condition)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Primary stainless-steel coupon station linking macro pool wall boundary layer (delta_m = 4381 um, delta_T = 2292 um, delta_c = 528 um) to micro biofilm canopy.'
+    },
+    'TRIGA-WALL-SS304L-02': {
+      field_id: 'TRIGA-WALL-SS304L-02',
+      label: 'Wall Coupon Locator TRIGA-WALL-SS304L-02 (SS304L Pool Liner)',
+      data_classification: 'CALCULATED',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'r = 500 cm, theta = 115 deg, z = +10 cm | D = 0.0540 Gy/s | H2O2 = 1.12 uM',
+      coordinate_frame: 'Cylindrical pool wall r = R_pool = 500 cm + local coupon normal z [um]',
+      source: 'Stage 1 PoolGeometryState & compute_coupon_boundary_layer at upper thermal plume station',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 -> Stage 2 boundary condition)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Secondary stainless-steel liner station experiencing slightly warmer plume temperature (36.1 degC) and lower wall dose rate (0.0540 Gy/s).'
+    },
+    'SURROGATE-COUPON-AL6061-03': {
+      field_id: 'SURROGATE-COUPON-AL6061-03',
+      label: 'Wall Coupon Locator SURROGATE-COUPON-AL6061-03 (Al-6061 Rack)',
+      data_classification: 'CALCULATED',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'r = 500 cm, theta = 215 deg, z = -95 cm | D = 0.1180 Gy/s | H2O2 = 1.76 uM',
+      coordinate_frame: 'Cylindrical pool wall r = R_pool = 500 cm + local coupon normal z [um]',
+      source: 'Stage 1 PoolGeometryState & compute_coupon_boundary_layer at lower high-dose rack station',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 -> Stage 2 boundary condition)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Core-facing aluminum-rack surrogate coupon station with higher local dose rate (0.1180 Gy/s) and peroxide concentration (1.76 uM).'
+    },
     coccomyxa_actinabiotis_benchmark: {
       field_id: 'coccomyxa_actinabiotis_benchmark',
+      label: 'Empirical Benchmark: Coccomyxa actinabiotis & Sarro (2005) Co-60',
       data_classification: 'MEASURED',
       calibration_status: 'PUBLISHED_G_VALUE',
       units: 'K_d = 4.5e5 mL/g (lab Ag-110m) | ~310 MBq removed in 360 m^3 pool over 21 d | Co-60 = 5,521 Bq/cm^2 (Sarro 2005)',
@@ -913,8 +1019,57 @@
       commit_lock: COMMIT_LOCK_STRING,
       notes: 'Distinguishes controlled laboratory Ag-110m K_d (4.5e5 mL/g) from real-scale 360 m^3 pool trials (~310 MBq over 21 days) and unpartitioned Sarro et al. (2005) Co-60 coupon totals.'
     },
+    baseline_no_coupling_default: {
+      field_id: 'baseline_no_coupling_default',
+      label: 'Control 1: Baseline Null (lambda_etc = 0.0) vs Exploratory Hypothesis',
+      data_classification: 'PROVISIONAL_ASSUMPTION',
+      calibration_status: 'UNCALIBRATED_MCS_LATTICE',
+      units: 'lambda_etc (dimensionless; default = 0.0) & delta_H_etc',
+      coordinate_frame: '3D CPM coupon lattice (40x40x40)',
+      source: 'Stage 3 FieldConsumerConfig baseline_no_coupling_default & flat-field volume swelling diagnostic',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 3 Control 1)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Enforces lambda_etc = 0.0 on load so zero radiotrophic bias is active unless explicitly toggled as an EXPLORATORY_HYPOTHESIS; documents why :gradient_difference avoids flat-field volume swelling.'
+    },
+    five_way_radionuclide_retention: {
+      field_id: 'five_way_radionuclide_retention',
+      label: 'Controls 2-4: 5-Way Radionuclide Retention Partition & Fein (1997) EPS',
+      data_classification: 'PROVISIONAL_ASSUMPTION',
+      calibration_status: 'PROVISIONAL_UNCALIBRATED_ASSUMPTION',
+      units: 'Bq/cm^2 across 5 retention channels',
+      coordinate_frame: '1D coupon biofilm depth z in [0, L_f] um',
+      source: 'Fein et al. (1997) pKa=(4.82, 6.90, 9.40); provisional Co-60 affinities; Rivasseau et al. (2013, 2016); Sarro et al. (2005)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 2 Controls 2-4)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Contrasts sterile oxide sorption, dead biomass EPS sorption, live non-melanized uptake, live melanized uptake, and Coccomyxa microalgal bioaccumulation.'
+    },
+    equal_dose_power_schedules: {
+      field_id: 'equal_dose_power_schedules',
+      label: 'Control 5: Equal-Dose Power Schedules (Regime-Dependent Control)',
+      data_classification: 'CALCULATED',
+      calibration_status: 'PUBLISHED_G_VALUE',
+      units: 'Integrated Dose = 295.2 Gy | Y_H2 = 1.68e-4 M, Y_H2O2 = 2.54e-4 M',
+      coordinate_frame: 'Stage 1 -> Stage 2 -> Stage 3 temporal schedule domain t_pool [s]',
+      source: 'Stage 3 run_equal_dose_power_schedule_control (constant vs periodic vs shuffled under two regimes)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 3 Control 5)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Primary linear radiolytic yields are identical across equal-dose schedules; downstream differences occur only in the active-loss/nonlinear/coupled regime and vanish in the conserved-linear/uncoupled regime.'
+    },
+    control_5a_spatial_bias_null: {
+      field_id: 'control_5a_spatial_bias_null',
+      label: 'Control 5a: Spatial-Bias Magnetic Null under Uniform Field (B_0, theta_B)',
+      data_classification: 'CALCULATED',
+      calibration_status: 'UNCALIBRATED_MCS_LATTICE',
+      units: 'grad J_ETC = 0.0 | delta_H(:gradient_difference) = 0.0 | j_base_b0_zero = 0.420',
+      coordinate_frame: '3D CPM coupon lattice under spatially uniform magnetic vector B_0',
+      source: 'Stage 3 evaluate_spatial_bias_magnetic_null_control5a',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 3 Control 5a)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Proves that a spatially uniform magnetic field produces zero spatial gradient (grad J_ETC = 0) and zero directional bias under :gradient_difference, while shifting uniform :site_occupation energy relative to B_0 = 0.'
+    },
     control_5b_rpm_sensitivity: {
       field_id: 'control_5b_rpm_sensitivity',
+      label: 'Control 5b: Biochemical Magnetic-Response Parametric Sensitivity',
       data_classification: 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS',
       calibration_status: 'ILLUSTRATIVE_SENSITIVITY_FORMULA',
       units: 'Dimensionless relative yield & J_ETC [mol m^-3 s^-1] vs B_0 [uT] and theta_B [rad]',
@@ -924,8 +1079,33 @@
       commit_lock: COMMIT_LOCK_STRING,
       notes: 'ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION: verifies the implemented algebraic sensitivity formula only; does NOT empirically validate a melanin radical-pair mechanism and is NOT grounded in a measured melanin spin Hamiltonian.'
     },
+    control_6_oxidant_chemotropism: {
+      field_id: 'control_6_oxidant_chemotropism',
+      label: 'Control 6: Non-Radiotrophic Oxidant Chemotropism (M_tot = 0 vs M_tot = 1)',
+      data_classification: 'PROVISIONAL_ASSUMPTION',
+      calibration_status: 'UNCALIBRATED_MCS_LATTICE',
+      units: 'Canopy centroid drift [um] (-4.8 um avoidance, +3.6 um aerotaxis)',
+      coordinate_frame: '1D/3D coupon boundary layer z in [0, 30] um',
+      source: 'Stage 3 evaluate_non_radiotrophic_oxidant_chemotropism_control6',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 3 Control 6)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Shows that directional growth along a radiolytic H2O2/O2 gradient can arise from classical oxidant avoidance or aerotaxis (M_tot = 0) without melanin-mediated radiotrophy (M_tot = 1).'
+    },
+    epistemic_gates_eg1_eg4_and_links_l1_l5: {
+      field_id: 'epistemic_gates_eg1_eg4_and_links_l1_l5',
+      label: 'Epistemic Gates (EG-1..EG-4) & Fault-Tree Links (L1..L5)',
+      data_classification: 'CALCULATED',
+      calibration_status: 'PUBLISHED_G_VALUE',
+      units: '4 Epistemic Gates (EG-1..EG-4) & 5 Causal Chain Links (L1..L5)',
+      coordinate_frame: 'Cross-stage epistemic architecture (Stage 1 -> Stage 2 -> Stage 3)',
+      source: 'magnetoreception_3d_explorer.html & ReactorPoolBiofilms epistemic gate specification',
+      model_version: 'REACTOR-POOL-BIOFILM-COORDINATED-3D-01 v1.0',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Enforces strict separation between established radiolysis/sorption benchmarks (L1-L3), exploratory radiotrophic coupling (L4), and illustrative spin-Hamiltonian sensitivity formulas (L5).'
+    },
     validated_cfd_pressure_Pa: {
       field_id: 'validated_cfd_pressure_Pa',
+      label: 'Facility-Validated 3D CFD Pressure Field [UNAVAILABLE]',
       data_classification: 'UNAVAILABLE',
       calibration_status: 'UNAVAILABLE_AWAITING_CAMPAIGN',
       units: 'Pa (UNAVAILABLE)',
@@ -937,6 +1117,7 @@
     },
     empirical_piv_temperature: {
       field_id: 'empirical_piv_temperature',
+      label: 'Empirical PIV/LIF Temperature & Velocity Field [UNAVAILABLE]',
       data_classification: 'UNAVAILABLE',
       calibration_status: 'UNAVAILABLE_AWAITING_CAMPAIGN',
       units: 'K / degC (UNAVAILABLE)',
@@ -1247,8 +1428,32 @@
   var urlParams = new URLSearchParams(window.location.search || '');
   var force2dParam = urlParams.get('force2d') === '1';
 
+  var CAMERA_PRESETS = {
+    'Wedge Cutaway': {
+      macro: { yaw: 0.62, pitch: 0.52, zoom: 1.0 },
+      micro: { yaw: 0.68, pitch: 0.50, zoom: 1.0 }
+    },
+    'Orbit': {
+      macro: { yaw: 1.18, pitch: 0.44, zoom: 1.02 },
+      micro: { yaw: 1.24, pitch: 0.44, zoom: 1.02 }
+    },
+    'Isometric': {
+      macro: { yaw: 0.7854, pitch: 0.6155, zoom: 1.0 },
+      micro: { yaw: 0.7854, pitch: 0.6155, zoom: 1.0 }
+    },
+    'Top Core': {
+      macro: { yaw: 0.0, pitch: 1.48, zoom: 1.06 },
+      micro: { yaw: 0.0, pitch: 1.42, zoom: 1.04 }
+    },
+    'Coupon Micro-Zoom': {
+      macro: { yaw: 0.44, pitch: 0.38, zoom: 1.28 },
+      micro: { yaw: 0.56, pitch: 0.42, zoom: 1.32 }
+    }
+  };
+
   window.EXPLORER_STATE = {
-    artifact_id: 'REACTOR-POOL-BIOFILM-3D-01',
+    artifact_id: 'REACTOR-POOL-BIOFILM-COORDINATED-3D-01',
+    artifact_id_alias: 'REACTOR-POOL-BIOFILM-3D-01',
     solvers_kept_separate: true,
     solver_level_coupled_validation_claimed: false,
     default_lambda_etc_on_load: 0.0,
@@ -1261,6 +1466,11 @@
     theta_wedge_deg: 90,
     z_slice_cm: -40,
     z_biofilm_um: 12.0,
+    biofilm_depth_range_um: 30,
+    camera_preset: 'Wedge Cutaway',
+    sync_camera_rotation: true,
+    camera_macro: { yaw: 0.62, pitch: 0.52, zoom: 1.0 },
+    camera_micro: { yaw: 0.68, pitch: 0.50, zoom: 1.0 },
     layers: {
       pool_geometry: true,
       temperature_flow: true,
@@ -1275,6 +1485,8 @@
     active_null_control: 'baseline_no_coupling_default',
     schedule_regime: 'active_nonlinear_coupled',
     selected_provenance_field: 'H2O2',
+    webgl_context_created: false,
+    fallback_triggered: false,
     render_mode_macro: 'initializing',
     render_mode_micro: 'initializing',
     frame_count: 0,
@@ -1289,25 +1501,54 @@
     }
   };
 
-  // WebGL context initialization with automatic 2D Canvas fallback
-  function initWebGLBackground(canvasId) {
+  // Build 3D WebGL geometry buffers (cylinder rings, core shroud, and coupon substrate mesh)
+  function buildWebGLMeshVertices(isMacro) {
+    var verts = [];
+    function pushTri(x0,y0,z0, x1,y1,z1, x2,y2,z2, r,g,b,a) {
+      verts.push(x0,y0,z0,r,g,b,a, x1,y1,z1,r,g,b,a, x2,y2,z2,r,g,b,a);
+    }
+    if (isMacro) {
+      var nSeg = 24;
+      for (var i = 0; i < nSeg; i++) {
+        var a0 = (i / nSeg) * Math.PI * 1.5 + 0.5 * Math.PI;
+        var a1 = ((i + 1) / nSeg) * Math.PI * 1.5 + 0.5 * Math.PI;
+        var x0 = 0.68 * Math.cos(a0), y0 = 0.68 * Math.sin(a0);
+        var x1 = 0.68 * Math.cos(a1), y1 = 0.68 * Math.sin(a1);
+        pushTri(x0,y0,-0.32, x1,y1,-0.32, x1,y1,0.32, 0.08,0.28,0.46,0.35);
+        pushTri(x0,y0,-0.32, x1,y1,0.32, x0,y0,0.32, 0.10,0.34,0.54,0.35);
+      }
+      // Central magenta core prism
+      var c = 0.11;
+      pushTri(-c,-c,-0.15, c,-c,-0.15, c,c,0.15, 0.72,0.18,0.82,0.45);
+      pushTri(-c,-c,-0.15, c,c,0.15, -c,c,0.15, 0.82,0.24,0.90,0.45);
+    } else {
+      // Micro coupon substrate slab + 3D canopy pillars
+      var s = 0.55;
+      pushTri(-s,-s,-0.18, s,-s,-0.18, s,s,-0.10, 0.30,0.38,0.48,0.45);
+      pushTri(-s,-s,-0.18, s,s,-0.10, -s,s,-0.10, 0.35,0.44,0.55,0.45);
+      for (var p = 0; p < 12; p++) {
+        var px = -0.38 + (p % 4) * 0.25;
+        var py = -0.32 + Math.floor(p / 4) * 0.28;
+        var isR = (p % 2 === 0);
+        pushTri(px-0.05,py,-0.08, px+0.05,py,-0.08, px,py+0.05,0.22, isR?0.85:0.20, isR?0.22:0.48, isR?0.25:0.88, 0.38);
+      }
+    }
+    return new Float32Array(verts);
+  }
+
+  // WebGL context initialization with 3D depth-buffered shader + automatic 2D Canvas fallback
+  function initWebGLBackground(canvasId, isMacro) {
     if (force2dParam) return null;
     var canvas = document.getElementById(canvasId);
     if (!canvas) return null;
     var gl = null;
     try {
-      gl = canvas.getContext('webgl', { antialias: true, preserveDrawingBuffer: true }) ||
-           canvas.getContext('experimental-webgl', { antialias: true, preserveDrawingBuffer: true });
+      gl = canvas.getContext('webgl', { antialias: true, depth: true, preserveDrawingBuffer: true }) ||
+           canvas.getContext('experimental-webgl', { antialias: true, depth: true, preserveDrawingBuffer: true });
     } catch (e) {
       gl = null;
     }
     if (!gl) return null;
-
-    var vsSrc = 'attribute vec2 aPos; varying vec2 vUv; void main(){ vUv = aPos * 0.5 + 0.5; gl_Position = vec4(aPos, 0.0, 1.0); }';
-    var fsSrc = 'precision mediump float; varying vec2 vUv; uniform float uPhase; uniform vec3 uTint; void main(){ ' +
-      'vec2 p = vUv - vec2(0.5, 0.5); float r = length(p); ' +
-      'float glow = 0.16 * exp(-3.5 * r * r) + 0.03 * sin(12.0 * p.x + uPhase) * cos(12.0 * p.y - uPhase); ' +
-      'gl_FragColor = vec4(uTint * glow + vec3(0.02, 0.04, 0.08), 1.0); }';
 
     function compile(type, src) {
       var s = gl.createShader(type);
@@ -1316,6 +1557,13 @@
       if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) return null;
       return s;
     }
+
+    var vsSrc = 'attribute vec2 aPos; varying vec2 vUv; void main(){ vUv = aPos * 0.5 + 0.5; gl_Position = vec4(aPos, 0.99, 1.0); }';
+    var fsSrc = 'precision mediump float; varying vec2 vUv; uniform float uPhase; uniform vec3 uTint; void main(){ ' +
+      'vec2 p = vUv - vec2(0.5, 0.5); float r = length(p); ' +
+      'float glow = 0.16 * exp(-3.5 * r * r) + 0.03 * sin(12.0 * p.x + uPhase) * cos(12.0 * p.y - uPhase); ' +
+      'gl_FragColor = vec4(uTint * glow + vec3(0.02, 0.04, 0.08), 1.0); }';
+
     var vs = compile(gl.VERTEX_SHADER, vsSrc);
     var fs = compile(gl.FRAGMENT_SHADER, fsSrc);
     if (!vs || !fs) return null;
@@ -1329,27 +1577,71 @@
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
 
+    // 3D depth-buffered mesh program
+    var vs3dSrc =
+      'attribute vec3 aPos3D; attribute vec4 aColor; varying vec4 vColor; ' +
+      'uniform float uYaw; uniform float uPitch; uniform float uZoom; ' +
+      'void main(){ ' +
+      '  float cy = cos(uYaw), sy = sin(uYaw); ' +
+      '  float cp = cos(uPitch), sp = sin(uPitch); ' +
+      '  float xr = aPos3D.x * cy - aPos3D.y * sy; ' +
+      '  float yr = aPos3D.x * sy + aPos3D.y * cy; ' +
+      '  float sx = xr * uZoom; ' +
+      '  float sy2 = (yr * sp + aPos3D.z * cp) * uZoom; ' +
+      '  float sz = (yr * cp - aPos3D.z * sp) * 0.35; ' +
+      '  vColor = aColor; ' +
+      '  gl_Position = vec4(sx, sy2, sz, 1.0); ' +
+      '}';
+    var fs3dSrc = 'precision mediump float; varying vec4 vColor; void main(){ gl_FragColor = vColor; }';
+    var vs3 = compile(gl.VERTEX_SHADER, vs3dSrc);
+    var fs3 = compile(gl.FRAGMENT_SHADER, fs3dSrc);
+    var prog3d = null, buf3d = null, meshVerts = buildWebGLMeshVertices(isMacro);
+    if (vs3 && fs3) {
+      prog3d = gl.createProgram();
+      gl.attachShader(prog3d, vs3);
+      gl.attachShader(prog3d, fs3);
+      gl.linkProgram(prog3d);
+      if (gl.getProgramParameter(prog3d, gl.LINK_STATUS)) {
+        buf3d = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf3d);
+        gl.bufferData(gl.ARRAY_BUFFER, meshVerts, gl.STATIC_DRAW);
+      } else {
+        prog3d = null;
+      }
+    }
+
     return {
       gl: gl,
       prog: prog,
       buf: buf,
       aPos: gl.getAttribLocation(prog, 'aPos'),
       uPhase: gl.getUniformLocation(prog, 'uPhase'),
-      uTint: gl.getUniformLocation(prog, 'uTint')
+      uTint: gl.getUniformLocation(prog, 'uTint'),
+      prog3d: prog3d,
+      buf3d: buf3d,
+      numVerts3d: meshVerts.length / 7,
+      aPos3D: prog3d ? gl.getAttribLocation(prog3d, 'aPos3D') : -1,
+      aColor: prog3d ? gl.getAttribLocation(prog3d, 'aColor') : -1,
+      uYaw: prog3d ? gl.getUniformLocation(prog3d, 'uYaw') : null,
+      uPitch: prog3d ? gl.getUniformLocation(prog3d, 'uPitch') : null,
+      uZoom: prog3d ? gl.getUniformLocation(prog3d, 'uZoom') : null
     };
   }
 
-  var glMacroCtx = initWebGLBackground('glPoolCanvas');
-  var glMicroCtx = initWebGLBackground('glBiofilmCanvas');
+  var glMacroCtx = initWebGLBackground('glPoolCanvas', true);
+  var glMicroCtx = initWebGLBackground('glBiofilmCanvas', false);
+  window.EXPLORER_STATE.webgl_context_created = Boolean(glMacroCtx && glMicroCtx);
+  window.EXPLORER_STATE.fallback_triggered = !window.EXPLORER_STATE.webgl_context_created;
   window.EXPLORER_STATE.render_mode_macro = glMacroCtx ? 'webgl+2d_overlay' : 'canvas2d_fallback';
   window.EXPLORER_STATE.render_mode_micro = glMicroCtx ? 'webgl+2d_overlay' : 'canvas2d_fallback';
 
-  function drawWebGLBackdrop(ctxObj, phase, tintRGB) {
+  function drawWebGLBackdrop(ctxObj, phase, tintRGB, cam) {
     if (!ctxObj) return;
     var gl = ctxObj.gl;
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.clearColor(0.02, 0.04, 0.08, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.disable(gl.DEPTH_TEST);
     gl.useProgram(ctxObj.prog);
     gl.bindBuffer(gl.ARRAY_BUFFER, ctxObj.buf);
     gl.enableVertexAttribArray(ctxObj.aPos);
@@ -1357,17 +1649,39 @@
     gl.uniform1f(ctxObj.uPhase, phase);
     gl.uniform3f(ctxObj.uTint, tintRGB[0], tintRGB[1], tintRGB[2]);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+    if (ctxObj.prog3d && ctxObj.buf3d && cam) {
+      gl.enable(gl.DEPTH_TEST);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.useProgram(ctxObj.prog3d);
+      gl.bindBuffer(gl.ARRAY_BUFFER, ctxObj.buf3d);
+      if (ctxObj.aPos3D >= 0) {
+        gl.enableVertexAttribArray(ctxObj.aPos3D);
+        gl.vertexAttribPointer(ctxObj.aPos3D, 3, gl.FLOAT, false, 28, 0);
+      }
+      if (ctxObj.aColor >= 0) {
+        gl.enableVertexAttribArray(ctxObj.aColor);
+        gl.vertexAttribPointer(ctxObj.aColor, 4, gl.FLOAT, false, 28, 12);
+      }
+      gl.uniform1f(ctxObj.uYaw, cam.yaw);
+      gl.uniform1f(ctxObj.uPitch, cam.pitch);
+      gl.uniform1f(ctxObj.uZoom, cam.zoom || 1.0);
+      gl.drawArrays(gl.TRIANGLES, 0, ctxObj.numVerts3d);
+    }
   }
 
-  // Isometric 3D projection helper for Macro Pool Cutaway
+  // Isometric / Orbit 3D projection helper for Macro Pool Cutaway
   function projectMacro3D(x, y, z, cx, cy, scale) {
-    var yaw = 0.62;
-    var pitch = 0.52;
+    var cam = window.EXPLORER_STATE.camera_macro || { yaw: 0.62, pitch: 0.52, zoom: 1.0 };
+    var yaw = cam.yaw;
+    var pitch = cam.pitch;
+    var s = scale * (cam.zoom || 1.0);
     var xr = x * Math.cos(yaw) - y * Math.sin(yaw);
     var yr = x * Math.sin(yaw) + y * Math.cos(yaw);
-    var sx = cx + xr * scale;
-    var sy = cy + (yr * Math.sin(pitch) - z * Math.cos(pitch)) * scale;
-    return { x: sx, y: sy };
+    var sx = cx + xr * s;
+    var sy = cy + (yr * Math.sin(pitch) - z * Math.cos(pitch)) * s;
+    return { x: sx, y: sy, depth: yr * Math.cos(pitch) + z * Math.sin(pitch) };
   }
 
   function fieldColorMap(fieldId, normVal) {
@@ -1379,19 +1693,22 @@
       var rT = Math.round(35 + 215 * v);
       var gT = Math.round(90 + 110 * (1 - Math.abs(v - 0.5) * 1.6));
       var bT = Math.round(220 - 180 * v);
-      return 'rgba(' + rT + ',' + gT + ',' + bT + ',0.78)';
+      return 'rgba(' + rT + ',' + gT + ',' + bT + ',0.80)';
     }
     // Radiolysis / Dose colormap (deep navy -> cyan -> emerald -> yellow -> magenta core)
     var r = Math.round(20 + 225 * Math.pow(v, 1.3));
     var g = Math.round(60 + 170 * Math.sin(v * Math.PI));
     var b = Math.round(160 + 85 * (1 - v));
-    return 'rgba(' + r + ',' + g + ',' + b + ',0.80)';
+    return 'rgba(' + r + ',' + g + ',' + b + ',0.82)';
   }
+
+  // Hit-test cache for clicking 3D elements on Macro Pool Canvas
+  var macroHitRegions = [];
 
   // Render Macro 3D Reactor Pool Cutaway
   function renderMacroPoolViewport() {
     var st = window.EXPLORER_STATE;
-    drawWebGLBackdrop(glMacroCtx, st.t_pool_s * 0.002, [0.22, 0.74, 0.97]);
+    drawWebGLBackdrop(glMacroCtx, st.t_pool_s * 0.002, [0.22, 0.74, 0.97], st.camera_macro);
 
     var canvas = document.getElementById('canvasPool2d');
     if (!canvas) return;
@@ -1403,13 +1720,14 @@
       ctx.fillRect(0, 0, W, H);
     }
 
+    macroHitRegions = [];
     var cx = W * 0.48, cy = H * 0.53, scale = 0.25;
     var R = 500, Zmin = -200, Zmax = 200;
     var wedgeRad = (st.theta_wedge_deg * Math.PI) / 180.0;
 
     // 1. 3D Wire-Grid Coordinate Bounding Box [-500,500] x [-500,500] x [-200,200] cm
     if (st.layers.pool_geometry) {
-      ctx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.24)';
       ctx.lineWidth = 1;
       var corners = [
         [-R,-R,Zmin],[R,-R,Zmin],[R,R,Zmin],[-R,R,Zmin],
@@ -1421,7 +1739,7 @@
         var p1 = projectMacro3D(corners[edges[e][1]][0], corners[edges[e][1]][1], corners[edges[e][1]][2], cx, cy, scale);
         ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
       }
-      ctx.fillStyle = 'rgba(148, 163, 184, 0.72)';
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.78)';
       ctx.font = '10px monospace';
       var lblX = projectMacro3D(R, -R, Zmin, cx, cy, scale);
       ctx.fillText('X,Y in [-500,500] cm', lblX.x - 55, lblX.y + 13);
@@ -1429,11 +1747,16 @@
       ctx.fillText('Z=+200 cm', lblZ.x - 18, lblZ.y - 6);
     }
 
-    // 2. Horizontal slice plane at z = z_slice_cm + Vertical r-z quarter-wedge cutaway faces
-    var showField = st.layers.radiation_radiolysis || st.layers.temperature_flow;
+    // 2. Horizontal slice plane at z = z_slice_cm + Vertical r-z quarter-wedge cutaway faces + Iso-Contour Lines
+    var isTempFlowField = (
+      st.active_field === 'temperature_C' ||
+      st.active_field === 'velocity_m_s' ||
+      st.active_field === 'validated_cfd_pressure_Pa' ||
+      st.active_field === 'empirical_piv_temperature'
+    );
+    var showField = isTempFlowField ? Boolean(st.layers.temperature_flow) : Boolean(st.layers.radiation_radiolysis);
     if (showField) {
       var nR = 14, nZ = 10;
-      // Two vertical cutaway planes at theta = 0 and theta = wedgeRad
       var thetas = [0.0, wedgeRad];
       for (var ti = 0; ti < thetas.length; ti++) {
         var th = thetas[ti];
@@ -1460,6 +1783,21 @@
             ctx.fill();
           }
         }
+        // Iso-contour arcs on each vertical r-z cutaway plane
+        var isoRadii = [125, 215, 315, 420];
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.36)';
+        ctx.lineWidth = 0.9;
+        for (var ic = 0; ic < isoRadii.length; ic++) {
+          var rIso = isoRadii[ic];
+          ctx.beginPath();
+          for (var ia2 = -12; ia2 <= 12; ia2++) {
+            var zIso = (ia2 / 12) * 165;
+            var rCur = Math.min(R - 10, Math.sqrt(Math.max(55 * 55, rIso * rIso - zIso * zIso * 0.55)));
+            var pIso = projectMacro3D(rCur * Math.cos(th), rCur * Math.sin(th), zIso, cx, cy, scale);
+            if (ia2 === -12) ctx.moveTo(pIso.x, pIso.y); else ctx.lineTo(pIso.x, pIso.y);
+          }
+          ctx.stroke();
+        }
       }
 
       // Horizontal x-y contour slice at z_slice_cm outside the removed wedge
@@ -1482,6 +1820,21 @@
           ctx.fill();
         }
       }
+      // Concentric iso-contour rings on the horizontal x-y slice plane
+      var hIsoRings = [150, 260, 380];
+      ctx.strokeStyle = 'rgba(226, 232, 240, 0.34)';
+      ctx.lineWidth = 0.85;
+      for (var hr = 0; hr < hIsoRings.length; hr++) {
+        ctx.beginPath();
+        for (var hs = 0; hs <= 32; hs++) {
+          var hAng = wedgeRad + (hs / 32) * (2 * Math.PI - wedgeRad);
+          var hPt = projectMacro3D(hIsoRings[hr] * Math.cos(hAng), hIsoRings[hr] * Math.sin(hAng), st.z_slice_cm, cx, cy, scale);
+          if (hs === 0) ctx.moveTo(hPt.x, hPt.y); else ctx.lineTo(hPt.x, hPt.y);
+        }
+        ctx.stroke();
+      }
+      var pCutHit = projectMacro3D(260 * Math.cos(wedgeRad * 0.5), 260 * Math.sin(wedgeRad * 0.5), st.z_slice_cm, cx, cy, scale);
+      macroHitRegions.push({ x: pCutHit.x, y: pCutHit.y, r: 42, action: 'provenance', target: st.active_field });
     }
 
     // 3. Cylindrical Pool Wall + Core Shroud + 8 Radial Structural Support Fins + Magenta MTR Core
@@ -1489,7 +1842,7 @@
       var steps = 48;
       var zLevels = [Zmin, st.z_slice_cm, Zmax];
       for (var zl = 0; zl < zLevels.length; zl++) {
-        ctx.strokeStyle = zl === 1 ? 'rgba(56, 189, 248, 0.78)' : 'rgba(148, 163, 184, 0.55)';
+        ctx.strokeStyle = zl === 1 ? 'rgba(56, 189, 248, 0.82)' : 'rgba(148, 163, 184, 0.58)';
         ctx.lineWidth = zl === 1 ? 1.8 : 1.2;
         ctx.beginPath();
         for (var s = 0; s <= steps; s++) {
@@ -1500,30 +1853,60 @@
         ctx.stroke();
       }
 
-      // 8 Radial structural support fins around the inner core shroud (r = 75..155 cm)
-      ctx.strokeStyle = 'rgba(203, 213, 225, 0.72)';
-      ctx.lineWidth = 1.4;
-      for (var f = 0; f < 8; f++) {
-        var fAng = (f / 8) * 2 * Math.PI;
-        var fIn = projectMacro3D(72 * Math.cos(fAng), 72 * Math.sin(fAng), -90, cx, cy, scale);
-        var fOut = projectMacro3D(155 * Math.cos(fAng), 155 * Math.sin(fAng), -140, cx, cy, scale);
-        ctx.beginPath(); ctx.moveTo(fIn.x, fIn.y); ctx.lineTo(fOut.x, fOut.y); ctx.stroke();
+      // Inner cylindrical core shroud (r = 75 cm)
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.65)';
+      ctx.lineWidth = 1.1;
+      var shroudZ = [-140, 80];
+      for (var sz = 0; sz < shroudZ.length; sz++) {
+        ctx.beginPath();
+        for (var ss = 0; ss <= 32; ss++) {
+          var sAng = (ss / 32) * 2 * Math.PI;
+          var sPt = projectMacro3D(75 * Math.cos(sAng), 75 * Math.sin(sAng), shroudZ[sz], cx, cy, scale);
+          if (ss === 0) ctx.moveTo(sPt.x, sPt.y); else ctx.lineTo(sPt.x, sPt.y);
+        }
+        ctx.stroke();
       }
 
-      // Central Magenta 10 MW MTR Box-Grid Core Lattice (r <= 65 cm, z in [-70, 70] cm)
-      ctx.fillStyle = 'rgba(217, 70, 239, 0.82)';
-      ctx.strokeStyle = '#f5d0fe';
-      ctx.lineWidth = 1.2;
-      var cBot = projectMacro3D(0, 0, -65, cx, cy, scale);
-      var cTop = projectMacro3D(0, 0, 65, cx, cy, scale);
-      ctx.fillRect(cTop.x - 16, cTop.y, 32, cBot.y - cTop.y);
-      ctx.strokeRect(cTop.x - 16, cTop.y, 32, cBot.y - cTop.y);
+      // 8 Radial 3D triangular structural support fins around the inner core shroud (r = 75..160 cm)
+      for (var f = 0; f < 8; f++) {
+        var fAng = (f / 8) * 2 * Math.PI;
+        var fInTop = projectMacro3D(75 * Math.cos(fAng), 75 * Math.sin(fAng), -65, cx, cy, scale);
+        var fInBot = projectMacro3D(75 * Math.cos(fAng), 75 * Math.sin(fAng), -145, cx, cy, scale);
+        var fOutBot = projectMacro3D(165 * Math.cos(fAng), 165 * Math.sin(fAng), -145, cx, cy, scale);
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.34)';
+        ctx.strokeStyle = 'rgba(226, 232, 240, 0.78)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(fInTop.x, fInTop.y);
+        ctx.lineTo(fInBot.x, fInBot.y);
+        ctx.lineTo(fOutBot.x, fOutBot.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // Central Magenta 10 MW MTR 3x3 Box-Grid Core Lattice (r <= 62 cm, z in [-65, 65] cm)
+      for (var gx = -1; gx <= 1; gx++) {
+        for (var gy = -1; gy <= 1; gy++) {
+          var bx0 = gx * 26, by0 = gy * 26;
+          var pTop = projectMacro3D(bx0, by0, 58, cx, cy, scale);
+          var pBot = projectMacro3D(bx0, by0, -58, cx, cy, scale);
+          ctx.fillStyle = 'rgba(217, 70, 239, 0.76)';
+          ctx.strokeStyle = '#f5d0fe';
+          ctx.lineWidth = 1.0;
+          var bw = 11, bh = Math.max(12, pBot.y - pTop.y);
+          ctx.fillRect(pTop.x - bw * 0.5, pTop.y, bw, bh);
+          ctx.strokeRect(pTop.x - bw * 0.5, pTop.y, bw, bh);
+        }
+      }
+      var pCoreCenter = projectMacro3D(0, 0, 0, cx, cy, scale);
+      macroHitRegions.push({ x: pCoreCenter.x, y: pCoreCenter.y, r: 28, action: 'provenance', target: 'pool_geometry_cad' });
     }
 
     // 4. Boussinesq Thermal Plume Streamlines (when temperature_flow is enabled)
     if (st.layers.temperature_flow) {
-      ctx.strokeStyle = 'rgba(251, 191, 36, 0.75)';
-      ctx.lineWidth = 1.3;
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.78)';
+      ctx.lineWidth = 1.4;
       var plumeAngles = [0.25, wedgeRad - 0.15];
       for (var pa = 0; pa < plumeAngles.length; pa++) {
         var pAng = plumeAngles[pa];
@@ -1546,7 +1929,7 @@
         var cPt = projectMacro3D(cp.r_cm * Math.cos(cAng), cp.r_cm * Math.sin(cAng), cp.z_cm, cx, cy, scale);
         var isSel = (cp.coupon_id === st.selected_coupon_id);
         ctx.beginPath();
-        ctx.arc(cPt.x, cPt.y, isSel ? 7 : 5, 0, 2 * Math.PI);
+        ctx.arc(cPt.x, cPt.y, isSel ? 7.5 : 5.5, 0, 2 * Math.PI);
         ctx.fillStyle = isSel ? '#10b981' : '#38bdf8';
         ctx.fill();
         ctx.strokeStyle = '#ffffff';
@@ -1555,10 +1938,25 @@
         ctx.fillStyle = isSel ? '#6ee7b7' : '#bae6fd';
         ctx.font = (isSel ? 'bold ' : '') + '10px monospace';
         ctx.fillText(cp.coupon_id, cPt.x + 9, cPt.y + 3);
+        macroHitRegions.push({ x: cPt.x, y: cPt.y, r: 16, action: 'coupon', target: cp.coupon_id });
       }
     }
 
-    // UNAVAILABLE field overlay notice when CFD/PIV is selected
+    // 6. Notice when all 4 spatial layers are toggled OFF
+    if (!st.layers.pool_geometry && !st.layers.temperature_flow && !st.layers.radiation_radiolysis && !st.layers.biofilm_coupons) {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.90)';
+      ctx.fillRect(65, H * 0.38, W - 130, 54);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.strokeRect(65, H * 0.38, W - 130, 54);
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = 'bold 11px monospace';
+      ctx.fillText('ALL 4 SPATIAL LAYERS TOGGLED OFF (NON-CRASHING STANDBY)', 82, H * 0.38 + 22);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px monospace';
+      ctx.fillText('Enable Layer 1-4 checkboxes in the left sidebar to restore 3D geometry and field contours.', 82, H * 0.38 + 40);
+    }
+
+    // 7. UNAVAILABLE field overlay notice when CFD/PIV is selected
     if (st.active_field === 'validated_cfd_pressure_Pa' || st.active_field === 'empirical_piv_temperature') {
       ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
       ctx.fillRect(45, H - 64, W - 90, 48);
@@ -1576,7 +1974,7 @@
   function renderMicroBiofilmViewport() {
     var st = window.EXPLORER_STATE;
     var mData = MORPHOTYPE_DATA[st.morphotype] || MORPHOTYPE_DATA.SL;
-    drawWebGLBackdrop(glMicroCtx, st.mcs_step * 0.05, [0.16, 0.65, 0.55]);
+    drawWebGLBackdrop(glMicroCtx, st.mcs_step * 0.05, [0.16, 0.65, 0.55], st.camera_micro);
 
     var canvas = document.getElementById('canvasBiofilm2d');
     if (!canvas) return;
@@ -1588,18 +1986,20 @@
       ctx.fillRect(0, 0, W, H);
     }
 
-    var cx = W * 0.50, cy = H * 0.68, scale = 5.4;
+    var cam = st.camera_micro || { yaw: 0.68, pitch: 0.50, zoom: 1.0 };
+    var cx = W * 0.50, cy = H * 0.68, scale = 5.4 * (cam.zoom || 1.0);
     function projMicro(x, y, z) {
-      var yaw = 0.68, pitch = 0.50;
+      var yaw = cam.yaw, pitch = cam.pitch;
       var xr = x * Math.cos(yaw) - y * Math.sin(yaw);
       var yr = x * Math.sin(yaw) + y * Math.cos(yaw);
       return {
         x: cx + xr * scale,
-        y: cy + (yr * Math.sin(pitch) - z * Math.cos(pitch)) * scale
+        y: cy + (yr * Math.sin(pitch) - z * Math.cos(pitch)) * scale,
+        depth: yr * Math.cos(pitch) + z * Math.sin(pitch)
       };
     }
 
-    // 1. Grey Stainless-Steel Coupon Substrate Block (z in [-3, 0] um, x,y in [-22, 22] um)
+    // 1. Grey Stainless-Steel Coupon Substrate Block (z in [-3.5, 0] um, x,y in [-22, 22] um)
     var L = 22;
     var subTop = [projMicro(-L,-L,0), projMicro(L,-L,0), projMicro(L,L,0), projMicro(-L,L,0)];
     var subBot = [projMicro(-L,-L,-3.5), projMicro(L,-L,-3.5), projMicro(L,L,-3.5), projMicro(-L,L,-3.5)];
@@ -1616,73 +2016,84 @@
     ctx.lineTo(subBot[2].x, subBot[2].y); ctx.lineTo(subBot[1].x, subBot[1].y);
     ctx.closePath(); ctx.fill();
 
-    // 2. Render 3D cells or CPM voxels according to morphotype
-    var nCells = 110;
-    var items = [];
-    for (var i = 0; i < nCells; i++) {
-      var s1 = Math.sin(i * 12.9898 + 1.23) * 43758.5453;
-      var u1 = s1 - Math.floor(s1);
-      var s2 = Math.sin(i * 78.233 + 4.56) * 43758.5453;
-      var u2 = s2 - Math.floor(s2);
-      var s3 = Math.sin(i * 39.425 + 7.89) * 43758.5453;
-      var u3 = s3 - Math.floor(s3);
+    // 2. Render 3D cells or CPM voxels when Layer 4 (biofilm_coupons) is enabled
+    if (st.layers.biofilm_coupons) {
+      var nCells = 128;
+      var items = [];
+      for (var i = 0; i < nCells; i++) {
+        var s1 = Math.sin(i * 12.9898 + 1.23) * 43758.5453;
+        var u1 = s1 - Math.floor(s1);
+        var s2 = Math.sin(i * 78.233 + 4.56) * 43758.5453;
+        var u2 = s2 - Math.floor(s2);
+        var s3 = Math.sin(i * 39.425 + 7.89) * 43758.5453;
+        var u3 = s3 - Math.floor(s3);
 
-      var isRed = (i % 2 === 0);
-      var x = (u1 - 0.5) * 34.0;
-      var y = (u2 - 0.5) * 34.0;
-      var z = 2.0;
-      if (st.morphotype === 'SL') {
-        z = isRed ? (10.5 + u3 * 12.5) : (1.2 + u3 * 8.8);
-      } else if (st.morphotype === 'CPM-Hypha') {
-        z = isRed ? (9.5 + u3 * 13.5 + st.lambda_etc * 1.4) : (1.0 + u3 * 9.5);
-      } else {
-        // SS and LL have overlapping vertical distributions
-        var colAngle = Math.atan2(y, x);
-        isRed = Math.sin(colAngle * 3.0) >= 0;
-        z = 1.5 + u3 * 19.0;
+        var isRed = (i % 2 === 0);
+        var x = (u1 - 0.5) * 34.0;
+        var y = (u2 - 0.5) * 34.0;
+        var z = 2.0;
+        if (st.morphotype === 'SL') {
+          z = isRed ? (10.5 + u3 * 12.5) : (1.2 + u3 * 8.8);
+        } else if (st.morphotype === 'CPM-Hypha') {
+          z = isRed ? (9.5 + u3 * 13.5 + st.lambda_etc * 1.4) : (1.0 + u3 * 9.5);
+        } else {
+          // SS and LL have overlapping vertical distributions with clonal columns
+          var colAngle = Math.atan2(y, x);
+          isRed = Math.sin(colAngle * 3.0) >= 0;
+          z = 1.5 + u3 * 19.0;
+        }
+        var p3 = projMicro(x, y, z);
+        items.push({ x: x, y: y, z: z, px: p3.x, py: p3.y, depth: p3.depth, isRed: isRed, angle: u1 * Math.PI });
       }
-      items.push({ x: x, y: y, z: z, isRed: isRed, angle: u1 * Math.PI });
-    }
-    items.sort(function(a, b) { return (a.x + a.y + a.z) - (b.x + b.y + b.z); });
+      items.sort(function(a, b) { return a.depth - b.depth; });
 
-    for (var k = 0; k < items.length; k++) {
-      var it = items[k];
-      var p = projMicro(it.x, it.y, it.z);
-      var shape = it.isRed ? mData.red_shape : mData.blue_shape;
-      var colFill = it.isRed ? '#ef4444' : '#3b82f6';
-      var colStroke = it.isRed ? '#fca5a5' : '#93c5fd';
+      for (var k = 0; k < items.length; k++) {
+        var it = items[k];
+        var shape = it.isRed ? mData.red_shape : mData.blue_shape;
+        var colFill = it.isRed ? '#ef4444' : '#3b82f6';
+        var colStroke = it.isRed ? '#fca5a5' : '#93c5fd';
 
-      if (shape === 'sphere') {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 4.3, 0, 2 * Math.PI);
-        ctx.fillStyle = colFill; ctx.fill();
-        ctx.strokeStyle = colStroke; ctx.lineWidth = 0.8; ctx.stroke();
-      } else if (shape === 'rod') {
-        var dx = Math.cos(it.angle) * 6.5;
-        var dy = Math.sin(it.angle) * 3.2;
-        ctx.beginPath();
-        ctx.moveTo(p.x - dx, p.y - dy);
-        ctx.lineTo(p.x + dx, p.y + dy);
-        ctx.strokeStyle = colFill;
-        ctx.lineWidth = 4.6;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-      } else {
-        // CPM-Hypha 40x40x40 voxel cube
-        ctx.fillStyle = colFill;
-        ctx.strokeStyle = colStroke;
-        ctx.lineWidth = 0.8;
-        ctx.fillRect(p.x - 4, p.y - 4, 8, 8);
-        ctx.strokeRect(p.x - 4, p.y - 4, 8, 8);
+        if (shape === 'sphere') {
+          ctx.beginPath();
+          ctx.arc(it.px, it.py, 4.3, 0, 2 * Math.PI);
+          ctx.fillStyle = colFill; ctx.fill();
+          ctx.strokeStyle = colStroke; ctx.lineWidth = 0.8; ctx.stroke();
+        } else if (shape === 'rod') {
+          var dx = Math.cos(it.angle + cam.yaw * 0.5) * 6.5;
+          var dy = Math.sin(it.angle + cam.yaw * 0.5) * 3.2;
+          ctx.beginPath();
+          ctx.moveTo(it.px - dx, it.py - dy);
+          ctx.lineTo(it.px + dx, it.py + dy);
+          ctx.strokeStyle = colFill;
+          ctx.lineWidth = 4.6;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+        } else {
+          // CPM-Hypha 40x40x40 voxel cube
+          ctx.fillStyle = colFill;
+          ctx.strokeStyle = colStroke;
+          ctx.lineWidth = 0.8;
+          ctx.fillRect(it.px - 4, it.py - 4, 8, 8);
+          ctx.strokeRect(it.px - 4, it.py - 4, 8, 8);
+        }
       }
+    } else {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.86)';
+      ctx.fillRect(55, H * 0.34, W - 110, 44);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.strokeRect(55, H * 0.34, W - 110, 44);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = 'bold 11px monospace';
+      ctx.fillText('LAYER 4 (BIOFILM COUPONS & CPM): HIDDEN (STERILE SUBSTRATE ONLY)', 68, H * 0.34 + 26);
     }
 
     // 3. Horizontal Canopy Probe Plane at z = z_biofilm_um
+    var zVis = Math.min(28.0, st.z_biofilm_um * (30.0 / (st.biofilm_depth_range_um || 30)));
     var prPlane = [
-      projMicro(-L, -L, st.z_biofilm_um),
-      projMicro(L, -L, st.z_biofilm_um),
-      projMicro(L, L, st.z_biofilm_um),
-      projMicro(-L, L, st.z_biofilm_um)
+      projMicro(-L, -L, zVis),
+      projMicro(L, -L, zVis),
+      projMicro(L, L, zVis),
+      projMicro(-L, L, zVis)
     ];
     ctx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
     ctx.setLineDash([4, 3]);
@@ -1694,10 +2105,10 @@
     ctx.setLineDash([]);
     ctx.fillStyle = '#38bdf8';
     ctx.font = '10px monospace';
-    ctx.fillText('z_probe = ' + st.z_biofilm_um.toFixed(1) + ' um', prPlane[1].x - 75, prPlane[1].y - 5);
+    ctx.fillText('z_probe = ' + st.z_biofilm_um.toFixed(1) + ' um (range 0..' + (st.biofilm_depth_range_um || 30) + ' um)', prPlane[1].x - 140, prPlane[1].y - 5);
   }
 
-  // Render Row A (2D x-z slice + morphotype inset), Row B (P(z) 3-D solid vs 2-D dashed), Row C (3D summary)
+  // Render Row A (2D x-z slice + dynamic morphotype inset), Row B (P(z) 3-D solid + histogram vs 2-D dashed), Row C (3D block + summary)
   function renderBiofilmStratificationRows() {
     var canvas = document.getElementById('canvasBiofilmRows');
     if (!canvas) return;
@@ -1726,32 +2137,59 @@
     ctx.font = '9.5px monospace';
     ctx.fillText('SS316L Coupon Substrate (z = 0 um)', ax0 + 55, subY + 11);
 
-    // Draw cells in Row A cross-section
-    for (var c = 0; c < 46; c++) {
-      var fx = (c / 45);
+    // Draw dense multi-layer cells in Row A cross-section
+    for (var c = 0; c < 68; c++) {
+      var fx = ((c * 17) % 68) / 67.0;
       var cx = ax0 + 18 + fx * (aw - 36);
       var isRed = (c % 2 === 0);
-      var zUm = isRed ? mData.z_mean_red_um : mData.z_mean_blue_um;
-      var jitter = Math.sin(c * 5.1) * 3.8;
-      var cy = subY - 4 - ((zUm + jitter) / 30.0) * (ah - 45);
+      if (st.morphotype === 'SS' || st.morphotype === 'LL') {
+        isRed = (fx > 0.22 && fx < 0.52) || (fx > 0.74);
+      }
+      var zBase = isRed ? mData.z_mean_red_um : mData.z_mean_blue_um;
+      var jitter = Math.sin(c * 4.7) * 5.2;
+      var zUm = Math.max(1.2, Math.min(26.5, zBase + jitter));
+      var cy = subY - 4 - (zUm / 30.0) * (ah - 45);
       ctx.fillStyle = isRed ? '#ef4444' : '#3b82f6';
+      ctx.strokeStyle = isRed ? '#fca5a5' : '#93c5fd';
+      ctx.lineWidth = 0.6;
       var shp = isRed ? mData.red_shape : mData.blue_shape;
       if (shp === 'sphere') {
-        ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 2 * Math.PI); ctx.fill();
+        ctx.beginPath(); ctx.arc(cx, cy, 4.0, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+      } else if (shp === 'rod') {
+        ctx.fillRect(cx - 5.5, cy - 2, 11, 4);
       } else {
-        ctx.fillRect(cx - 5, cy - 2, 10, 4);
+        ctx.fillRect(cx - 3.5, cy - 3.5, 7, 7);
+        ctx.strokeRect(cx - 3.5, cy - 3.5, 7, 7);
       }
     }
 
-    // Circular morphotype inset, top-left:
+    // Dynamic circular morphotype inset, top-left (matches SL, SS, LL, or CPM-Hypha):
+    var inX = ax0 + 36, inY = ay0 + 34;
     ctx.beginPath();
-    ctx.arc(ax0 + 34, ay0 + 32, 22, 0, 2 * Math.PI);
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.92)'; ctx.fill();
-    ctx.strokeStyle = '#94a3b8'; ctx.stroke();
-    ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(ax0 + 27, ay0 + 29, 5, 0, 2 * Math.PI); ctx.fill();
-    ctx.fillStyle = '#3b82f6'; ctx.fillRect(ax0 + 34, ay0 + 33, 12, 5);
+    ctx.arc(inX, inY, 23, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.94)'; ctx.fill();
+    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.2; ctx.stroke();
 
-    // Panel B: P(z) Cell-Height Distribution (z in [0, 30] um vs P(z) in [0, 0.1], 3-D solid vs 2-D dashed)
+    // Red species icon inside circular inset
+    ctx.fillStyle = '#ef4444';
+    if (mData.red_shape === 'sphere') {
+      ctx.beginPath(); ctx.arc(inX - 7, inY - 5, 5.5, 0, 2 * Math.PI); ctx.fill();
+    } else if (mData.red_shape === 'rod') {
+      ctx.fillRect(inX - 14, inY - 8, 13, 5);
+    } else {
+      ctx.fillRect(inX - 11, inY - 9, 8, 8);
+    }
+    // Blue species icon inside circular inset
+    ctx.fillStyle = '#3b82f6';
+    if (mData.blue_shape === 'sphere') {
+      ctx.beginPath(); ctx.arc(inX + 7, inY + 5, 5.5, 0, 2 * Math.PI); ctx.fill();
+    } else if (mData.blue_shape === 'rod') {
+      ctx.fillRect(inX - 1, inY + 3, 14, 5);
+    } else {
+      ctx.fillRect(inX + 2, inY + 1, 8, 8);
+    }
+
+    // Panel B: P(z) Cell-Height Distribution (z in [0, 30] um vs P(z) in [0, 0.1], 3-D solid + histogram vs 2-D dashed)
     var bx0 = 324, by0 = 26, bw = 360, bh = H - 38;
     ctx.strokeStyle = 'rgba(148, 163, 184, 0.28)';
     ctx.strokeRect(bx0, by0, bw, bh);
@@ -1765,23 +2203,22 @@
     ctx.moveTo(plotX, plotY); ctx.lineTo(plotX, plotY + plotH); ctx.lineTo(plotX + plotW, plotY + plotH);
     ctx.stroke();
 
-    function drawPzCurve(arr, color, dashed, fillAlpha) {
-      var zBins = MORPHOTYPE_DATA.z_um_bins;
-      if (fillAlpha > 0) {
-        ctx.fillStyle = color.replace('1)', fillAlpha + ')');
-        ctx.beginPath();
-        ctx.moveTo(plotX, plotY + plotH);
-        for (var i = 0; i < zBins.length; i++) {
-          var px = plotX + (zBins[i] / 30.0) * plotW;
-          var py = plotY + plotH - Math.min(1.0, arr[i] / 0.10) * plotH;
-          ctx.lineTo(px, py);
-        }
-        ctx.lineTo(plotX + plotW, plotY + plotH);
-        ctx.closePath();
-        ctx.fill();
-      }
+    // Draw shaded step-histogram bars for 3D blue and red distributions (matching reference image Row B)
+    var zBins = MORPHOTYPE_DATA.z_um_bins;
+    var barW = plotW / zBins.length;
+    for (var hb = 0; hb < zBins.length; hb++) {
+      var hx = plotX + (zBins[hb] / 30.0) * plotW;
+      var hBlue = Math.min(1.0, mData.p_z_blue_3d[hb] / 0.10) * plotH;
+      var hRed = Math.min(1.0, mData.p_z_red_3d[hb] / 0.10) * plotH;
+      ctx.fillStyle = 'rgba(59, 130, 246, 0.20)';
+      ctx.fillRect(hx, plotY + plotH - hBlue, barW * 0.9, hBlue);
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.20)';
+      ctx.fillRect(hx, plotY + plotH - hRed, barW * 0.9, hRed);
+    }
+
+    function drawPzCurve(arr, color, dashed) {
       ctx.strokeStyle = color;
-      ctx.lineWidth = dashed ? 1.5 : 2.2;
+      ctx.lineWidth = dashed ? 1.6 : 2.3;
       if (dashed) ctx.setLineDash([4, 3]); else ctx.setLineDash([]);
       ctx.beginPath();
       for (var j = 0; j < zBins.length; j++) {
@@ -1793,13 +2230,19 @@
       ctx.setLineDash([]);
     }
 
-    drawPzCurve(mData.p_z_blue_3d, 'rgba(59, 130, 246, 1)', false, 0.22);
-    drawPzCurve(mData.p_z_red_3d,  'rgba(239, 68, 68, 1)',  false, 0.22);
-    drawPzCurve(mData.p_z_blue_2d, 'rgba(147, 197, 253, 1)', true, 0.0);
-    drawPzCurve(mData.p_z_red_2d,  'rgba(252, 165, 165, 1)', true, 0.0);
+    drawPzCurve(mData.p_z_blue_3d, 'rgba(59, 130, 246, 1)', false);
+    drawPzCurve(mData.p_z_red_3d,  'rgba(239, 68, 68, 1)',  false);
+    drawPzCurve(mData.p_z_blue_2d, 'rgba(147, 197, 253, 1)', true);
+    drawPzCurve(mData.p_z_red_2d,  'rgba(252, 165, 165, 1)', true);
+
+    // Legend inside Row B
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '9.5px monospace';
+    ctx.fillText('Solid+Hist: 3-D | Dashed: 2-D', plotX + plotW - 175, plotY + 12);
 
     // Probe line at z_biofilm_um
-    var probePx = plotX + (st.z_biofilm_um / 30.0) * plotW;
+    var probeNorm = Math.min(1.0, st.z_biofilm_um / (st.biofilm_depth_range_um || 30.0));
+    var probePx = plotX + probeNorm * plotW;
     ctx.strokeStyle = '#38bdf8';
     ctx.setLineDash([2, 2]);
     ctx.beginPath(); ctx.moveTo(probePx, plotY); ctx.lineTo(probePx, plotY + plotH); ctx.stroke();
@@ -1814,13 +2257,13 @@
     ctx.fillText('0.1', plotX - 24, plotY + 8);
     ctx.fillText('P(z)', plotX - 28, plotY + plotH * 0.5);
 
-    // Panel C: 3D Stratification Metrics & Epistemic Summary
+    // Panel C: 3D Block Preview + Stratification Metrics & Epistemic Summary
     var cx0 = 700, cy0 = 26, cw = W - cx0 - 14, ch = H - 38;
     ctx.strokeStyle = 'rgba(148, 163, 184, 0.28)';
     ctx.strokeRect(cx0, cy0, cw, ch);
     ctx.fillStyle = '#38bdf8';
     ctx.font = 'bold 11px monospace';
-    ctx.fillText('ROW C // 3D Block Stratification Summary', cx0, 17);
+    ctx.fillText('ROW C // 3D Block & Stratification Summary', cx0, 17);
 
     var lines = [
       'Morphotype: ' + mData.label,
@@ -1828,15 +2271,14 @@
       'z_mean(red):  ' + mData.z_mean_red_um.toFixed(2) + ' um',
       'Stratified (blue < red): ' + (mData.stratified_canopy_over_base ? 'YES (SL/Hypha)' : 'NO (Overlap)'),
       'Boundary delta_c: 528.0 um',
-      'H2O2 l_rxn: 118.3 um (penetrates)',
-      '*OH l_rxn:  4.47 nm (quenches)',
-      'Time Base: MCS != t_pool [s]',
+      'H2O2 l_rxn: 118.3 um | *OH: 4.47 nm',
+      'Time Base: MCS != t_pool [s] (NaN)',
       'Coupling: lambda_etc = ' + st.lambda_etc.toFixed(2)
     ];
     ctx.fillStyle = '#e2e8f0';
-    ctx.font = '10.5px monospace';
+    ctx.font = '10px monospace';
     for (var li = 0; li < lines.length; li++) {
-      ctx.fillText(lines[li], cx0 + 10, cy0 + 22 + li * 18);
+      ctx.fillText(lines[li], cx0 + 10, cy0 + 20 + li * 18);
     }
   }
 
@@ -1983,6 +2425,8 @@
     var rec = PROVENANCE_REGISTRY[fieldId] || PROVENANCE_REGISTRY.H2O2;
     window.EXPLORER_STATE.selected_provenance_field = rec.field_id;
     document.getElementById('prov_field_id').textContent = rec.field_id;
+    var lblEl = document.getElementById('prov_label');
+    if (lblEl) lblEl.textContent = rec.label || rec.field_id;
     document.getElementById('prov_data_classification').textContent = rec.data_classification;
     document.getElementById('prov_calibration_status').textContent = rec.calibration_status;
     document.getElementById('prov_units').textContent = rec.units;
@@ -2020,7 +2464,8 @@
     var macroBadge = document.getElementById('macroFieldBadge');
     macroBadge.className = 'epi-badge epi-' + fRec.data_classification;
     macroBadge.textContent = st.active_field + ' [' + fRec.data_classification + ']';
-    document.getElementById('hudMacroField').textContent = 'FIELD: ' + st.active_field + ' [' + fRec.units + '] // r-z + x-y cutaway';
+    document.getElementById('hudMacroField').textContent =
+      'FIELD: ' + st.active_field + ' [' + fRec.units + '] // CAM: ' + st.camera_preset;
     document.getElementById('hudMacroCoupon').textContent = 'WALL COUPON: ' + cp.coupon_id;
 
     var microBadge = document.getElementById('microMorphBadge');
@@ -2048,6 +2493,10 @@
   }
 
   // Public Interactive API Hooks
+  window.getState = function() {
+    return window.EXPLORER_STATE;
+  };
+
   window.setLayerToggle = function(layerName, enabled) {
     if (!(layerName in window.EXPLORER_STATE.layers)) return false;
     window.EXPLORER_STATE.layers[layerName] = Boolean(enabled);
@@ -2088,6 +2537,9 @@
     for (var i = 0; i < btns.length; i++) {
       btns[i].classList.toggle('active', btns[i].getAttribute('data-coupon') === couponId);
     }
+    if (PROVENANCE_REGISTRY[couponId]) {
+      updateProvenanceUI(couponId);
+    }
     renderAll();
     return COUPON_LOCATORS[couponId];
   };
@@ -2101,23 +2553,88 @@
     }
     if (morphId === 'CPM-Hypha') {
       updateProvenanceUI('cpm_morphology_stage3');
+    } else if (PROVENANCE_REGISTRY['morphotype_' + morphId]) {
+      updateProvenanceUI('morphotype_' + morphId);
     }
     renderAll();
     return MORPHOTYPE_DATA[morphId];
   };
 
+  window.setCameraView = function(presetName) {
+    var preset = CAMERA_PRESETS[presetName];
+    if (!preset) return null;
+    window.EXPLORER_STATE.camera_preset = presetName;
+    window.EXPLORER_STATE.camera_macro = {
+      yaw: preset.macro.yaw,
+      pitch: preset.macro.pitch,
+      zoom: preset.macro.zoom
+    };
+    window.EXPLORER_STATE.camera_micro = {
+      yaw: preset.micro.yaw,
+      pitch: preset.micro.pitch,
+      zoom: preset.micro.zoom
+    };
+    var btns = document.querySelectorAll('[data-cam]');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', btns[i].getAttribute('data-cam') === presetName);
+    }
+    renderAll();
+    return {
+      camera_preset: presetName,
+      camera_macro: window.EXPLORER_STATE.camera_macro,
+      camera_micro: window.EXPLORER_STATE.camera_micro
+    };
+  };
+
+  window.setSyncCameraRotation = function(enabled) {
+    window.EXPLORER_STATE.sync_camera_rotation = Boolean(enabled);
+    var cb = document.getElementById('toggle_sync_camera');
+    if (cb) cb.checked = Boolean(enabled);
+    return window.EXPLORER_STATE.sync_camera_rotation;
+  };
+
+  window.setBiofilmDepthRange = function(maxUm) {
+    var m = (Number(maxUm) === 100) ? 100 : 30;
+    window.EXPLORER_STATE.biofilm_depth_range_um = m;
+    var sl = document.getElementById('slider_z_biofilm_um');
+    if (sl) {
+      sl.max = String(m);
+      if (window.EXPLORER_STATE.z_biofilm_um > m) {
+        window.EXPLORER_STATE.z_biofilm_um = m;
+        sl.value = String(m);
+        document.getElementById('lbl_z_biofilm_um').textContent = m.toFixed(1) + ' um';
+      }
+    }
+    var b30 = document.getElementById('btnDepthRange30');
+    var b100 = document.getElementById('btnDepthRange100');
+    if (b30) b30.classList.toggle('active', m === 30);
+    if (b100) b100.classList.toggle('active', m === 100);
+    renderAll();
+    return window.EXPLORER_STATE.biofilm_depth_range_um;
+  };
+
   window.setCutawayGeometry = function(thetaDeg, zSliceCm, zBiofilmUm) {
     if (typeof thetaDeg === 'number' && !isNaN(thetaDeg)) {
-      window.EXPLORER_STATE.theta_wedge_deg = thetaDeg;
-      document.getElementById('lbl_theta_wedge').textContent = thetaDeg + ' deg';
+      window.EXPLORER_STATE.theta_wedge_deg = Math.max(30, Math.min(180, thetaDeg));
+      var elT = document.getElementById('lbl_theta_wedge');
+      if (elT) elT.textContent = window.EXPLORER_STATE.theta_wedge_deg + ' deg';
+      var slT = document.getElementById('slider_theta_wedge');
+      if (slT) slT.value = String(window.EXPLORER_STATE.theta_wedge_deg);
     }
     if (typeof zSliceCm === 'number' && !isNaN(zSliceCm)) {
-      window.EXPLORER_STATE.z_slice_cm = zSliceCm;
-      document.getElementById('lbl_z_slice_cm').textContent = zSliceCm + ' cm';
+      window.EXPLORER_STATE.z_slice_cm = Math.max(-200, Math.min(200, zSliceCm));
+      var elZ = document.getElementById('lbl_z_slice_cm');
+      if (elZ) elZ.textContent = window.EXPLORER_STATE.z_slice_cm + ' cm';
+      var slZ = document.getElementById('slider_z_slice_cm');
+      if (slZ) slZ.value = String(window.EXPLORER_STATE.z_slice_cm);
     }
     if (typeof zBiofilmUm === 'number' && !isNaN(zBiofilmUm)) {
-      window.EXPLORER_STATE.z_biofilm_um = zBiofilmUm;
-      document.getElementById('lbl_z_biofilm_um').textContent = zBiofilmUm.toFixed(1) + ' um';
+      var maxD = window.EXPLORER_STATE.biofilm_depth_range_um || 30;
+      window.EXPLORER_STATE.z_biofilm_um = Math.max(0, Math.min(maxD, zBiofilmUm));
+      var elB = document.getElementById('lbl_z_biofilm_um');
+      if (elB) elB.textContent = window.EXPLORER_STATE.z_biofilm_um.toFixed(1) + ' um';
+      var slB = document.getElementById('slider_z_biofilm_um');
+      if (slB) slB.value = String(window.EXPLORER_STATE.z_biofilm_um);
     }
     renderAll();
     return {
@@ -2162,20 +2679,33 @@
     return window.EXPLORER_STATE.lambda_etc;
   };
 
+  var NULL_CONTROL_TO_PROVENANCE_KEY = {
+    baseline_no_coupling_default: 'baseline_no_coupling_default',
+    five_way_radionuclide_retention: 'coupon_eps_sorption',
+    equal_dose_power_schedules: 'equal_dose_power_schedules',
+    control_5a_spatial_bias_null: 'control_5a_spatial_bias_null',
+    control_5b_biochemical_magnetic_sensitivity: 'control_5b_rpm_sensitivity',
+    control_6_oxidant_chemotropism: 'control_6_oxidant_chemotropism',
+    epistemic_gates_eg1_eg4_and_links_l1_l5: 'epistemic_gates_eg1_eg4_and_links_l1_l5'
+  };
+
   window.setNullControl = function(controlId) {
-    if (!NULL_MODEL_WORKBENCH[controlId]) return null;
-    window.EXPLORER_STATE.active_null_control = controlId;
+    var resolvedId = controlId;
+    if (controlId === 'control_5b_rpm_sensitivity') {
+      resolvedId = 'control_5b_biochemical_magnetic_sensitivity';
+    }
+    if (!NULL_MODEL_WORKBENCH[resolvedId]) return null;
+    window.EXPLORER_STATE.active_null_control = resolvedId;
     var btns = document.querySelectorAll('[data-null]');
     for (var i = 0; i < btns.length; i++) {
-      btns[i].classList.toggle('active', btns[i].getAttribute('data-null') === controlId);
+      btns[i].classList.toggle('active', btns[i].getAttribute('data-null') === resolvedId);
     }
-    if (controlId === 'control_5b_biochemical_magnetic_sensitivity') {
-      updateProvenanceUI('control_5b_rpm_sensitivity');
-    } else if (controlId === 'five_way_radionuclide_retention') {
-      updateProvenanceUI('coupon_eps_sorption');
+    var provKey = NULL_CONTROL_TO_PROVENANCE_KEY[resolvedId];
+    if (provKey && PROVENANCE_REGISTRY[provKey]) {
+      updateProvenanceUI(provKey);
     }
     renderNullModelWorkbench();
-    return NULL_MODEL_WORKBENCH[controlId];
+    return NULL_MODEL_WORKBENCH[resolvedId];
   };
 
   window.setScheduleRegime = function(regimeId) {
@@ -2183,6 +2713,7 @@
     window.EXPLORER_STATE.schedule_regime = regimeId;
     document.getElementById('btnRegimeActive').classList.toggle('active', regimeId === 'active_nonlinear_coupled');
     document.getElementById('btnRegimeConserved').classList.toggle('active', regimeId === 'conserved_linear_uncoupled');
+    updateProvenanceUI('equal_dose_power_schedules');
     renderNullModelWorkbench();
     return NULL_MODEL_WORKBENCH.equal_dose_power_schedules.regimes[regimeId];
   };
@@ -2194,16 +2725,201 @@
     return window.EXPLORER_STATE.oklo_comparison_visible;
   };
 
+  window.verifyScientificBoundaries = function() {
+    var st = window.EXPLORER_STATE;
+    var c1 = NULL_MODEL_WORKBENCH.baseline_no_coupling_default;
+    var c2 = NULL_MODEL_WORKBENCH.five_way_radionuclide_retention;
+    var c5 = NULL_MODEL_WORKBENCH.equal_dose_power_schedules;
+    var c5a = NULL_MODEL_WORKBENCH.control_5a_spatial_bias_null;
+    var c5b = NULL_MODEL_WORKBENCH.control_5b_biochemical_magnetic_sensitivity;
+    var c6 = NULL_MODEL_WORKBENCH.control_6_oxidant_chemotropism;
+    var sl = MORPHOTYPE_DATA.SL;
+    var ss = MORPHOTYPE_DATA.SS;
+    var ll = MORPHOTYPE_DATA.LL;
+
+    var checks = {
+      solvers_kept_separate: st.solvers_kept_separate === true,
+      solver_level_coupled_validation_claimed: st.solver_level_coupled_validation_claimed === false,
+      default_lambda_etc_is_zero: st.default_lambda_etc_on_load === 0.0 && c1.default_lambda_etc === 0.0,
+      time_bases_uncoupled: st.time_bases_locked_uncoupled === true && Number.isNaN(st.seconds_per_mcs) && st.d_pitch_status === 'awaiting_measurement',
+      fein_vs_co60_separated: c2.fein_1997_status === 'LITERATURE_DERIVED_FEIN_1997' && c2.co60_affinity_status === 'PROVISIONAL_ASSUMPTION_AWAITING_CALIBRATION',
+      schedule_control_regime_dependent: c5.primary_yields_identical_across_schedules === true &&
+        c5.downstream_differences_are_regime_dependent === true &&
+        c5.implies_downstream_differences_under_all_regimes === false &&
+        c5.conserved_regime_final_yields_identical === true &&
+        c5.uncoupled_regime_cpm_trajectories_identical === true,
+      control_5a_spatial_bias_null_valid: c5a.uniform_field_grad_J_ETC === 0.0 && c5a.gradient_difference_delta_H === 0.0 && c5a.j_base_b0_zero === 0.420,
+      control_5b_illustrative_only: c5b.epistemic_badge === 'ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION' &&
+        c5b.output_classification === 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS' &&
+        c5b.verifies_implemented_function_not_real_melanin_mechanism === true &&
+        c5b.empirically_validates_melanin_radical_pair_mechanism === false &&
+        c5b.grounded_in_measured_melanin_spin_hamiltonian === false,
+      control_6_non_radiotrophic_chemotropism_present: c6.non_melanized_M0_oxidant_avoidance_drift_um < 0 && c6.non_melanized_M0_aerotaxis_drift_um > 0,
+      morphotype_stratification_SL_valid: sl.z_mean_blue_um < sl.z_mean_red_um && sl.stratified_canopy_over_base === true &&
+        ss.stratified_canopy_over_base === false && ll.stratified_canopy_over_base === false,
+      oklo_5_of_5_rupture_enforced: st.oklo_dimensional_rupture_score === '5/5',
+      commit_lock_enforced: st.commit_locks.reactor_pool_biofilms_commit === '903f278' &&
+        st.commit_locks.prrt_spatial_cpm_clinical_main === '507fc19c507505233268e058b7b5d7a0bd4e378c' &&
+        st.commit_locks.prrt_spatial_cpm_remote_pr31_head === '2db2a7b558ea736c61cc459fd6a72c4afa36e3c5' &&
+        st.commit_locks.prrt_spatial_cpm_local_unpushed_head === '8182c30ab46d3b6a8cee7c853c18f7a44766a59d' &&
+        st.commit_locks.local_test_results_attributed_to_remote_pr_head === false &&
+        st.commit_locks.local_branch_pushed_to_remote === false,
+      unavailable_fields_honest: PROVENANCE_REGISTRY.validated_cfd_pressure_Pa.data_classification === 'UNAVAILABLE' &&
+        PROVENANCE_REGISTRY.empirical_piv_temperature.data_classification === 'UNAVAILABLE'
+    };
+
+    var allPassed = Object.keys(checks).every(function(k) { return checks[k] === true; });
+    return {
+      all_passed: allPassed,
+      artifact_id: st.artifact_id,
+      checks: checks
+    };
+  };
+
+  // Interactive Pointer Orbit / Zoom and Click Hit-Testing on 3D Viewports
+  function attachViewportInteractions() {
+    var poolCanvas = document.getElementById('canvasPool2d');
+    var bioCanvas = document.getElementById('canvasBiofilm2d');
+    var rowsCanvas = document.getElementById('canvasBiofilmRows');
+    var dragState = null;
+
+    function attachOrbit(canvas, isMacro) {
+      if (!canvas) return;
+      canvas.style.cursor = 'grab';
+      canvas.addEventListener('mousedown', function(ev) {
+        dragState = {
+          isMacro: isMacro,
+          startX: ev.clientX,
+          startY: ev.clientY,
+          moved: false
+        };
+        canvas.style.cursor = 'grabbing';
+      });
+      canvas.addEventListener('wheel', function(ev) {
+        ev.preventDefault();
+        var delta = ev.deltaY < 0 ? 1.06 : 0.94;
+        var st = window.EXPLORER_STATE;
+        if (isMacro || st.sync_camera_rotation) {
+          st.camera_macro.zoom = Math.max(0.65, Math.min(1.65, (st.camera_macro.zoom || 1.0) * delta));
+        }
+        if (!isMacro || st.sync_camera_rotation) {
+          st.camera_micro.zoom = Math.max(0.65, Math.min(1.65, (st.camera_micro.zoom || 1.0) * delta));
+        }
+        renderAll();
+      }, { passive: false });
+    }
+
+    attachOrbit(poolCanvas, true);
+    attachOrbit(bioCanvas, false);
+
+    window.addEventListener('mousemove', function(ev) {
+      if (!dragState) return;
+      var dx = ev.clientX - dragState.startX;
+      var dy = ev.clientY - dragState.startY;
+      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) dragState.moved = true;
+      dragState.startX = ev.clientX;
+      dragState.startY = ev.clientY;
+      var st = window.EXPLORER_STATE;
+      var dYaw = dx * 0.008;
+      var dPitch = Math.max(-0.25, Math.min(0.25, dy * 0.006));
+      if (dragState.isMacro || st.sync_camera_rotation) {
+        st.camera_macro.yaw += dYaw;
+        st.camera_macro.pitch = Math.max(0.18, Math.min(1.50, st.camera_macro.pitch + dPitch));
+      }
+      if (!dragState.isMacro || st.sync_camera_rotation) {
+        st.camera_micro.yaw += dYaw;
+        st.camera_micro.pitch = Math.max(0.18, Math.min(1.50, st.camera_micro.pitch + dPitch));
+      }
+      renderAll();
+    });
+
+    window.addEventListener('mouseup', function() {
+      if (dragState) {
+        if (poolCanvas) poolCanvas.style.cursor = 'grab';
+        if (bioCanvas) bioCanvas.style.cursor = 'grab';
+        dragState = null;
+      }
+    });
+
+    if (poolCanvas) {
+      poolCanvas.addEventListener('click', function(ev) {
+        var rect = poolCanvas.getBoundingClientRect();
+        var sx = (ev.clientX - rect.left) * (poolCanvas.width / Math.max(1, rect.width));
+        var sy = (ev.clientY - rect.top) * (poolCanvas.height / Math.max(1, rect.height));
+        for (var i = macroHitRegions.length - 1; i >= 0; i--) {
+          var reg = macroHitRegions[i];
+          var dist = Math.hypot(sx - reg.x, sy - reg.y);
+          if (dist <= reg.r) {
+            if (reg.action === 'coupon') {
+              window.selectCoupon(reg.target);
+            } else if (reg.action === 'provenance') {
+              window.selectProvenanceField(reg.target);
+            }
+            return;
+          }
+        }
+        window.selectProvenanceField(window.EXPLORER_STATE.active_field);
+      });
+    }
+
+    if (bioCanvas) {
+      bioCanvas.addEventListener('click', function() {
+        var m = window.EXPLORER_STATE.morphotype;
+        if (m === 'CPM-Hypha') {
+          window.selectProvenanceField('cpm_morphology_stage3');
+        } else if (PROVENANCE_REGISTRY['morphotype_' + m]) {
+          window.selectProvenanceField('morphotype_' + m);
+        }
+      });
+    }
+
+    if (rowsCanvas) {
+      rowsCanvas.addEventListener('click', function(ev) {
+        var rect = rowsCanvas.getBoundingClientRect();
+        var sx = (ev.clientX - rect.left) * (rowsCanvas.width / Math.max(1, rect.width));
+        if (sx > 320 && sx < 690) {
+          var zClick = Math.max(0, Math.min(30, ((sx - 362) / 308) * (window.EXPLORER_STATE.biofilm_depth_range_um || 30)));
+          window.setCutawayGeometry(null, null, +zClick.toFixed(1));
+        }
+        var m = window.EXPLORER_STATE.morphotype;
+        if (m === 'CPM-Hypha') {
+          window.selectProvenanceField('cpm_morphology_stage3');
+        } else if (PROVENANCE_REGISTRY['morphotype_' + m]) {
+          window.selectProvenanceField('morphotype_' + m);
+        }
+      });
+    }
+  }
+
   window.__POOL_BIOFILM_EXPLORER__ = {
     state: window.EXPLORER_STATE,
     provenance_registry: PROVENANCE_REGISTRY,
     coupon_locators: COUPON_LOCATORS,
     morphotype_data: MORPHOTYPE_DATA,
     null_model_workbench: NULL_MODEL_WORKBENCH,
+    getState: window.getState,
+    setLayerToggle: window.setLayerToggle,
+    setActiveField: window.setActiveField,
+    setMorphotype: window.setMorphotype,
+    setNullControl: window.setNullControl,
+    setScheduleRegime: window.setScheduleRegime,
+    selectProvenanceField: window.selectProvenanceField,
+    getProvenanceRecord: window.getProvenanceRecord,
+    selectCoupon: window.selectCoupon,
+    setCameraView: window.setCameraView,
+    setSyncCameraRotation: window.setSyncCameraRotation,
+    setBiofilmDepthRange: window.setBiofilmDepthRange,
+    setCutawayGeometry: window.setCutawayGeometry,
+    setMacroPoolTime: window.setMacroPoolTime,
+    setMicroMcsStep: window.setMicroMcsStep,
+    setLambdaEtc: window.setLambdaEtc,
+    setOkloComparisonToggle: window.setOkloComparisonToggle,
+    verifyScientificBoundaries: window.verifyScientificBoundaries,
     renderAll: renderAll
   };
 
   // Initial render on load with default lambda_etc = 0.0
+  attachViewportInteractions();
   updateProvenanceUI('H2O2');
   renderAll();
 })();

@@ -32,14 +32,14 @@ end
             "tecdoc643_reference_fixture.jl"                    => (6018,   "ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d"),
             "proto_biofilms_geyser_fission_research_program.md" => (48056,  "da50d4002e6bcca94234045c3d371e16af243806cdb1ed99e0beff074c1cfb11"),
             "poolwater_interactive.html"                         => (79610,   "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a"),
-            "POOLWATER_WORKFLOW_SPEC.md"                         => (17706,   "ebbd2647583018d8c1f4699652481bbc6ee4e72c86e9ea536a8c4e0059afbd80"),
+            "POOLWATER_WORKFLOW_SPEC.md"                         => (22168,   "e17ef1951fed038cca0e8b395b1d6348990e281d3649e90019eba2fb5a6d1659"),
             "multispecies_biofilm_robin_cylindrical_4panel.gif"  => (2571435, "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997"),
             "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
             "magnetoreception_3d_explorer.html"                  => (263619,  "e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064"),
-            "reactor_pool_biofilm_explorer.html"                 => (105721,  "e3d738cdb6c7045d386b61b72fa2f3930365fde6a97cf72c38a5a5dbd807fc0f"),
+            "reactor_pool_biofilm_explorer.html"                 => (143361,  "15f3659f8f6e052e394eaa3255ef9200dca99f3be66038a7366b5c213e4f9552"),
             "evidence_manifest.json"                             => (116876,  "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf"),
-            "test_calculation_provenance_and_invariants.js"      => (43823,   "1ab6e20b1b601d81d84893168a97076a3a26a66e426a0ce835568b8cff534755"),
-            "benchmark_manifest.json"                            => (19627,   "f98fe0d72b4d6cc2eef299fad3a5719972f801892445b07fd21b330c59a13205"),
+            "test_calculation_provenance_and_invariants.js"      => (45665,   "c2342bacb34036a7c1e0a5d623a4ae2b321a43072e064b9947511def450b110a"),
+            "benchmark_manifest.json"                            => (21262,   "8a91ecb71a6e7e784555b87dda5de2be43090b4faac46b3e0abef756bb3189f7"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")
@@ -363,12 +363,18 @@ end
     # --------------------------------------------------------------------------
     # Gate 6: Coordinated 3D Open-Pool Reactor & Biofilm Coupon Explorer
     # --------------------------------------------------------------------------
-    @testset "Gate 6: Coordinated 3D Pool-and-Biofilm Explorer (REACTOR-POOL-BIOFILM-3D-01)" begin
+    @testset "Gate 6: Coordinated 3D Pool-and-Biofilm Explorer (REACTOR-POOL-BIOFILM-COORDINATED-3D-01)" begin
         rpb_html = file_sha256_and_bytes("reactor_pool_biofilm_explorer.html").text
         manifest_txt = file_sha256_and_bytes("benchmark_manifest.json").text
+        spec_txt = file_sha256_and_bytes("POOLWATER_WORKFLOW_SPEC.md").text
 
+        @test occursin("REACTOR-POOL-BIOFILM-COORDINATED-3D-01", rpb_html)
         @test occursin("REACTOR-POOL-BIOFILM-3D-01", rpb_html)
+        @test occursin("REACTOR-POOL-BIOFILM-COORDINATED-3D-01", manifest_txt)
         @test occursin("REACTOR-POOL-BIOFILM-3D-01", manifest_txt)
+        @test occursin("REACTOR-POOL-BIOFILM-COORDINATED-3D-01", spec_txt)
+        @test occursin("verifyScientificBoundaries", rpb_html)
+        @test occursin("getState", rpb_html)
         @test occursin("solvers_kept_separate: true", rpb_html)
         @test occursin("solver_level_coupled_validation_claimed: false", rpb_html)
         @test occursin("default_lambda_etc_on_load: 0.0", rpb_html)

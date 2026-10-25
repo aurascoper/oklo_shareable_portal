@@ -755,12 +755,14 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   assert.strictEqual(/(&mdash;|&ndash;|&#8211;|&#8212;|&#x2013;|&#x2014;)/i.test(html), false, 'reactor_pool_biofilm_explorer.html contains forbidden HTML dash entity');
   assert.strictEqual(forbiddenNdaRegex.test(html), false, 'reactor_pool_biofilm_explorer.html contains forbidden NDA keyword');
 
-  // 2. Cross-portal navigation links
+  // 2. Artifact IDs & Cross-portal navigation links
+  assert.ok(html.includes("artifact_id: 'REACTOR-POOL-BIOFILM-COORDINATED-3D-01'"), 'Missing artifact_id REACTOR-POOL-BIOFILM-COORDINATED-3D-01');
+  assert.ok(html.includes("artifact_id_alias: 'REACTOR-POOL-BIOFILM-3D-01'"), 'Missing artifact_id_alias REACTOR-POOL-BIOFILM-3D-01');
   for (const href of ['index.html', 'poolwater_interactive.html', 'biofilms_3d_explorer.html', 'magnetoreception_3d_explorer.html']) {
     assert.ok(html.includes(`href="${href}"`), `Missing cross-portal link to ${href}`);
   }
 
-  // 3. Strict architectural & scientific boundaries
+  // 3. Strict architectural & scientific boundaries + required API hooks
   assert.ok(html.includes('solvers_kept_separate: true'), 'Missing solvers_kept_separate: true');
   assert.ok(html.includes('solver_level_coupled_validation_claimed: false'), 'Missing solver_level_coupled_validation_claimed: false');
   assert.ok(html.includes('default_lambda_etc_on_load: 0.0'), 'Missing default_lambda_etc_on_load: 0.0');
@@ -768,11 +770,27 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   assert.ok(html.includes('seconds_per_mcs: NaN'), 'Missing seconds_per_mcs: NaN');
   assert.ok(html.includes("d_pitch_status: 'awaiting_measurement'"), 'Missing d_pitch_status: awaiting_measurement');
   assert.ok(html.includes('TIME BASES UNCOUPLED: t_pool [s] != MCS'), 'Missing uncoupled time-base banner');
+  for (const hook of [
+    'getState: window.getState',
+    'setLayerToggle: window.setLayerToggle',
+    'setMorphotype: window.setMorphotype',
+    'setNullControl: window.setNullControl',
+    'setScheduleRegime: window.setScheduleRegime',
+    'selectProvenanceField: window.selectProvenanceField',
+    'getProvenanceRecord: window.getProvenanceRecord',
+    'verifyScientificBoundaries: window.verifyScientificBoundaries'
+  ]) {
+    assert.ok(html.includes(hook), `Missing required __POOL_BIOFILM_EXPLORER__ hook: ${hook}`);
+  }
 
-  // 4. Four toggleable spatial layers & morphotype stratification
+  // 4. Four toggleable spatial layers, camera view presets & morphotype stratification
   for (const layer of ['pool_geometry', 'temperature_flow', 'radiation_radiolysis', 'biofilm_coupons']) {
     assert.ok(html.includes(`toggle_${layer}`), `Missing layer toggle ${layer}`);
   }
+  for (const cam of ['Wedge Cutaway', 'Orbit', 'Isometric', 'Top Core', 'Coupon Micro-Zoom']) {
+    assert.ok(html.includes(`data-cam="${cam}"`), `Missing camera preset button ${cam}`);
+  }
+  assert.ok(html.includes('id="toggle_sync_camera"'), 'Missing synchronized camera rotation toggle');
   for (const morph of ['SL', 'SS', 'LL', 'CPM-Hypha']) {
     assert.ok(html.includes(`data-morph="${morph}"`), `Missing morphotype button ${morph}`);
   }
@@ -798,7 +816,8 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   assert.ok(html.includes('empirically_validates_melanin_radical_pair_mechanism: false'), 'Missing Control 5b empirical validation guard');
   assert.ok(html.includes('grounded_in_measured_melanin_spin_hamiltonian: false'), 'Missing Control 5b spin Hamiltonian guard');
 
-  // 6. Provenance registry & commit locks
+  // 6. Provenance registry, label field & commit locks + POOLWATER_WORKFLOW_SPEC.md parity
+  assert.ok(html.includes('id="prov_label"'), 'Missing prov_label row in Provenance Inspector table');
   for (const commitHash of [
     '903f278',
     '507fc19c507505233268e058b7b5d7a0bd4e378c',
@@ -810,7 +829,13 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   assert.ok(html.includes('local_test_results_attributed_to_remote_pr_head: false'), 'Missing local_test_results_attributed_to_remote_pr_head: false');
   assert.ok(html.includes('local_branch_pushed_to_remote: false'), 'Missing local_branch_pushed_to_remote: false');
 
-  console.log('PASS [Coordinated 3D Pool-and-Biofilm Explorer 7/7]: 4 spatial layers, uncoupled t_pool/MCS time bases, default lambda_etc=0.0, 4 morphotypes (SL/SS/LL/CPM-Hypha), 7 null-model comparisons, Control 5b guards, and provenance commit locks verified.');
+  const specPath = path.join(ROOT, 'POOLWATER_WORKFLOW_SPEC.md');
+  assert.ok(fs.existsSync(specPath), 'Missing POOLWATER_WORKFLOW_SPEC.md');
+  const specTxt = fs.readFileSync(specPath, 'utf8');
+  assert.ok(specTxt.includes('REACTOR-POOL-BIOFILM-COORDINATED-3D-01'), 'POOLWATER_WORKFLOW_SPEC.md missing REACTOR-POOL-BIOFILM-COORDINATED-3D-01');
+  assert.ok(specTxt.includes('reactor_pool_biofilm_explorer.html'), 'POOLWATER_WORKFLOW_SPEC.md missing reactor_pool_biofilm_explorer.html');
+
+  console.log('PASS [Coordinated 3D Pool-and-Biofilm Explorer 7/7]: 4 spatial layers, camera views, uncoupled t_pool/MCS time bases, default lambda_etc=0.0, 4 morphotypes (SL/SS/LL/CPM-Hypha), 7 null-model comparisons, Control 5b guards, verifyScientificBoundaries, and provenance commit locks verified.');
 }
 
 function runAll() {
