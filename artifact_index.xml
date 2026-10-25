@@ -47,7 +47,7 @@
     <Artifact id="REF-NW-JL-FIX">
       <Title>Quarantined TECDOC-643 Julia Benchmark Reference Fixture</Title>
       <Requirement>neutron_transport_explorer_v0 / RadioPharm.jl Operator Equation Audit</Requirement>
-      <EpistemicStatus>transcribed_unverified_reference_fixture (tests generic reactivity algebra; does not transfer box-grid MTR results to annular MTR core)</EpistemicStatus>
+      <EpistemicStatus>transcribed_unverified_reference_fixture (Generic IAEA-TECDOC-643 Vol. 1 10 MW MTR benchmark; illustrative OpenMC proof of concept; not modeled on any operating reactor. Tests generic reactivity algebra; does not transfer box-grid MTR results to annular MTR core)</EpistemicStatus>
       <EvidenceClassification>transcribed</EvidenceClassification>
       <RelativePortalPath>tecdoc643_reference_fixture.jl</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/tecdoc643_reference_fixture.jl</PublicArtifactUrl>
@@ -103,12 +103,12 @@
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/poolwater_interactive.html</PublicArtifactUrl>
       <RelativeSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativeSpecPath>
       <PublicSpecUrl>https://aurascoper.github.io/oklo_shareable_portal/POOLWATER_WORKFLOW_SPEC.md</PublicSpecUrl>
-      <SpecBytes>17684</SpecBytes>
-      <SpecSHA256>2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669</SpecSHA256>
+      <SpecBytes>17706</SpecBytes>
+      <SpecSHA256>ebbd2647583018d8c1f4699652481bbc6ee4e72c86e9ea536a8c4e0059afbd80</SpecSHA256>
       <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
       <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
-      <BenchmarkManifestBytes>17965</BenchmarkManifestBytes>
-      <BenchmarkManifestSHA256>f32f2393768e6c6ddb1baa47702e4d1ca973fcd7e5ae2e26907a3e4c2743e35b</BenchmarkManifestSHA256>
+      <BenchmarkManifestBytes>18093</BenchmarkManifestBytes>
+      <BenchmarkManifestSHA256>473d4d043d9f02298b4c3576b77577fbfbc2ba0cb72993fdbc30365627f264f6</BenchmarkManifestSHA256>
       <Bytes>79610</Bytes>
       <SHA256>fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>

@@ -39,7 +39,7 @@
       "upstream_raw_downloads_sha256": "813c9e9fb33e47d9ceead8ea8f08bf07122583cf4292aab651d4f919a572a849",
       "dataset_id": "tecdoc643_neutron_walk_transcribed_table_v0",
       "evidence_classification": "transcribed",
-      "epistemic_status": "transcribed_unverified_reference_fixture (tests generic reactivity algebra; does not transfer box-grid MTR results to annular MTR core)",
+      "epistemic_status": "transcribed_unverified_reference_fixture (Generic IAEA-TECDOC-643 Vol. 1 10 MW MTR benchmark; illustrative OpenMC proof of concept; not modeled on any operating reactor. Tests generic reactivity algebra; does not transfer box-grid MTR results to annular MTR core)",
       "frozen_gate0": true
     },
     "OKLO-R0-FROZEN-FIXTURE": {
@@ -75,8 +75,8 @@
       "bytes": 79610,
       "sha256": "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a",
       "spec_relative_path": "POOLWATER_WORKFLOW_SPEC.md",
-      "spec_bytes": 17684,
-      "spec_sha256": "2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669",
+      "spec_bytes": 17706,
+      "spec_sha256": "ebbd2647583018d8c1f4699652481bbc6ee4e72c86e9ea536a8c4e0059afbd80",
       "dataset_id": "poolwater_synthetic_demo_v1",
       "evidence_classification": "synthetic",
       "epistemic_status": "dataset_driven_synthetic_pool_demo (separates TECDOC-643 neutron reference, point-reactor kinetics, synthetic Boussinesq pool convection, and isolated surrogate-loop PIE protocol)",

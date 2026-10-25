@@ -1,6 +1,6 @@
 {
   "schema": "oklo_portal_ci_verification_receipt_v1",
-  "generated_at": "2026-10-24T00:50:21.118Z",
+  "generated_at": "2026-10-25T04:02:24.189Z",
   "gate0_files_verified": 14,
   "tests": {
     "lazy_init": "PASS",
@@ -9,7 +9,7 @@
       "glHeight": 630,
       "glHidden": false,
       "slHidden": true,
-      "kval": "1.013 ± 0.109",
+      "kval": "0.749 ± 0.102",
       "ntot": "(120 neutrons)"
     },
     "split_view_layout": {

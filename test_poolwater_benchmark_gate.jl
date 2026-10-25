@@ -32,13 +32,13 @@ end
             "tecdoc643_reference_fixture.jl"                    => (6018,   "ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d"),
             "proto_biofilms_geyser_fission_research_program.md" => (48056,  "da50d4002e6bcca94234045c3d371e16af243806cdb1ed99e0beff074c1cfb11"),
             "poolwater_interactive.html"                         => (79610,   "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a"),
-            "POOLWATER_WORKFLOW_SPEC.md"                         => (17684,   "2969c35e198d0019d3b8a970754eb6a75754428c93724049822be96759db0669"),
+            "POOLWATER_WORKFLOW_SPEC.md"                         => (17706,   "ebbd2647583018d8c1f4699652481bbc6ee4e72c86e9ea536a8c4e0059afbd80"),
             "multispecies_biofilm_robin_cylindrical_4panel.gif"  => (2571435, "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997"),
             "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
             "magnetoreception_3d_explorer.html"                  => (263619,  "e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064"),
             "evidence_manifest.json"                             => (116876,  "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf"),
             "test_calculation_provenance_and_invariants.js"      => (38751,   "db751a8972ee125fe4e334cdc59c51f1f3c5784b03026119587b50a3cd65fb55"),
-            "benchmark_manifest.json"                            => (17965,   "f32f2393768e6c6ddb1baa47702e4d1ca973fcd7e5ae2e26907a3e4c2743e35b"),
+            "benchmark_manifest.json"                            => (18093,   "473d4d043d9f02298b4c3576b77577fbfbc2ba0cb72993fdbc30365627f264f6"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")
@@ -237,6 +237,8 @@ end
         forbidden_patterns = [
             r"\bmurr\b"i,
             r"missouri\s+university\s+research\s+reactor"i,
+            r"institutional-scrubbed"i,
+            r"thomas\s+mccoy"i,
             r"\br-103\b"i,
             r"rur-26"i,
             r"\bap-dc-001\b"i,
@@ -257,6 +259,13 @@ end
             end
         end
 
+        prov_label = "Generic IAEA-TECDOC-643 Vol. 1 10 MW MTR benchmark; illustrative OpenMC proof of concept; not modeled on any operating reactor."
+        @test occursin(prov_label, file_sha256_and_bytes("index.html").text)
+        @test occursin(prov_label, file_sha256_and_bytes("README.md").text)
+        @test occursin(prov_label, file_sha256_and_bytes("artifact_index.xml").text)
+        @test occursin(prov_label, file_sha256_and_bytes("benchmark_manifest.json").text)
+        @test occursin(prov_label, file_sha256_and_bytes("POOLWATER_WORKFLOW_SPEC.md").text)
+
         dash_clean_files = [
             "index.html",
             "README.md",
@@ -275,13 +284,14 @@ end
             "evidence_manifest.json",
             "test_calculation_provenance_and_invariants.js",
             "test_tecdoc643_viewer_regression.js",
+            "test_poolwater_benchmark_gate.jl",
         ]
 
         for f in dash_clean_files
             txt = file_sha256_and_bytes(f).text
             @test !occursin("\u2014", txt)
             @test !occursin("\u2013", txt)
-            if f != "test_calculation_provenance_and_invariants.js"
+            if !(f in ("test_calculation_provenance_and_invariants.js", "test_poolwater_benchmark_gate.jl"))
                 @test !occursin("&mdash;", txt)
                 @test !occursin("&ndash;", txt)
             end
