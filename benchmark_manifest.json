@@ -5,6 +5,41 @@
   "repository": "aurascoper/oklo_shareable_portal",
   "public_portal_url": "https://aurascoper.github.io/oklo_shareable_portal/",
   "qms_standard": "SOP-QMS-001",
+  "gate_0_frozen_file_accounting": {
+    "primary_pre_existing_gate_0_artifact_count": 10,
+    "primary_pre_existing_gate_0_artifacts": [
+      "spacetime_explorer_4d_shareable.html",
+      "tecdoc643_neutron_walk.html",
+      "tecdoc643_reference_fixture.jl",
+      "oklo_r0_fixture_readonly.html",
+      "CONFORMANCE_FIXTURE_SPEC.md",
+      "biofilms_3d_explorer.html",
+      "poolwater_interactive.html",
+      "multispecies_biofilm_robin_cylindrical_4panel.gif",
+      "clonal_sector_expansion_reference.jpg",
+      "magnetoreception_3d_explorer.html"
+    ],
+    "linked_sidecar_manifest_count": 1,
+    "linked_sidecar_manifests": [
+      "evidence_manifest.json"
+    ],
+    "total_pre_existing_frozen_file_count": 11,
+    "coordinated_and_companion_files": {
+      "reactor_pool_biofilm_explorer.html": {
+        "bytes": 203053,
+        "sha256": "b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32"
+      },
+      "POOLWATER_WORKFLOW_SPEC.md": {
+        "bytes": 27723,
+        "sha256": "a58b90704dd273aa4cf388af7007175df2f4b5c2a6b885406857279a6748503d"
+      },
+      "index.html": {
+        "bytes": 98176,
+        "sha256": "c1349076ce0e29f1db58b1087b68812d3652658ef96ae615189b08559e80c4e3"
+      }
+    },
+    "accounting_note": "10 primary pre-existing Gate-0 artifacts + 1 linked sidecar manifest (evidence_manifest.json) = 11 pre-existing frozen files, plus reactor_pool_biofilm_explorer.html and companion portal/specification files."
+  },
   "gate_0_frozen_inputs": {
     "R10-4D-SHAREABLE-HTML": {
       "relative_path": "spacetime_explorer_4d_shareable.html",
@@ -27,7 +62,7 @@
       "upstream_embed_revision_sha256": "a463adfac1fbf8aa60b52f937d8f180e0c69678af2103bca4199718f8f849650",
       "upstream_branch_commit": "718e9c6f7273706aabb905d50847bf13b1ebb2b1",
       "evidence_classification": "replayed",
-      "epistemic_status": "external_design_reference (client-side 2-group toy surrogate + recorded OpenMC 0.15.3 playback; not a live OpenMC solver)",
+      "epistemic_status": "external_design_reference (Archived Playback Only; client-side 2-group toy surrogate + recorded OpenMC 0.15.3 playback; not a live OpenMC solver)",
       "frozen_gate0": true
     },
     "REF-NW-JL-FIX": {
@@ -39,7 +74,7 @@
       "upstream_raw_downloads_sha256": "813c9e9fb33e47d9ceead8ea8f08bf07122583cf4292aab651d4f919a572a849",
       "dataset_id": "tecdoc643_neutron_walk_transcribed_table_v0",
       "evidence_classification": "transcribed",
-      "epistemic_status": "transcribed_unverified_reference_fixture (Generic IAEA-TECDOC-643 Vol. 1 10 MW MTR benchmark; illustrative OpenMC proof of concept; not modeled on any operating reactor. Tests generic reactivity algebra; does not transfer box-grid MTR results to annular MTR core)",
+      "epistemic_status": "transcribed_unverified_reference_fixture (Public-literature benchmark; Generic IAEA-TECDOC-643 Vol. 1 10 MW MTR benchmark; illustrative OpenMC proof of concept; not modeled on any operating reactor. Tests generic reactivity algebra; does not transfer box-grid MTR results to annular MTR core)",
       "frozen_gate0": true
     },
     "OKLO-R0-FROZEN-FIXTURE": {
@@ -66,7 +101,7 @@
       "frame_manifest_sha256": "39ef51ef98abe56eab1f1b2cd6c0cc4cf99ccfb4403483b83f7ea06f22f3406c",
       "ensemble_csv_sha256": "c4b11303f36d45582e25311ba2bc0347292488e7c5899bd2fffa1f4156674dc0",
       "evidence_classification": "uncalibrated_model_snapshot",
-      "epistemic_status": "uncalibrated_model_snapshot_reference (40x40x40 lattice; D-PITCH awaiting_measurement; seconds_per_mcs = NaN; 256-seed 4-arm radial null within +/-0.05 r/R; cpm-sp-v1 displacement CIs span zero)",
+      "epistemic_status": "uncalibrated_model_snapshot_reference (40x40x40 lattice; D-PITCH awaiting_measurement; seconds_per_mcs = NaN; 256-seed 4-arm radial null within +/-0.05 r/R; cpm-sp-v1 displacement CIs span zero. This demo does not model fouling.)",
       "frozen_gate0": false
     },
     "POOLWATER-3D-INTERACTIVE-01": {
@@ -75,11 +110,11 @@
       "bytes": 79610,
       "sha256": "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a",
       "spec_relative_path": "POOLWATER_WORKFLOW_SPEC.md",
-      "spec_bytes": 23866,
-      "spec_sha256": "dbdc5aed5897a9b5ee305167afd3103fc67a6f60b93e9eebb49940e30eaab633",
+      "spec_bytes": 27723,
+      "spec_sha256": "a58b90704dd273aa4cf388af7007175df2f4b5c2a6b885406857279a6748503d",
       "dataset_id": "poolwater_synthetic_demo_v1",
       "evidence_classification": "synthetic",
-      "epistemic_status": "dataset_driven_synthetic_pool_demo (separates TECDOC-643 neutron reference, point-reactor kinetics, synthetic Boussinesq pool convection, and isolated surrogate-loop PIE protocol)",
+      "epistemic_status": "dataset_driven_synthetic_pool_demo (Internal checks pass; separates TECDOC-643 neutron reference, point-reactor kinetics, synthetic Boussinesq pool convection, and isolated surrogate-loop PIE protocol)",
       "frozen_gate0": false
     },
     "BIOFILMS-ROBIN-CYL-GIF-01": {
@@ -97,7 +132,7 @@
       "model_id": "cpm-sp-growth-v1",
       "boundary_condition": "Robin boundary condition at cylinder wall r = R (-D_eff * dc/dr = P_eff * (c - c_ext)); legacy_nonperiodic_cylinder; unrelated to avian (Erithacus rubecula) magnetoreception",
       "evidence_classification": "synthetic",
-      "epistemic_status": "synthetic_four_panel_visualization (combined arm, growth=1, Seed 42, MCS 0..200, axis-clipped cylinder; synthetic dose_rate 0..0.01 Gy/s is not calibrated radiation transport; net_biomass_rate_proxy is growth_rate minus mortality_hazard in mixed currencies and not measured growth; causal interpretation requires matched Radiation OFF vs ON counterfactuals)",
+      "epistemic_status": "synthetic_four_panel_visualization (combined arm, growth=1, Seed 42, MCS 0..200, axis-clipped cylinder; synthetic dose_rate 0..0.01 Gy/s is not calibrated radiation transport; net_biomass_rate_proxy is Illustrative Proxy: Monod Rate minus Parcel Hazard, 1/MCS and not measured growth; in this model under the assumed hazards, outward survivor-radius shifts come from selective axial mortality H0-B rather than directed movement H0-A, and expansion of lower-hazard reference organisms D. radiodurans and C. neoformans into vacated space follows directly from the assumed input hazards; includes O. intermedium AM7 (reclassified as Brucella intermedia))",
       "frozen_gate0": false
     },
     "BIOTITE-MAGNETORECEPTION-4D-01": {
@@ -109,11 +144,11 @@
       "evidence_manifest_bytes": 116876,
       "evidence_manifest_sha256": "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf",
       "invariant_test_relative_path": "test_calculation_provenance_and_invariants.js",
-      "invariant_test_bytes": 65150,
-      "invariant_test_sha256": "6550934121791fa847160edc02153abb2e0ae564407e9c63223274fd27c95ac5",
+      "invariant_test_bytes": 68878,
+      "invariant_test_sha256": "46bc77e217120bd9823beb2f379687afbecc458a7a98b30d659b9e11e8b61cd3",
       "source_module": "src/track4_mineral_magnetoreception_gates.jl",
       "evidence_classification": "calculated",
-      "epistemic_status": "cross_domain_epistemic_gated_4d_viewer (EG-1..EG-4 enforced; 4D perspective tesseract w = t / theta_B in [0..360 deg] / D_4 hyperplane rotation; criterial separation of accepted verified candidates vs criterial-pruned candidates vs exploratory particles; 3-regime 1 um^3 biotite Fe3O4 inclusion sensitivity)",
+      "epistemic_status": "cross_domain_epistemic_gated_4d_viewer (Internal consistency checks pass; EG-1..EG-4 enforced; 4D perspective tesseract w = t / theta_B in [0..360 deg] / D_4 hyperplane rotation; criterial separation of accepted verified candidates vs criterial-pruned candidates vs exploratory particles; uses established magnetotactic bacteria magnetosome chain U_mag / (k_B * T) = 5.69 > 1 as positive code-verification benchmark; highlights Treiber et al. 2012 Nature iron-particle warning; grounds bench follow-up in testable fungal biotite-weathering Fe/K ICP assay against sterile and killed-fungus controls; 3-regime 1 um^3 biotite Fe3O4 superparamagnetic/single-domain/multi-domain inclusion sensitivity)",
       "frozen_gate0": false
     },
     "REACTOR-POOL-BIOFILM-COORDINATED-3D-01": {
@@ -397,8 +432,8 @@
     "section_version": "1.3.0",
     "epistemic_gates": {
       "EG-1": "EG-1: Geochemical Provenance (ESTABLISHED_BOUNDARY): Oklo Reactor Zones RZ1-RZ16 verified mineral inventory (uraninite, bituminous organic matter, illite, chlorite; Nagy 1991, 1993; Gauthier-Lafaye 1996) has oklo_reactor_zone_biotite_verified = false; biotite is evaluated strictly as an independent comparative 2:1 phyllosilicate and prebiotic-scaffold hypothesis (Hansma 2022), and Robin boundary condition (-D_eff dc/dr = P_eff(c - c_ext)) at cylinder wall r = R in aurascoper/Biofilms is strictly separated from European robin (Erithacus rubecula) avian magnetoreception.",
-      "EG-2": "EG-2: Physical Mechanism (SEPARATE_PHYSICAL_MECHANISMS): Biogenic single-domain Fe3O4 magnetosome chain (U_mag / (k_B T) = 5.688616 at 300 K, 5.5051 at 310 K; Crit = Accepted Verified) vs. inclusion-free paramagnetic biotite K(Mg,Fe)3AlSi3O10(F,OH)2 with (001) cleavage (U_aniso / (k_B T) = 5.894344e-8 at V = 9.8175e-22 m^3 and 6.003953e-5 at V = 1 um^3, B = 50 uT, T = 300 K; Crit = Pruned unless coupled to single-domain Fe3O4 inclusions) vs. cryptochrome-4 [FADdot- ... TrpHdot+] radical-pair spin mixing (f_L = 1.401248 MHz, 1/omega_L = 113.58 ns physical Zeeman timescale, not biological coherence threshold; separated from melanin radiotropism). Includes 3-tier irradiation hierarchy (Park et al. 2004 A508 RPV steel +16% H_c vs. Shong et al. ASTM STP15114S Fe/Ni wire H_c/B_r decrease) and specimen-encoding gate.",
-      "EG-3": "EG-3: Cellular Transduction (UNRESOLVED_TRANSDUCTION_GAP): Even if a mineral inclusion or radical pair experiences magnetic torque or spin-state modulation (EG-2), coupling to fungal hyphal tip redirection, mitochondrial bioenergetics, or radiotrophic growth remains unestablished (Sandia 2024 Cs-137 null; aurascoper/Biofilms cpm-sp-v1 256-seed selective axial mortality H0-B +0.0493 r/R vs. null directed parcel displacement H0-A delta_r_i = 0).",
+      "EG-2": "EG-2: Physical Mechanism (SEPARATE_PHYSICAL_MECHANISMS): Biogenic single-domain Fe3O4 magnetosome chain in magnetotactic bacteria (U_mag / (k_B T) = 5.688616 at 300 K, 5.5051 at 310 K; Crit = Accepted Verified positive code-verification benchmark) vs. inclusion-free paramagnetic biotite K(Mg,Fe)3AlSi3O10(F,OH)2 with (001) cleavage (U_aniso / (k_B T) = 5.894344e-8 at V = 9.8175e-22 m^3 and 6.003953e-5 at V = 1 um^3, B = 50 uT, T = 300 K; Crit = Pruned unless coupled to single-domain Fe3O4 inclusions) vs. cryptochrome-4 [FADdot- ... TrpHdot+] radical-pair spin mixing (f_L = 1.401248 MHz, 1/omega_L = 113.58 ns physical Zeeman timescale, not biological coherence threshold; separated from melanin radiotropism). Includes 3-tier irradiation hierarchy (Park et al. 2004 A508 RPV steel +16% H_c vs. Shong et al. ASTM STP15114S Fe/Ni wire H_c/B_r decrease) and specimen-encoding gate.",
+      "EG-3": "EG-3: Cellular Transduction (UNRESOLVED_TRANSDUCTION_GAP): Even if a mineral inclusion or radical pair experiences magnetic torque or spin-state modulation (EG-2), coupling to fungal hyphal tip redirection, mitochondrial bioenergetics, or radiotrophic growth remains unestablished (Sandia 2024 Cs-137 null; aurascoper/Biofilms cpm-sp-v1 256-seed selective axial mortality H0-B +0.0493 r/R vs. null directed parcel displacement H0-A delta_r_i = 0), and per Treiber et al. (2012, Nature), iron-rich particles alone do not establish magnetoreception; bench follow-up is grounded in a testable fungal biotite-weathering (Fe/K ICP against sterile and killed-fungus controls) assay.",
       "EG-4": "EG-4: Evolutionary Origin (UNTESTED_EVOLUTIONARY_HYPOTHESIS): Prebiotic mineral surface ordering on biotite or hydrothermal clays (H5) and evolved biogenic magnetosome (mam/mms) or cryptochrome (Cry4a) magnetoreception (H6) have no established phylogenetic or biochemical evolutionary bridge, and every curve/trajectory is explicitly tagged ([MEASURED], [CALCULATED], [SYNTHETIC], [COUNTERFACTUAL_BOUND]) with criterial separation (Accepted Verified vs Criterial-Pruned vs Unverified Exploratory)."
     },
     "biotite_1um3_inclusion_regimes_at_50uT_300K": {

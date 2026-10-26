@@ -173,7 +173,7 @@ function verifyTrajectoryCounterfactualInvariants() {
     );
   }
 
-  // 2b. Direct trajectory-level synthetic simulation proving H0-B vs H0-A separation:
+  // 2b. Direct trajectory-level synthetic simulation showing H0-B vs H0-A separation:
   function mulberry32(seed) {
     let a = seed >>> 0;
     return function () {
@@ -1075,8 +1075,8 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   assert.strictEqual(vmBoundaries.timelineCouplingProgrammaticallyBlocked, true);
   assert.strictEqual(vmBoundaries.baselineNullControlEnforcesLambdaZero, true);
 
-  // Verify Gate 2: Pinned baseline SHA-256 hashes of all 10 pre-existing Gate-0 artifacts + final reactor_pool_biofilm_explorer.html
-  const pinnedGate0Files = {
+  // Verify Gate 2: Pinned baseline SHA-256 hashes of all 10 primary pre-existing Gate-0 artifacts + 1 linked sidecar manifest (11 pre-existing frozen files) + coordinated/companion files
+  const pinnedPrimaryGate0Artifacts = {
     'spacetime_explorer_4d_shareable.html': {
       bytes: 132358,
       sha256: 'f9ca39ea37503f0e2012ad3dd5aad05ef26709337d5e84f83df89234920b4612'
@@ -1105,10 +1105,6 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       bytes: 79610,
       sha256: 'fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a'
     },
-    'POOLWATER_WORKFLOW_SPEC.md': {
-      bytes: 23866,
-      sha256: 'dbdc5aed5897a9b5ee305167afd3103fc67a6f60b93e9eebb49940e30eaab633'
-    },
     'multispecies_biofilm_robin_cylindrical_4panel.gif': {
       bytes: 2571435,
       sha256: 'e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997'
@@ -1120,16 +1116,46 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
     'magnetoreception_3d_explorer.html': {
       bytes: 263619,
       sha256: 'e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064'
-    },
+    }
+  };
+  const pinnedSidecarManifests = {
     'evidence_manifest.json': {
       bytes: 116876,
       sha256: '4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf'
-    },
+    }
+  };
+  const pinnedCoordinatedAndCompanionFiles = {
     'reactor_pool_biofilm_explorer.html': {
       bytes: 203053,
       sha256: 'b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32'
+    },
+    'POOLWATER_WORKFLOW_SPEC.md': {
+      bytes: 27723,
+      sha256: 'a58b90704dd273aa4cf388af7007175df2f4b5c2a6b885406857279a6748503d'
+    },
+    'index.html': {
+      bytes: 98176,
+      sha256: 'c1349076ce0e29f1db58b1087b68812d3652658ef96ae615189b08559e80c4e3'
     }
   };
+  assert.strictEqual(Object.keys(pinnedPrimaryGate0Artifacts).length, 10, 'Expected exactly 10 primary pre-existing Gate-0 artifacts');
+  assert.strictEqual(Object.keys(pinnedSidecarManifests).length, 1, 'Expected exactly 1 linked sidecar manifest');
+  assert.strictEqual(
+    Object.keys(pinnedPrimaryGate0Artifacts).length + Object.keys(pinnedSidecarManifests).length,
+    11,
+    'Expected 10 primary Gate-0 artifacts + 1 sidecar manifest = 11 pre-existing frozen files'
+  );
+  if (bm.gate_0_frozen_file_accounting) {
+    assert.strictEqual(bm.gate_0_frozen_file_accounting.primary_pre_existing_gate_0_artifact_count, 10);
+    assert.strictEqual(bm.gate_0_frozen_file_accounting.linked_sidecar_manifest_count, 1);
+    assert.strictEqual(bm.gate_0_frozen_file_accounting.total_pre_existing_frozen_file_count, 11);
+  }
+  const pinnedGate0Files = Object.assign(
+    {},
+    pinnedPrimaryGate0Artifacts,
+    pinnedSidecarManifests,
+    pinnedCoordinatedAndCompanionFiles
+  );
 
   const nodeCrypto = require('crypto');
   for (const [relFile, expected] of Object.entries(pinnedGate0Files)) {
@@ -1162,7 +1188,27 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
     }
   }
 
-  console.log('PASS [Coordinated 3D Pool-and-Biofilm Explorer 7/7]: Gate 1 separated provenance taxonomy, Gate 2 explicit on-disk SHA-256 verification of all Gate-0 frozen inputs and reactor_pool_biofilm_explorer.html, Gate 3 narrow validation claims and programmatic baseline/timeline firewall (including VM runtime execution), 4 spatial layers, 4 morphotypes, and 7 null-model comparisons verified.');
+  // Verify Pre-Publication Portal Review Fixes (1-7) & Biotite/Biomagnetite Framing on index.html and editable companion files
+  const indexText = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.ok(!/institutional-scrubbed|institutionally scrubbed/i.test(indexText), 'index.html must not contain Institutional-scrubbed');
+  assert.ok(!/pre-oct 19|pre-2026-10-19/i.test(indexText), 'index.html must not contain Pre-Oct 19 Materials');
+  assert.ok(!/proving|falsification|falsifiable/i.test(indexText), 'index.html must not contain proving/falsification');
+  assert.ok(!/implies zero fouling/i.test(indexText), 'index.html must not contain implies zero fouling');
+  assert.ok(indexText.includes('Public-literature benchmark'), 'index.html must include Public-literature benchmark');
+  assert.ok(indexText.includes('Archived Playback Only') && indexText.includes('Archived Playback'), 'index.html must include Archived Playback labels');
+  assert.ok(indexText.includes('Illustrative Proxy: Monod Rate minus Parcel Hazard, 1/MCS'), 'index.html must declare net_biomass_rate_proxy currency');
+  assert.ok(indexText.includes('This demo does not model fouling.'), 'index.html must state This demo does not model fouling.');
+  assert.ok(indexText.includes('O. intermedium AM7 (reclassified as Brucella intermedia)'), 'index.html must note Brucella intermedia reclassification');
+  assert.ok(indexText.includes('Author:') && indexText.includes('Mark Hunter Kinder II') && indexText.includes('CC0 1.0 Public Domain'), 'index.html must include Author, Date, License header');
+  assert.ok(indexText.includes('class="plain-language-summary"'), 'index.html must include plain-language-summary');
+  assert.ok(indexText.includes('positive code-verification benchmark') && indexText.includes('Treiber et al. (2012') && indexText.includes('Fe/K'), 'index.html must highlight magnetosome positive control, Treiber et al. (2012) warning, and fungal biotite Fe/K ICP bench assay');
+  const forbiddenHyperRe = new RegExp('hyper' + 'paramagnet', 'i');
+  for (const checkFile of ['index.html', 'POOLWATER_WORKFLOW_SPEC.md', 'README.md', 'artifact_index.xml', 'benchmark_manifest.json', 'magnetoreception_3d_explorer.html']) {
+    const txt = fs.readFileSync(path.join(ROOT, checkFile), 'utf8');
+    assert.ok(!forbiddenHyperRe.test(txt), `${checkFile} must use superparamagnetic terminology exclusively`);
+  }
+
+  console.log('PASS [Coordinated 3D Pool-and-Biofilm Explorer 7/7]: Gate 1 separated provenance taxonomy, Gate 2 explicit on-disk SHA-256 verification of all 10 primary Gate-0 frozen inputs + 1 sidecar manifest + coordinated/companion files, Gate 3 narrow validation claims and programmatic baseline/timeline firewall (including VM runtime execution), 4 spatial layers, 4 morphotypes, 7 null-model comparisons, and pre-publication portal review invariants verified.');
 }
 
 function runAll() {

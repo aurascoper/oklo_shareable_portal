@@ -79,8 +79,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'POOLWATER_WORKFLOW_SPEC.md',
-      sha256: 'dbdc5aed5897a9b5ee305167afd3103fc67a6f60b93e9eebb49940e30eaab633',
-      bytes: 23866
+      sha256: 'a58b90704dd273aa4cf388af7007175df2f4b5c2a6b885406857279a6748503d',
+      bytes: 27723
     },
     {
       path: 'multispecies_biofilm_robin_cylindrical_4panel.gif',
@@ -109,13 +109,13 @@ function verifyArtifactHashes() {
     },
     {
       path: 'test_calculation_provenance_and_invariants.js',
-      sha256: '6550934121791fa847160edc02153abb2e0ae564407e9c63223274fd27c95ac5',
-      bytes: 65150
+      sha256: '46bc77e217120bd9823beb2f379687afbecc458a7a98b30d659b9e11e8b61cd3',
+      bytes: 68878
     },
     {
       path: 'benchmark_manifest.json',
-      sha256: '05932a8dd0323b3ed302197a780fef901e2814bf530f157160c26e862bd84024',
-      bytes: 28203
+      sha256: '96cd892fb0ee30c3a4ddde57f2710ba5f34bb6ff9bc0f64985b8bcc3a595d8e6',
+      bytes: 30757
     }
   ];
 

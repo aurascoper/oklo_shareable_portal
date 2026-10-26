@@ -48,6 +48,36 @@
       font-size: 13px;
       color: var(--muted);
     }
+    .header-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      width: 100%;
+    }
+    .author-meta {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #bae6fd;
+    }
+    .plain-language-summary {
+      width: 100%;
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      width: 100%;
+    }
     .badge {
       display: inline-block;
       font-family: var(--mono);
@@ -267,17 +297,26 @@
 </head>
 <body>
   <header>
-    <div>
-      <h1>Oklo Scientific Visualization Index, Pool-Water Benchmark &amp; Biofilms 3D Portal</h1>
-      <p>Companion portal preserving frozen Revision-0 fixture integrity while indexing R10 4D Geochemistry, Pool-Water Interactive CFD/Kinetics, Biofilms 3D CPM, Biotite &amp; Biomagnetite 4D Magnetoreception (EG-1..EG-4), and TECDOC-643 Neutron Walk</p>
+    <div class="header-top">
+      <div>
+        <h1>Oklo Scientific Visualization Index, Pool-Water Benchmark &amp; Biofilms 3D Portal</h1>
+        <p>Public-literature benchmark &amp; synthetic model portal preserving frozen Revision-0 fixture integrity while indexing R10 4D Geochemistry, Pool-Water Interactive CFD/Kinetics, Biofilms 3D CPM, Biotite &amp; Biomagnetite 4D Magnetoreception, and TECDOC-643 Neutron Walk</p>
+      </div>
+      <div class="author-meta">
+        Author: Mark Hunter Kinder II | Date: October 2026 | License: <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0 1.0 Public Domain</a>
+      </div>
     </div>
-    <div>
+    <div class="plain-language-summary">
+      <strong>What This Portal Is (and Is Not):</strong> This portal collects interactive visualizers for public-literature nuclear benchmarks (the generic IAEA-TECDOC-643 10 MW research-reactor benchmark and idealized Oklo natural-reactor transport) alongside exploratory synthetic models of microbial biofilms and mineral magnetics. All simulations shown here are literature-parameterized educational demonstrations, archived Monte Carlo playbacks, or uncalibrated mathematical models whose badges indicate only that internal software consistency checks pass. None of these interactive tools represent an operating nuclear facility, a live coupled reactor-safety solver, or an experimentally validated biological discovery.
+    </div>
+    <div class="badge-row">
       <span class="badge green">R10 4D Slice: MERGED (942e3f8)</span>
-      <span class="badge blue">Pool-Water Interactive: Gate 0-4 PASS</span>
-      <span class="badge green">3D Pool + Biofilm Explorer: Stage 1-2-3 PASS (5a9ff39a)</span>
-      <span class="badge green">Biotite &amp; Biomagnetite 4D: EG-1..EG-4 PASS (e9e50a68)</span>
+      <span class="badge blue">Pool-Water Interactive: Internal checks pass</span>
+      <span class="badge green">3D Pool + Biofilm Explorer: Internal consistency checks pass (5a9ff39a)</span>
+      <span class="badge green">Biotite &amp; Biomagnetite 4D: Internal consistency checks pass (e9e50a68)</span>
       <span class="badge amber">TECDOC-643: Reference Audit Only (dc15eb93)</span>
       <span class="badge blue">R0 Fixture: Frozen Unmodified (8dac3ae9)</span>
+      <span class="badge blue">Provenance: Public-literature benchmark (literature-parameterized)</span>
     </div>
   </header>
 
@@ -297,7 +336,7 @@
     </div>
 
     <div id="bannerTxt" class="banner">
-      <strong>Epistemic Status (R10 Stage 0/1):</strong> Prescribed analytical 3D Gaussian advection-diffusion-decay tracer pulse across 5 discrete time states (t = 0 s to 1000 s, +k vertical up-axis). Local workstation verification passed; Stage 2 transient PDE solver is not authorized.
+      <strong>Epistemic Status (R10 Stage 0/1):</strong> Prescribed analytical 3D Gaussian advection-diffusion-decay tracer pulse across 5 discrete time states (t = 0 s to 1000 s, +k vertical up-axis). Internal consistency checks pass; Stage 2 transient PDE solver is not authorized.
     </div>
 
     <div id="coupledSyncBar" class="sync-bar">
@@ -339,7 +378,7 @@
         <div class="frame-head">
           <div>
             <strong>Pool-Water Interactive Visualization (10 MW MTR Core Reference + Synthetic Boussinesq Plume + External Surrogate Loop / PIE Boundary)</strong>
-            <span class="badge blue">SYNTHETIC_PEDAGOGICAL_DEMO | Gate 0-4 Verified</span>
+            <span class="badge blue">SYNTHETIC_PEDAGOGICAL_DEMO | Internal checks pass</span>
           </div>
           <div>
             <a href="poolwater_interactive.html" target="_blank" rel="noopener">Open Standalone Pool-Water HTML</a> |
@@ -355,7 +394,7 @@
         <div class="frame-head">
           <div>
             <strong>TECDOC-643 Neutron Walk (10 MW MTR Design &amp; Data Reference)</strong>
-            <span class="badge amber">Pre-Oct 19 Materials / Playback Only</span>
+            <span class="badge amber">Archived Playback Only</span>
           </div>
           <div>
             <a href="https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md" target="_blank" rel="noopener">Claude Artifact Link (KcgJyGkRmxzpEFSc8Y12md)</a> |
@@ -400,8 +439,8 @@
       <div id="cardMagneto" class="frame-card is-hidden">
         <div class="frame-head">
           <div>
-            <strong>Biotite, Biomagnetite &amp; Cryptochrome 4D Spatiotemporal Magnetoreception Explorer (EG-1 to EG-4)</strong>
-            <span class="badge green">MODELED U_mag/(k_B*T) | 3-Regime 1 um^3 Biotite Sensitivity | 4D Hyperplane &amp; D_4 Scrubber</span>
+            <strong>Biotite, Biomagnetite &amp; Cryptochrome 4D Explorer: Magnetotactic Bacteria Positive Control, Treiber et al. (2012) Iron-Particle Warning &amp; Fungal Biotite-Weathering (Fe/K ICP) Assay</strong>
+            <span class="badge green">POSITIVE CONTROL: Magnetosome Chain U_mag/(k_B*T) | BENCH ASSAY: Fungal Biotite Fe/K ICP vs Sterile/Killed Controls | Treiber et al. (2012) Warning</span>
           </div>
           <div>
             <a href="magnetoreception_3d_explorer.html" target="_blank" rel="noopener">Open Standalone Biotite &amp; Magnetoreception 4D HTML</a> |
@@ -442,7 +481,7 @@
 
       <p style="margin:0 0 12px;font-size:13px;color:var(--text);">
         <strong>Visual Companion to the Biofilm Spatial-Modeling Question (Living Biofilms <code>H_6</code> vs. Abiotic Prebiotic Organization <code>H_5</code>):</strong>
-        This four-panel animation (<a href="multispecies_biofilm_robin_cylindrical_4panel.gif" target="_blank" rel="noopener"><code>multispecies_biofilm_robin_cylindrical_4panel.gif</code></a>, <code>2,571,435</code> bytes, SHA-256 <code>e73622d6454a3a6a...</code>) places four modeled quantities from the <a href="https://github.com/aurascoper/Biofilms" target="_blank" rel="noopener"><code>aurascoper/Biofilms</code></a> cylindrical Cellular Potts / Monod extension (<code>diagnostics/fitness_phase/pv_workflow.py --clip</code>, execution commit <code>841d052</code>, config SHA-256 <code>eb090aa3c0a97177...</code>) in one view: <strong>(1) microbial species and parcel geometry</strong>, <strong>(2) a wrapped Kuramoto phase field</strong>, <strong>(3) a net biomass-rate proxy</strong>, and <strong>(4) a synthetic radial dose-rate field</strong>.
+        This four-panel animation (<a href="multispecies_biofilm_robin_cylindrical_4panel.gif" target="_blank" rel="noopener"><code>multispecies_biofilm_robin_cylindrical_4panel.gif</code></a>, <code>2,571,435</code> bytes, SHA-256 <code>e73622d6454a3a6a...</code>) places four modeled quantities from the <a href="https://github.com/aurascoper/Biofilms" target="_blank" rel="noopener"><code>aurascoper/Biofilms</code></a> cylindrical Cellular Potts / Monod extension (<code>diagnostics/fitness_phase/pv_workflow.py --clip</code>, execution commit <code>841d052</code>, config SHA-256 <code>eb090aa3c0a97177...</code>) in one view: <strong>(1) microbial species and parcel geometry</strong>, <strong>(2) a wrapped Kuramoto phase field</strong>, <strong>(3) a net biomass-rate proxy (<code>Illustrative Proxy: Monod Rate minus Parcel Hazard, 1/MCS</code>)</strong>, and <strong>(4) a synthetic radial dose-rate field</strong>.
         Connecting this visualization to the portal's research-program section preserves the strict boundary between <strong>living cellular biofilms (<code>H_6</code>)</strong> and <strong>abiotic prebiotic oligomer organization (<code>H_5</code>)</strong> without conflating the two:
         <a href="proto_biofilms_geyser_fission_research_program.md" target="_blank" rel="noopener">Read the research-program document (local .md)</a> |
         <a href="https://github.com/aurascoper/oklo_shareable_portal/blob/main/proto_biofilms_geyser_fission_research_program.md" target="_blank" rel="noopener">GitHub Research-Program Document</a> |
@@ -461,7 +500,7 @@
             <div><strong>Caption &amp; Modeling Limits:</strong> Four-panel ParaView <code>pvpython</code> export (<code>pv_workflow.py build OUTPUT/growth_1_seed_42/combined VIEW_CLIP --clip</code>) on a <code>40 x 40 x 40</code> nonperiodic cylindrical lattice (<code>legacy_nonperiodic_cylinder</code>) with a whole-voxel plane cut through the cylinder axis (<code>r = 0</code>) so the interior dose peak is visible.</div>
             <ul style="margin:6px 0 0;padding-left:18px;">
               <li><strong>Synthetic dose-rate field vs. calibrated radiation transport:</strong> Bottom-right panel shows an assumed radial profile (<code>0.0e+00</code> to <code>1.0e-02 Gy/s</code> peaking at <code>r = 0</code> with synthetic clock <code>seconds_per_mcs = 60.0 s</code>), <em>not</em> a calibrated OpenMC or coupled radiation-transport result (<code>validate_coupled_config</code> and <code>tests/radiodialysis_basis_gate.jl</code> refuse coupled transport until physical voxel pitch <code>dx</code> / <code>D-PITCH</code> and density <code>rho</code> are calibrated).</li>
-              <li><strong>Net biomass-rate proxy vs. experimentally measured growth rate:</strong> Bottom-left panel displays <code>growth_rate - hazard_rate</code> (<code>[-6.0e-02, +5.0e-02] 1/MCS</code>), subtracting an instantaneous whole-parcel death commitment hazard (<code>alpha_s * dD/dt</code>) from a conditional biomass-specific Monod uptake/maintenance rate. Because these two terms have different currencies, their difference is an illustrative model proxy (<code>net_biomass_rate_proxy</code>), not the growth rate of any physical quantity, not realized biomass change, and not an experimentally measured growth rate.</li>
+              <li><strong>Net biomass-rate proxy vs. experimentally measured growth rate (<code>Illustrative Proxy: Monod Rate minus Parcel Hazard, 1/MCS</code>):</strong> Bottom-left panel displays <code>growth_rate - hazard_rate</code> (<code>[-6.0e-02, +5.0e-02] 1/MCS</code>), subtracting an instantaneous whole-parcel death commitment hazard (<code>alpha_s * dD/dt</code>) from a conditional biomass-specific Monod uptake/maintenance rate. Because these two terms are combined in this synthetic model as <code>Illustrative Proxy: Monod Rate minus Parcel Hazard, 1/MCS</code>, their difference is an illustrative model proxy (<code>net_biomass_rate_proxy</code>), not the growth rate of any physical quantity, not realized biomass change, and not an experimentally measured growth rate.</li>
               <li><strong>Robin boundary condition vs. avian magnetoreception:</strong> "Robin cylindrical" refers strictly to the mathematical <strong>Robin boundary condition</strong> (<code>a * u + b * du/dn = g</code>, specifically the ghost-point membrane wall flux condition <code>-D_eff * dc/dr|_{r=R} = P_eff(t) * (c(R,t) - c_ext)</code> at outer cylinder radius <code>r = R</code> in <code>biofilms_potts.jl</code>), and has zero connection to the European robin (<code>Erithacus rubecula</code>) or avian magnetoreception.</li>
             </ul>
           </div>
@@ -481,10 +520,10 @@
           <canvas id="robinCounterfactualCanvas" width="760" height="390" style="width:100%;height:auto;background:#07111a;border:1px solid var(--border);border-radius:6px;display:block;"></canvas>
           <div style="margin-top:8px;font-size:12px;color:var(--muted);line-height:1.45;">
             <strong>Why a Single Combined-Growth GIF Cannot Establish Causality Alone:</strong>
-            Showing a combined-growth state and a dose-rate field does not by itself show whether dose drives parcel motion or species selection. Comparing matched seeds with <strong>Radiation OFF (<code>baseline</code> / <code>phase_only</code>)</strong> vs. <strong>Radiation ON (<code>survival_only</code> / <code>combined</code>)</strong> while holding initial coordinates, founder IDs, phases, and all non-radiation parameters fixed separates the three outcomes:
+            Showing a combined-growth state and a dose-rate field does not by itself show whether dose drives parcel motion or species selection. Comparing matched seeds with <strong>Radiation OFF (<code>baseline</code> / <code>phase_only</code>)</strong> vs. <strong>Radiation ON (<code>survival_only</code> / <code>combined</code>)</strong> while holding initial coordinates, founder IDs, phases, and all non-radiation parameters fixed separates the three model outcomes:
             <strong>(1) Survival (<code>cpm-sp-v1</code>, 256 seeds):</strong> axial dose removes <code>5,511 / 10,752</code> parcels near the axis;
-            <strong>(2) Biomass change (<code>cpm-sp-growth-v1</code>, 16 seeds):</strong> low-hazard <code>D. radiodurans</code> (<code>+34,137</code>) and <code>C. neoformans</code> (<code>+6,142</code>) expand into freed nutrient/space while high-hazard competitors lose biomass;
-            <strong>(3) Directional displacement (<code>delta_r_i</code>):</strong> all 7 species' 95% CIs span zero (<code>[-0.0052, +0.0013] r/R</code>), proving that survivor radius shifts outward via <strong>selective axial mortality (<code>H0-B</code>), not directed movement (<code>H0-A</code>)</strong>.
+            <strong>(2) Biomass change (<code>cpm-sp-growth-v1</code>, 16 seeds):</strong> lower-hazard literature reference organisms <code>D. radiodurans</code> (<code>+34,137</code>; literature radiation-resistance reference, absent from published reactor-pool surveys) and <code>C. neoformans</code> (<code>+6,142</code>; BSL-2 laboratory reference fungus, not a pool organism) expanding into vacated nutrient/space while higher-hazard competitors lose biomass follows directly from the assumed input hazards (e.g., <code>0.002 Gy^-1</code> for <code>D. radiodurans</code> vs. <code>0.060 Gy^-1</code> for <code>S. oneidensis</code>), rather than being an empirical discovery;
+            <strong>(3) Directional displacement (<code>delta_r_i</code>):</strong> all 7 species' 95% CIs span zero (<code>[-0.0052, +0.0013] r/R</code>), showing that in this model, under these assumed hazards, the outward shift in survivor radius comes from <strong>selective axial mortality (<code>H0-B</code>) rather than directed movement (<code>H0-A</code>)</strong>.
           </div>
 
           <details style="margin-top:10px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px 10px;">
@@ -518,14 +557,14 @@
             </thead>
             <tbody>
               <tr>
-                <td><strong>1. C. neoformans</strong> (<code>0.010 Gy^-1</code>, melanized)</td>
+                <td><strong>1. C. neoformans</strong> (<code>0.010 Gy^-1</code>, melanized; BSL-2 laboratory reference fungus, not a pool organism)</td>
                 <td class="mono">-1.74 [-1.88, -1.61]</td>
                 <td class="mono">+0.0086 vs. +0.0075 r/R (256/0)</td>
                 <td class="mono">+0.0011 [-0.0025, +0.0047] (NULL)</td>
                 <td class="mono">+6,142 [+1,021, +11,415] (alive: +1.6)</td>
               </tr>
               <tr>
-                <td><strong>2. D. radiodurans</strong> (<code>0.002 Gy^-1</code>, lowest hazard)</td>
+                <td><strong>2. D. radiodurans</strong> (<code>0.002 Gy^-1</code>, lowest assumed hazard; literature reference organism, absent from published reactor-pool surveys)</td>
                 <td class="mono">-0.43 [-0.51, -0.35]</td>
                 <td class="mono">+0.0017 vs. +0.0004 r/R (256/0)</td>
                 <td class="mono">+0.0013 [-0.0010, +0.0036] (NULL)</td>
@@ -553,14 +592,14 @@
                 <td class="mono">-6,032 [-10,204, -1,805] (alive: -5.2)</td>
               </tr>
               <tr>
-                <td><strong>6. S. oneidensis</strong> (<code>0.060 Gy^-1</code>, highest hazard)</td>
+                <td><strong>6. S. oneidensis</strong> (<code>0.060 Gy^-1</code>, highest assumed hazard)</td>
                 <td class="mono">-5.26 [-5.35, -5.16]</td>
                 <td class="mono">+0.0493 vs. +0.0538 r/R (145/111)</td>
                 <td class="mono">-0.0045 [-0.0117, +0.0027] (NULL)</td>
                 <td class="mono">-10,348 [-14,553, -6,117] (alive: -6.3)</td>
               </tr>
               <tr>
-                <td><strong>7. O. intermedium AM7</strong> (<code>0.030 Gy^-1</code>)</td>
+                <td><strong>7. O. intermedium AM7 (reclassified as Brucella intermedia)</strong> (<code>0.030 Gy^-1</code>, pool isolate)</td>
                 <td class="mono">-3.82 [-3.97, -3.67]</td>
                 <td class="mono">+0.0356 vs. +0.0359 r/R (240/16)</td>
                 <td class="mono">-0.0003 [-0.0056, +0.0049] (NULL)</td>
@@ -574,6 +613,9 @@
 
     <div id="auditSection" class="card">
       <h2>Indexed Shareable Artifacts, Provenance Hashes, and Embed Links</h2>
+      <p style="font-size: 0.78rem; color: var(--muted); line-height: 1.5; margin: 0 0 10px 0;">
+        <strong>Gate-0 Frozen File Accounting:</strong> The repository locks <strong>10 primary pre-existing Gate-0 artifacts</strong> (<code>spacetime_explorer_4d_shareable.html</code>, <code>tecdoc643_neutron_walk.html</code>, <code>tecdoc643_reference_fixture.jl</code>, <code>oklo_r0_fixture_readonly.html</code>, <code>CONFORMANCE_FIXTURE_SPEC.md</code>, <code>biofilms_3d_explorer.html</code>, <code>poolwater_interactive.html</code>, <code>multispecies_biofilm_robin_cylindrical_4panel.gif</code>, <code>clonal_sector_expansion_reference.jpg</code>, and <code>magnetoreception_3d_explorer.html</code>) plus <strong>1 linked sidecar manifest</strong> (<code>evidence_manifest.json</code>, <code>116,876</code> bytes, SHA-256 <code>4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf</code>), totaling <strong>11 pre-existing frozen files</strong>, alongside the frozen coordinated viewer <code>reactor_pool_biofilm_explorer.html</code> (<code>203,053</code> bytes, SHA-256 <code>b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32</code>).
+      </p>
       <table>
         <thead>
           <tr>
@@ -593,7 +635,7 @@
               <span class="mono">Upstream Ref: PR #10 (Merged: 942e3f8)</span>
             </td>
             <td class="mono">f9ca39ea37503f0e...<br>(132,358 bytes)</td>
-            <td><span class="badge green">Technical PASS</span><br>Prescribed analytical Gaussian pulse; local verification; Stage 2 PDE solver not authorized.</td>
+            <td><span class="badge green">Internal checks pass</span><br>Prescribed analytical Gaussian pulse; internal consistency checks pass; Stage 2 PDE solver not authorized.</td>
           </tr>
           <tr>
             <td class="mono">POOLWATER-3D-INTERACTIVE-01</td>
@@ -604,7 +646,7 @@
               <a href="benchmark_manifest.json">benchmark_manifest.json</a>
             </td>
             <td class="mono">fa0f0dc30c45681a...<br>(79,610 bytes)</td>
-            <td><span class="badge blue">Gate 0-4 Verified</span><br>Decouples `NeutronTransportReference`, `PoolThermalHydraulicsSynthetic`, `ReactorKineticsAlgebra`, and `SurrogateLoopBiofilmPIEBoundary`; missing CFD/PIV fields stay `UNAVAILABLE`.</td>
+            <td><span class="badge blue">Internal checks pass</span><br>Decouples `NeutronTransportReference`, `PoolThermalHydraulicsSynthetic`, `ReactorKineticsAlgebra`, and `SurrogateLoopBiofilmPIEBoundary`; missing CFD/PIV fields stay `UNAVAILABLE`.</td>
           </tr>
           <tr>
             <td class="mono">BIOFILMS-3D-CPM-01</td>
@@ -614,7 +656,7 @@
               <span class="mono">aurascoper/Biofilms (c766e7b / de8d88e)</span>
             </td>
             <td class="mono">037e2050b70e92b7...<br>(869,267 bytes)</td>
-            <td><span class="badge amber">Uncalibrated Reference</span><br>40x40x40 lattice (`D-PITCH: awaiting_measurement`, `seconds_per_mcs = NaN`); all 28 TOST 90% CIs lie inside `[-0.05, +0.05] r/R`.</td>
+            <td><span class="badge amber">Uncalibrated Reference</span><br>40x40x40 lattice (`D-PITCH: awaiting_measurement`, `seconds_per_mcs = NaN`); all 28 TOST 90% CIs lie inside `[-0.05, +0.05] r/R`. This demo does not model fouling.</td>
           </tr>
           <tr>
             <td class="mono">BIOFILMS-ROBIN-CYL-GIF-01</td>
@@ -625,7 +667,7 @@
               <a href="https://github.com/aurascoper/Biofilms" target="_blank" rel="noopener">aurascoper/Biofilms (841d052, pv_workflow.py --clip)</a>
             </td>
             <td class="mono">e73622d6454a3a6a...<br>(2,571,435 bytes)<br><span style="color:var(--muted)">Ref: 67865f34... (159,146 B)</span></td>
-            <td><span class="badge amber">Synthetic visualization</span><br>Robin wall BC at `r = R` (not avian magnetoreception); synthetic `dose_rate` (`0..0.01 Gy/s`) != calibrated transport; `net_biomass_rate_proxy` != measured growth; living `H_6` != abiotic `H_5`.</td>
+            <td><span class="badge amber">Synthetic visualization</span><br>Robin wall BC at `r = R` (not avian magnetoreception); synthetic `dose_rate` (`0..0.01 Gy/s`) != calibrated transport; `net_biomass_rate_proxy` (`Illustrative Proxy: Monod Rate minus Parcel Hazard, 1/MCS`) != measured growth; living `H_6` != abiotic `H_5`.</td>
           </tr>
           <tr>
             <td class="mono">REF-NW-HTML-01</td>
@@ -636,11 +678,11 @@
               <span class="mono">Upstream Ref: PR #11 (718e9c6)</span>
             </td>
             <td class="mono">dc15eb934fe6cd32...<br>(937,606 bytes)</td>
-            <td><span class="badge amber">Reference Audit Only</span><br>"Real OpenMC" is 500-track playback (pre-Oct 19 materials); burnup is a 1-mat/element laptop demo (340.26 d vs ~298 d cluster). Preserved byte-identical per Gate 0.</td>
+            <td><span class="badge amber">Reference Audit Only</span><br>"Real OpenMC" is 500-track playback (Archived Playback); burnup is a 1-mat/element laptop demo (340.26 d vs ~298 d cluster). Preserved byte-identical per Gate 0.</td>
           </tr>
           <tr>
             <td class="mono">REF-NW-JL-FIX</td>
-            <td><strong>Quarantined TECDOC-643 Julia Fixture</strong><br>Transcribed blade sweep &amp; burnup reactivity algebra test hook (Generic IAEA-TECDOC-643 Vol. 1 10 MW MTR benchmark; illustrative OpenMC proof of concept; not modeled on any operating reactor.)</td>
+            <td><strong>Quarantined TECDOC-643 Julia Fixture</strong><br>Transcribed blade sweep &amp; burnup reactivity algebra test hook (Public-literature benchmark: Generic IAEA-TECDOC-643 Vol. 1 10 MW MTR benchmark; illustrative OpenMC proof of concept; not modeled on any operating reactor.)</td>
             <td>
               <a href="tecdoc643_reference_fixture.jl" target="_blank" rel="noopener">tecdoc643_reference_fixture.jl</a>
             </td>
@@ -676,7 +718,7 @@
               <a href="test_calculation_provenance_and_invariants.js">test_calculation_provenance_and_invariants.js</a>
             </td>
             <td class="mono">e9e50a6857b699aa...<br>(263,619 bytes)<br><span style="color:var(--muted)">Manifest: 4f61d995... (116,876 B)</span></td>
-            <td><span class="badge green">EG-1..EG-4 Verified (v1.3.0)</span><br>Separates Oklo (`uraninite`, `bitumen`, `illite`, `chlorite`) from unverified biotite (`oklo_reactor_zone_biotite_verified = false`); models 3-regime 1 um^3 biotite Fe3O4 sensitivity (`is_realistic_natural_default = false`).</td>
+            <td><span class="badge green">Internal consistency checks pass (v1.3.0)</span><br>Uses established <strong>magnetotactic bacteria magnetosome chains (<code>U_mag/(k_B*T) = 5.69</code>)</strong> as the positive code-verification benchmark; enforces the <strong>Treiber et al. (2012, Nature) warning</strong> that iron-rich particles alone do not establish magnetoreception; and frames <strong>fungal biotite-weathering (<code>Fe/K</code> ICP leachate &amp; microscopy against sterile and killed-fungus controls)</strong> as the testable bench assay rather than open-ended fungal magnetoreception or avian cryptochrome transfer claims.</td>
           </tr>
           <tr>
             <td class="mono">REACTOR-POOL-BIOFILM-COORDINATED-3D-01<br><span style="color:var(--muted)">(REACTOR-POOL-BIOFILM-3D-01)</span></td>
@@ -686,7 +728,7 @@
               <span class="mono">aurascoper/reactor-pool-biofilms (7c21d35 / 903f278, v0.1.0)</span>
             </td>
             <td class="mono">b25fa9cc46f7c2bd...<br>(203,053 bytes)</td>
-            <td><span class="badge green">Uncoupled Solvers Verified</span><br>Solvers kept strictly separate (<code>solver_level_coupled_validation_claimed = false</code>); Layer 1 pool geometry is <code>SYNTHETIC_SCHEMATIC</code> (<code>is_tecdoc643_benchmark_geometry = false</code>); separated provenance taxonomy (<code>geometry_classification</code>, lowercase <code>evidence_classification</code>, <code>epistemic_status</code>); programmatic null-control lock (<code>lambda_etc = 0.0</code>) and uncoupled time bases (<code>t_pool [s] != MCS</code>, <code>seconds_per_mcs = NaN</code>).</td>
+            <td><span class="badge green">Uncoupled Solvers (Internal checks pass)</span><br>Solvers kept strictly separate (<code>solver_level_coupled_validation_claimed = false</code>); Layer 1 pool geometry is <code>SYNTHETIC_SCHEMATIC</code> (<code>is_tecdoc643_benchmark_geometry = false</code>); separated provenance taxonomy (<code>geometry_classification</code>, lowercase <code>evidence_classification</code>, <code>epistemic_status</code>); programmatic null-control lock (<code>lambda_etc = 0.0</code>) and uncoupled time bases (<code>t_pool [s] != MCS</code>, <code>seconds_per_mcs = NaN</code>).</td>
           </tr>
           <tr>
             <td class="mono">INDEX-XML-01</td>
@@ -701,6 +743,12 @@
       </table>
 
       <h2 style="margin-top:20px">Cross-Domain Epistemic Gates (EG-1 to EG-4): Biotite, Biomagnetite &amp; Cryptochrome 4D Magnetoreception Audit</h2>
+      <p style="font-size: 0.78rem; color: var(--muted); line-height: 1.5; margin: 0 0 10px 0;">
+        <strong>Separating Established Positive Controls, Testable Bench Assays, and Unverified Speculation:</strong>
+        (1) <strong>Established positive control:</strong> magnetotactic bacteria synthesize magnetosome chains (<code>Fe3O4</code>) whose magnetic alignment energy exceeds thermal noise (<code>U_mag / (k_B * T) = 5.69 &gt; 1</code> at <code>50 uT, 300 K</code>), providing a known physical benchmark to verify the <code>U_mag / (k_B * T)</code> calculation, alongside the <strong>Treiber et al. (2012, Nature) warning</strong> that iron-rich cells in pigeon beaks once mistaken for magnetoreceptors proved to be macrophages ("iron particle present" does not equal "magnetic sense").
+        (2) <strong>Testable at the bench:</strong> fungal weathering of biotite flakes measured via dissolved <code>Fe</code> and <code>K</code> release (ICP-MS / ICP-OES and surface microscopy against sterile flakes and heat-killed fungus controls), plus standard magnetic-drop / TEM / rock-magnetism (superparamagnetic vs. single-domain) assays.
+        (3) <strong>Unsupported or unverified as framed:</strong> open-ended fungal magnetoreception, direct transfer of avian cryptochrome radical-pair chemistry to fungi/melanin, and unverified reactor-zone biotite at Oklo (<code>oklo_reactor_zone_biotite_verified = false</code>).
+      </p>
       <table>
         <thead>
           <tr>
@@ -712,22 +760,22 @@
         </thead>
         <tbody>
           <tr>
-            <td><strong>EG-1: Geochemical Provenance</strong></td>
-            <td class="mono">Oklo RZ1-RZ16: uraninite, bituminous_organic_matter, illite, chlorite (Nagy 1991, 1993; Gauthier-Lafaye 1996)<br>Comparative mica: biotite (Hansma 2022)</td>
+            <td><strong>EG-1: Geochemical Provenance &amp; Testable Fungal Biotite-Weathering Assay</strong></td>
+            <td class="mono">Oklo RZ1-RZ16: uraninite, bituminous_organic_matter, illite, chlorite (Nagy 1991, 1993; Gauthier-Lafaye 1996)<br>Comparative mica: biotite (Hansma 2022; fungal Fe/K ICP weathering assay)</td>
             <td class="mono">oklo_reactor_zone_biotite_verified = false</td>
-            <td>Biotite is evaluated strictly as an independent comparative 2:1 phyllosilicate and prebiotic-scaffold hypothesis, never as a verified Oklo reactor-zone mineral.</td>
+            <td>Biotite is evaluated strictly as an independent comparative 2:1 phyllosilicate and testable bench substrate (measuring fungal <code>Fe</code> and <code>K</code> leaching via ICP and surface pitting by microscopy against sterile and killed-fungus controls), never as a verified Oklo reactor-zone mineral.</td>
           </tr>
           <tr>
-            <td><strong>EG-2: Physical Mechanism (Biogenic Fe3O4 vs Inclusion-Free Biotite)</strong></td>
+            <td><strong>EG-2: Positive Control (Magnetotactic Bacteria Fe3O4 Chain) vs Inclusion-Free Biotite</strong></td>
             <td class="mono">Magnetosome chain: N=15, r=25 nm, M_s=4.8e5 A/m (V=9.817e-22 m^3)<br>Volume-matched biotite: chi_v=1.0e-3 SI, Delta_chi=2.5e-4 SI, M_r=0</td>
             <td class="mono">Fe3O4 chain: 5.688616 (300 K) | 5.5051 (310 K)<br>Biotite Aniso: 5.894344e-8 | Iso: 2.357738e-7<br>Ferritin: 3.358569e-5 | Cry4a f_L: 1.401248 MHz</td>
-            <td>Inclusion-free paramagnetic biotite is 9.65e7x weaker than a volume-matched magnetosome chain; 1 / omega_L = 113.58 ns is a physical Zeeman precession timescale, not a biological coherence threshold.</td>
+            <td>Magnetotactic bacteria magnetosome chains provide the established positive control (<code>U_mag/(k_B*T) &gt; 1</code>) for code verification; inclusion-free paramagnetic biotite is 9.65e7x weaker than a volume-matched magnetosome chain; 1 / omega_L = 113.58 ns is a physical Zeeman precession timescale, not a biological coherence threshold.</td>
           </tr>
           <tr>
-            <td><strong>EG-2: 1 um^3 Natural Biotite Flake 3-Regime Fe3O4 Sensitivity</strong></td>
-            <td class="mono">Scenario A: Idealized coherently aligned saturated SD (M = M_s)<br>Scenario B: Partially remanent natural NRM (eta_NRM = 0.01)<br>Scenario C: Unblocked SP / MD (chi_eff = 3.0, Delta_chi_eff = 0.5 SI)</td>
+            <td><strong>EG-2: 1 um^3 Natural Biotite Flake 3-Regime Fe3O4 Sensitivity (Superparamagnetic vs Single-Domain)</strong></td>
+            <td class="mono">Scenario A: Idealized coherently aligned saturated SD (M = M_s)<br>Scenario B: Partially remanent natural NRM (eta_NRM = 0.01)<br>Scenario C: Unblocked superparamagnetic (SP) / MD (chi_eff = 3.0, Delta_chi_eff = 0.5 SI)</td>
             <td class="mono">Scen A (0 / 0.01% / 1%): 6.0040e-5 / 0.5795 / 57.9438<br>Scen B (0 / 0.01% / 1%): 6.0040e-5 / 5.8544e-3 / 0.5795<br>Scen C Aniso: 6.0040e-5 / 7.2041e-5 / 1.2602e-3<br>Scen C Iso (tau=0): 6.0040e-5 / 1.3208e-4 / 7.2642e-3</td>
-            <td>All 3 regimes carry <code>is_realistic_natural_default = false</code>; requires FORC/Day hysteresis and NRM/IRM characterization. Uniform-field directional torque requires magnetic anisotropy (<code>Delta_chi_eff != 0</code>).</td>
+            <td>All 3 regimes carry <code>is_realistic_natural_default = false</code>; requires FORC/Day hysteresis and NRM/IRM characterization to distinguish single-domain (SD) from superparamagnetic (SP) behavior. Per Treiber et al. (2012, Nature), iron-rich particles alone do not establish magnetoreception.</td>
           </tr>
           <tr>
             <td><strong>EG-2: 3-Tier Irradiation Boundary &amp; Specimen-Encoding Gate</strong></td>
@@ -739,7 +787,7 @@
             <td><strong>EG-3 &amp; EG-4: Cellular Transduction &amp; Evolutionary Origin</strong></td>
             <td class="mono">cpm-sp-v1 (256 seeds, 10,752 parcels, 841d052) &amp; Sandia (2024) Cs-137 null</td>
             <td class="mono">Survivor shift: +0.0493 r/R (H0-B)<br>Parcel displacement delta_r_i: 0 (H0-A)</td>
-            <td>Downstream eukaryotic mitochondrial/hyphal transduction (<code>EG-3</code>) and evolutionary co-option from Oklo or biotite to <code>mam/mms</code> or cryptochrome (<code>EG-4</code>) remain <code>UNRESOLVED</code>.</td>
+            <td>Downstream eukaryotic mitochondrial/hyphal transduction (<code>EG-3</code>) and evolutionary co-option from Oklo or biotite to <code>mam/mms</code> or cryptochrome (<code>EG-4</code>) remain <code>UNRESOLVED</code>; avian cryptochrome radical-pair chemistry does not transfer directly to fungi or melanin.</td>
           </tr>
         </tbody>
       </table>
@@ -803,7 +851,7 @@
             <td><strong>Stage 1: Surrogate Hydrodynamic &amp; Water-Chemistry Loop</strong></td>
             <td class="mono">Non-nuclear bench flow cell<br>Coupons: PIE-COUPON-SS316L-01, PIE-COUPON-AL6061-02</td>
             <td>Controlled wall shear (`tau_w = 0.05..2.5 Pa`), temperature (`294..318 K`), conductivity, dissolved O2, and DIC/DOC speciation (`simulate_surrogate_loop_pie_materials_campaign()`).</td>
-            <td>Strictly decoupled from reactor core reactivity (`k_eff`) and pool thermal-hydraulics; implies zero fouling in operating MTR primary coolant.</td>
+            <td>Strictly decoupled from reactor core reactivity (`k_eff`) and pool thermal-hydraulics. This demo does not model fouling.</td>
           </tr>
           <tr>
             <td><strong>Stage 2: Biofilm EPS/Melanin Rheology &amp; Porous Resistance</strong></td>
@@ -815,7 +863,7 @@
             <td><strong>Stage 3: Sham-Controlled Radiation &amp; Spin-Dynamics Assay</strong></td>
             <td class="mono">External irradiator / sham-coil rig (`0..500 uT`)<br>Seeds 42..297 + `cpm-sp-v1` / `cpm-sp-growth-v1`</td>
             <td>Pre-registered 5-row planned-contrast matrix (15 cells vs. 24-cell full factorial); radical-pair spin Hamiltonian (`evaluate_radical_pair_magnetoreception_hypothesis()`).</td>
-            <td>`cpm-sp-v1` selection-vs-displacement is NULL (`5,511 / 10,752` axial deaths shift survivor radius up to `+0.0493 r/R` while all 7 identified-parcel displacement 95% CIs `delta_r_i` span zero); `cpm-sp-growth-v1` 15/16 synthetic phase-locking PASS is purely algorithmic; zero radiotrophy claim permitted without C-13/C-14 dark fixation + ATP/NADH + killed controls.</td>
+            <td>In `cpm-sp-v1`, under these assumed hazards, the outward shift in survivor radius (`+0.0493 r/R` across `5,511 / 10,752` axial deaths) comes from selective axial mortality (`H0-B`) rather than directed movement (`H0-A`, where all 7 identified-parcel displacement 95% CIs `delta_r_i` span zero); `cpm-sp-growth-v1` 15/16 synthetic phase-locking is purely algorithmic; zero radiotrophy claim permitted without C-13/C-14 dark fixation + ATP/NADH + killed controls.</td>
           </tr>
           <tr>
             <td><strong>Stage 4: Post-Irradiation Examination (PIE) &amp; Materials Qualification</strong></td>
@@ -852,7 +900,7 @@
             <td class="mono">BiofilmRheology.simulate_biofilm_porous_rheology_coupling()<br>ingest_biofilms_3d_cpm_ensemble_benchmark()<br>biofilms_3d_explorer.html (BIOFILMS-3D-CPM-01)</td>
           </tr>
           <tr>
-            <td><strong>Layer C: Falsifiable Magnetic &amp; Radiation Perturbations Around Null</strong></td>
+            <td><strong>Layer C: Candidate Magnetic &amp; Radiation Perturbations Around Null</strong></td>
             <td>Parameterizes candidate magnetic or radiation modulation of growth (<code>theta_i</code>) and active directional bias (<code>gamma_i</code>) as explicit perturbations around the null (<code>H_0: theta_i = 0, gamma_i = 0</code>; Dadachova et al. 2007; Maeda et al. 2012; Rishabh et al. 2023 <code>arXiv:2312.06597</code>; Gassab et al. 2026 <code>arXiv:2605.00205</code>).</td>
             <td class="mono">MagnetoreceptionHypotheses.evaluate_radical_pair_magnetoreception_hypothesis()</td>
           </tr>
@@ -1080,13 +1128,13 @@
       if (mode === '4d') {
         document.getElementById('tab4d').classList.add('active');
         c4d.classList.remove('is-hidden');
-        banner.innerHTML = '<strong>Epistemic Status (R10 Stage 0/1):</strong> Prescribed analytical 3D Gaussian advection-diffusion-decay tracer pulse across 5 discrete time states (t = 0 s to 1000 s, +k vertical up-axis). Local workstation verification passed; Stage 2 transient PDE solver is not authorized.';
+        banner.innerHTML = '<strong>Epistemic Status (R10 Stage 0/1):</strong> Prescribed analytical 3D Gaussian advection-diffusion-decay tracer pulse across 5 discrete time states (t = 0 s to 1000 s, +k vertical up-axis). Internal consistency checks pass; Stage 2 transient PDE solver is not authorized.';
       } else if (mode === 'nw') {
         document.getElementById('tabNw').classList.add('active');
         cNw.classList.remove('is-hidden');
         void cNw.offsetWidth;
         ensureIframeLoaded(ifrNw, notifyNwResize);
-        banner.innerHTML = '<strong>Epistemic Status (TECDOC-643 Neutron Walk Reference):</strong> Design and data-structure reference (<a href="https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md" target="_blank" rel="noopener">claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md</a>). "Real OpenMC" replays 500 recorded histories from pre-Oct 19 materials; burnup is a laptop demo (crossing k = 1 at day 340.26 vs. ~day 298 on cluster). Preserved byte-identical per Gate 0.';
+        banner.innerHTML = '<strong>Epistemic Status (TECDOC-643 Neutron Walk Reference):</strong> Design and data-structure reference (<a href="https://claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md" target="_blank" rel="noopener">claude.ai/artifact/KcgJyGkRmxzpEFSc8Y12md</a>). "Real OpenMC" replays 500 recorded histories (Archived Playback); burnup is a laptop demo (crossing k = 1 at day 340.26 vs. ~day 298 on cluster). Preserved byte-identical per Gate 0.';
       } else if (mode === 'split') {
         document.getElementById('tabSplit').classList.add('active');
         grid.classList.add('split');
@@ -1100,7 +1148,7 @@
         cBio.classList.remove('is-hidden');
         void cBio.offsetWidth;
         ensureIframeLoaded(ifrBio, null);
-        banner.innerHTML = '<strong>Epistemic Status (Biofilms 3D Cellular Potts Reference):</strong> Uncalibrated 40x40x40 lattice snapshots from <code>aurascoper/Biofilms</code> (Seed 42, 6 parcels per species, MCS 0 to 100, Full vs. Null arms) plus 256-seed 4-arm radial null ensemble (<code>Seeds 42..297</code>) and <code>cpm-sp-v1</code> / <code>cpm-sp-growth-v1</code> audits. Axes count discrete lattice sites (<code>D-PITCH: awaiting_measurement</code>, <code>seconds_per_mcs = NaN</code>); radiotrophy, radioresistance, physical dose, and the blocked radiodialysis loop are excluded from claims.';
+        banner.innerHTML = '<strong>Epistemic Status (Biofilms 3D Cellular Potts Reference):</strong> Uncalibrated 40x40x40 lattice snapshots from <code>aurascoper/Biofilms</code> (Seed 42, 6 parcels per species, MCS 0 to 100, Full vs. Null arms) plus 256-seed 4-arm radial null ensemble (<code>Seeds 42..297</code>) and <code>cpm-sp-v1</code> / <code>cpm-sp-growth-v1</code> audits. Axes count discrete lattice sites (<code>D-PITCH: awaiting_measurement</code>, <code>seconds_per_mcs = NaN</code>); radiotrophy, radioresistance, physical dose, and the blocked radiodialysis loop are excluded from claims. This demo does not model fouling.';
       } else if (mode === 'r0') {
         document.getElementById('tabR0').classList.add('active');
         cR0.classList.remove('is-hidden');
@@ -1139,14 +1187,14 @@
         banner.innerHTML = '<strong>Benchmark Workflow, Surrogate Loop / PIE Demarcation &amp; Precision Audit Summary:</strong> Review the artifact SHA-256 registry, precision-aware recomputations, 4-stage surrogate loop / PIE protocol, and 5-row planned-contrast experimental matrix below.';
       } else if (mode === 'robingif') {
         document.getElementById('tabRobinGif').classList.add('active');
-        banner.innerHTML = '<strong>Multispecies Biofilm Spatial Model (Synthetic visualization):</strong> Four-panel ParaView export (<code>multispecies_biofilm_robin_cylindrical_4panel.gif</code>, <code>cpm-sp-growth-v1</code>, <code>combined</code> arm, <code>growth=1</code>, Seed 42, MCS 0..200) on a cylindrical domain with a mathematical <strong>Robin boundary condition</strong> at outer radius <code>r = R</code> (unrelated to avian magnetoreception). Synthetic <code>dose_rate</code> (<code>0..0.01 Gy/s</code>) is not calibrated radiation transport; <code>net_biomass_rate_proxy</code> is not an experimentally measured growth rate; causal interpretation requires the matched-seed <code>Radiation OFF</code> vs. <code>Radiation ON</code> counterfactual comparison shown below.';
+        banner.innerHTML = '<strong>Multispecies Biofilm Spatial Model (Synthetic visualization):</strong> Four-panel ParaView export (<code>multispecies_biofilm_robin_cylindrical_4panel.gif</code>, <code>cpm-sp-growth-v1</code>, <code>combined</code> arm, <code>growth=1</code>, Seed 42, MCS 0..200) on a cylindrical domain with a mathematical <strong>Robin boundary condition</strong> at outer radius <code>r = R</code> (unrelated to avian magnetoreception). Synthetic <code>dose_rate</code> (<code>0..0.01 Gy/s</code>) is not calibrated radiation transport; <code>net_biomass_rate_proxy</code> (<code>Illustrative Proxy: Monod Rate minus Parcel Hazard, 1/MCS</code>) is not an experimentally measured growth rate; causal interpretation requires the matched-seed <code>Radiation OFF</code> vs. <code>Radiation ON</code> counterfactual comparison shown below.';
         drawRobinCounterfactualCanvas(currentRobinCfMode);
       } else if (mode === 'magneto') {
         document.getElementById('tabMagneto').classList.add('active');
         cMagneto.classList.remove('is-hidden');
         void cMagneto.offsetWidth;
         ensureIframeLoaded(ifrMagneto, notifyMagnetoResize);
-        banner.innerHTML = '<strong>Epistemic Status (Biotite, Biomagnetite &amp; Cryptochrome 4D Magnetoreception Explorer, EG-1 to EG-4):</strong> Preserves strict separation between documented Oklo reactor-zone mineralogy (<code>uraninite</code>, <code>bituminous_organic_matter</code>, <code>illite</code>, <code>chlorite</code>) and unverified biotite (<code>oklo_reactor_zone_biotite_verified = false</code>). Compares modeled <code>U_mag / (k_B * T)</code> at <code>50 uT, 300 K</code> across biogenic <code>Fe3O4</code> magnetosome chains (<code>5.69</code>), inclusion-free paramagnetic biotite (<code>5.89e-8</code>), and 3-regime <code>1 um^3</code> biotite <code>Fe3O4</code> inclusion sensitivity (Scenarios A/B/C, all with <code>is_realistic_natural_default = false</code>), with a 4D tesseract hyperplane and <code>D_4</code> group scrubber.';
+        banner.innerHTML = '<strong>Epistemic Status (Biotite, Biomagnetite &amp; Cryptochrome 4D Magnetoreception Explorer, EG-1 to EG-4):</strong> Preserves strict separation between documented Oklo reactor-zone mineralogy (<code>uraninite</code>, <code>bituminous_organic_matter</code>, <code>illite</code>, <code>chlorite</code>) and unverified biotite (<code>oklo_reactor_zone_biotite_verified = false</code>). Uses the established magnetotactic bacteria <code>Fe3O4</code> magnetosome chain (<code>U_mag / (k_B * T) = 5.69 &gt; 1</code> at <code>50 uT, 300 K</code>) as the positive code-verification benchmark against inclusion-free paramagnetic biotite (<code>5.89e-8</code>) and 3-regime <code>1 um^3</code> biotite <code>Fe3O4</code> inclusion sensitivity (Scenarios A/B/C, all with <code>is_realistic_natural_default = false</code>), highlights the Treiber et al. (2012, <em>Nature</em>) warning that iron-rich particles alone do not establish magnetoreception, and grounds bench follow-up in a testable fungal biotite-weathering (<code>Fe/K</code> ICP against sterile and killed-fungus controls) assay.';
       } else if (mode === 'poolbiofilm') {
         document.getElementById('tabPoolBiofilm').classList.add('active');
         cPoolBiofilm.classList.remove('is-hidden');
@@ -1164,13 +1212,13 @@
       clonal_ref_sha256: '67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115',
       clonal_ref_bytes: 159146,
       species: [
-        { id: 1, short: 'CN', name: 'C. neoformans',      alpha: 0.010, color: '#40b373', aliveDiff: -1.74, aliveCi: [-1.88, -1.61], survRadShift: 0.0086, initSurvRadShift: 0.0075, disp: 0.0011,  dispCi: [-0.0025, 0.0047], bioDiff: 6142,   bioCi: [1021, 11415] },
-        { id: 2, short: 'DR', name: 'D. radiodurans',     alpha: 0.002, color: '#edb021', aliveDiff: -0.43, aliveCi: [-0.51, -0.35], survRadShift: 0.0017, initSurvRadShift: 0.0004, disp: 0.0013,  dispCi: [-0.0010, 0.0036], bioDiff: 34137,  bioCi: [27900, 40681] },
+        { id: 1, short: 'CN', name: 'C. neoformans (BSL-2 lab ref; not pool org)', alpha: 0.010, color: '#40b373', aliveDiff: -1.74, aliveCi: [-1.88, -1.61], survRadShift: 0.0086, initSurvRadShift: 0.0075, disp: 0.0011,  dispCi: [-0.0025, 0.0047], bioDiff: 6142,   bioCi: [1021, 11415] },
+        { id: 2, short: 'DR', name: 'D. radiodurans (lit. ref; absent in pools)', alpha: 0.002, color: '#edb021', aliveDiff: -0.43, aliveCi: [-0.51, -0.35], survRadShift: 0.0017, initSurvRadShift: 0.0004, disp: 0.0013,  dispCi: [-0.0010, 0.0036], bioDiff: 34137,  bioCi: [27900, 40681] },
         { id: 3, short: 'CS', name: 'C. sphaerospermum',  alpha: 0.015, color: '#1fa6db', aliveDiff: -2.62, aliveCi: [-2.76, -2.47], survRadShift: 0.0192, initSurvRadShift: 0.0210, disp: -0.0018, dispCi: [-0.0061, 0.0026], bioDiff: -3002,  bioCi: [-8424, 2098] },
         { id: 4, short: 'BS', name: 'B. subtilis',        alpha: 0.040, color: '#cc6b4d', aliveDiff: -4.48, aliveCi: [-4.62, -4.34], survRadShift: 0.0382, initSurvRadShift: 0.0434, disp: -0.0052, dispCi: [-0.0112, 0.0005], bioDiff: -13293, bioCi: [-17223, -9449] },
         { id: 5, short: 'AN', name: 'A. niger',           alpha: 0.020, color: '#ad7ac2', aliveDiff: -3.18, aliveCi: [-3.32, -3.04], survRadShift: 0.0191, initSurvRadShift: 0.0212, disp: -0.0021, dispCi: [-0.0068, 0.0026], bioDiff: -6032,  bioCi: [-10204, -1805] },
         { id: 6, short: 'SO', name: 'S. oneidensis',      alpha: 0.060, color: '#e387c4', aliveDiff: -5.26, aliveCi: [-5.35, -5.16], survRadShift: 0.0493, initSurvRadShift: 0.0538, disp: -0.0045, dispCi: [-0.0117, 0.0027], bioDiff: -10348, bioCi: [-14553, -6117] },
-        { id: 7, short: 'OI', name: 'O. intermedium AM7', alpha: 0.030, color: '#999999', aliveDiff: -3.82, aliveCi: [-3.97, -3.67], survRadShift: 0.0356, initSurvRadShift: 0.0359, disp: -0.0003, dispCi: [-0.0056, 0.0049], bioDiff: -10264, bioCi: [-14877, -5774] }
+        { id: 7, short: 'OI', name: 'O. intermedium AM7 (reclassified as Brucella intermedia)', alpha: 0.030, color: '#999999', aliveDiff: -3.82, aliveCi: [-3.97, -3.67], survRadShift: 0.0356, initSurvRadShift: 0.0359, disp: -0.0003, dispCi: [-0.0056, 0.0049], bioDiff: -10264, bioCi: [-14877, -5774] }
       ]
     };
 
@@ -1313,7 +1361,7 @@
           ctx.fillText('DR & CN expand into freed', x0 + 8, py0 + ph + 26);
           ctx.fillText('nutrient (16 seeds, Growth ON)', x0 + 8, py0 + ph + 37);
         } else {
-          ctx.fillText('Low-hazard DR (+34,137) & CN (+6,142) expand into freed space (16 seeds)', px0 + 4, py0 + ph + 28);
+          ctx.fillText('Assumed lower-hazard ref DR (+34,137) & CN (+6,142) expand into vacated space', px0 + 4, py0 + ph + 28);
         }
       } else if (kind === 'displacement') {
         const minY = -0.02;
