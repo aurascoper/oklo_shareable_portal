@@ -1,6 +1,6 @@
 {
   "schema": "oklo_portal_ci_verification_receipt_v1",
-  "generated_at": "2026-10-25T19:24:52.088Z",
+  "generated_at": "2026-10-26T13:42:31.475Z",
   "gate0_files_verified": 15,
   "tests": {
     "lazy_init": "PASS",
@@ -9,7 +9,7 @@
       "glHeight": 630,
       "glHidden": false,
       "slHidden": true,
-      "kval": "1.013 ± 0.109",
+      "kval": "1.094 ± 0.110",
       "ntot": "(120 neutrons)"
     },
     "split_view_layout": {
@@ -279,7 +279,12 @@
       "renderModeMicro": "webgl+2d_overlay",
       "defaultLambdaEtc": 0,
       "solversKeptSeparate": true,
-      "coupledValidationClaimed": false
+      "coupledValidationClaimed": false,
+      "provenanceTaxonomySeparated": true,
+      "passingRenderingTestsValidateSoftwareBoundariesNotPhysicalModel": true,
+      "empiricalPhysicalOrBiologicalValidationClaimed": false,
+      "timelineCouplingProgrammaticallyBlocked": true,
+      "baselineNullControlEnforcesLambdaZero": true
     },
     "biofilms_disabled_webgl_fallback": {
       "glHidden": true,

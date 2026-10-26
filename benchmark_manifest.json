@@ -75,8 +75,8 @@
       "bytes": 79610,
       "sha256": "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a",
       "spec_relative_path": "POOLWATER_WORKFLOW_SPEC.md",
-      "spec_bytes": 22666,
-      "spec_sha256": "d7a3f3d295607d89a4672551f7435de10d6078e4b1b78973a8ae6374e7c16755",
+      "spec_bytes": 23866,
+      "spec_sha256": "dbdc5aed5897a9b5ee305167afd3103fc67a6f60b93e9eebb49940e30eaab633",
       "dataset_id": "poolwater_synthetic_demo_v1",
       "evidence_classification": "synthetic",
       "epistemic_status": "dataset_driven_synthetic_pool_demo (separates TECDOC-643 neutron reference, point-reactor kinetics, synthetic Boussinesq pool convection, and isolated surrogate-loop PIE protocol)",
@@ -109,8 +109,8 @@
       "evidence_manifest_bytes": 116876,
       "evidence_manifest_sha256": "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf",
       "invariant_test_relative_path": "test_calculation_provenance_and_invariants.js",
-      "invariant_test_bytes": 47835,
-      "invariant_test_sha256": "3d547c52b117ebb4508c999116195bd71e13302b1281fb824a51d237aaba2aed",
+      "invariant_test_bytes": 65150,
+      "invariant_test_sha256": "6550934121791fa847160edc02153abb2e0ae564407e9c63223274fd27c95ac5",
       "source_module": "src/track4_mineral_magnetoreception_gates.jl",
       "evidence_classification": "calculated",
       "epistemic_status": "cross_domain_epistemic_gated_4d_viewer (EG-1..EG-4 enforced; 4D perspective tesseract w = t / theta_B in [0..360 deg] / D_4 hyperplane rotation; criterial separation of accepted verified candidates vs criterial-pruned candidates vs exploratory particles; 3-regime 1 um^3 biotite Fe3O4 inclusion sensitivity)",
@@ -119,8 +119,8 @@
     "REACTOR-POOL-BIOFILM-COORDINATED-3D-01": {
       "relative_path": "reactor_pool_biofilm_explorer.html",
       "public_url": "https://aurascoper.github.io/oklo_shareable_portal/reactor_pool_biofilm_explorer.html",
-      "bytes": 154133,
-      "sha256": "79582bfb8c24570a459dc576bbc30a5c6bea566484988c179a53ba0dce91335e",
+      "bytes": 203053,
+      "sha256": "b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32",
       "source_repo": "aurascoper/reactor-pool-biofilms",
       "source_commit": "903f278",
       "audit_reconciliation_commit": "7c21d35",
@@ -131,22 +131,25 @@
       "local_branch_pushed_to_remote": false,
       "solvers_kept_separate": true,
       "solver_level_coupled_validation_claimed": false,
+      "passing_rendering_tests_validate_software_boundaries_not_physical_model": true,
+      "empirical_physical_or_biological_validation_claimed": false,
       "default_lambda_etc": 0.0,
       "seconds_per_mcs": "NaN",
       "geometry_classification": "SYNTHETIC_SCHEMATIC",
+      "evidence_classification": "synthetic",
       "epistemic_class": "SYNTHETIC_SCHEMATIC",
+      "data_classification": "SYNTHETIC_SCHEMATIC",
       "is_tecdoc643_benchmark_geometry": false,
       "synthetic_schematic_not_tecdoc643_geometry": true,
       "geometry_provenance_statement": "SYNTHETIC_SCHEMATIC: Schematic cylindrical cutaway (X,Y in [-500,500] cm, Z in [-200,200] cm, simplified 3x3 core lattice); NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R=2.0 m, H=8.0 m poolwater_interactive.html domain. Displaying benchmark-derived fields requires an explicit coordinate mapping and preserves the distinction between SYNTHETIC_SCHEMATIC geometry and TECDOC-643 benchmark geometry.",
-      "evidence_classification": "calculated",
-      "epistemic_status": "coordinated_3d_pool_and_biofilm_explorer (SYNTHETIC_SCHEMATIC cylindrical pool cutaway X,Y in [-500,500] cm, Z in [-200,200] cm, simplified 3x3 core lattice [NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R=2.0 m, H=8.0 m poolwater_interactive.html domain]; Stage 1 radiolysis yields on synthetic Boussinesq geometry, Stage 2 coupon EPS sorption with Fein 1997 pKa and provisional Co-60 affinities, Stage 3 uncalibrated CPM field consumer with default lambda_etc = 0.0, uncoupled t_pool [s] vs MCS time bases, regime-dependent equal-dose power-schedule control, illustrative magnetic sensitivity label, 7 null-model comparisons, and provenance on demand)",
+      "epistemic_status": "COORDINATED_SYNTHETIC_AND_REDUCED_ORDER_EXPLORER (geometry_classification=SYNTHETIC_SCHEMATIC, not TECDOC-643 6x7 benchmark geometry; combines synthetic flow/geometry, reduced-order calculated radiolysis, uncalibrated_model_snapshot biofilm/sorption layers, and unavailable validated CFD; passing rendering and boundary tests verify software implementation only, not empirical physical or biological validation; baseline lambda_etc=0.0 and uncoupled t_pool [s] vs MCS timelines strictly enforced)",
       "frozen_gate0": false
     },
     "REACTOR-POOL-BIOFILM-3D-01": {
       "relative_path": "reactor_pool_biofilm_explorer.html",
       "public_url": "https://aurascoper.github.io/oklo_shareable_portal/reactor_pool_biofilm_explorer.html",
-      "bytes": 154133,
-      "sha256": "79582bfb8c24570a459dc576bbc30a5c6bea566484988c179a53ba0dce91335e",
+      "bytes": 203053,
+      "sha256": "b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32",
       "source_repo": "aurascoper/reactor-pool-biofilms",
       "source_commit": "903f278",
       "audit_reconciliation_commit": "7c21d35",
@@ -157,15 +160,18 @@
       "local_branch_pushed_to_remote": false,
       "solvers_kept_separate": true,
       "solver_level_coupled_validation_claimed": false,
+      "passing_rendering_tests_validate_software_boundaries_not_physical_model": true,
+      "empirical_physical_or_biological_validation_claimed": false,
       "default_lambda_etc": 0.0,
       "seconds_per_mcs": "NaN",
       "geometry_classification": "SYNTHETIC_SCHEMATIC",
+      "evidence_classification": "synthetic",
       "epistemic_class": "SYNTHETIC_SCHEMATIC",
+      "data_classification": "SYNTHETIC_SCHEMATIC",
       "is_tecdoc643_benchmark_geometry": false,
       "synthetic_schematic_not_tecdoc643_geometry": true,
       "geometry_provenance_statement": "SYNTHETIC_SCHEMATIC: Schematic cylindrical cutaway (X,Y in [-500,500] cm, Z in [-200,200] cm, simplified 3x3 core lattice); NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R=2.0 m, H=8.0 m poolwater_interactive.html domain. Displaying benchmark-derived fields requires an explicit coordinate mapping and preserves the distinction between SYNTHETIC_SCHEMATIC geometry and TECDOC-643 benchmark geometry.",
-      "evidence_classification": "calculated",
-      "epistemic_status": "coordinated_3d_pool_and_biofilm_explorer (SYNTHETIC_SCHEMATIC cylindrical pool cutaway X,Y in [-500,500] cm, Z in [-200,200] cm, simplified 3x3 core lattice [NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R=2.0 m, H=8.0 m poolwater_interactive.html domain]; Stage 1 radiolysis yields on synthetic Boussinesq geometry, Stage 2 coupon EPS sorption with Fein 1997 pKa and provisional Co-60 affinities, Stage 3 uncalibrated CPM field consumer with default lambda_etc = 0.0, uncoupled t_pool [s] vs MCS time bases, regime-dependent equal-dose power-schedule control, illustrative magnetic sensitivity label, 7 null-model comparisons, and provenance on demand)",
+      "epistemic_status": "COORDINATED_SYNTHETIC_AND_REDUCED_ORDER_EXPLORER (geometry_classification=SYNTHETIC_SCHEMATIC, not TECDOC-643 6x7 benchmark geometry; combines synthetic flow/geometry, reduced-order calculated radiolysis, uncalibrated_model_snapshot biofilm/sorption layers, and unavailable validated CFD; passing rendering and boundary tests verify software implementation only, not empirical physical or biological validation; baseline lambda_etc=0.0 and uncoupled t_pool [s] vs MCS timelines strictly enforced)",
       "frozen_gate0": false
     }
   },
@@ -261,10 +267,64 @@
       "artifact_id": "REACTOR-POOL-BIOFILM-COORDINATED-3D-01",
       "artifact_id_alias": "REACTOR-POOL-BIOFILM-3D-01",
       "geometry_classification": "SYNTHETIC_SCHEMATIC",
+      "evidence_classification": "synthetic",
       "epistemic_class": "SYNTHETIC_SCHEMATIC",
+      "data_classification": "SYNTHETIC_SCHEMATIC",
+      "epistemic_status": "COORDINATED_SYNTHETIC_AND_REDUCED_ORDER_EXPLORER (geometry_classification=SYNTHETIC_SCHEMATIC, not TECDOC-643 6x7 benchmark geometry; combines synthetic flow/geometry, reduced-order calculated radiolysis, uncalibrated_model_snapshot biofilm/sorption layers, and unavailable validated CFD; passing rendering and boundary tests verify software implementation only, not empirical physical or biological validation; baseline lambda_etc=0.0 and uncoupled t_pool [s] vs MCS timelines strictly enforced)",
       "is_tecdoc643_benchmark_geometry": false,
       "synthetic_schematic_not_tecdoc643_geometry": true,
-      "geometry_provenance_statement": "SYNTHETIC_SCHEMATIC: Schematic cylindrical cutaway (X,Y in [-500,500] cm, Z in [-200,200] cm, simplified 3x3 core lattice); NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R=2.0 m, H=8.0 m poolwater_interactive.html domain. Displaying benchmark-derived fields requires an explicit coordinate mapping and preserves the distinction between SYNTHETIC_SCHEMATIC geometry and TECDOC-643 benchmark geometry."
+      "passing_rendering_tests_validate_software_boundaries_not_physical_model": true,
+      "empirical_physical_or_biological_validation_claimed": false,
+      "geometry_provenance_statement": "SYNTHETIC_SCHEMATIC: Schematic cylindrical cutaway (X,Y in [-500,500] cm, Z in [-200,200] cm, simplified 3x3 core lattice); NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R=2.0 m, H=8.0 m poolwater_interactive.html domain. Displaying benchmark-derived fields requires an explicit coordinate mapping and preserves the distinction between SYNTHETIC_SCHEMATIC geometry and TECDOC-643 benchmark geometry.",
+      "provenance_taxonomy_contract": {
+        "contract_version": "1.0.0",
+        "orthogonal_axes_separated": true,
+        "normalized_evidence_taxonomy": [
+          "measured",
+          "calculated",
+          "synthetic",
+          "uncalibrated_model_snapshot",
+          "replayed",
+          "transcribed",
+          "unavailable"
+        ],
+        "geometry_classification_taxonomy": [
+          "SYNTHETIC_SCHEMATIC",
+          "MICRO_BIOFILM_SLAB_VOXEL",
+          "TECDOC643_6X7_BENCHMARK_REFERENCE",
+          "POOLWATER_R200_H800_SYNTHETIC_CYLINDER"
+        ],
+        "ui_badge_to_manifest_taxonomy_map": {
+          "SYNTHETIC_SCHEMATIC": {
+            "geometry_classification": "SYNTHETIC_SCHEMATIC",
+            "evidence_classification": "synthetic",
+            "epistemic_status": "SYNTHETIC_SCHEMATIC_GEOMETRY_ONLY (illustrative [-500,500] cm cylinder with 3x3 schematic core; not TECDOC-643 6x7 benchmark geometry and not R=200 cm, H=800 cm poolwater_interactive.html cylinder; software rendering verification does not empirically validate reactor physics)"
+          },
+          "SYNTHETIC": {
+            "geometry_classification": "SYNTHETIC_SCHEMATIC",
+            "micro_biofilm_geometry_classification": "MICRO_BIOFILM_SLAB_VOXEL",
+            "evidence_classification": "synthetic",
+            "micro_biofilm_evidence_classification": "uncalibrated_model_snapshot",
+            "epistemic_status": "SYNTHETIC_ANALYTICAL_OR_PACKING_SURROGATE (prescribed analytical Boussinesq thermal/flow plume on SYNTHETIC_SCHEMATIC pool domain or synthetic 3D/2D morphotype packing snapshot on MICRO_BIOFILM_SLAB_VOXEL; software verification does not empirically validate physical or biological models)"
+          },
+          "CALCULATED": {
+            "geometry_classification": "SYNTHETIC_SCHEMATIC",
+            "micro_biofilm_geometry_classification": "MICRO_BIOFILM_SLAB_VOXEL",
+            "evidence_classification": "calculated",
+            "epistemic_status": "REDUCED_ORDER_CALCULATED_FROM_PUBLISHED_PARAMETERS (reduced-order radiolysis/attenuation algebra from published G-values and rate constants on SYNTHETIC_SCHEMATIC geometry, or analytical symmetry/schedule controls; software verification confirms algebraic/PDE implementation only, not empirical validation)"
+          },
+          "PROVISIONAL_ASSUMPTION": {
+            "geometry_classification": "MICRO_BIOFILM_SLAB_VOXEL",
+            "evidence_classification": "uncalibrated_model_snapshot",
+            "epistemic_status": "UNCALIBRATED_PROVISIONAL_MODEL_SNAPSHOT (provisional Co-60 sorption affinities, uncalibrated 40x40x40 CPM lattice with seconds_per_mcs=NaN and baseline lambda_etc=0.0 enforced, or Control 5b illustrative sensitivity formula; software verification does not empirically validate biological or spin-chemical mechanisms)"
+          },
+          "UNAVAILABLE": {
+            "geometry_classification": "SYNTHETIC_SCHEMATIC",
+            "evidence_classification": "unavailable",
+            "epistemic_status": "EXPLICITLY_UNAVAILABLE_CAMPAIGN_DATA (no validated 3D RANS/LES CFD pressure or empirical PIV/LIF thermometry/velocimetry exists in workspace; never fabricated or interpolated)"
+          }
+        }
+      }
     }
   },
   "gate_2_physics_module_interfaces": {

@@ -79,8 +79,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'POOLWATER_WORKFLOW_SPEC.md',
-      sha256: 'd7a3f3d295607d89a4672551f7435de10d6078e4b1b78973a8ae6374e7c16755',
-      bytes: 22666
+      sha256: 'dbdc5aed5897a9b5ee305167afd3103fc67a6f60b93e9eebb49940e30eaab633',
+      bytes: 23866
     },
     {
       path: 'multispecies_biofilm_robin_cylindrical_4panel.gif',
@@ -99,8 +99,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'reactor_pool_biofilm_explorer.html',
-      sha256: '79582bfb8c24570a459dc576bbc30a5c6bea566484988c179a53ba0dce91335e',
-      bytes: 154133
+      sha256: 'b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32',
+      bytes: 203053
     },
     {
       path: 'evidence_manifest.json',
@@ -109,13 +109,13 @@ function verifyArtifactHashes() {
     },
     {
       path: 'test_calculation_provenance_and_invariants.js',
-      sha256: '3d547c52b117ebb4508c999116195bd71e13302b1281fb824a51d237aaba2aed',
-      bytes: 47835
+      sha256: '6550934121791fa847160edc02153abb2e0ae564407e9c63223274fd27c95ac5',
+      bytes: 65150
     },
     {
       path: 'benchmark_manifest.json',
-      sha256: 'a2788f69fdcbb4c0a13ac0d80931ac8e9b5dee98a372185d9976f5fbc855cbcd',
-      bytes: 24139
+      sha256: '05932a8dd0323b3ed302197a780fef901e2814bf530f157160c26e862bd84024',
+      bytes: 28203
     }
   ];
 
@@ -129,12 +129,40 @@ function verifyArtifactHashes() {
       assert.ok(manifest.includes(item.sha256), `benchmark_manifest.json missing SHA-256 for ${item.path}`);
     }
   }
+  const manifestObj = JSON.parse(manifest);
+  const g0Entries = Object.values(manifestObj.gate_0_frozen_inputs || {});
+  assert.ok(g0Entries.length >= 9, 'benchmark_manifest.json gate_0_frozen_inputs missing');
+  for (const g0 of g0Entries) {
+    const aMain = sha256File(g0.relative_path);
+    assert.strictEqual(aMain.bytes, g0.bytes, `gate_0_frozen_inputs ${g0.relative_path} bytes mismatch`);
+    assert.strictEqual(aMain.sha256, g0.sha256, `gate_0_frozen_inputs ${g0.relative_path} sha256 mismatch`);
+    if (g0.spec_relative_path) {
+      const aSpec = sha256File(g0.spec_relative_path);
+      assert.strictEqual(aSpec.bytes, g0.spec_bytes, `gate_0_frozen_inputs ${g0.spec_relative_path} bytes mismatch`);
+      assert.strictEqual(aSpec.sha256, g0.spec_sha256, `gate_0_frozen_inputs ${g0.spec_relative_path} sha256 mismatch`);
+    }
+    if (g0.companion_reference_relative_path) {
+      const aComp = sha256File(g0.companion_reference_relative_path);
+      assert.strictEqual(aComp.bytes, g0.companion_reference_bytes, `gate_0_frozen_inputs ${g0.companion_reference_relative_path} bytes mismatch`);
+      assert.strictEqual(aComp.sha256, g0.companion_reference_sha256, `gate_0_frozen_inputs ${g0.companion_reference_relative_path} sha256 mismatch`);
+    }
+    if (g0.evidence_manifest_relative_path) {
+      const aEv = sha256File(g0.evidence_manifest_relative_path);
+      assert.strictEqual(aEv.bytes, g0.evidence_manifest_bytes, `gate_0_frozen_inputs ${g0.evidence_manifest_relative_path} bytes mismatch`);
+      assert.strictEqual(aEv.sha256, g0.evidence_manifest_sha256, `gate_0_frozen_inputs ${g0.evidence_manifest_relative_path} sha256 mismatch`);
+    }
+    if (g0.invariant_test_relative_path) {
+      const aInv = sha256File(g0.invariant_test_relative_path);
+      assert.strictEqual(aInv.bytes, g0.invariant_test_bytes, `gate_0_frozen_inputs ${g0.invariant_test_relative_path} bytes mismatch`);
+      assert.strictEqual(aInv.sha256, g0.invariant_test_sha256, `gate_0_frozen_inputs ${g0.invariant_test_relative_path} sha256 mismatch`);
+    }
+  }
   assert.ok(indexHtml.includes('dc15eb934fe6cd32...'), 'index.html missing Gate-0 REF-NW-HTML-01 SHA prefix');
   assert.ok(indexHtml.includes('fa0f0dc30c45681a...'), 'index.html missing POOLWATER-3D-INTERACTIVE-01 SHA prefix');
   assert.ok(indexHtml.includes('037e2050b70e92b7...'), 'index.html missing BIOFILMS-3D-CPM-01 SHA prefix');
   assert.ok(indexHtml.includes('e73622d6454a3a6a...'), 'index.html missing BIOFILMS-ROBIN-CYL-GIF-01 SHA prefix');
   assert.ok(indexHtml.includes('e9e50a6857b699aa...'), 'index.html missing BIOTITE-MAGNETORECEPTION-4D-01 SHA prefix');
-  assert.ok(indexHtml.includes('79582bfb8c24570a...'), 'index.html missing REACTOR-POOL-BIOFILM-COORDINATED-3D-01 SHA prefix');
+  assert.ok(indexHtml.includes('b25fa9cc46f7c2bd...'), 'index.html missing REACTOR-POOL-BIOFILM-COORDINATED-3D-01 SHA prefix');
   console.log('PASS [1/15]: Gate-0 artifact hashes, byte counts, and manifests verified.');
   return expectedFiles;
 }
@@ -995,6 +1023,10 @@ async function runTests() {
               fieldId: d.getElementById('prov_field_id').textContent,
               label: d.getElementById('prov_label').textContent,
               hasLabelInRecord: Boolean(recObj && recObj.label && recObj.label.length > 3),
+              geometryClassification: d.getElementById('prov_geometry_classification').textContent,
+              evidenceClassification: d.getElementById('prov_evidence_classification').textContent,
+              epistemicClass: d.getElementById('prov_epistemic_class').textContent,
+              epistemicStatus: d.getElementById('prov_epistemic_status').textContent,
               classification: d.getElementById('prov_data_classification').textContent,
               outputClassification: recObj ? (recObj.output_classification || null) : null,
               commitLock: d.getElementById('prov_commit_lock').textContent
@@ -1003,10 +1035,38 @@ async function runTests() {
           api.selectProvenanceField('H2O2');
 
           const allowedClasses = ['SYNTHETIC_SCHEMATIC', 'SYNTHETIC', 'CALCULATED', 'PROVISIONAL_ASSUMPTION', 'UNAVAILABLE'];
+          const allowedGeometryClasses = ['SYNTHETIC_SCHEMATIC', 'MICRO_BIOFILM_SLAB_VOXEL'];
+          const allowedEvidenceClasses = ['synthetic', 'calculated', 'uncalibrated_model_snapshot', 'unavailable'];
           const allProvenanceClassesValid = Object.values(api.provenance_registry).every(
-            r => r && allowedClasses.includes(r.data_classification) && allowedClasses.includes(r.epistemic_class)
+            r => r &&
+              allowedClasses.includes(r.data_classification) &&
+              allowedClasses.includes(r.epistemic_class) &&
+              allowedGeometryClasses.includes(r.geometry_classification) &&
+              allowedEvidenceClasses.includes(r.evidence_classification) &&
+              typeof r.epistemic_status === 'string' && r.epistemic_status.length > 10
+          );
+          const shorthandAliasesValid = ['H2O2_uM', 'H2_uM', 'OH_rad_nM', 'e_aq_nM', 'dose_rate_Gy_h', 'boundary_layer_um', 'C1', 'C2', 'C3', 'H0_baseline_lambda0', 'H0_1_sterile_abiotic', 'H0_2_dead_biomass', 'H0_3_non_melanized', 'H0_5b_rpm_sensitivity', 'H0_6_chemotropism', 'H0_equal_dose_schedules', 'H0_epistemic_gates'].every(
+            k => Boolean(api.provenance_registry[k] && allowedEvidenceClasses.includes(api.provenance_registry[k].evidence_classification))
           );
           const geomProv = st.geometry_provenance || {};
+
+          // Gate 3: Programmatic lambda_etc = 0.0 under null controls & timeline firewall probe
+          const firewallProbe = api.attemptCrossTimelineOrBaselineViolation();
+          const couplingAttemptRes = api.attemptTimelineCoupling(12.5);
+          const enforceFirewallRes = api.enforceBaselineAndTimelineFirewall();
+          api.setLambdaEtc(0.5);
+          const exploratoryTransition = {
+            lambdaAt05: st.lambda_etc,
+            controlAt05: st.active_null_control
+          };
+          api.setNullControl('H0_baseline_lambda0');
+          const resetUnderNull = {
+            lambdaAfterNull: st.lambda_etc,
+            lockActive: st.baseline_lambda_lock
+          };
+          api.setLambdaEtc(0.75, { enforceBaselineLock: true });
+          const clampedWithLockOption = st.lambda_etc;
+          api.setNullControl('baseline_no_coupling_default');
 
           // Sample canvas pixels to prove non-blank rendering on all 2D/overlay canvases
           function countNonBlankPixels(cnv) {
@@ -1026,11 +1086,24 @@ async function runTests() {
             tabActive: document.getElementById('tabPoolBiofilm').classList.contains('active'),
             artifactId: stateFromHook.artifact_id,
             boundaryAllPassed: boundaryCheck.all_passed,
+            provenanceTaxonomySeparated: boundaryCheck.provenanceTaxonomySeparated,
+            passingRenderingTestsValidateSoftwareBoundariesNotPhysicalModel: boundaryCheck.passingRenderingTestsValidateSoftwareBoundariesNotPhysicalModel,
+            empiricalPhysicalOrBiologicalValidationClaimed: boundaryCheck.empiricalPhysicalOrBiologicalValidationClaimed,
+            timelineCouplingProgrammaticallyBlocked: boundaryCheck.timelineCouplingProgrammaticallyBlocked,
+            baselineNullControlEnforcesLambdaZero: boundaryCheck.baselineNullControlEnforcesLambdaZero,
             syntheticSchematicCheckSnake: boundaryCheck.checks.synthetic_schematic_not_tecdoc643_geometry,
             syntheticSchematicCheckCamel: boundaryCheck.checks.syntheticSchematicNotTecdoc643Geometry,
             geomClassification: geomProv.geometry_classification,
             isTecdoc643BenchmarkGeometry: geomProv.is_tecdoc643_benchmark_geometry,
             allProvenanceClassesValid,
+            shorthandAliasesValid,
+            firewallProbeAllBlocked: firewallProbe.all_violations_blocked,
+            firewallRawPropertyTamperBlocked: firewallProbe.raw_property_tamper_blocked_immediately,
+            couplingAttemptRes,
+            enforceFirewallRes,
+            exploratoryTransition,
+            resetUnderNull,
+            clampedWithLockOption,
             webglContextCreated,
             fallbackTriggered,
             glPoolWidth: glPool.width,
@@ -1073,11 +1146,32 @@ async function runTests() {
         assert.strictEqual(poolBiofilmState.tabActive, true);
         assert.strictEqual(poolBiofilmState.artifactId, 'REACTOR-POOL-BIOFILM-COORDINATED-3D-01');
         assert.strictEqual(poolBiofilmState.boundaryAllPassed, true);
+        assert.strictEqual(poolBiofilmState.provenanceTaxonomySeparated, true);
+        assert.strictEqual(poolBiofilmState.passingRenderingTestsValidateSoftwareBoundariesNotPhysicalModel, true);
+        assert.strictEqual(poolBiofilmState.empiricalPhysicalOrBiologicalValidationClaimed, false);
+        assert.strictEqual(poolBiofilmState.timelineCouplingProgrammaticallyBlocked, true);
+        assert.strictEqual(poolBiofilmState.baselineNullControlEnforcesLambdaZero, true);
         assert.strictEqual(poolBiofilmState.syntheticSchematicCheckSnake, true);
         assert.strictEqual(poolBiofilmState.syntheticSchematicCheckCamel, true);
         assert.strictEqual(poolBiofilmState.geomClassification, 'SYNTHETIC_SCHEMATIC');
         assert.strictEqual(poolBiofilmState.isTecdoc643BenchmarkGeometry, false);
         assert.strictEqual(poolBiofilmState.allProvenanceClassesValid, true);
+        assert.strictEqual(poolBiofilmState.shorthandAliasesValid, true);
+        assert.strictEqual(poolBiofilmState.firewallProbeAllBlocked, true);
+        assert.strictEqual(poolBiofilmState.firewallRawPropertyTamperBlocked, true);
+        assert.strictEqual(poolBiofilmState.couplingAttemptRes.timeline_coupling_rejected, true);
+        assert.strictEqual(poolBiofilmState.couplingAttemptRes.reason, 'NO_VALIDATED_SECONDS_TO_MCS_CONVERSION');
+        assert.strictEqual(poolBiofilmState.couplingAttemptRes.baseline_lambda_etc_enforced_zero, true);
+        assert.strictEqual(poolBiofilmState.couplingAttemptRes.rendering_tests_validate_physical_model, false);
+        assert.strictEqual(poolBiofilmState.enforceFirewallRes.timeline_coupling_rejected, true);
+        assert.strictEqual(poolBiofilmState.enforceFirewallRes.reason, 'NO_VALIDATED_SECONDS_TO_MCS_CONVERSION');
+        assert.strictEqual(poolBiofilmState.enforceFirewallRes.baseline_lambda_etc_enforced_zero, true);
+        assert.strictEqual(poolBiofilmState.enforceFirewallRes.rendering_tests_validate_physical_model, false);
+        assert.strictEqual(poolBiofilmState.exploratoryTransition.lambdaAt05, 0.5);
+        assert.strictEqual(poolBiofilmState.exploratoryTransition.controlAt05, 'EXPLORATORY_COUPLED_HYPOTHESIS');
+        assert.strictEqual(poolBiofilmState.resetUnderNull.lambdaAfterNull, 0.0);
+        assert.strictEqual(poolBiofilmState.resetUnderNull.lockActive, true);
+        assert.strictEqual(poolBiofilmState.clampedWithLockOption, 0.0);
         assert.strictEqual(poolBiofilmState.webglContextCreated, true);
         assert.strictEqual(poolBiofilmState.fallbackTriggered, false);
         assert.strictEqual(poolBiofilmState.renderModeMacro, 'webgl+2d_overlay');
@@ -1126,8 +1220,17 @@ async function runTests() {
         for (const pk of Object.keys(poolBiofilmState.provAudit)) {
           assert.strictEqual(poolBiofilmState.provAudit[pk].hasLabelInRecord, true, `Provenance record ${pk} missing label`);
         }
+        assert.strictEqual(poolBiofilmState.provAudit.pool_geometry.geometryClassification, 'SYNTHETIC_SCHEMATIC');
+        assert.strictEqual(poolBiofilmState.provAudit.pool_geometry.evidenceClassification, 'synthetic');
         assert.strictEqual(poolBiofilmState.provAudit.pool_geometry.classification, 'SYNTHETIC_SCHEMATIC');
+        assert.strictEqual(poolBiofilmState.provAudit.H2O2.geometryClassification, 'SYNTHETIC_SCHEMATIC');
+        assert.strictEqual(poolBiofilmState.provAudit.H2O2.evidenceClassification, 'calculated');
+        assert.strictEqual(poolBiofilmState.provAudit.cpm_morphology_stage3.geometryClassification, 'MICRO_BIOFILM_SLAB_VOXEL');
+        assert.strictEqual(poolBiofilmState.provAudit.cpm_morphology_stage3.evidenceClassification, 'uncalibrated_model_snapshot');
+        assert.strictEqual(poolBiofilmState.provAudit.validated_cfd_pressure_Pa.geometryClassification, 'SYNTHETIC_SCHEMATIC');
+        assert.strictEqual(poolBiofilmState.provAudit.validated_cfd_pressure_Pa.evidenceClassification, 'unavailable');
         assert.strictEqual(poolBiofilmState.provAudit.validated_cfd_pressure_Pa.classification, 'UNAVAILABLE');
+        assert.strictEqual(poolBiofilmState.provAudit.control_5b_rpm_sensitivity.evidenceClassification, 'uncalibrated_model_snapshot');
         assert.strictEqual(poolBiofilmState.provAudit.control_5b_rpm_sensitivity.classification, 'PROVISIONAL_ASSUMPTION');
         assert.strictEqual(poolBiofilmState.provAudit.control_5b_rpm_sensitivity.outputClassification, 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS');
 
@@ -1158,7 +1261,7 @@ async function runTests() {
         assert.strictEqual(force2dState.geomClassification, 'SYNTHETIC_SCHEMATIC');
         assert.strictEqual(force2dState.isTecdoc643BenchmarkGeometry, false);
 
-        console.log(`PASS [11/15]: Coordinated 3D Pool-and-Biofilm Explorer WebGL (Pool=${poolBiofilmState.glPoolWidth}x${poolBiofilmState.glPoolHeight}, Biofilm=${poolBiofilmState.glBioWidth}x${poolBiofilmState.glBioHeight}), ?force2d=1 fallback, SYNTHETIC_SCHEMATIC geometry provenance, 4 layers, 5 camera views, 4 morphotypes, uncoupled time bases, 7 null controls, & Provenance on Demand verified.`);
+        console.log(`PASS [11/15]: Coordinated 3D Pool-and-Biofilm Explorer WebGL (Pool=${poolBiofilmState.glPoolWidth}x${poolBiofilmState.glPoolHeight}, Biofilm=${poolBiofilmState.glBioWidth}x${poolBiofilmState.glBioHeight}), ?force2d=1 fallback, separated provenance taxonomy, programmatic lambda_etc=0 & timeline firewall, 4 layers, 5 camera views, 4 morphotypes, 7 null controls, & Provenance on Demand verified.`);
         receipt.tests.reactor_pool_biofilm_3d_explorer = {
           glPoolWidth: poolBiofilmState.glPoolWidth,
           glPoolHeight: poolBiofilmState.glPoolHeight,
@@ -1168,7 +1271,12 @@ async function runTests() {
           renderModeMicro: poolBiofilmState.renderModeMicro,
           defaultLambdaEtc: poolBiofilmState.defaultLambdaEtc,
           solversKeptSeparate: poolBiofilmState.defaultSolversSeparate,
-          coupledValidationClaimed: poolBiofilmState.defaultCoupledClaimed
+          coupledValidationClaimed: poolBiofilmState.defaultCoupledClaimed,
+          provenanceTaxonomySeparated: poolBiofilmState.provenanceTaxonomySeparated,
+          passingRenderingTestsValidateSoftwareBoundariesNotPhysicalModel: poolBiofilmState.passingRenderingTestsValidateSoftwareBoundariesNotPhysicalModel,
+          empiricalPhysicalOrBiologicalValidationClaimed: poolBiofilmState.empiricalPhysicalOrBiologicalValidationClaimed,
+          timelineCouplingProgrammaticallyBlocked: poolBiofilmState.timelineCouplingProgrammaticallyBlocked,
+          baselineNullControlEnforcesLambdaZero: poolBiofilmState.baselineNullControlEnforcesLambdaZero
         };
       }
     );

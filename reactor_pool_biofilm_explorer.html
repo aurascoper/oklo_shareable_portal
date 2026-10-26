@@ -741,7 +741,11 @@
       <tbody>
         <tr><th>Field ID</th><td id="prov_field_id">H2O2</td></tr>
         <tr><th>Label</th><td id="prov_label">Hydrogen Peroxide Radiolysis Field (H2O2)</td></tr>
+        <tr><th>Geometry Classification</th><td id="prov_geometry_classification">SYNTHETIC_SCHEMATIC</td></tr>
+        <tr><th>Normalized Evidence Class</th><td id="prov_evidence_classification">calculated</td></tr>
+        <tr><th>UI Epistemic Badge</th><td id="prov_epistemic_class">CALCULATED</td></tr>
         <tr><th>Data Classification</th><td id="prov_data_classification">CALCULATED</td></tr>
+        <tr><th>Epistemic Status &amp; Scope</th><td id="prov_epistemic_status">REDUCED_ORDER_CALCULATED_ON_SYNTHETIC_SCHEMATIC_GEOMETRY: Computed from published primary radiolysis yields (Jay-Gerin 2025; Buxton 1988) on a synthetic Boussinesq pool geometry/flow surrogate. Software verification confirms algebraic/PDE conservation only and does not empirically validate facility-specific pool radiolysis or biological coupling.</td></tr>
         <tr><th>Calibration Status</th><td id="prov_calibration_status">PUBLISHED_G_VALUE</td></tr>
         <tr><th>Units</th><td id="prov_units">mol/L</td></tr>
         <tr><th>Coordinate Frame</th><td id="prov_coordinate_frame">Cylindrical pool (r, theta, z) [cm] + 1D coupon boundary layer z [um]</td></tr>
@@ -808,10 +812,63 @@
   var SYNTHETIC_SCHEMATIC_STATEMENT =
     'SYNTHETIC_SCHEMATIC: Schematic cylindrical cutaway (X,Y in [-500,500] cm, Z in [-200,200] cm, simplified 3x3 core lattice); NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R=2.0 m, H=8.0 m poolwater_interactive.html domain. Displaying benchmark-derived fields requires an explicit coordinate mapping and preserves the distinction between SYNTHETIC_SCHEMATIC geometry and TECDOC-643 benchmark geometry.';
 
+  var PROVENANCE_TAXONOMY_CONTRACT = {
+    contract_version: '1.0.0',
+    orthogonal_axes_separated: true,
+    normalized_evidence_taxonomy: [
+      'measured',
+      'calculated',
+      'synthetic',
+      'uncalibrated_model_snapshot',
+      'replayed',
+      'transcribed',
+      'unavailable'
+    ],
+    geometry_classification_taxonomy: [
+      'SYNTHETIC_SCHEMATIC',
+      'MICRO_BIOFILM_SLAB_VOXEL',
+      'TECDOC643_6X7_BENCHMARK_REFERENCE',
+      'POOLWATER_R200_H800_SYNTHETIC_CYLINDER'
+    ],
+    ui_badge_to_manifest_taxonomy_map: {
+      SYNTHETIC_SCHEMATIC: {
+        geometry_classification: 'SYNTHETIC_SCHEMATIC',
+        evidence_classification: 'synthetic',
+        epistemic_status: 'SYNTHETIC_SCHEMATIC_GEOMETRY_ONLY (illustrative [-500,500] cm cylinder with 3x3 schematic core; not TECDOC-643 6x7 benchmark geometry and not R=200 cm, H=800 cm poolwater_interactive.html cylinder; software rendering verification does not empirically validate reactor physics)'
+      },
+      SYNTHETIC: {
+        geometry_classification: 'SYNTHETIC_SCHEMATIC',
+        micro_biofilm_geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+        evidence_classification: 'synthetic',
+        micro_biofilm_evidence_classification: 'uncalibrated_model_snapshot',
+        epistemic_status: 'SYNTHETIC_ANALYTICAL_OR_PACKING_SURROGATE (prescribed analytical Boussinesq thermal/flow plume on SYNTHETIC_SCHEMATIC pool domain or synthetic 3D/2D morphotype packing snapshot on MICRO_BIOFILM_SLAB_VOXEL; software verification does not empirically validate physical or biological models)'
+      },
+      CALCULATED: {
+        geometry_classification: 'SYNTHETIC_SCHEMATIC',
+        micro_biofilm_geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+        evidence_classification: 'calculated',
+        epistemic_status: 'REDUCED_ORDER_CALCULATED_FROM_PUBLISHED_PARAMETERS (reduced-order radiolysis/attenuation algebra from published G-values and rate constants on SYNTHETIC_SCHEMATIC geometry, or analytical symmetry/schedule controls; software verification confirms algebraic/PDE implementation only, not empirical validation)'
+      },
+      PROVISIONAL_ASSUMPTION: {
+        geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+        evidence_classification: 'uncalibrated_model_snapshot',
+        epistemic_status: 'UNCALIBRATED_PROVISIONAL_MODEL_SNAPSHOT (provisional Co-60 sorption affinities, uncalibrated 40x40x40 CPM lattice with seconds_per_mcs=NaN and baseline lambda_etc=0.0 enforced, or Control 5b illustrative sensitivity formula; software verification does not empirically validate biological or spin-chemical mechanisms)'
+      },
+      UNAVAILABLE: {
+        geometry_classification: 'SYNTHETIC_SCHEMATIC',
+        evidence_classification: 'unavailable',
+        epistemic_status: 'EXPLICITLY_UNAVAILABLE_CAMPAIGN_DATA (no validated 3D RANS/LES CFD pressure or empirical PIV/LIF thermometry/velocimetry exists in workspace; never fabricated or interpolated)'
+      }
+    }
+  };
+
   var PROVENANCE_REGISTRY = {
     pool_geometry: {
       field_id: 'pool_geometry',
       label: 'Layer 1 Schematic Cylindrical Pool Cutaway & 3x3 Core Lattice [SYNTHETIC_SCHEMATIC]',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'synthetic',
+      epistemic_status: 'SYNTHETIC_SCHEMATIC_GEOMETRY_ONLY: Illustrative 3D cylindrical pool cutaway (X,Y in [-500,500] cm, Z in [-200,200] cm, simplified 3x3 core lattice); NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R=2.0 m, H=8.0 m poolwater_interactive.html domain. Software and rendering verification confirm geometric display boundaries only and do not empirically validate reactor neutronics or thermal-hydraulics.',
       epistemic_class: 'SYNTHETIC_SCHEMATIC',
       data_classification: 'SYNTHETIC_SCHEMATIC',
       is_tecdoc643_benchmark_geometry: false,
@@ -826,6 +883,9 @@
     H2O2: {
       field_id: 'H2O2',
       label: 'Hydrogen Peroxide Radiolysis Field (H2O2)',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'calculated',
+      epistemic_status: 'REDUCED_ORDER_CALCULATED_ON_SYNTHETIC_SCHEMATIC_GEOMETRY: Computed from published primary radiolysis yields (Jay-Gerin 2025; Buxton 1988) on a synthetic Boussinesq pool geometry/flow surrogate. Software verification confirms algebraic/PDE conservation only and does not empirically validate facility-specific pool radiolysis or biological coupling.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
@@ -839,6 +899,9 @@
     H2: {
       field_id: 'H2',
       label: 'Molecular Hydrogen Radiolysis Field (H2)',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'calculated',
+      epistemic_status: 'REDUCED_ORDER_CALCULATED_ON_SYNTHETIC_SCHEMATIC_GEOMETRY: Computed from published primary radiolysis yield G(H2)=0.45 molecules/100 eV (Jay-Gerin 2025; Buxton 1988) on a synthetic pool geometry/flow surrogate. Software verification confirms reduced-order transport algebra only and does not empirically validate facility-specific dissolved H2 profiles or biological utilization.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
@@ -852,6 +915,9 @@
     OH_rad: {
       field_id: 'OH_rad',
       label: 'Hydroxyl Radical Field (*OH)',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'calculated',
+      epistemic_status: 'REDUCED_ORDER_CALCULATED_ON_SYNTHETIC_SCHEMATIC_GEOMETRY: Computed from published G(*OH)=2.80 molecules/100 eV and radical scavenging kinetics (l_rxn = 4.47 nm) on a synthetic pool geometry. Software verification confirms reaction-diffusion scale separation only and does not empirically validate in-situ radical concentrations or biological model claims.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
@@ -865,6 +931,9 @@
     e_aq: {
       field_id: 'e_aq',
       label: 'Hydrated Electron Field (e_aq^-)',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'calculated',
+      epistemic_status: 'REDUCED_ORDER_CALCULATED_ON_SYNTHETIC_SCHEMATIC_GEOMETRY: Computed from published G(e_aq^-)=2.65 molecules/100 eV and scavenging kinetics (l_rxn = 9.90 nm) on a synthetic pool geometry. Software verification confirms reaction-diffusion scale separation only and does not empirically validate in-situ hydrated electron concentrations or biological model claims.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
@@ -878,6 +947,9 @@
     dose_rate_Gy_s: {
       field_id: 'dose_rate_Gy_s',
       label: 'Ionizing Dose Rate Field D(r,z) [Gy/s]',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'calculated',
+      epistemic_status: 'REDUCED_ORDER_CALCULATED_ON_SYNTHETIC_SCHEMATIC_GEOMETRY: Analytical radial/axial attenuation surrogate D(r,z) evaluated on the SYNTHETIC_SCHEMATIC [-500,500] cm cylinder (not a live Monte Carlo OpenMC transport solution or TECDOC-643 6x7 benchmark tally). Software verification confirms attenuation formula evaluation only and does not empirically validate physical reactor dosimetry.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'SYNTHETIC_SURROGATE',
@@ -891,6 +963,9 @@
     temperature_C: {
       field_id: 'temperature_C',
       label: 'Synthetic Boussinesq Thermal Plume T(r,z) [degC]',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'synthetic',
+      epistemic_status: 'SYNTHETIC_ANALYTICAL_FIELD_ON_SYNTHETIC_SCHEMATIC_GEOMETRY: Prescribed analytical Boussinesq thermal plume and flat-plate thermal boundary layer (delta_T = 2292 um) on the schematic cylinder; validated facility CFD/PIV thermometry is UNAVAILABLE. Software verification confirms rendering and boundary-layer scaling only, not empirical physical validation.',
       epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
@@ -904,6 +979,9 @@
     velocity_m_s: {
       field_id: 'velocity_m_s',
       label: 'Synthetic Convection & Boundary-Layer Velocity u(r,z) [m/s]',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'synthetic',
+      epistemic_status: 'SYNTHETIC_ANALYTICAL_FIELD_ON_SYNTHETIC_SCHEMATIC_GEOMETRY: Prescribed analytical Boussinesq recirculation and Blasius coupon boundary layer (delta_m = 4381 um, delta_c = 528 um) on the schematic cylinder; validated facility CFD/PIV velocimetry is UNAVAILABLE. Software verification confirms divergence-free rendering and scaling only, not empirical physical validation.',
       epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
@@ -917,6 +995,9 @@
     pool_geometry_cad: {
       field_id: 'pool_geometry_cad',
       label: '3D Schematic Cylindrical Pool Tank, Core Shroud & 8 Support Fins [SYNTHETIC_SCHEMATIC]',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'synthetic',
+      epistemic_status: 'SYNTHETIC_SCHEMATIC_GEOMETRY_ONLY: Illustrative 3D cylindrical pool tank, core shroud, and 8 support fins on [-500,500] cm domain; NOT the IAEA-TECDOC-643 6x7 benchmark geometry. Software and rendering tests verify visual CAD surrogate boundaries only and do not empirically validate physical reactor hardware.',
       epistemic_class: 'SYNTHETIC_SCHEMATIC',
       data_classification: 'SYNTHETIC_SCHEMATIC',
       is_tecdoc643_benchmark_geometry: false,
@@ -931,6 +1012,9 @@
     quarter_wedge_cutaway: {
       field_id: 'quarter_wedge_cutaway',
       label: '3D Quarter-Wedge Cutaway & Orthogonal r-z / x-y Slice Operator [SYNTHETIC_SCHEMATIC]',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'synthetic',
+      epistemic_status: 'SYNTHETIC_SCHEMATIC_GEOMETRY_ONLY: Interactive 3D quarter-wedge cutaway and orthogonal r-z / x-y slice operator over the SYNTHETIC_SCHEMATIC pool domain. Software verification confirms viewport clipping and coordinate projection only, not empirical physical or biological validation.',
       epistemic_class: 'SYNTHETIC_SCHEMATIC',
       data_classification: 'SYNTHETIC_SCHEMATIC',
       is_tecdoc643_benchmark_geometry: false,
@@ -945,6 +1029,9 @@
     coupon_eps_sorption: {
       field_id: 'coupon_eps_sorption',
       label: 'Stage 2 EPS Protonation & Provisional Co-60 Biosorption',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'UNCALIBRATED_PROVISIONAL_SORPTION_MODEL: Combines literature-derived Fein et al. (1997) Bacillus subtilis protonation pKa values (4.82, 6.90, 9.40) with provisional uncalibrated Co-60 binding affinities (log K_Co = 1.60, 2.50, 3.20). Software verification confirms speciation algebra and partition bookkeeping only and does not empirically validate in-pool radionuclide retention.',
       epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'PROVISIONAL_UNCALIBRATED_ASSUMPTION',
@@ -958,6 +1045,9 @@
     cpm_morphology_stage3: {
       field_id: 'cpm_morphology_stage3',
       label: 'Stage 3 3D Cellular Potts & Morphotype Stratification Lattice',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'UNCALIBRATED_MODEL_SNAPSHOT_NULL_BASELINE_ENFORCED: 40x40x40 Cellular Potts lattice with D-PITCH awaiting_measurement, seconds_per_mcs = NaN (uncoupled from t_pool [s]), and baseline lambda_etc = 0.0 programmatically enforced under null controls. Software and rendering verification confirm solver isolation and null invariants only, not empirical biological validation.',
       epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
@@ -971,6 +1061,9 @@
     'CPM-Hypha': {
       field_id: 'CPM-Hypha',
       label: 'Stage 3 3D Cellular Potts & Morphotype Stratification Lattice (CPM-Hypha)',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'UNCALIBRATED_MODEL_SNAPSHOT_NULL_BASELINE_ENFORCED: 40x40x40 Cellular Potts hyphal/biofilm voxel snapshot with seconds_per_mcs = NaN and baseline lambda_etc = 0.0 enforced. Passing rendering and boundary tests verify software implementation only and do not establish biological radiotropism or calibrated biofilm rheology.',
       epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
@@ -984,6 +1077,9 @@
     morphotype_SL: {
       field_id: 'morphotype_SL',
       label: 'Morphotype SL: Sphere (Cocci) + Long Rod/Hypha Stratification',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'UNCALIBRATED_MORPHOTYPE_PACKING_SNAPSHOT: Synthetic 3D vs 2D sphere-plus-rod/hypha mechanical packing snapshot (z_mean(blue) < z_mean(red) at lambda_etc = 0.0). Demonstrates non-radiotrophic shape-driven stratification in silico; software verification does not empirically validate living biofilm canopy architecture.',
       epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
@@ -997,6 +1093,9 @@
     SL: {
       field_id: 'SL',
       label: 'Morphotype SL: Sphere (Cocci) + Long Rod/Hypha Stratification',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'UNCALIBRATED_MORPHOTYPE_PACKING_SNAPSHOT: Synthetic 3D vs 2D sphere-plus-rod/hypha mechanical packing snapshot (z_mean(blue) < z_mean(red) at lambda_etc = 0.0). Demonstrates non-radiotrophic shape-driven stratification in silico; software verification does not empirically validate living biofilm canopy architecture.',
       epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
@@ -1010,6 +1109,9 @@
     morphotype_SS: {
       field_id: 'morphotype_SS',
       label: 'Morphotype SS: Symmetric Sphere + Sphere Clonal Columns',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'UNCALIBRATED_MORPHOTYPE_PACKING_SNAPSHOT: Synthetic 3D vs 2D symmetric sphere-sphere clonal column control snapshot (z_mean(blue) ~ z_mean(red) at lambda_etc = 0.0). Software verification confirms symmetric null packing control only and does not empirically validate living biofilm growth.',
       epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
@@ -1023,6 +1125,9 @@
     SS: {
       field_id: 'SS',
       label: 'Morphotype SS: Symmetric Sphere + Sphere Clonal Columns',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'UNCALIBRATED_MORPHOTYPE_PACKING_SNAPSHOT: Synthetic 3D vs 2D symmetric sphere-sphere clonal column control snapshot (z_mean(blue) ~ z_mean(red) at lambda_etc = 0.0). Software verification confirms symmetric null packing control only and does not empirically validate living biofilm growth.',
       epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
@@ -1036,6 +1141,9 @@
     morphotype_LL: {
       field_id: 'morphotype_LL',
       label: 'Morphotype LL: Symmetric Long Rod + Long Rod Entangled Canopy',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'UNCALIBRATED_MORPHOTYPE_PACKING_SNAPSHOT: Synthetic 3D vs 2D symmetric rod-rod entangled canopy control snapshot (z_mean(blue) ~ z_mean(red) at lambda_etc = 0.0). Software verification confirms symmetric rod-packing control only and does not empirically validate living biofilm growth.',
       epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
@@ -1049,6 +1157,9 @@
     LL: {
       field_id: 'LL',
       label: 'Morphotype LL: Symmetric Long Rod + Long Rod Entangled Canopy',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'UNCALIBRATED_MORPHOTYPE_PACKING_SNAPSHOT: Synthetic 3D vs 2D symmetric rod-rod entangled canopy control snapshot (z_mean(blue) ~ z_mean(red) at lambda_etc = 0.0). Software verification confirms symmetric rod-packing control only and does not empirically validate living biofilm growth.',
       epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
@@ -1062,6 +1173,9 @@
     'PIE-COUPON-SS316L-01': {
       field_id: 'PIE-COUPON-SS316L-01',
       label: 'Wall Coupon Locator PIE-COUPON-SS316L-01 (SS316L Stainless Steel)',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'SYNTHETIC_SCHEMATIC_COUPON_BOUNDARY_SNAPSHOT: Wall coupon station at r = 500 cm on the SYNTHETIC_SCHEMATIC pool cylinder linking reduced-order boundary-layer scales to uncalibrated micro-scale biofilm/sorption snapshots. Software verification confirms coordinate and boundary-condition handoff only, not empirical PIE coupon validation.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'SYNTHETIC_SURROGATE',
@@ -1075,6 +1189,9 @@
     'TRIGA-WALL-SS304L-02': {
       field_id: 'TRIGA-WALL-SS304L-02',
       label: 'Wall Coupon Locator TRIGA-WALL-SS304L-02 (SS304L Pool Liner)',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'SYNTHETIC_SCHEMATIC_COUPON_BOUNDARY_SNAPSHOT: Secondary wall liner coupon station at r = 500 cm on the SYNTHETIC_SCHEMATIC pool cylinder linking reduced-order plume/boundary-layer conditions to uncalibrated biofilm snapshots. Software verification confirms boundary handoff only, not empirical PIE coupon validation.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'SYNTHETIC_SURROGATE',
@@ -1088,6 +1205,9 @@
     'SURROGATE-COUPON-AL6061-03': {
       field_id: 'SURROGATE-COUPON-AL6061-03',
       label: 'Wall Coupon Locator SURROGATE-COUPON-AL6061-03 (Al-6061 Rack)',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'SYNTHETIC_SCHEMATIC_COUPON_BOUNDARY_SNAPSHOT: Core-facing aluminum rack surrogate coupon station at r = 500 cm on the SYNTHETIC_SCHEMATIC pool cylinder linking reduced-order dose/peroxide scales to uncalibrated biofilm snapshots. Software verification confirms boundary handoff only, not empirical PIE coupon validation.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'SYNTHETIC_SURROGATE',
@@ -1101,6 +1221,9 @@
     coccomyxa_actinabiotis_benchmark: {
       field_id: 'coccomyxa_actinabiotis_benchmark',
       label: 'Empirical Benchmark: Coccomyxa actinabiotis & Sarro (2005) Co-60',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'LITERATURE_BENCHMARK_ANCHOR_IN_UNCALIBRATED_RETENTION_MODEL: Anchors Stage 2 retention comparisons to published Rivasseau et al. (2013, 2016) Coccomyxa actinabiotis Ag-110m uptake and unpartitioned Sarro et al. (2005) Co-60 coupon totals (which lacked a sterile control). Software verification confirms reference anchor values only and does not empirically validate predictive multi-species pool retention.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       empirical_benchmark_classification: 'MEASURED',
@@ -1115,6 +1238,9 @@
     baseline_no_coupling_default: {
       field_id: 'baseline_no_coupling_default',
       label: 'Control 1: Baseline Null (lambda_etc = 0.0) vs Exploratory Hypothesis',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'PROGRAMMATICALLY_ENFORCED_NULL_BASELINE (lambda_etc = 0.0): Enforces zero radiotrophic Hamiltonian coupling (delta_H_etc = 0.0) under baseline and abiotic/non-melanized null controls, while isolating exploratory lambda_etc > 0 runs. Software verification confirms programmatic null enforcement and flat-field volume swelling diagnostics only, not empirical biological validation.',
       epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
@@ -1128,6 +1254,9 @@
     five_way_radionuclide_retention: {
       field_id: 'five_way_radionuclide_retention',
       label: 'Controls 2-4: 5-Way Radionuclide Retention Partition & Fein (1997) EPS',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'UNCALIBRATED_FIVE_WAY_RETENTION_PARTITION: Contrasts sterile oxide, passive dead-biomass EPS, non-melanized active, melanized active, and microalgal retention channels (with lambda_etc = 0.0 enforced for abiotic, dead, and non-melanized controls) using Fein (1997) pKa values and provisional Co-60 affinities. Software verification confirms partition conservation only and does not empirically validate in-situ radionuclide partitioning.',
       epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'PROVISIONAL_UNCALIBRATED_ASSUMPTION',
@@ -1141,6 +1270,9 @@
     equal_dose_power_schedules: {
       field_id: 'equal_dose_power_schedules',
       label: 'Control 5: Equal-Dose Power Schedules (Regime-Dependent Control)',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'calculated',
+      epistemic_status: 'REGIME_DEPENDENT_ANALYTICAL_SCHEDULE_CONTROL: Proves that equal integrated dose (295.2 Gy) yields identical primary linear radiolytic production across constant, periodic, and shuffled schedules, while downstream differences are strictly regime-dependent (vanishing in the conserved-linear / lambda_etc = 0 regime). Software verification confirms mathematical regime separation only, not empirical biological schedule effects.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
@@ -1154,6 +1286,9 @@
     control_5a_spatial_bias_null: {
       field_id: 'control_5a_spatial_bias_null',
       label: 'Control 5a: Spatial-Bias Magnetic Null under Uniform Field (B_0, theta_B)',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'calculated',
+      epistemic_status: 'ANALYTICAL_SYMMETRY_NULL_CONTROL: Proves mathematically that a spatially uniform magnetic field (B_0, theta_B) with zero spatial gradient (grad J_ETC = 0) produces zero directional bias under :gradient_difference (delta_H = 0). Software verification confirms symmetry invariance in code only and does not empirically validate cellular magnetoreception.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
@@ -1167,6 +1302,9 @@
     control_5b_rpm_sensitivity: {
       field_id: 'control_5b_rpm_sensitivity',
       label: 'Control 5b: Biochemical Magnetic-Response Parametric Sensitivity',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION: Evaluates an uncalibrated algebraic sensitivity formula for scalar yield vs (B_0, theta_B); not grounded in a measured melanin spin Hamiltonian. Passing software tests verifies the implemented algebraic function only and does not empirically validate a melanin radical-pair mechanism.',
       epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       output_classification: 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS',
@@ -1182,6 +1320,9 @@
     control_5b_biochemical_magnetic_sensitivity: {
       field_id: 'control_5b_biochemical_magnetic_sensitivity',
       label: 'Control 5b: Biochemical Magnetic-Response Parametric Sensitivity',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION: Evaluates an uncalibrated algebraic sensitivity formula for scalar yield vs (B_0, theta_B); not grounded in a measured melanin spin Hamiltonian. Passing software tests verifies the implemented algebraic function only and does not empirically validate a melanin radical-pair mechanism.',
       epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       output_classification: 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS',
@@ -1197,6 +1338,9 @@
     control_6_oxidant_chemotropism: {
       field_id: 'control_6_oxidant_chemotropism',
       label: 'Control 6: Non-Radiotrophic Oxidant Chemotropism (M_tot = 0 vs M_tot = 1)',
+      geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
+      evidence_classification: 'uncalibrated_model_snapshot',
+      epistemic_status: 'UNCALIBRATED_CHEMOTROPIC_CONFOUNDER_CONTROL: Demonstrates in silico that directional canopy drift along a radiolytic H2O2/O2 gradient can arise from non-radiotrophic oxidant avoidance or aerotaxis (M_tot = 0, lambda_etc = 0.0) without melanin-mediated radiotrophy. Software verification confirms counterfactual model separation only, not empirical biological chemotaxis.',
       epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
@@ -1210,6 +1354,9 @@
     epistemic_gates_eg1_eg4_and_links_l1_l5: {
       field_id: 'epistemic_gates_eg1_eg4_and_links_l1_l5',
       label: 'Epistemic Gates (EG-1..EG-4) & Fault-Tree Links (L1..L5)',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'calculated',
+      epistemic_status: 'CROSS_STAGE_EPISTEMIC_GATE_ARCHITECTURE (EG-1..EG-4 & L1..L5): Enforces architectural separation between Stage 1 radiolysis, Stage 2 sorption, and Stage 3 uncalibrated CPM coupling, with baseline lambda_etc = 0.0 and uncoupled t_pool [s] vs MCS timelines. Software verification confirms guardrail enforcement only and does not empirically validate physical or biological hypotheses.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
@@ -1223,6 +1370,9 @@
     validated_cfd_pressure_Pa: {
       field_id: 'validated_cfd_pressure_Pa',
       label: 'Facility-Validated 3D CFD Pressure Field [UNAVAILABLE]',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'unavailable',
+      epistemic_status: 'EXPLICITLY_UNAVAILABLE_FIELD: No facility-validated 3D RANS/LES CFD pressure field exists in this workspace. Explicitly marked unavailable (never fabricated or interpolated from synthetic Boussinesq surrogates); software verification confirms honest unavailable-state handling only.',
       epistemic_class: 'UNAVAILABLE',
       data_classification: 'UNAVAILABLE',
       calibration_status: 'UNAVAILABLE_AWAITING_CAMPAIGN',
@@ -1236,6 +1386,9 @@
     empirical_piv_temperature: {
       field_id: 'empirical_piv_temperature',
       label: 'Empirical PIV/LIF Temperature & Velocity Field [UNAVAILABLE]',
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'unavailable',
+      epistemic_status: 'EXPLICITLY_UNAVAILABLE_FIELD: No empirical PIV/LIF velocimetry or thermometry campaign data exist in this workspace. Explicitly marked unavailable (never fabricated from synthetic thermal plume formulas); software verification confirms honest unavailable-state handling only.',
       epistemic_class: 'UNAVAILABLE',
       data_classification: 'UNAVAILABLE',
       calibration_status: 'UNAVAILABLE_AWAITING_CAMPAIGN',
@@ -1247,6 +1400,56 @@
       notes: 'Explicitly flagged UNAVAILABLE; viewer falls back to synthetic Boussinesq thermal plume indicator.'
     }
   };
+
+  // Register non-enumerable provenance aliases so Object.keys(PROVENANCE_REGISTRY) preserves the 33 canonical entries
+  // while getProvenanceRecord(id) / selectProvenanceField(id) / PROVENANCE_REGISTRY[id] also resolve shorthand/manifest IDs.
+  (function registerProvenanceAliases() {
+    var aliasMap = {
+      boundary_layer_um: { base: 'velocity_m_s', label: 'Synthetic Boundary-Layer Thickness Scales (delta_m, delta_T, delta_c) [um]', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'synthetic' },
+      dose_rate_Gy_h: { base: 'dose_rate_Gy_s', label: 'Ionizing Dose Rate Field D(r,z) [Gy/h]', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'calculated' },
+      H2O2_uM: { base: 'H2O2', label: 'Hydrogen Peroxide Radiolysis Field (H2O2 [uM])', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'calculated' },
+      H2_uM: { base: 'H2', label: 'Molecular Hydrogen Radiolysis Field (H2 [uM])', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'calculated' },
+      OH_rad_nM: { base: 'OH_rad', label: 'Hydroxyl Radical Field (*OH [nM])', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'calculated' },
+      e_aq_nM: { base: 'e_aq', label: 'Hydrated Electron Field (e_aq^- [nM])', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'calculated' },
+      oklo_comparison: { base: 'epistemic_gates_eg1_eg4_and_links_l1_l5', label: 'Oklo RZ2 vs Modern Open-Pool MTR 5/5 Dimensional Rupture Comparison', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'calculated' },
+      Co60_retained_Bq_cm2: { base: 'coupon_eps_sorption', label: 'Stage 2 Retained Co-60 Surface Activity [Bq/cm^2]', geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL', evidence_classification: 'uncalibrated_model_snapshot' },
+      Ag110m_algal_Bq_g: { base: 'coccomyxa_actinabiotis_benchmark', label: 'Coccomyxa actinabiotis Ag-110m Bioaccumulation Benchmark [Bq/g]', geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL', evidence_classification: 'uncalibrated_model_snapshot' },
+      J_ETC_fmol_cm2_s: { base: 'cpm_morphology_stage3', label: 'Phenomenological Melanin-ETC Flux Proxy J_ETC [fmol/cm^2/s]', geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL', evidence_classification: 'uncalibrated_model_snapshot' },
+      C1: { base: 'PIE-COUPON-SS316L-01', label: 'Wall Coupon C1 (PIE-COUPON-SS316L-01)', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'uncalibrated_model_snapshot' },
+      C2: { base: 'TRIGA-WALL-SS304L-02', label: 'Wall Coupon C2 (TRIGA-WALL-SS304L-02)', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'uncalibrated_model_snapshot' },
+      C3: { base: 'SURROGATE-COUPON-AL6061-03', label: 'Wall Coupon C3 (SURROGATE-COUPON-AL6061-03)', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'uncalibrated_model_snapshot' },
+      H0_baseline_lambda0: { base: 'baseline_no_coupling_default', label: 'Control H0_baseline_lambda0: Baseline Null (lambda_etc = 0.0 Enforced)', geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL', evidence_classification: 'uncalibrated_model_snapshot' },
+      H0_1_sterile_abiotic: { base: 'five_way_radionuclide_retention', label: 'Control H0_1_sterile_abiotic: Sterile Abiotic Oxide Sorption (lambda_etc = 0.0)', geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL', evidence_classification: 'uncalibrated_model_snapshot' },
+      H0_2_dead_biomass: { base: 'five_way_radionuclide_retention', label: 'Control H0_2_dead_biomass: Passive Dead-Biomass EPS Complexation (lambda_etc = 0.0)', geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL', evidence_classification: 'uncalibrated_model_snapshot' },
+      H0_3_non_melanized: { base: 'five_way_radionuclide_retention', label: 'Control H0_3_non_melanized: Live Non-Melanized Strain Control (lambda_etc = 0.0)', geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL', evidence_classification: 'uncalibrated_model_snapshot' },
+      H0_4_equal_dose_schedule: { base: 'equal_dose_power_schedules', label: 'Control H0_4_equal_dose_schedule: Equal-Dose Power Schedule Regime Test', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'calculated' },
+      H0_equal_dose_schedules: { base: 'equal_dose_power_schedules', label: 'Control H0_equal_dose_schedules: Equal-Dose Power Schedule Regime Test', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'calculated' },
+      H0_5a_spatial_bias_null: { base: 'control_5a_spatial_bias_null', label: 'Control H0_5a_spatial_bias_null: Uniform Magnetic Field Spatial-Bias Null', geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL', evidence_classification: 'calculated' },
+      H0_5b_biochemical_magnetic: { base: 'control_5b_rpm_sensitivity', label: 'Control H0_5b_biochemical_magnetic: Illustrative Biochemical Magnetic Sensitivity', geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL', evidence_classification: 'uncalibrated_model_snapshot' },
+      H0_5b_rpm_sensitivity: { base: 'control_5b_rpm_sensitivity', label: 'Control H0_5b_rpm_sensitivity: Illustrative Biochemical Magnetic Sensitivity', geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL', evidence_classification: 'uncalibrated_model_snapshot' },
+      H0_6_chemotropism: { base: 'control_6_oxidant_chemotropism', label: 'Control H0_6_chemotropism: Non-Radiotrophic Oxidant Chemotropism (lambda_etc = 0.0)', geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL', evidence_classification: 'uncalibrated_model_snapshot' },
+      H0_epistemic_gates: { base: 'epistemic_gates_eg1_eg4_and_links_l1_l5', label: 'Control H0_epistemic_gates: Epistemic Gates EG-1..EG-4 & Fault-Tree Links L1..L5', geometry_classification: 'SYNTHETIC_SCHEMATIC', evidence_classification: 'calculated' },
+      EXPLORATORY_COUPLED_HYPOTHESIS: { base: 'baseline_no_coupling_default', label: 'Exploratory Coupled Hypothesis (lambda_etc > 0; Unvalidated)', geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL', evidence_classification: 'uncalibrated_model_snapshot' }
+    };
+    Object.keys(aliasMap).forEach(function(aliasKey) {
+      var spec = aliasMap[aliasKey];
+      var src = PROVENANCE_REGISTRY[spec.base];
+      if (!src) return;
+      var copy = {};
+      Object.keys(src).forEach(function(k) { copy[k] = src[k]; });
+      copy.field_id = aliasKey;
+      copy.canonical_field_id = spec.base;
+      copy.label = spec.label;
+      copy.geometry_classification = spec.geometry_classification;
+      copy.evidence_classification = spec.evidence_classification;
+      Object.defineProperty(PROVENANCE_REGISTRY, aliasKey, {
+        value: copy,
+        enumerable: false,
+        configurable: true,
+        writable: true
+      });
+    });
+  })();
 
   var COUPON_LOCATORS = {
     'PIE-COUPON-SS316L-01': {
@@ -1304,6 +1507,9 @@
       tau_w_Pa: 0.055
     }
   };
+  Object.defineProperty(COUPON_LOCATORS, 'C1', { value: COUPON_LOCATORS['PIE-COUPON-SS316L-01'], enumerable: false, configurable: true });
+  Object.defineProperty(COUPON_LOCATORS, 'C2', { value: COUPON_LOCATORS['TRIGA-WALL-SS304L-02'], enumerable: false, configurable: true });
+  Object.defineProperty(COUPON_LOCATORS, 'C3', { value: COUPON_LOCATORS['SURROGATE-COUPON-AL6061-03'], enumerable: false, configurable: true });
 
   // Precompute deterministic 3D cells and P(z) distributions for SL, SS, LL, CPM-Hypha
   function buildMorphotypeData() {
@@ -1424,6 +1630,8 @@
   var NULL_MODEL_WORKBENCH = {
     baseline_no_coupling_default: {
       id: 'baseline_no_coupling_default',
+      canonical_id: 'baseline_no_coupling_default',
+      enforces_lambda_zero: true,
       title: 'Control 1: Baseline Null (lambda_etc = 0.0) vs Exploratory Field Coupling (lambda_etc > 0)',
       default_lambda_etc: 0.0,
       default_delta_H_etc: 0.0,
@@ -1434,6 +1642,8 @@
     },
     five_way_radionuclide_retention: {
       id: 'five_way_radionuclide_retention',
+      canonical_id: 'five_way_radionuclide_retention',
+      enforces_lambda_zero: true,
       title: 'Controls 2-4: 5-Way Radionuclide Retention Partition & Coccomyxa Benchmark',
       fein_1997_pKa: [4.82, 6.90, 9.40],
       fein_1997_status: 'LITERATURE_DERIVED_FEIN_1997',
@@ -1461,6 +1671,8 @@
     },
     equal_dose_power_schedules: {
       id: 'equal_dose_power_schedules',
+      canonical_id: 'equal_dose_power_schedules',
+      enforces_lambda_zero: false,
       title: 'Control 5: Equal-Dose Power Schedules (Constant vs Periodic vs Shuffled)',
       integrated_dose_Gy: 295.2,
       primary_integrated_yield_H2_mol_L: 1.68e-4,
@@ -1495,6 +1707,8 @@
     },
     control_5a_spatial_bias_null: {
       id: 'control_5a_spatial_bias_null',
+      canonical_id: 'control_5a_spatial_bias_null',
+      enforces_lambda_zero: true,
       title: 'Control 5a: Spatial-Bias Magnetic Null (Uniform B_0, theta_B)',
       uniform_field_grad_J_ETC: 0.0,
       gradient_difference_delta_H: 0.0,
@@ -1505,6 +1719,8 @@
     },
     control_5b_biochemical_magnetic_sensitivity: {
       id: 'control_5b_biochemical_magnetic_sensitivity',
+      canonical_id: 'control_5b_biochemical_magnetic_sensitivity',
+      enforces_lambda_zero: false,
       title: 'Control 5b: Biochemical Magnetic-Response Parametric Sensitivity',
       epistemic_badge: 'ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION',
       output_classification: 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS',
@@ -1517,6 +1733,8 @@
     },
     control_6_oxidant_chemotropism: {
       id: 'control_6_oxidant_chemotropism',
+      canonical_id: 'control_6_oxidant_chemotropism',
+      enforces_lambda_zero: true,
       title: 'Control 6: Non-Radiotrophic Oxidant Chemotropism (M_tot = 0 vs M_tot = 1)',
       non_melanized_M0_oxidant_avoidance_drift_um: -4.8,
       non_melanized_M0_aerotaxis_drift_um: 3.6,
@@ -1526,6 +1744,8 @@
     },
     epistemic_gates_eg1_eg4_and_links_l1_l5: {
       id: 'epistemic_gates_eg1_eg4_and_links_l1_l5',
+      canonical_id: 'epistemic_gates_eg1_eg4_and_links_l1_l5',
+      enforces_lambda_zero: false,
       title: 'Epistemic Gates (EG-1..EG-4) & Fault-Tree Links (L1..L5)',
       gates: {
         'EG-1': 'Separates published primary radiolysis yields (Jay-Gerin 2025; Buxton 1988) from unmeasured facility-specific 3D CFD/PIV flow fields.',
@@ -1542,6 +1762,39 @@
       }
     }
   };
+
+  (function registerNullWorkbenchAliases() {
+    var nullAliases = {
+      H0_baseline_lambda0: { base: 'baseline_no_coupling_default', enforces_lambda_zero: true },
+      H0_1_sterile_abiotic: { base: 'five_way_radionuclide_retention', enforces_lambda_zero: true },
+      H0_2_dead_biomass: { base: 'five_way_radionuclide_retention', enforces_lambda_zero: true },
+      H0_3_non_melanized: { base: 'five_way_radionuclide_retention', enforces_lambda_zero: true },
+      H0_4_equal_dose_schedule: { base: 'equal_dose_power_schedules', enforces_lambda_zero: false },
+      H0_equal_dose_schedules: { base: 'equal_dose_power_schedules', enforces_lambda_zero: false },
+      H0_5a_spatial_bias_null: { base: 'control_5a_spatial_bias_null', enforces_lambda_zero: true },
+      H0_5b_biochemical_magnetic: { base: 'control_5b_biochemical_magnetic_sensitivity', enforces_lambda_zero: false },
+      H0_5b_rpm_sensitivity: { base: 'control_5b_biochemical_magnetic_sensitivity', enforces_lambda_zero: false },
+      H0_6_chemotropism: { base: 'control_6_oxidant_chemotropism', enforces_lambda_zero: true },
+      H0_epistemic_gates: { base: 'epistemic_gates_eg1_eg4_and_links_l1_l5', enforces_lambda_zero: false },
+      EXPLORATORY_COUPLED_HYPOTHESIS: { base: 'baseline_no_coupling_default', enforces_lambda_zero: false }
+    };
+    Object.keys(nullAliases).forEach(function(aliasId) {
+      var spec = nullAliases[aliasId];
+      var src = NULL_MODEL_WORKBENCH[spec.base];
+      if (!src) return;
+      var copy = {};
+      Object.keys(src).forEach(function(k) { copy[k] = src[k]; });
+      copy.id = aliasId;
+      copy.canonical_id = spec.base;
+      copy.enforces_lambda_zero = spec.enforces_lambda_zero;
+      Object.defineProperty(NULL_MODEL_WORKBENCH, aliasId, {
+        value: copy,
+        enumerable: false,
+        configurable: true,
+        writable: true
+      });
+    });
+  })();
 
   // Global Explorer State
   var urlParams = new URLSearchParams(window.location.search || '');
@@ -1575,8 +1828,12 @@
     artifact_id_alias: 'REACTOR-POOL-BIOFILM-3D-01',
     solvers_kept_separate: true,
     solver_level_coupled_validation_claimed: false,
+    passing_rendering_tests_validate_software_boundaries_not_physical_model: true,
+    empirical_physical_or_biological_validation_claimed: false,
     default_lambda_etc_on_load: 0.0,
     lambda_etc: 0.0,
+    baseline_lambda_lock: true,
+    strict_null_control_lock: false,
     t_pool_s: 1800,
     mcs_step: 60,
     seconds_per_mcs: NaN,
@@ -1590,10 +1847,13 @@
     sync_camera_rotation: true,
     camera_macro: { yaw: 0.62, pitch: 0.52, zoom: 1.0 },
     camera_micro: { yaw: 0.68, pitch: 0.50, zoom: 1.0 },
+    provenance_taxonomy_contract: PROVENANCE_TAXONOMY_CONTRACT,
     geometry_provenance: {
       geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      evidence_classification: 'synthetic',
       epistemic_class: 'SYNTHETIC_SCHEMATIC',
       data_classification: 'SYNTHETIC_SCHEMATIC',
+      epistemic_status: 'SYNTHETIC_SCHEMATIC_3D_POOL_DOMAIN (not TECDOC-643 6x7 benchmark geometry; passing rendering tests verify software geometry only, not physical reactor hydrodynamics)',
       is_tecdoc643_benchmark_geometry: false,
       statement: SYNTHETIC_SCHEMATIC_STATEMENT,
       schematic_domain: {
@@ -1643,6 +1903,91 @@
       local_branch_pushed_to_remote: false
     }
   };
+
+  // Programmatic descriptor firewall on window.EXPLORER_STATE so even direct console mutation cannot violate
+  // baseline lambda_etc = 0.0 under null controls or couple t_pool [s] to MCS steps.
+  var _internalLambdaEtc = 0.0;
+  var _allowInternalLambdaWrite = false;
+  var _internalActiveNullControl = 'baseline_no_coupling_default';
+  (function installExplorerStateFirewallGuards(st) {
+    Object.defineProperty(st, 'active_null_control', {
+      enumerable: true,
+      configurable: true,
+      get: function() { return _internalActiveNullControl; },
+      set: function(ctrlId) {
+        var nextId = String(ctrlId || 'baseline_no_coupling_default');
+        _internalActiveNullControl = nextId;
+        var ctrl = NULL_MODEL_WORKBENCH[nextId];
+        if (ctrl && ctrl.enforces_lambda_zero === true) {
+          _internalLambdaEtc = 0.0;
+          st.baseline_lambda_lock = true;
+        }
+      }
+    });
+    Object.defineProperty(st, 'lambda_etc', {
+      enumerable: true,
+      configurable: true,
+      get: function() { return _internalLambdaEtc; },
+      set: function(v) {
+        var num = Math.max(0.0, Number(v));
+        if (isNaN(num)) num = 0.0;
+        var curCtrl = NULL_MODEL_WORKBENCH[_internalActiveNullControl];
+        var isZeroCtrl = Boolean(curCtrl && curCtrl.enforces_lambda_zero);
+        if (!_allowInternalLambdaWrite && (isZeroCtrl || st.baseline_lambda_lock === true || st.strict_null_control_lock === true) && num > 0.0) {
+          _internalLambdaEtc = 0.0;
+          st.baseline_lambda_lock = true;
+          return;
+        }
+        _internalLambdaEtc = num;
+      }
+    });
+    Object.defineProperty(st, 'seconds_per_mcs', {
+      enumerable: true,
+      configurable: true,
+      get: function() { return NaN; },
+      set: function() {
+        if (MORPHOTYPE_DATA['CPM-Hypha']) MORPHOTYPE_DATA['CPM-Hypha'].seconds_per_mcs = NaN;
+      }
+    });
+    Object.defineProperty(st, 'd_pitch_status', {
+      enumerable: true,
+      configurable: true,
+      get: function() { return 'awaiting_measurement'; },
+      set: function() {
+        if (MORPHOTYPE_DATA['CPM-Hypha']) MORPHOTYPE_DATA['CPM-Hypha'].d_pitch_status = 'awaiting_measurement';
+      }
+    });
+    Object.defineProperty(st, 'time_bases_locked_uncoupled', {
+      enumerable: true,
+      configurable: true,
+      get: function() { return true; },
+      set: function() {}
+    });
+    Object.defineProperty(st, 'solvers_kept_separate', {
+      enumerable: true,
+      configurable: true,
+      get: function() { return true; },
+      set: function() {}
+    });
+    Object.defineProperty(st, 'solver_level_coupled_validation_claimed', {
+      enumerable: true,
+      configurable: true,
+      get: function() { return false; },
+      set: function() {}
+    });
+    Object.defineProperty(st, 'passing_rendering_tests_validate_software_boundaries_not_physical_model', {
+      enumerable: true,
+      configurable: true,
+      get: function() { return true; },
+      set: function() {}
+    });
+    Object.defineProperty(st, 'empirical_physical_or_biological_validation_claimed', {
+      enumerable: true,
+      configurable: true,
+      get: function() { return false; },
+      set: function() {}
+    });
+  })(window.EXPLORER_STATE);
 
   // Build 3D WebGL geometry buffers (cylinder rings, core shroud, and coupon substrate mesh)
   function buildWebGLMeshVertices(isMacro) {
@@ -2437,7 +2782,9 @@
     ctx.fillStyle = '#050912';
     ctx.fillRect(0, 0, W, H);
 
-    var mode = st.active_null_control;
+    var rawMode = st.active_null_control;
+    var modeObj = NULL_MODEL_WORKBENCH[rawMode] || NULL_MODEL_WORKBENCH.baseline_no_coupling_default;
+    var mode = modeObj.canonical_id || rawMode;
     var html = '';
 
     function drawBarChart(labels, values, colors, unitLabel) {
@@ -2570,7 +2917,15 @@
     document.getElementById('prov_field_id').textContent = rec.field_id;
     var lblEl = document.getElementById('prov_label');
     if (lblEl) lblEl.textContent = rec.label || rec.field_id;
+    var geomEl = document.getElementById('prov_geometry_classification');
+    if (geomEl) geomEl.textContent = rec.geometry_classification;
+    var evEl = document.getElementById('prov_evidence_classification');
+    if (evEl) evEl.textContent = rec.evidence_classification;
+    var epiEl = document.getElementById('prov_epistemic_class');
+    if (epiEl) epiEl.textContent = rec.epistemic_class || rec.data_classification;
     document.getElementById('prov_data_classification').textContent = rec.data_classification;
+    var statusEl = document.getElementById('prov_epistemic_status');
+    if (statusEl) statusEl.textContent = rec.epistemic_status;
     document.getElementById('prov_calibration_status').textContent = rec.calibration_status;
     document.getElementById('prov_units').textContent = rec.units;
     document.getElementById('prov_coordinate_frame').textContent = rec.coordinate_frame;
@@ -2585,7 +2940,8 @@
 
     var btns = document.querySelectorAll('[data-prov]');
     for (var i = 0; i < btns.length; i++) {
-      btns[i].classList.toggle('active', btns[i].getAttribute('data-prov') === rec.field_id);
+      var targetProv = btns[i].getAttribute('data-prov');
+      btns[i].classList.toggle('active', targetProv === rec.field_id || targetProv === rec.canonical_field_id);
     }
   }
 
@@ -2653,10 +3009,12 @@
 
   window.setActiveField = function(fieldId) {
     if (!PROVENANCE_REGISTRY[fieldId]) return false;
-    window.EXPLORER_STATE.active_field = fieldId;
+    var rec = PROVENANCE_REGISTRY[fieldId];
+    window.EXPLORER_STATE.active_field = rec.canonical_field_id || fieldId;
     var btns = document.querySelectorAll('[data-field]');
     for (var i = 0; i < btns.length; i++) {
-      btns[i].classList.toggle('active', btns[i].getAttribute('data-field') === fieldId);
+      var df = btns[i].getAttribute('data-field');
+      btns[i].classList.toggle('active', df === fieldId || df === window.EXPLORER_STATE.active_field);
     }
     updateProvenanceUI(fieldId);
     renderAll();
@@ -2675,16 +3033,19 @@
 
   window.selectCoupon = function(couponId) {
     if (!COUPON_LOCATORS[couponId]) return false;
-    window.EXPLORER_STATE.selected_coupon_id = couponId;
+    var cp = COUPON_LOCATORS[couponId];
+    window.EXPLORER_STATE.selected_coupon_id = cp.coupon_id;
     var btns = document.querySelectorAll('[data-coupon]');
     for (var i = 0; i < btns.length; i++) {
-      btns[i].classList.toggle('active', btns[i].getAttribute('data-coupon') === couponId);
+      btns[i].classList.toggle('active', btns[i].getAttribute('data-coupon') === cp.coupon_id);
     }
     if (PROVENANCE_REGISTRY[couponId]) {
       updateProvenanceUI(couponId);
+    } else if (PROVENANCE_REGISTRY[cp.coupon_id]) {
+      updateProvenanceUI(cp.coupon_id);
     }
     renderAll();
-    return COUPON_LOCATORS[couponId];
+    return cp;
   };
 
   window.setMorphotype = function(morphId) {
@@ -2793,6 +3154,8 @@
   window.setMacroPoolTime = function(tPoolSeconds) {
     var mcsBefore = window.EXPLORER_STATE.mcs_step;
     window.EXPLORER_STATE.t_pool_s = Number(tPoolSeconds);
+    window.EXPLORER_STATE.seconds_per_mcs = NaN;
+    window.EXPLORER_STATE.time_bases_locked_uncoupled = true;
     document.getElementById('lbl_t_pool_s').textContent = window.EXPLORER_STATE.t_pool_s + ' s';
     renderAll();
     return {
@@ -2806,6 +3169,8 @@
   window.setMicroMcsStep = function(mcsStep) {
     var tPoolBefore = window.EXPLORER_STATE.t_pool_s;
     window.EXPLORER_STATE.mcs_step = Number(mcsStep);
+    window.EXPLORER_STATE.seconds_per_mcs = NaN;
+    window.EXPLORER_STATE.time_bases_locked_uncoupled = true;
     document.getElementById('lbl_mcs_step').textContent = window.EXPLORER_STATE.mcs_step + ' MCS';
     renderAll();
     return {
@@ -2815,13 +3180,220 @@
     };
   };
 
-  window.setLambdaEtc = function(val) {
+  window.setLambdaEtc = function(val, options) {
+    var st = window.EXPLORER_STATE;
     var num = Math.max(0.0, Number(val));
-    window.EXPLORER_STATE.lambda_etc = num;
+    if (isNaN(num)) num = 0.0;
+    var curCtrl = NULL_MODEL_WORKBENCH[st.active_null_control];
+    var isZeroEnforcedCtrl = Boolean(curCtrl && curCtrl.enforces_lambda_zero);
+    var enforceLock = Boolean((options && options.enforceBaselineLock === true) || st.strict_null_control_lock === true);
+
+    if (num > 0.0 && isZeroEnforcedCtrl) {
+      if (enforceLock) {
+        num = 0.0;
+        st.baseline_lambda_lock = true;
+      } else {
+        st.baseline_lambda_lock = false;
+        st.active_null_control = 'EXPLORATORY_COUPLED_HYPOTHESIS';
+      }
+    } else if (num === 0.0) {
+      st.baseline_lambda_lock = true;
+      if (st.active_null_control === 'EXPLORATORY_COUPLED_HYPOTHESIS') {
+        st.active_null_control = 'baseline_no_coupling_default';
+      }
+    }
+
+    _allowInternalLambdaWrite = true;
+    st.lambda_etc = num;
+    _allowInternalLambdaWrite = false;
+    var slL = document.getElementById('slider_lambda_etc');
+    if (slL) slL.value = String(st.lambda_etc);
     document.getElementById('lbl_lambda_etc').textContent =
-      num.toFixed(2) + (num === 0.0 ? ' (NULL)' : ' (EXPLORATORY)');
+      st.lambda_etc.toFixed(2) + (st.lambda_etc === 0.0 ? ' (NULL)' : ' (EXPLORATORY)');
     renderAll();
-    return window.EXPLORER_STATE.lambda_etc;
+    return st.lambda_etc;
+  };
+
+  window.setBaselineLambdaLock = function(locked) {
+    var st = window.EXPLORER_STATE;
+    st.strict_null_control_lock = Boolean(locked);
+    st.baseline_lambda_lock = Boolean(locked);
+    if (locked) {
+      st.lambda_etc = 0.0;
+      var slL = document.getElementById('slider_lambda_etc');
+      if (slL) slL.value = '0';
+      var lblL = document.getElementById('lbl_lambda_etc');
+      if (lblL) lblL.textContent = '0.00 (NULL)';
+      if (st.active_null_control === 'EXPLORATORY_COUPLED_HYPOTHESIS') {
+        st.active_null_control = 'baseline_no_coupling_default';
+      }
+      renderAll();
+    }
+    return {
+      baseline_lambda_lock: st.baseline_lambda_lock,
+      strict_null_control_lock: st.strict_null_control_lock,
+      lambda_etc: st.lambda_etc,
+      active_null_control: st.active_null_control
+    };
+  };
+
+  window.attemptTimelineCoupling = function(requestedSecondsPerMcs) {
+    var st = window.EXPLORER_STATE;
+    st.seconds_per_mcs = NaN;
+    st.d_pitch_status = 'awaiting_measurement';
+    st.time_bases_locked_uncoupled = true;
+    st.solvers_kept_separate = true;
+    st.solver_level_coupled_validation_claimed = false;
+    if (MORPHOTYPE_DATA['CPM-Hypha']) {
+      MORPHOTYPE_DATA['CPM-Hypha'].seconds_per_mcs = NaN;
+      MORPHOTYPE_DATA['CPM-Hypha'].d_pitch_status = 'awaiting_measurement';
+    }
+    var curCtrl = NULL_MODEL_WORKBENCH[st.active_null_control];
+    var zeroEnforced = Boolean(
+      st.default_lambda_etc_on_load === 0.0 &&
+      (!(curCtrl && curCtrl.enforces_lambda_zero) || st.lambda_etc === 0.0)
+    );
+    return {
+      timeline_coupling_rejected: true,
+      coupling_rejected: true,
+      reason: 'NO_VALIDATED_SECONDS_TO_MCS_CONVERSION',
+      baseline_lambda_etc_enforced_zero: zeroEnforced,
+      rendering_tests_validate_physical_model: false,
+      requested_seconds_per_mcs: requestedSecondsPerMcs,
+      enforced_seconds_per_mcs: st.seconds_per_mcs,
+      seconds_per_mcs_is_nan: Number.isNaN(st.seconds_per_mcs),
+      d_pitch_status: st.d_pitch_status,
+      time_bases_locked_uncoupled: st.time_bases_locked_uncoupled
+    };
+  };
+
+  window.enforceBaselineAndTimelineFirewall = function() {
+    var st = window.EXPLORER_STATE;
+    st.seconds_per_mcs = NaN;
+    st.d_pitch_status = 'awaiting_measurement';
+    st.time_bases_locked_uncoupled = true;
+    st.solvers_kept_separate = true;
+    st.solver_level_coupled_validation_claimed = false;
+    st.passing_rendering_tests_validate_software_boundaries_not_physical_model = true;
+    st.empirical_physical_or_biological_validation_claimed = false;
+    if (MORPHOTYPE_DATA['CPM-Hypha']) {
+      MORPHOTYPE_DATA['CPM-Hypha'].seconds_per_mcs = NaN;
+      MORPHOTYPE_DATA['CPM-Hypha'].d_pitch_status = 'awaiting_measurement';
+    }
+    var curCtrl = NULL_MODEL_WORKBENCH[st.active_null_control];
+    var requiresZero = Boolean(curCtrl && curCtrl.enforces_lambda_zero);
+    if (requiresZero && st.lambda_etc !== 0.0) {
+      st.lambda_etc = 0.0;
+      st.baseline_lambda_lock = true;
+      var slL = document.getElementById('slider_lambda_etc');
+      if (slL) slL.value = '0';
+      var lblL = document.getElementById('lbl_lambda_etc');
+      if (lblL) lblL.textContent = '0.00 (NULL)';
+    }
+    renderAll();
+    var zeroEnforced = Boolean(
+      st.default_lambda_etc_on_load === 0.0 &&
+      (!requiresZero || (st.lambda_etc === 0.0 && st.baseline_lambda_lock === true))
+    );
+    return {
+      timeline_coupling_rejected: true,
+      coupling_rejected: true,
+      reason: 'NO_VALIDATED_SECONDS_TO_MCS_CONVERSION',
+      baseline_lambda_etc_enforced_zero: zeroEnforced,
+      rendering_tests_validate_physical_model: false,
+      enforced: true,
+      active_null_control: st.active_null_control,
+      lambda_etc: st.lambda_etc,
+      baseline_lambda_lock: st.baseline_lambda_lock,
+      seconds_per_mcs_is_nan: Number.isNaN(st.seconds_per_mcs),
+      d_pitch_status: st.d_pitch_status,
+      time_bases_locked_uncoupled: st.time_bases_locked_uncoupled,
+      solvers_kept_separate: st.solvers_kept_separate,
+      solver_level_coupled_validation_claimed: st.solver_level_coupled_validation_claimed
+    };
+  };
+
+  window.attemptCrossTimelineOrBaselineViolation = function() {
+    var st = window.EXPLORER_STATE;
+    var savedControl = st.active_null_control;
+    var savedLambda = st.lambda_etc;
+    var savedStrict = st.strict_null_control_lock;
+    var savedTPool = st.t_pool_s;
+    var savedMcs = st.mcs_step;
+
+    // 1. Raise lambda_etc > 0 then activate baseline null control
+    window.setLambdaEtc(0.85);
+    var lambdaDuringExploratory = st.lambda_etc;
+    var controlDuringExploratory = st.active_null_control;
+    window.setNullControl('H0_baseline_lambda0');
+    var lambdaAfterBaselineNull = st.lambda_etc;
+    var lockAfterBaselineNull = st.baseline_lambda_lock;
+
+    // 2. Attempt to raise lambda_etc > 0 with enforceBaselineLock: true while in baseline null
+    window.setLambdaEtc(0.95, { enforceBaselineLock: true });
+    var lambdaAfterLockedAttempt = st.lambda_etc;
+
+    // 3. Attempt to couple timelines via attemptTimelineCoupling(12.5) and direct state tampering
+    var couplingAttempt = window.attemptTimelineCoupling(12.5);
+    st.seconds_per_mcs = 10.0;
+    st.time_bases_locked_uncoupled = false;
+    st.lambda_etc = 0.75;
+    var rawTamperBlockedImmediately = Boolean(
+      Number.isNaN(st.seconds_per_mcs) &&
+      st.time_bases_locked_uncoupled === true &&
+      st.lambda_etc === 0.0
+    );
+    var firewallAfterTamper = window.enforceBaselineAndTimelineFirewall();
+
+    // 4. Verify macro/micro slider independence
+    var macroStep = window.setMacroPoolTime(savedTPool + 300);
+    var microStep = window.setMicroMcsStep(savedMcs + 15);
+
+    // Restore original state cleanly
+    st.strict_null_control_lock = savedStrict;
+    window.setMacroPoolTime(savedTPool);
+    window.setMicroMcsStep(savedMcs);
+    window.setNullControl(savedControl);
+    if (savedLambda > 0) {
+      window.setLambdaEtc(savedLambda);
+    }
+
+    var blocked = Boolean(
+      lambdaDuringExploratory === 0.85 &&
+      controlDuringExploratory === 'EXPLORATORY_COUPLED_HYPOTHESIS' &&
+      lambdaAfterBaselineNull === 0.0 &&
+      lockAfterBaselineNull === true &&
+      lambdaAfterLockedAttempt === 0.0 &&
+      couplingAttempt.timeline_coupling_rejected === true &&
+      couplingAttempt.reason === 'NO_VALIDATED_SECONDS_TO_MCS_CONVERSION' &&
+      couplingAttempt.baseline_lambda_etc_enforced_zero === true &&
+      couplingAttempt.rendering_tests_validate_physical_model === false &&
+      couplingAttempt.seconds_per_mcs_is_nan === true &&
+      rawTamperBlockedImmediately === true &&
+      firewallAfterTamper.timeline_coupling_rejected === true &&
+      firewallAfterTamper.reason === 'NO_VALIDATED_SECONDS_TO_MCS_CONVERSION' &&
+      firewallAfterTamper.baseline_lambda_etc_enforced_zero === true &&
+      firewallAfterTamper.rendering_tests_validate_physical_model === false &&
+      firewallAfterTamper.lambda_etc === 0.0 &&
+      firewallAfterTamper.seconds_per_mcs_is_nan === true &&
+      firewallAfterTamper.time_bases_locked_uncoupled === true &&
+      macroStep.mcs_step_unchanged === true &&
+      microStep.t_pool_s_unchanged === true
+    );
+
+    return {
+      all_violations_blocked: blocked,
+      raw_property_tamper_blocked_immediately: rawTamperBlockedImmediately,
+      exploratory_transition_isolated_from_null: controlDuringExploratory === 'EXPLORATORY_COUPLED_HYPOTHESIS',
+      null_control_reset_lambda_to_zero: lambdaAfterBaselineNull === 0.0,
+      locked_attempt_clamped_to_zero: lambdaAfterLockedAttempt === 0.0,
+      timeline_coupling_rejected: couplingAttempt.timeline_coupling_rejected === true && couplingAttempt.seconds_per_mcs_is_nan === true,
+      reason: 'NO_VALIDATED_SECONDS_TO_MCS_CONVERSION',
+      baseline_lambda_etc_enforced_zero: firewallAfterTamper.baseline_lambda_etc_enforced_zero === true,
+      rendering_tests_validate_physical_model: false,
+      firewall_restored_after_tamper: firewallAfterTamper.lambda_etc === 0.0 && firewallAfterTamper.seconds_per_mcs_is_nan === true,
+      macro_micro_sliders_orthogonal: macroStep.mcs_step_unchanged === true && microStep.t_pool_s_unchanged === true
+    };
   };
 
   var NULL_CONTROL_TO_PROVENANCE_KEY = {
@@ -2831,7 +3403,19 @@
     control_5a_spatial_bias_null: 'control_5a_spatial_bias_null',
     control_5b_biochemical_magnetic_sensitivity: 'control_5b_rpm_sensitivity',
     control_6_oxidant_chemotropism: 'control_6_oxidant_chemotropism',
-    epistemic_gates_eg1_eg4_and_links_l1_l5: 'epistemic_gates_eg1_eg4_and_links_l1_l5'
+    epistemic_gates_eg1_eg4_and_links_l1_l5: 'epistemic_gates_eg1_eg4_and_links_l1_l5',
+    H0_baseline_lambda0: 'H0_baseline_lambda0',
+    H0_1_sterile_abiotic: 'H0_1_sterile_abiotic',
+    H0_2_dead_biomass: 'H0_2_dead_biomass',
+    H0_3_non_melanized: 'H0_3_non_melanized',
+    H0_4_equal_dose_schedule: 'H0_4_equal_dose_schedule',
+    H0_equal_dose_schedules: 'H0_equal_dose_schedules',
+    H0_5a_spatial_bias_null: 'H0_5a_spatial_bias_null',
+    H0_5b_biochemical_magnetic: 'H0_5b_biochemical_magnetic',
+    H0_5b_rpm_sensitivity: 'H0_5b_rpm_sensitivity',
+    H0_6_chemotropism: 'H0_6_chemotropism',
+    H0_epistemic_gates: 'H0_epistemic_gates',
+    EXPLORATORY_COUPLED_HYPOTHESIS: 'EXPLORATORY_COUPLED_HYPOTHESIS'
   };
 
   window.setNullControl = function(controlId) {
@@ -2839,18 +3423,32 @@
     if (controlId === 'control_5b_rpm_sensitivity') {
       resolvedId = 'control_5b_biochemical_magnetic_sensitivity';
     }
-    if (!NULL_MODEL_WORKBENCH[resolvedId]) return null;
+    var ctrlObj = NULL_MODEL_WORKBENCH[resolvedId];
+    if (!ctrlObj) return null;
     window.EXPLORER_STATE.active_null_control = resolvedId;
+
+    // Programmatically enforce lambda_etc === 0.0 when activating any baseline or null control
+    if (ctrlObj.enforces_lambda_zero === true) {
+      window.EXPLORER_STATE.lambda_etc = 0.0;
+      window.EXPLORER_STATE.baseline_lambda_lock = true;
+      var slL = document.getElementById('slider_lambda_etc');
+      if (slL) slL.value = '0';
+      var lblL = document.getElementById('lbl_lambda_etc');
+      if (lblL) lblL.textContent = '0.00 (NULL)';
+    }
+
+    var canonicalBtnId = ctrlObj.canonical_id || resolvedId;
     var btns = document.querySelectorAll('[data-null]');
     for (var i = 0; i < btns.length; i++) {
-      btns[i].classList.toggle('active', btns[i].getAttribute('data-null') === resolvedId);
+      var dn = btns[i].getAttribute('data-null');
+      btns[i].classList.toggle('active', dn === resolvedId || dn === canonicalBtnId);
     }
-    var provKey = NULL_CONTROL_TO_PROVENANCE_KEY[resolvedId];
+    var provKey = NULL_CONTROL_TO_PROVENANCE_KEY[resolvedId] || NULL_CONTROL_TO_PROVENANCE_KEY[canonicalBtnId];
     if (provKey && PROVENANCE_REGISTRY[provKey]) {
       updateProvenanceUI(provKey);
     }
-    renderNullModelWorkbench();
-    return NULL_MODEL_WORKBENCH[resolvedId];
+    renderAll();
+    return ctrlObj;
   };
 
   window.setScheduleRegime = function(regimeId) {
@@ -2885,16 +3483,72 @@
     var geomOk = Boolean(
       gp &&
       gp.geometry_classification === 'SYNTHETIC_SCHEMATIC' &&
+      gp.evidence_classification === 'synthetic' &&
       gp.epistemic_class === 'SYNTHETIC_SCHEMATIC' &&
       gp.data_classification === 'SYNTHETIC_SCHEMATIC' &&
       gp.is_tecdoc643_benchmark_geometry === false &&
       PROVENANCE_REGISTRY.pool_geometry &&
+      PROVENANCE_REGISTRY.pool_geometry.geometry_classification === 'SYNTHETIC_SCHEMATIC' &&
+      PROVENANCE_REGISTRY.pool_geometry.evidence_classification === 'synthetic' &&
       PROVENANCE_REGISTRY.pool_geometry.data_classification === 'SYNTHETIC_SCHEMATIC' &&
       PROVENANCE_REGISTRY.pool_geometry.is_tecdoc643_benchmark_geometry === false &&
       PROVENANCE_REGISTRY.pool_geometry_cad.data_classification === 'SYNTHETIC_SCHEMATIC' &&
       PROVENANCE_REGISTRY.pool_geometry_cad.is_tecdoc643_benchmark_geometry === false &&
       PROVENANCE_REGISTRY.quarter_wedge_cutaway.data_classification === 'SYNTHETIC_SCHEMATIC' &&
       PROVENANCE_REGISTRY.quarter_wedge_cutaway.is_tecdoc643_benchmark_geometry === false
+    );
+
+    var validEvidenceSet = { synthetic: true, calculated: true, uncalibrated_model_snapshot: true, unavailable: true };
+    var validGeometrySet = { SYNTHETIC_SCHEMATIC: true, MICRO_BIOFILM_SLAB_VOXEL: true };
+    var regKeys = Object.keys(PROVENANCE_REGISTRY);
+    var allPropKeys = Object.getOwnPropertyNames(PROVENANCE_REGISTRY);
+    var taxonomyOk = Boolean(
+      st.provenance_taxonomy_contract &&
+      Array.isArray(st.provenance_taxonomy_contract.normalized_evidence_taxonomy) &&
+      st.provenance_taxonomy_contract.normalized_evidence_taxonomy.length === 7 &&
+      Array.isArray(st.provenance_taxonomy_contract.geometry_classification_taxonomy) &&
+      st.provenance_taxonomy_contract.geometry_classification_taxonomy.length === 4 &&
+      regKeys.length === 33 &&
+      allPropKeys.length >= 33 &&
+      allPropKeys.every(function(k) {
+        var r = PROVENANCE_REGISTRY[k];
+        return Boolean(
+          r &&
+          validGeometrySet[r.geometry_classification] === true &&
+          validEvidenceSet[r.evidence_classification] === true &&
+          r.evidence_classification === r.evidence_classification.toLowerCase() &&
+          typeof r.epistemic_status === 'string' &&
+          r.epistemic_status.length > 20
+        );
+      })
+    );
+
+    var narrowClaimsOk = Boolean(
+      st.passing_rendering_tests_validate_software_boundaries_not_physical_model === true &&
+      st.empirical_physical_or_biological_validation_claimed === false &&
+      st.solver_level_coupled_validation_claimed === false
+    );
+
+    var tcProbe = typeof window.attemptTimelineCoupling === 'function' ? window.attemptTimelineCoupling(1.0) : null;
+    var timelineFirewallOk = Boolean(
+      st.time_bases_locked_uncoupled === true &&
+      Number.isNaN(st.seconds_per_mcs) &&
+      st.d_pitch_status === 'awaiting_measurement' &&
+      tcProbe &&
+      tcProbe.timeline_coupling_rejected === true &&
+      tcProbe.reason === 'NO_VALIDATED_SECONDS_TO_MCS_CONVERSION' &&
+      tcProbe.baseline_lambda_etc_enforced_zero === true &&
+      tcProbe.rendering_tests_validate_physical_model === false &&
+      typeof window.enforceBaselineAndTimelineFirewall === 'function'
+    );
+
+    var baselineEnforcedOk = Boolean(
+      st.default_lambda_etc_on_load === 0.0 &&
+      c1.default_lambda_etc === 0.0 &&
+      c1.enforces_lambda_zero === true &&
+      NULL_MODEL_WORKBENCH.H0_baseline_lambda0 &&
+      NULL_MODEL_WORKBENCH.H0_baseline_lambda0.enforces_lambda_zero === true &&
+      typeof window.setBaselineLambdaLock === 'function'
     );
 
     var checks = {
@@ -2904,6 +3558,14 @@
       time_bases_uncoupled: st.time_bases_locked_uncoupled === true && Number.isNaN(st.seconds_per_mcs) && st.d_pitch_status === 'awaiting_measurement',
       synthetic_schematic_not_tecdoc643_geometry: geomOk,
       syntheticSchematicNotTecdoc643Geometry: geomOk,
+      provenance_taxonomy_separated: taxonomyOk,
+      provenanceTaxonomySeparated: taxonomyOk,
+      passing_rendering_tests_validate_software_boundaries_not_physical_model: narrowClaimsOk,
+      passingRenderingTestsValidateSoftwareBoundariesNotPhysicalModel: narrowClaimsOk,
+      timeline_coupling_programmatically_blocked: timelineFirewallOk,
+      timelineCouplingProgrammaticallyBlocked: timelineFirewallOk,
+      baseline_null_control_enforces_lambda_zero: baselineEnforcedOk,
+      baselineNullControlEnforcesLambdaZero: baselineEnforcedOk,
       fein_vs_co60_separated: c2.fein_1997_status === 'LITERATURE_DERIVED_FEIN_1997' && c2.co60_affinity_status === 'PROVISIONAL_ASSUMPTION_AWAITING_CALIBRATION',
       schedule_control_regime_dependent: c5.primary_yields_identical_across_schedules === true &&
         c5.downstream_differences_are_regime_dependent === true &&
@@ -2934,6 +3596,11 @@
     return {
       all_passed: allPassed,
       artifact_id: st.artifact_id,
+      provenanceTaxonomySeparated: taxonomyOk,
+      passingRenderingTestsValidateSoftwareBoundariesNotPhysicalModel: narrowClaimsOk,
+      empiricalPhysicalOrBiologicalValidationClaimed: st.empirical_physical_or_biological_validation_claimed,
+      timelineCouplingProgrammaticallyBlocked: timelineFirewallOk,
+      baselineNullControlEnforcesLambdaZero: baselineEnforcedOk,
       checks: checks
     };
   };
@@ -3055,6 +3722,7 @@
 
   window.__POOL_BIOFILM_EXPLORER__ = {
     state: window.EXPLORER_STATE,
+    provenance_taxonomy_contract: PROVENANCE_TAXONOMY_CONTRACT,
     provenance_registry: PROVENANCE_REGISTRY,
     coupon_locators: COUPON_LOCATORS,
     morphotype_data: MORPHOTYPE_DATA,
@@ -3075,6 +3743,10 @@
     setMacroPoolTime: window.setMacroPoolTime,
     setMicroMcsStep: window.setMicroMcsStep,
     setLambdaEtc: window.setLambdaEtc,
+    setBaselineLambdaLock: window.setBaselineLambdaLock,
+    attemptTimelineCoupling: window.attemptTimelineCoupling,
+    enforceBaselineAndTimelineFirewall: window.enforceBaselineAndTimelineFirewall,
+    attemptCrossTimelineOrBaselineViolation: window.attemptCrossTimelineOrBaselineViolation,
     setOkloComparisonToggle: window.setOkloComparisonToggle,
     verifyScientificBoundaries: window.verifyScientificBoundaries,
     renderAll: renderAll

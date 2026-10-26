@@ -816,9 +816,15 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   assert.ok(html.includes('empirically_validates_melanin_radical_pair_mechanism: false'), 'Missing Control 5b empirical validation guard');
   assert.ok(html.includes('grounded_in_measured_melanin_spin_hamiltonian: false'), 'Missing Control 5b spin Hamiltonian guard');
 
-  // 6. SYNTHETIC_SCHEMATIC geometry provenance, label field & commit locks + POOLWATER_WORKFLOW_SPEC.md parity
+  // 6. SYNTHETIC_SCHEMATIC geometry provenance, separated taxonomy contract & commit locks + POOLWATER_WORKFLOW_SPEC.md parity
   assert.strictEqual(html.includes('BENCHMARK_GEOMETRY'), false, 'reactor_pool_biofilm_explorer.html must not label its schematic 3x3 geometry as BENCHMARK_GEOMETRY');
+  assert.ok(html.includes('PROVENANCE_TAXONOMY_CONTRACT'), 'Missing PROVENANCE_TAXONOMY_CONTRACT in reactor_pool_biofilm_explorer.html');
+  assert.ok(html.includes('provenance_taxonomy_contract: PROVENANCE_TAXONOMY_CONTRACT'), 'Missing provenance_taxonomy_contract on EXPLORER_STATE');
   assert.ok(html.includes("geometry_classification: 'SYNTHETIC_SCHEMATIC'"), 'Missing geometry_classification: SYNTHETIC_SCHEMATIC');
+  assert.ok(html.includes("geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL'"), 'Missing geometry_classification: MICRO_BIOFILM_SLAB_VOXEL');
+  for (const evClass of ['synthetic', 'calculated', 'uncalibrated_model_snapshot', 'unavailable']) {
+    assert.ok(html.includes(`evidence_classification: '${evClass}'`), `Missing lowercase evidence_classification: '${evClass}'`);
+  }
   assert.ok(html.includes("epistemic_class: 'SYNTHETIC_SCHEMATIC'"), 'Missing epistemic_class: SYNTHETIC_SCHEMATIC');
   assert.ok(html.includes("data_classification: 'SYNTHETIC_SCHEMATIC'"), 'Missing data_classification: SYNTHETIC_SCHEMATIC');
   assert.ok(html.includes('is_tecdoc643_benchmark_geometry: false'), 'Missing is_tecdoc643_benchmark_geometry: false');
@@ -828,7 +834,35 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   );
   assert.ok(html.includes('synthetic_schematic_not_tecdoc643_geometry: geomOk'), 'Missing synthetic_schematic_not_tecdoc643_geometry check in verifyScientificBoundaries');
   assert.ok(html.includes('syntheticSchematicNotTecdoc643Geometry: geomOk'), 'Missing syntheticSchematicNotTecdoc643Geometry check in verifyScientificBoundaries');
-  assert.ok(html.includes('id="prov_label"'), 'Missing prov_label row in Provenance Inspector table');
+  for (const domRowId of [
+    'id="prov_label"',
+    'id="prov_geometry_classification"',
+    'id="prov_evidence_classification"',
+    'id="prov_epistemic_class"',
+    'id="prov_data_classification"',
+    'id="prov_epistemic_status"'
+  ]) {
+    assert.ok(html.includes(domRowId), `Missing ${domRowId} row in Provenance Inspector table`);
+  }
+
+  // 7. Gate 3: Narrow validation claims & programmatic enforcement of baseline lambda_etc = 0.0 and uncoupled timelines
+  assert.ok(html.includes('passing_rendering_tests_validate_software_boundaries_not_physical_model: true'), 'Missing passing_rendering_tests_validate_software_boundaries_not_physical_model: true');
+  assert.ok(html.includes('empirical_physical_or_biological_validation_claimed: false'), 'Missing empirical_physical_or_biological_validation_claimed: false');
+  assert.ok(html.includes('baseline_lambda_lock: true'), 'Missing baseline_lambda_lock: true');
+  for (const fwHook of [
+    'setBaselineLambdaLock: window.setBaselineLambdaLock',
+    'attemptTimelineCoupling: window.attemptTimelineCoupling',
+    'enforceBaselineAndTimelineFirewall: window.enforceBaselineAndTimelineFirewall',
+    'attemptCrossTimelineOrBaselineViolation: window.attemptCrossTimelineOrBaselineViolation',
+    'provenanceTaxonomySeparated: taxonomyOk',
+    'passingRenderingTestsValidateSoftwareBoundariesNotPhysicalModel: narrowClaimsOk',
+    'empiricalPhysicalOrBiologicalValidationClaimed: st.empirical_physical_or_biological_validation_claimed',
+    'timelineCouplingProgrammaticallyBlocked: timelineFirewallOk',
+    'baselineNullControlEnforcesLambdaZero: baselineEnforcedOk'
+  ]) {
+    assert.ok(html.includes(fwHook), `Missing Gate 3 firewall/boundary property: ${fwHook}`);
+  }
+
   for (const commitHash of [
     '903f278',
     '7c21d35',
@@ -851,7 +885,284 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   assert.ok(specTxt.includes('SYNTHETIC_SCHEMATIC'), 'POOLWATER_WORKFLOW_SPEC.md missing SYNTHETIC_SCHEMATIC');
   assert.ok(specTxt.includes('is_tecdoc643_benchmark_geometry = false'), 'POOLWATER_WORKFLOW_SPEC.md missing is_tecdoc643_benchmark_geometry = false');
 
-  console.log('PASS [Coordinated 3D Pool-and-Biofilm Explorer 7/7]: 4 spatial layers, SYNTHETIC_SCHEMATIC geometry provenance (not TECDOC-643 6x7), camera views, uncoupled t_pool/MCS time bases, default lambda_etc=0.0, 4 morphotypes (SL/SS/LL/CPM-Hypha), 7 null-model comparisons, Control 5b guards, verifyScientificBoundaries, and provenance commit locks verified.');
+  // 8. Gate 1 & Gate 2: Verify benchmark_manifest.json taxonomy contract & exact on-disk SHA-256 digests of all Gate-0 frozen inputs
+  const bmPath = path.join(ROOT, 'benchmark_manifest.json');
+  assert.ok(fs.existsSync(bmPath), 'Missing benchmark_manifest.json');
+  const bm = JSON.parse(fs.readFileSync(bmPath, 'utf8'));
+  const g0 = bm.gate_0_frozen_inputs;
+  assert.ok(g0, 'Missing gate_0_frozen_inputs in benchmark_manifest.json');
+
+  // Verify Gate 1 taxonomy fields in benchmark_manifest.json
+  const expectedEpistemicStatus = 'COORDINATED_SYNTHETIC_AND_REDUCED_ORDER_EXPLORER (geometry_classification=SYNTHETIC_SCHEMATIC, not TECDOC-643 6x7 benchmark geometry; combines synthetic flow/geometry, reduced-order calculated radiolysis, uncalibrated_model_snapshot biofilm/sorption layers, and unavailable validated CFD; passing rendering and boundary tests verify software implementation only, not empirical physical or biological validation; baseline lambda_etc=0.0 and uncoupled t_pool [s] vs MCS timelines strictly enforced)';
+  for (const g0Key of ['REACTOR-POOL-BIOFILM-COORDINATED-3D-01', 'REACTOR-POOL-BIOFILM-3D-01']) {
+    const entry = g0[g0Key];
+    assert.ok(entry, `Missing ${g0Key} in benchmark_manifest.json gate_0_frozen_inputs`);
+    assert.strictEqual(entry.geometry_classification, 'SYNTHETIC_SCHEMATIC', `Expected geometry_classification=SYNTHETIC_SCHEMATIC on ${g0Key}`);
+    assert.strictEqual(entry.evidence_classification, 'synthetic', `Expected lowercase evidence_classification=synthetic on ${g0Key}`);
+    assert.strictEqual(entry.epistemic_class, 'SYNTHETIC_SCHEMATIC', `Expected epistemic_class=SYNTHETIC_SCHEMATIC on ${g0Key}`);
+    assert.strictEqual(entry.data_classification, 'SYNTHETIC_SCHEMATIC', `Expected data_classification=SYNTHETIC_SCHEMATIC on ${g0Key}`);
+    assert.strictEqual(entry.epistemic_status, expectedEpistemicStatus, `Unexpected epistemic_status on ${g0Key}`);
+    assert.strictEqual(entry.is_tecdoc643_benchmark_geometry, false, `Expected is_tecdoc643_benchmark_geometry=false on ${g0Key}`);
+  }
+  const g1Coord = bm.gate_1_normalized_contracts && bm.gate_1_normalized_contracts.coordinated_pool_biofilm_3d_viewer_benchmark;
+  assert.ok(g1Coord, 'Missing gate_1_normalized_contracts.coordinated_pool_biofilm_3d_viewer_benchmark');
+  assert.strictEqual(g1Coord.geometry_classification, 'SYNTHETIC_SCHEMATIC');
+  assert.strictEqual(g1Coord.evidence_classification, 'synthetic');
+  assert.strictEqual(g1Coord.epistemic_class, 'SYNTHETIC_SCHEMATIC');
+  assert.strictEqual(g1Coord.data_classification, 'SYNTHETIC_SCHEMATIC');
+  assert.strictEqual(g1Coord.epistemic_status, expectedEpistemicStatus);
+  assert.ok(g1Coord.provenance_taxonomy_contract, 'Missing provenance_taxonomy_contract in gate_1_normalized_contracts.coordinated_pool_biofilm_3d_viewer_benchmark');
+  assert.deepStrictEqual(
+    g1Coord.provenance_taxonomy_contract.normalized_evidence_taxonomy,
+    ['measured', 'calculated', 'synthetic', 'uncalibrated_model_snapshot', 'replayed', 'transcribed', 'unavailable']
+  );
+  assert.deepStrictEqual(
+    g1Coord.provenance_taxonomy_contract.geometry_classification_taxonomy,
+    ['SYNTHETIC_SCHEMATIC', 'MICRO_BIOFILM_SLAB_VOXEL', 'TECDOC643_6X7_BENCHMARK_REFERENCE', 'POOLWATER_R200_H800_SYNTHETIC_CYLINDER']
+  );
+
+  // Execute reactor_pool_biofilm_explorer.html inline script in a Node VM context to verify Gate 1 & Gate 3 runtime contracts
+  const vm = require('vm');
+  const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
+  assert.ok(scriptMatch && scriptMatch[1], 'Missing inline <script> in reactor_pool_biofilm_explorer.html');
+  const domElements = {};
+  function getMockEl(id) {
+    if (!domElements[id]) {
+      domElements[id] = {
+        id,
+        width: 560,
+        height: 360,
+        value: '0',
+        max: '30',
+        checked: true,
+        textContent: '',
+        innerHTML: '',
+        className: '',
+        style: { display: 'block', cursor: 'grab' },
+        classList: {
+          _set: new Set(),
+          toggle(cls, force) {
+            if (force === undefined) {
+              if (this._set.has(cls)) this._set.delete(cls); else this._set.add(cls);
+            } else if (force) {
+              this._set.add(cls);
+            } else {
+              this._set.delete(cls);
+            }
+          },
+          contains(cls) { return this._set.has(cls); }
+        },
+        getAttribute() { return ''; },
+        addEventListener() {},
+        getBoundingClientRect() { return { left: 0, top: 0, width: 560, height: 360 }; },
+        getContext(type) {
+          if (type === '2d') {
+            return {
+              clearRect() {}, fillRect() {}, strokeRect() {}, beginPath() {}, moveTo() {}, lineTo() {},
+              closePath() {}, fill() {}, stroke() {}, arc() {}, ellipse() {}, fillText() {},
+              save() {}, restore() {}, translate() {}, rotate() {}, setLineDash() {},
+              createLinearGradient() { return { addColorStop() {} }; }
+            };
+          }
+          return null;
+        }
+      };
+    }
+    return domElements[id];
+  }
+  const sandboxWindow = {
+    location: { search: '?force2d=1' },
+    URLSearchParams,
+    Math,
+    Number,
+    String,
+    Boolean,
+    Object,
+    Array,
+    Float32Array,
+    isNaN,
+    addEventListener() {},
+    document: {
+      getElementById: getMockEl,
+      querySelectorAll() { return []; }
+    }
+  };
+  sandboxWindow.window = sandboxWindow;
+  vm.runInNewContext(scriptMatch[1], sandboxWindow);
+
+  const vmApi = sandboxWindow.__POOL_BIOFILM_EXPLORER__;
+  const vmState = sandboxWindow.getState();
+  assert.ok(vmApi && vmState, 'VM execution of reactor_pool_biofilm_explorer.html failed to expose __POOL_BIOFILM_EXPLORER__ or getState()');
+  assert.deepStrictEqual(
+    JSON.parse(JSON.stringify(vmState.provenance_taxonomy_contract)),
+    g1Coord.provenance_taxonomy_contract,
+    'getState().provenance_taxonomy_contract must match benchmark_manifest.json gate_1_normalized_contracts.coordinated_pool_biofilm_3d_viewer_benchmark.provenance_taxonomy_contract'
+  );
+
+  // Verify all 33 canonical registry entries + all shorthand aliases in VM runtime
+  const canonicalKeys = Object.keys(vmApi.provenance_registry);
+  assert.strictEqual(canonicalKeys.length, 33, `Expected 33 canonical PROVENANCE_REGISTRY keys, got ${canonicalKeys.length}`);
+  const requiredAliasKeys = [
+    'boundary_layer_um', 'dose_rate_Gy_h', 'H2O2_uM', 'H2_uM', 'OH_rad_nM', 'e_aq_nM',
+    'oklo_comparison', 'Co60_retained_Bq_cm2', 'Ag110m_algal_Bq_g', 'J_ETC_fmol_cm2_s',
+    'C1', 'C2', 'C3', 'SL', 'SS', 'LL', 'CPM-Hypha',
+    'H0_baseline_lambda0', 'H0_1_sterile_abiotic', 'H0_2_dead_biomass', 'H0_3_non_melanized',
+    'H0_4_equal_dose_schedule', 'H0_equal_dose_schedules', 'H0_5a_spatial_bias_null',
+    'H0_5b_biochemical_magnetic', 'H0_5b_rpm_sensitivity', 'H0_6_chemotropism',
+    'H0_epistemic_gates', 'EXPLORATORY_COUPLED_HYPOTHESIS'
+  ];
+  for (const key of [...canonicalKeys, ...requiredAliasKeys]) {
+    const rec = vmApi.getProvenanceRecord(key);
+    assert.ok(rec, `getProvenanceRecord('${key}') returned null`);
+    assert.ok(
+      ['SYNTHETIC_SCHEMATIC', 'MICRO_BIOFILM_SLAB_VOXEL'].includes(rec.geometry_classification),
+      `Invalid geometry_classification on ${key}: ${rec.geometry_classification}`
+    );
+    assert.ok(
+      ['synthetic', 'calculated', 'uncalibrated_model_snapshot', 'unavailable'].includes(rec.evidence_classification),
+      `Invalid lowercase evidence_classification on ${key}: ${rec.evidence_classification}`
+    );
+    assert.ok(typeof rec.epistemic_status === 'string' && rec.epistemic_status.length > 20, `Missing epistemic_status on ${key}`);
+    vmApi.selectProvenanceField(key);
+    assert.strictEqual(getMockEl('prov_geometry_classification').textContent, rec.geometry_classification);
+    assert.strictEqual(getMockEl('prov_evidence_classification').textContent, rec.evidence_classification);
+    assert.strictEqual(getMockEl('prov_epistemic_class').textContent, rec.epistemic_class);
+    assert.strictEqual(getMockEl('prov_epistemic_status').textContent, rec.epistemic_status);
+  }
+
+  // Verify Gate 3 programmatic enforcement of lambda_etc = 0.0 under null controls & timeline firewall in VM
+  for (const zeroCtrl of ['H0_baseline_lambda0', 'H0_1_sterile_abiotic', 'H0_2_dead_biomass', 'H0_3_non_melanized', 'H0_6_chemotropism']) {
+    vmApi.setLambdaEtc(0.6);
+    assert.strictEqual(vmState.lambda_etc, 0.6);
+    assert.strictEqual(vmState.active_null_control, 'EXPLORATORY_COUPLED_HYPOTHESIS');
+    vmApi.setNullControl(zeroCtrl);
+    assert.strictEqual(vmState.lambda_etc, 0.0, `setNullControl('${zeroCtrl}') must reset lambda_etc to 0.0`);
+    assert.strictEqual(vmState.baseline_lambda_lock, true);
+    // Direct property mutation while in null control must be blocked by descriptor trap
+    vmState.lambda_etc = 0.9;
+    assert.strictEqual(vmState.lambda_etc, 0.0, `Direct mutation ofEXPLORER_STATE.lambda_etc under ${zeroCtrl} must be blocked`);
+  }
+  vmState.seconds_per_mcs = 15.0;
+  vmState.time_bases_locked_uncoupled = false;
+  assert.strictEqual(Number.isNaN(vmState.seconds_per_mcs), true, 'Direct mutation of seconds_per_mcs must be rejected');
+  assert.strictEqual(vmState.time_bases_locked_uncoupled, true, 'Direct mutation of time_bases_locked_uncoupled must be rejected');
+
+  const tcRes = vmApi.attemptTimelineCoupling(5.0);
+  assert.strictEqual(tcRes.timeline_coupling_rejected, true);
+  assert.strictEqual(tcRes.reason, 'NO_VALIDATED_SECONDS_TO_MCS_CONVERSION');
+  assert.strictEqual(tcRes.baseline_lambda_etc_enforced_zero, true);
+  assert.strictEqual(tcRes.rendering_tests_validate_physical_model, false);
+
+  const fwRes = vmApi.enforceBaselineAndTimelineFirewall();
+  assert.strictEqual(fwRes.timeline_coupling_rejected, true);
+  assert.strictEqual(fwRes.reason, 'NO_VALIDATED_SECONDS_TO_MCS_CONVERSION');
+  assert.strictEqual(fwRes.baseline_lambda_etc_enforced_zero, true);
+  assert.strictEqual(fwRes.rendering_tests_validate_physical_model, false);
+
+  const vioRes = vmApi.attemptCrossTimelineOrBaselineViolation();
+  assert.strictEqual(vioRes.all_violations_blocked, true);
+  assert.strictEqual(vioRes.raw_property_tamper_blocked_immediately, true);
+  assert.strictEqual(vioRes.timeline_coupling_rejected, true);
+  assert.strictEqual(vioRes.reason, 'NO_VALIDATED_SECONDS_TO_MCS_CONVERSION');
+  assert.strictEqual(vioRes.baseline_lambda_etc_enforced_zero, true);
+  assert.strictEqual(vioRes.rendering_tests_validate_physical_model, false);
+
+  const vmBoundaries = vmApi.verifyScientificBoundaries();
+  assert.strictEqual(vmBoundaries.all_passed, true);
+  assert.strictEqual(vmBoundaries.provenanceTaxonomySeparated, true);
+  assert.strictEqual(vmBoundaries.passingRenderingTestsValidateSoftwareBoundariesNotPhysicalModel, true);
+  assert.strictEqual(vmBoundaries.empiricalPhysicalOrBiologicalValidationClaimed, false);
+  assert.strictEqual(vmBoundaries.timelineCouplingProgrammaticallyBlocked, true);
+  assert.strictEqual(vmBoundaries.baselineNullControlEnforcesLambdaZero, true);
+
+  // Verify Gate 2: Pinned baseline SHA-256 hashes of all 10 pre-existing Gate-0 artifacts + final reactor_pool_biofilm_explorer.html
+  const pinnedGate0Files = {
+    'spacetime_explorer_4d_shareable.html': {
+      bytes: 132358,
+      sha256: 'f9ca39ea37503f0e2012ad3dd5aad05ef26709337d5e84f83df89234920b4612'
+    },
+    'tecdoc643_neutron_walk.html': {
+      bytes: 937606,
+      sha256: 'dc15eb934fe6cd32a084dc13d05ee17d8f5ad988f7ea1bd2598bdcd9a0065b78'
+    },
+    'tecdoc643_reference_fixture.jl': {
+      bytes: 6018,
+      sha256: 'ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d'
+    },
+    'oklo_r0_fixture_readonly.html': {
+      bytes: 77117,
+      sha256: '8dac3ae9b8268a476b791f8c2293130e899d5c86c7fab09ce27345de2333544d'
+    },
+    'CONFORMANCE_FIXTURE_SPEC.md': {
+      bytes: 20743,
+      sha256: '587745ede6c6997a298f8f0a4e01127823de1b7c606383cfa49b87db0cc60d0c'
+    },
+    'biofilms_3d_explorer.html': {
+      bytes: 869267,
+      sha256: '037e2050b70e92b77075b3b913aeed615457d6a1cb09a0fe85f4d6b14d96366d'
+    },
+    'poolwater_interactive.html': {
+      bytes: 79610,
+      sha256: 'fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a'
+    },
+    'POOLWATER_WORKFLOW_SPEC.md': {
+      bytes: 23866,
+      sha256: 'dbdc5aed5897a9b5ee305167afd3103fc67a6f60b93e9eebb49940e30eaab633'
+    },
+    'multispecies_biofilm_robin_cylindrical_4panel.gif': {
+      bytes: 2571435,
+      sha256: 'e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997'
+    },
+    'clonal_sector_expansion_reference.jpg': {
+      bytes: 159146,
+      sha256: '67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115'
+    },
+    'magnetoreception_3d_explorer.html': {
+      bytes: 263619,
+      sha256: 'e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064'
+    },
+    'evidence_manifest.json': {
+      bytes: 116876,
+      sha256: '4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf'
+    },
+    'reactor_pool_biofilm_explorer.html': {
+      bytes: 203053,
+      sha256: 'b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32'
+    }
+  };
+
+  const nodeCrypto = require('crypto');
+  for (const [relFile, expected] of Object.entries(pinnedGate0Files)) {
+    const fullPath = path.join(ROOT, relFile);
+    assert.ok(fs.existsSync(fullPath), `Missing Gate-0 file on disk: ${relFile}`);
+    const buf = fs.readFileSync(fullPath);
+    const actualSha = nodeCrypto.createHash('sha256').update(buf).digest('hex');
+    assert.strictEqual(buf.length, expected.bytes, `Byte count mismatch for ${relFile}: actual=${buf.length}, expected=${expected.bytes}`);
+    assert.strictEqual(actualSha, expected.sha256, `SHA-256 mismatch for ${relFile}: actual=${actualSha}, expected=${expected.sha256}`);
+  }
+
+  for (const [entryKey, entryVal] of Object.entries(g0)) {
+    const fileTriples = [
+      ['relative_path', 'bytes', 'sha256'],
+      ['spec_relative_path', 'spec_bytes', 'spec_sha256'],
+      ['companion_reference_relative_path', 'companion_reference_bytes', 'companion_reference_sha256'],
+      ['evidence_manifest_relative_path', 'evidence_manifest_bytes', 'evidence_manifest_sha256'],
+      ['invariant_test_relative_path', 'invariant_test_bytes', 'invariant_test_sha256']
+    ];
+    for (const [pathField, bytesField, shaField] of fileTriples) {
+      if (entryVal[pathField]) {
+        const relFile = entryVal[pathField];
+        const fullPath = path.join(ROOT, relFile);
+        assert.ok(fs.existsSync(fullPath), `Gate-0 entry ${entryKey}.${pathField} (${relFile}) missing on disk`);
+        const buf = fs.readFileSync(fullPath);
+        const actualSha = nodeCrypto.createHash('sha256').update(buf).digest('hex');
+        assert.strictEqual(buf.length, entryVal[bytesField], `Manifest ${entryKey}.${bytesField} mismatch for ${relFile}`);
+        assert.strictEqual(actualSha, entryVal[shaField], `Manifest ${entryKey}.${shaField} mismatch for ${relFile}`);
+      }
+    }
+  }
+
+  console.log('PASS [Coordinated 3D Pool-and-Biofilm Explorer 7/7]: Gate 1 separated provenance taxonomy, Gate 2 explicit on-disk SHA-256 verification of all Gate-0 frozen inputs and reactor_pool_biofilm_explorer.html, Gate 3 narrow validation claims and programmatic baseline/timeline firewall (including VM runtime execution), 4 spatial layers, 4 morphotypes, and 7 null-model comparisons verified.');
 }
 
 function runAll() {

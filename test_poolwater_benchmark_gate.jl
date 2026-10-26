@@ -32,14 +32,14 @@ end
             "tecdoc643_reference_fixture.jl"                    => (6018,   "ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d"),
             "proto_biofilms_geyser_fission_research_program.md" => (48056,  "da50d4002e6bcca94234045c3d371e16af243806cdb1ed99e0beff074c1cfb11"),
             "poolwater_interactive.html"                         => (79610,   "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a"),
-            "POOLWATER_WORKFLOW_SPEC.md"                         => (22666,   "d7a3f3d295607d89a4672551f7435de10d6078e4b1b78973a8ae6374e7c16755"),
+            "POOLWATER_WORKFLOW_SPEC.md"                         => (23866,   "dbdc5aed5897a9b5ee305167afd3103fc67a6f60b93e9eebb49940e30eaab633"),
             "multispecies_biofilm_robin_cylindrical_4panel.gif"  => (2571435, "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997"),
             "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
             "magnetoreception_3d_explorer.html"                  => (263619,  "e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064"),
-            "reactor_pool_biofilm_explorer.html"                 => (154133,  "79582bfb8c24570a459dc576bbc30a5c6bea566484988c179a53ba0dce91335e"),
+            "reactor_pool_biofilm_explorer.html"                 => (203053,  "b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32"),
             "evidence_manifest.json"                             => (116876,  "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf"),
-            "test_calculation_provenance_and_invariants.js"      => (47835,   "3d547c52b117ebb4508c999116195bd71e13302b1281fb824a51d237aaba2aed"),
-            "benchmark_manifest.json"                            => (24139,   "a2788f69fdcbb4c0a13ac0d80931ac8e9b5dee98a372185d9976f5fbc855cbcd"),
+            "test_calculation_provenance_and_invariants.js"      => (65150,   "6550934121791fa847160edc02153abb2e0ae564407e9c63223274fd27c95ac5"),
+            "benchmark_manifest.json"                            => (28203,   "05932a8dd0323b3ed302197a780fef901e2814bf530f157160c26e862bd84024"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")
@@ -69,6 +69,56 @@ end
             end
         end
 
+        # Gate 2: Explicit entry-by-entry on-disk byte size & SHA-256 verification of benchmark_manifest.json["gate_0_frozen_inputs"]
+        g0_keys = [
+            "R10-4D-SHAREABLE-HTML",
+            "REF-NW-HTML-01",
+            "REF-NW-JL-FIX",
+            "OKLO-R0-FROZEN-FIXTURE",
+            "BIOFILMS-3D-CPM-01",
+            "POOLWATER-3D-INTERACTIVE-01",
+            "BIOFILMS-ROBIN-CYL-GIF-01",
+            "BIOTITE-MAGNETORECEPTION-4D-01",
+            "REACTOR-POOL-BIOFILM-COORDINATED-3D-01",
+            "REACTOR-POOL-BIOFILM-3D-01",
+        ]
+        g0_section_match = match(r"\"gate_0_frozen_inputs\"\s*:\s*\{(.*?)\n  \},"s, manifest_info.text)
+        @test g0_section_match !== nothing
+        g0_section = g0_section_match.captures[1]
+        discovered_g0_keys = [m.captures[1] for m in eachmatch(r"\n    \"([^\"]+)\"\s*:\s*\{", g0_section)]
+        @test discovered_g0_keys == g0_keys
+        for gk in g0_keys
+            entry_pat = Regex("\"$(gk)\"\\s*:\\s*\\{(.*?)\\n    \\}", "s")
+            em = match(entry_pat, g0_section)
+            @test em !== nothing
+            eblock = em.captures[1]
+
+            rel_m = match(r"\"relative_path\"\s*:\s*\"([^\"]+)\"", eblock)
+            bytes_m = match(r"\"bytes\"\s*:\s*(\d+)", eblock)
+            sha_m = match(r"\"sha256\"\s*:\s*\"([0-9a-f]{64})\"", eblock)
+            @test rel_m !== nothing && bytes_m !== nothing && sha_m !== nothing
+            ondisk = file_sha256_and_bytes(rel_m.captures[1])
+            @test ondisk.bytes == parse(Int, bytes_m.captures[1])
+            @test ondisk.sha256 == sha_m.captures[1]
+
+            for (path_field, bytes_field, sha_field) in [
+                ("spec_relative_path", "spec_bytes", "spec_sha256"),
+                ("companion_reference_relative_path", "companion_reference_bytes", "companion_reference_sha256"),
+                ("evidence_manifest_relative_path", "evidence_manifest_bytes", "evidence_manifest_sha256"),
+                ("invariant_test_relative_path", "invariant_test_bytes", "invariant_test_sha256"),
+            ]
+                pm = match(Regex("\"$(path_field)\"\\s*:\\s*\"([^\"]+)\""), eblock)
+                if pm !== nothing
+                    bm = match(Regex("\"$(bytes_field)\"\\s*:\\s*(\\d+)"), eblock)
+                    sm = match(Regex("\"$(sha_field)\"\\s*:\\s*\"([0-9a-f]{64})\""), eblock)
+                    @test bm !== nothing && sm !== nothing
+                    sub_ondisk = file_sha256_and_bytes(pm.captures[1])
+                    @test sub_ondisk.bytes == parse(Int, bm.captures[1])
+                    @test sub_ondisk.sha256 == sm.captures[1]
+                end
+            end
+        end
+
         @test occursin("Multispecies Biofilm Spatial Model", index_info.text)
         @test occursin("Synthetic visualization", index_info.text)
         @test occursin("Robin boundary condition", index_info.text)
@@ -77,6 +127,8 @@ end
         @test occursin("clonal_sector_expansion_reference.jpg", index_info.text)
         @test occursin("magnetoreception_3d_explorer.html", index_info.text)
         @test occursin("reactor_pool_biofilm_explorer.html", index_info.text)
+        @test occursin("b25fa9cc46f7c2bd...", index_info.text)
+        @test occursin("(203,053 bytes)", index_info.text)
         @test occursin("https://github.com/aurascoper/Biofilms", index_info.text)
 
         @test !occursin("file://", xml_info.text)
@@ -364,10 +416,14 @@ end
     # Gate 6: Coordinated 3D Open-Pool Reactor & Biofilm Coupon Explorer
     # --------------------------------------------------------------------------
     @testset "Gate 6: Coordinated 3D Pool-and-Biofilm Explorer (REACTOR-POOL-BIOFILM-COORDINATED-3D-01)" begin
-        rpb_html = file_sha256_and_bytes("reactor_pool_biofilm_explorer.html").text
+        rpb_info = file_sha256_and_bytes("reactor_pool_biofilm_explorer.html")
+        rpb_html = rpb_info.text
         manifest_txt = file_sha256_and_bytes("benchmark_manifest.json").text
         spec_txt = file_sha256_and_bytes("POOLWATER_WORKFLOW_SPEC.md").text
+        xml_txt = file_sha256_and_bytes("artifact_index.xml").text
 
+        @test rpb_info.bytes == 203053
+        @test rpb_info.sha256 == "b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32"
         @test occursin("REACTOR-POOL-BIOFILM-COORDINATED-3D-01", rpb_html)
         @test occursin("REACTOR-POOL-BIOFILM-3D-01", rpb_html)
         @test occursin("REACTOR-POOL-BIOFILM-COORDINATED-3D-01", manifest_txt)
@@ -384,13 +440,64 @@ end
         @test occursin("implies_downstream_differences_under_all_regimes: false", rpb_html)
         @test occursin("ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION", rpb_html)
         @test occursin("geometry_classification: 'SYNTHETIC_SCHEMATIC'", rpb_html)
+        @test occursin("geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL'", rpb_html)
         @test occursin("is_tecdoc643_benchmark_geometry: false", rpb_html)
         @test occursin("synthetic_schematic_not_tecdoc643_geometry", rpb_html)
         @test occursin("syntheticSchematicNotTecdoc643Geometry", rpb_html)
         @test !occursin("BENCHMARK_GEOMETRY", rpb_html)
+
+        # Gate 1: Separated Provenance Taxonomy Contract (geometry_classification vs lowercase evidence_classification vs epistemic_status)
+        @test occursin("PROVENANCE_TAXONOMY_CONTRACT", rpb_html)
+        @test occursin("evidence_classification: 'synthetic'", rpb_html)
+        @test occursin("evidence_classification: 'calculated'", rpb_html)
+        @test occursin("evidence_classification: 'uncalibrated_model_snapshot'", rpb_html)
+        @test occursin("evidence_classification: 'unavailable'", rpb_html)
+        @test occursin("SYNTHETIC_SCHEMATIC_GEOMETRY_ONLY", rpb_html)
+        @test occursin("SYNTHETIC_ANALYTICAL_OR_PACKING_SURROGATE", rpb_html)
+        @test occursin("REDUCED_ORDER_CALCULATED_FROM_PUBLISHED_PARAMETERS", rpb_html)
+        @test occursin("UNCALIBRATED_PROVISIONAL_MODEL_SNAPSHOT", rpb_html)
+        @test occursin("EXPLICITLY_UNAVAILABLE_CAMPAIGN_DATA", rpb_html)
+        @test occursin("prov_geometry_classification", rpb_html)
+        @test occursin("prov_evidence_classification", rpb_html)
+        @test occursin("prov_epistemic_class", rpb_html)
+        @test occursin("prov_epistemic_status", rpb_html)
         @test occursin("\"geometry_classification\": \"SYNTHETIC_SCHEMATIC\"", manifest_txt)
+        @test occursin("\"evidence_classification\": \"synthetic\"", manifest_txt)
+        @test occursin("\"epistemic_status\": \"COORDINATED_SYNTHETIC_AND_REDUCED_ORDER_EXPLORER", manifest_txt)
+        @test occursin("\"provenance_taxonomy_contract\"", manifest_txt)
+        @test occursin("\"TECDOC643_6X7_BENCHMARK_REFERENCE\"", manifest_txt)
+        @test occursin("\"POOLWATER_R200_H800_SYNTHETIC_CYLINDER\"", manifest_txt)
+        @test occursin("<GeometryClassification>SYNTHETIC_SCHEMATIC</GeometryClassification>", xml_txt)
+        @test occursin("<EvidenceClassification>synthetic</EvidenceClassification>", xml_txt)
+        @test occursin("<EpistemicStatus>COORDINATED_SYNTHETIC_AND_REDUCED_ORDER_EXPLORER", xml_txt)
         @test occursin("\"is_tecdoc643_benchmark_geometry\": false", manifest_txt)
         @test occursin("\"synthetic_schematic_pool_conflated_with_tecdoc643_benchmark_geometry\": false", manifest_txt)
+
+        # Gate 3: Programmatic lambda_etc = 0.0 & timeline coupling firewall + narrow software boundary validation claims
+        @test occursin("setBaselineLambdaLock", rpb_html)
+        @test occursin("attemptTimelineCoupling", rpb_html)
+        @test occursin("enforceBaselineAndTimelineFirewall", rpb_html)
+        @test occursin("installExplorerStateFirewallGuards", rpb_html)
+        @test occursin("NO_VALIDATED_SECONDS_TO_MCS_CONVERSION", rpb_html)
+        @test occursin("timeline_coupling_rejected: true", rpb_html)
+        @test occursin("baseline_lambda_etc_enforced_zero", rpb_html)
+        @test occursin("rendering_tests_validate_physical_model: false", rpb_html)
+        @test occursin("H0_5b_rpm_sensitivity", rpb_html)
+        @test occursin("H0_equal_dose_schedules", rpb_html)
+        @test occursin("H0_epistemic_gates", rpb_html)
+        @test occursin("attemptCrossTimelineOrBaselineViolation", rpb_html)
+        @test occursin("provenanceTaxonomySeparated: taxonomyOk", rpb_html)
+        @test occursin("passingRenderingTestsValidateSoftwareBoundariesNotPhysicalModel: narrowClaimsOk", rpb_html)
+        @test occursin("empiricalPhysicalOrBiologicalValidationClaimed: st.empirical_physical_or_biological_validation_claimed", rpb_html)
+        @test occursin("passing_rendering_tests_validate_software_boundaries_not_physical_model: true", rpb_html)
+        @test occursin("empirical_physical_or_biological_validation_claimed: false", rpb_html)
+        @test occursin("timelineCouplingProgrammaticallyBlocked: timelineFirewallOk", rpb_html)
+        @test occursin("baselineNullControlEnforcesLambdaZero: baselineEnforcedOk", rpb_html)
+        @test occursin("\"passing_rendering_tests_validate_software_boundaries_not_physical_model\": true", manifest_txt)
+        @test occursin("\"empirical_physical_or_biological_validation_claimed\": false", manifest_txt)
+        @test occursin("\"solver_level_coupled_pool_biofilm_validation_claimed\": false", manifest_txt)
+        @test occursin("\"melanin_radiotrophy_default_lambda_etc_nonzero\": false", manifest_txt)
+
         @test occursin("507fc19c507505233268e058b7b5d7a0bd4e378c", rpb_html)
         @test occursin("2db2a7b558ea736c61cc459fd6a72c4afa36e3c5", rpb_html)
         @test occursin("8182c30ab46d3b6a8cee7c853c18f7a44766a59d", rpb_html)
@@ -398,4 +505,6 @@ end
         @test occursin("local_branch_pushed_to_remote: false", rpb_html)
     end
 end
+
+
 
