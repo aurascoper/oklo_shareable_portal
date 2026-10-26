@@ -103,12 +103,12 @@
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/poolwater_interactive.html</PublicArtifactUrl>
       <RelativeSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativeSpecPath>
       <PublicSpecUrl>https://aurascoper.github.io/oklo_shareable_portal/POOLWATER_WORKFLOW_SPEC.md</PublicSpecUrl>
-      <SpecBytes>22168</SpecBytes>
-      <SpecSHA256>e17ef1951fed038cca0e8b395b1d6348990e281d3649e90019eba2fb5a6d1659</SpecSHA256>
+      <SpecBytes>22666</SpecBytes>
+      <SpecSHA256>d7a3f3d295607d89a4672551f7435de10d6078e4b1b78973a8ae6374e7c16755</SpecSHA256>
       <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
       <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
-      <BenchmarkManifestBytes>21262</BenchmarkManifestBytes>
-      <BenchmarkManifestSHA256>8a91ecb71a6e7e784555b87dda5de2be43090b4faac46b3e0abef756bb3189f7</BenchmarkManifestSHA256>
+      <BenchmarkManifestBytes>24139</BenchmarkManifestBytes>
+      <BenchmarkManifestSHA256>a2788f69fdcbb4c0a13ac0d80931ac8e9b5dee98a372185d9976f5fbc855cbcd</BenchmarkManifestSHA256>
       <Bytes>79610</Bytes>
       <SHA256>fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
@@ -160,8 +160,8 @@
       <EvidenceManifestBytes>116876</EvidenceManifestBytes>
       <EvidenceManifestSHA256>4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf</EvidenceManifestSHA256>
       <InvariantTestRelativePath>test_calculation_provenance_and_invariants.js</InvariantTestRelativePath>
-      <InvariantTestBytes>45665</InvariantTestBytes>
-      <InvariantTestSHA256>c2342bacb34036a7c1e0a5d623a4ae2b321a43072e064b9947511def450b110a</InvariantTestSHA256>
+      <InvariantTestBytes>47835</InvariantTestBytes>
+      <InvariantTestSHA256>3d547c52b117ebb4508c999116195bd71e13302b1281fb824a51d237aaba2aed</InvariantTestSHA256>
       <SourceModule>src/track4_mineral_magnetoreception_gates.jl</SourceModule>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
@@ -169,12 +169,12 @@
     <Artifact id="REACTOR-POOL-BIOFILM-COORDINATED-3D-01">
       <Title>Coordinated 3D Open-Pool Reactor and Biofilm Coupon Explorer</Title>
       <Requirement>Coordinated 3D Macro Pool Cutaway and Micro Coupon Biofilm Explorer with Uncoupled Solvers, Default lambda_etc = 0.0, Seven Null-Model Comparisons, and Provenance on Demand</Requirement>
-      <EpistemicStatus>coordinated_3d_pool_and_biofilm_explorer (solvers kept strictly separate with solver_level_coupled_validation_claimed = false; Stage 1 primary radiolysis yields from Jay-Gerin 2025 and Buxton 1988 on synthetic Boussinesq geometry with cfd_piv_status = UNAVAILABLE; Stage 2 coupon EPS sorption with Fein et al. 1997 protonation pKa = 4.82, 6.90, 9.40 and provisional Co-60 binding affinities log K_Co = 1.60, 2.50, 3.20 plus Coccomyxa actinabiotis Ag-110m lab 4.5e5 mL/g and 360 m^3 pool ~310 MBq benchmarks; Stage 3 uncalibrated CPM field consumer with default lambda_etc = 0.0 and seconds_per_mcs = NaN; uncoupled t_pool [s] vs MCS time bases; 7 null-model comparisons including regime-dependent equal-dose schedules and Control 5b illustrative sensitivity analysis)</EpistemicStatus>
+      <EpistemicStatus>coordinated_3d_pool_and_biofilm_explorer (solvers kept strictly separate with solver_level_coupled_validation_claimed = false; Layer 1 pool geometry X,Y in [-500,500] cm, Z in [-200,200] cm with simplified 3x3 core lattice is SYNTHETIC_SCHEMATIC with is_tecdoc643_benchmark_geometry = false, NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R = 2.0 m, H = 8.0 m poolwater_interactive.html domain; Stage 1 primary radiolysis yields from Jay-Gerin 2025 and Buxton 1988 on synthetic Boussinesq geometry with cfd_piv_status = UNAVAILABLE; Stage 2 coupon EPS sorption with Fein et al. 1997 protonation pKa = 4.82, 6.90, 9.40 and provisional Co-60 binding affinities log K_Co = 1.60, 2.50, 3.20 plus Coccomyxa actinabiotis Ag-110m lab 4.5e5 mL/g and 360 m^3 pool ~310 MBq benchmarks; Stage 3 uncalibrated CPM field consumer with default lambda_etc = 0.0 and seconds_per_mcs = NaN; uncoupled t_pool [s] vs MCS time bases; 7 null-model comparisons including regime-dependent equal-dose schedules and Control 5b illustrative sensitivity analysis)</EpistemicStatus>
       <EvidenceClassification>calculated</EvidenceClassification>
       <RelativePortalPath>reactor_pool_biofilm_explorer.html</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/reactor_pool_biofilm_explorer.html</PublicArtifactUrl>
-      <Bytes>143361</Bytes>
-      <SHA256>15f3659f8f6e052e394eaa3255ef9200dca99f3be66038a7366b5c213e4f9552</SHA256>
+      <Bytes>154133</Bytes>
+      <SHA256>79582bfb8c24570a459dc576bbc30a5c6bea566484988c179a53ba0dce91335e</SHA256>
       <SourceRepository>aurascoper/reactor-pool-biofilms</SourceRepository>
       <ExecutionSourceCommitSHA>903f278</ExecutionSourceCommitSHA>
       <PRRTSpatialCPMClinicalMainCommit>507fc19c507505233268e058b7b5d7a0bd4e378c</PRRTSpatialCPMClinicalMainCommit>
@@ -186,12 +186,12 @@
     <Artifact id="REACTOR-POOL-BIOFILM-3D-01">
       <Title>Coordinated 3D Open-Pool Reactor and Biofilm Coupon Explorer (Alias)</Title>
       <Requirement>Coordinated 3D Macro Pool Cutaway and Micro Coupon Biofilm Explorer with Uncoupled Solvers, Default lambda_etc = 0.0, Seven Null-Model Comparisons, and Provenance on Demand</Requirement>
-      <EpistemicStatus>coordinated_3d_pool_and_biofilm_explorer (solvers kept strictly separate with solver_level_coupled_validation_claimed = false; Stage 1 primary radiolysis yields from Jay-Gerin 2025 and Buxton 1988 on synthetic Boussinesq geometry with cfd_piv_status = UNAVAILABLE; Stage 2 coupon EPS sorption with Fein et al. 1997 protonation pKa = 4.82, 6.90, 9.40 and provisional Co-60 binding affinities log K_Co = 1.60, 2.50, 3.20 plus Coccomyxa actinabiotis Ag-110m lab 4.5e5 mL/g and 360 m^3 pool ~310 MBq benchmarks; Stage 3 uncalibrated CPM field consumer with default lambda_etc = 0.0 and seconds_per_mcs = NaN; uncoupled t_pool [s] vs MCS time bases; 7 null-model comparisons including regime-dependent equal-dose schedules and Control 5b illustrative sensitivity analysis)</EpistemicStatus>
+      <EpistemicStatus>coordinated_3d_pool_and_biofilm_explorer (solvers kept strictly separate with solver_level_coupled_validation_claimed = false; Layer 1 pool geometry X,Y in [-500,500] cm, Z in [-200,200] cm with simplified 3x3 core lattice is SYNTHETIC_SCHEMATIC with is_tecdoc643_benchmark_geometry = false, NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R = 2.0 m, H = 8.0 m poolwater_interactive.html domain; Stage 1 primary radiolysis yields from Jay-Gerin 2025 and Buxton 1988 on synthetic Boussinesq geometry with cfd_piv_status = UNAVAILABLE; Stage 2 coupon EPS sorption with Fein et al. 1997 protonation pKa = 4.82, 6.90, 9.40 and provisional Co-60 binding affinities log K_Co = 1.60, 2.50, 3.20 plus Coccomyxa actinabiotis Ag-110m lab 4.5e5 mL/g and 360 m^3 pool ~310 MBq benchmarks; Stage 3 uncalibrated CPM field consumer with default lambda_etc = 0.0 and seconds_per_mcs = NaN; uncoupled t_pool [s] vs MCS time bases; 7 null-model comparisons including regime-dependent equal-dose schedules and Control 5b illustrative sensitivity analysis)</EpistemicStatus>
       <EvidenceClassification>calculated</EvidenceClassification>
       <RelativePortalPath>reactor_pool_biofilm_explorer.html</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/reactor_pool_biofilm_explorer.html</PublicArtifactUrl>
-      <Bytes>143361</Bytes>
-      <SHA256>15f3659f8f6e052e394eaa3255ef9200dca99f3be66038a7366b5c213e4f9552</SHA256>
+      <Bytes>154133</Bytes>
+      <SHA256>79582bfb8c24570a459dc576bbc30a5c6bea566484988c179a53ba0dce91335e</SHA256>
       <SourceRepository>aurascoper/reactor-pool-biofilms</SourceRepository>
       <ExecutionSourceCommitSHA>903f278</ExecutionSourceCommitSHA>
       <PRRTSpatialCPMClinicalMainCommit>507fc19c507505233268e058b7b5d7a0bd4e378c</PRRTSpatialCPMClinicalMainCommit>

@@ -32,14 +32,14 @@ end
             "tecdoc643_reference_fixture.jl"                    => (6018,   "ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d"),
             "proto_biofilms_geyser_fission_research_program.md" => (48056,  "da50d4002e6bcca94234045c3d371e16af243806cdb1ed99e0beff074c1cfb11"),
             "poolwater_interactive.html"                         => (79610,   "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a"),
-            "POOLWATER_WORKFLOW_SPEC.md"                         => (22168,   "e17ef1951fed038cca0e8b395b1d6348990e281d3649e90019eba2fb5a6d1659"),
+            "POOLWATER_WORKFLOW_SPEC.md"                         => (22666,   "d7a3f3d295607d89a4672551f7435de10d6078e4b1b78973a8ae6374e7c16755"),
             "multispecies_biofilm_robin_cylindrical_4panel.gif"  => (2571435, "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997"),
             "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
             "magnetoreception_3d_explorer.html"                  => (263619,  "e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064"),
-            "reactor_pool_biofilm_explorer.html"                 => (143361,  "15f3659f8f6e052e394eaa3255ef9200dca99f3be66038a7366b5c213e4f9552"),
+            "reactor_pool_biofilm_explorer.html"                 => (154133,  "79582bfb8c24570a459dc576bbc30a5c6bea566484988c179a53ba0dce91335e"),
             "evidence_manifest.json"                             => (116876,  "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf"),
-            "test_calculation_provenance_and_invariants.js"      => (45665,   "c2342bacb34036a7c1e0a5d623a4ae2b321a43072e064b9947511def450b110a"),
-            "benchmark_manifest.json"                            => (21262,   "8a91ecb71a6e7e784555b87dda5de2be43090b4faac46b3e0abef756bb3189f7"),
+            "test_calculation_provenance_and_invariants.js"      => (47835,   "3d547c52b117ebb4508c999116195bd71e13302b1281fb824a51d237aaba2aed"),
+            "benchmark_manifest.json"                            => (24139,   "a2788f69fdcbb4c0a13ac0d80931ac8e9b5dee98a372185d9976f5fbc855cbcd"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")
@@ -383,6 +383,14 @@ end
         @test occursin("downstream_differences_are_regime_dependent: true", rpb_html)
         @test occursin("implies_downstream_differences_under_all_regimes: false", rpb_html)
         @test occursin("ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION", rpb_html)
+        @test occursin("geometry_classification: 'SYNTHETIC_SCHEMATIC'", rpb_html)
+        @test occursin("is_tecdoc643_benchmark_geometry: false", rpb_html)
+        @test occursin("synthetic_schematic_not_tecdoc643_geometry", rpb_html)
+        @test occursin("syntheticSchematicNotTecdoc643Geometry", rpb_html)
+        @test !occursin("BENCHMARK_GEOMETRY", rpb_html)
+        @test occursin("\"geometry_classification\": \"SYNTHETIC_SCHEMATIC\"", manifest_txt)
+        @test occursin("\"is_tecdoc643_benchmark_geometry\": false", manifest_txt)
+        @test occursin("\"synthetic_schematic_pool_conflated_with_tecdoc643_benchmark_geometry\": false", manifest_txt)
         @test occursin("507fc19c507505233268e058b7b5d7a0bd4e378c", rpb_html)
         @test occursin("2db2a7b558ea736c61cc459fd6a72c4afa36e3c5", rpb_html)
         @test occursin("8182c30ab46d3b6a8cee7c853c18f7a44766a59d", rpb_html)

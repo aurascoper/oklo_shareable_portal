@@ -116,6 +116,7 @@
   .epi-MEASURED { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.45); }
   .epi-CALCULATED { background: rgba(56, 189, 248, 0.18); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.45); }
   .epi-SYNTHETIC { background: rgba(168, 85, 247, 0.18); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.45); }
+  .epi-SYNTHETIC_SCHEMATIC { background: rgba(168, 85, 247, 0.24); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.58); }
   .epi-PROVISIONAL_ASSUMPTION { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.45); }
   .epi-UNAVAILABLE { background: rgba(244, 63, 94, 0.18); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.45); }
   .epi-ILLUSTRATIVE_SENSITIVITY_ANALYSIS { background: rgba(236, 72, 153, 0.18); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.45); }
@@ -197,7 +198,7 @@
   .field-btn:hover { border-color: var(--accent-cyan); color: #fff; }
   .field-btn.active {
     background: rgba(56, 189, 248, 0.22);
-    border-color: var(--accent-cyan);
+    border: 1px solid var(--accent-cyan);
     color: #fff;
     font-weight: 700;
   }
@@ -458,8 +459,8 @@
     Melanin-mediated radiotrophy is OFF by default (<code>lambda_etc = 0.0</code>, <code>delta_H_etc = 0.0</code>). Any <code>&lambda;_etc &gt; 0</code> run is tagged <span class="epi-badge epi-PROVISIONAL_ASSUMPTION">EXPLORATORY_HYPOTHESIS</span>.
   </div>
   <div class="boundary-card">
-    <strong>GUARDRAIL 3 // UNCOUPLED TIME BASES:</strong>
-    Macro pool physical time <code>t_pool [s]</code> and micro CPM Monte Carlo steps <code>MCS</code> are strictly uncoupled (<code>seconds_per_mcs = NaN</code>, <code>D-PITCH: awaiting_measurement</code>).
+    <strong>GUARDRAIL 3 // UNCOUPLED TIME BASES &amp; SYNTHETIC_SCHEMATIC GEOMETRY:</strong>
+    Macro pool physical time <code>t_pool [s]</code> and micro CPM Monte Carlo steps <code>MCS</code> are strictly uncoupled (<code>seconds_per_mcs = NaN</code>, <code>D-PITCH: awaiting_measurement</code>). Pool geometry is <span class="epi-badge epi-SYNTHETIC_SCHEMATIC">SYNTHETIC_SCHEMATIC</span> (NOT TECDOC-643 6x7 benchmark).
   </div>
 </section>
 
@@ -478,14 +479,15 @@
           <input type="checkbox" id="toggle_pool_geometry" checked onchange="window.setLayerToggle('pool_geometry', this.checked)">
           <span>L1: Pool Geometry &amp; 3D Cutaway</span>
         </label>
-        <span class="epi-badge epi-SYNTHETIC">SYNTHETIC</span>
+        <span class="epi-badge epi-SYNTHETIC_SCHEMATIC">SYNTHETIC_SCHEMATIC</span>
       </div>
-      <div class="layer-desc">
-        Generic 10 MW open-pool MTR tank (<code>R = 500 cm</code>, <code>Z in [-200, 200] cm</code>), core shroud with 8 radial support fins, magenta box-grid core, and quarter-wedge cutaway.
+      <div class="layer-desc" id="poolGeometryProvenanceBanner">
+        SYNTHETIC_SCHEMATIC: Schematic cylindrical cutaway (<code>X,Y in [-500,500] cm</code>, <code>Z in [-200,200] cm</code>, simplified <code>3x3</code> core lattice); NOT the IAEA-TECDOC-643 <code>6x7</code> box-grid MTR benchmark geometry and NOT the <code>R=2.0 m</code>, <code>H=8.0 m</code> <code>poolwater_interactive.html</code> domain. Displaying benchmark-derived fields requires an explicit coordinate mapping and preserves the distinction between <code>SYNTHETIC_SCHEMATIC</code> geometry and TECDOC-643 benchmark geometry.
       </div>
       <div class="field-pills">
-        <button class="field-btn" onclick="window.selectProvenanceField('pool_geometry_cad')">Inspect CAD Surrogate</button>
-        <button class="field-btn" onclick="window.selectProvenanceField('quarter_wedge_cutaway')">Inspect r-z / x-y Cutaway</button>
+        <button class="field-btn" data-prov="pool_geometry" onclick="window.selectProvenanceField('pool_geometry')">Pool Geometry [SYNTHETIC_SCHEMATIC]</button>
+        <button class="field-btn" data-prov="pool_geometry_cad" onclick="window.selectProvenanceField('pool_geometry_cad')">Inspect CAD Surrogate</button>
+        <button class="field-btn" data-prov="quarter_wedge_cutaway" onclick="window.selectProvenanceField('quarter_wedge_cutaway')">Inspect r-z / x-y Cutaway</button>
       </div>
     </div>
 
@@ -519,7 +521,7 @@
         <span class="epi-badge epi-CALCULATED">CALCULATED</span>
       </div>
       <div class="layer-desc">
-        Stage 1 primary yields (Jay-Gerin 2025; Buxton 1988) on synthetic geometry: long-lived <code>H2O2</code> (<code>l_rxn = 118.3 um</code>) &amp; <code>H2</code> (<code>109.5 um</code>) penetrate coupon boundary layer; radicals <code>*OH</code> (<code>4.47 nm</code>) &amp; <code>e_aq^-</code> (<code>9.90 nm</code>) quench locally.
+        Stage 1 primary yields (Jay-Gerin 2025; Buxton 1988) on synthetic schematic geometry: long-lived <code>H2O2</code> (<code>l_rxn = 118.3 um</code>) &amp; <code>H2</code> (<code>109.5 um</code>) penetrate coupon boundary layer; radicals <code>*OH</code> (<code>4.47 nm</code>) &amp; <code>e_aq^-</code> (<code>9.90 nm</code>) quench locally.
       </div>
       <div class="field-pills">
         <button class="field-btn active" data-field="H2O2" onclick="window.setActiveField('H2O2')">H2O2 [mol/L]</button>
@@ -545,7 +547,7 @@
       <div class="field-pills">
         <button class="field-btn" onclick="window.selectProvenanceField('coupon_eps_sorption')">Stage 2 EPS Sorption</button>
         <button class="field-btn" onclick="window.selectProvenanceField('cpm_morphology_stage3')">Stage 3 CPM Lattice</button>
-        <button class="field-btn" onclick="window.selectProvenanceField('coccomyxa_actinabiotis_benchmark')">Coccomyxa Benchmark (MEASURED)</button>
+        <button class="field-btn" onclick="window.selectProvenanceField('coccomyxa_actinabiotis_benchmark')">Coccomyxa Benchmark</button>
       </div>
     </div>
 
@@ -629,7 +631,7 @@
       <!-- Viewport 1: Macro 3D Open-Pool Cutaway -->
       <div class="viewport-card">
         <div class="panel-header" style="margin-bottom:2px;">
-          <span class="panel-title">Macro Viewport // 3D Reactor Pool Cutaway (R=500 cm)</span>
+          <span class="panel-title">Macro Viewport // 3D Reactor Pool Cutaway (R=500 cm, SYNTHETIC_SCHEMATIC)</span>
           <span class="epi-badge epi-CALCULATED" id="macroFieldBadge">H2O2 [CALCULATED]</span>
         </div>
         <div class="canvas-wrap" id="macroViewportWrap">
@@ -721,6 +723,7 @@
       Click any layer field, 3D viewport element, coupon, morphotype, or null-model control (or select below) to inspect full epistemic metadata and commit locks:
     </div>
     <div class="field-pills" style="margin-bottom:10px;">
+      <button class="field-btn" data-prov="pool_geometry" onclick="window.selectProvenanceField('pool_geometry')">Pool Geometry</button>
       <button class="field-btn active" data-prov="H2O2" onclick="window.selectProvenanceField('H2O2')">H2O2</button>
       <button class="field-btn" data-prov="H2" onclick="window.selectProvenanceField('H2')">H2</button>
       <button class="field-btn" data-prov="OH_rad" onclick="window.selectProvenanceField('OH_rad')">*OH</button>
@@ -802,10 +805,28 @@
     'local unpushed reconciliation head@8182c30ab46d3b6a8cee7c853c18f7a44766a59d; ' +
     'local_test_results_attributed_to_remote_pr_head=false; local_branch_pushed_to_remote=false)';
 
+  var SYNTHETIC_SCHEMATIC_STATEMENT =
+    'SYNTHETIC_SCHEMATIC: Schematic cylindrical cutaway (X,Y in [-500,500] cm, Z in [-200,200] cm, simplified 3x3 core lattice); NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R=2.0 m, H=8.0 m poolwater_interactive.html domain. Displaying benchmark-derived fields requires an explicit coordinate mapping and preserves the distinction between SYNTHETIC_SCHEMATIC geometry and TECDOC-643 benchmark geometry.';
+
   var PROVENANCE_REGISTRY = {
+    pool_geometry: {
+      field_id: 'pool_geometry',
+      label: 'Layer 1 Schematic Cylindrical Pool Cutaway & 3x3 Core Lattice [SYNTHETIC_SCHEMATIC]',
+      epistemic_class: 'SYNTHETIC_SCHEMATIC',
+      data_classification: 'SYNTHETIC_SCHEMATIC',
+      is_tecdoc643_benchmark_geometry: false,
+      calibration_status: 'SYNTHETIC_SCHEMATIC_NON_BENCHMARK',
+      units: 'cm (X,Y in [-500, 500] cm, Z in [-200, 200] cm; simplified 3x3 core lattice)',
+      coordinate_frame: '3D Cartesian box [-500, 500] x [-500, 500] x [-200, 200] cm & cylindrical (r, theta, z) [SYNTHETIC_SCHEMATIC]',
+      source: 'SYNTHETIC_SCHEMATIC illustrative open-pool cutaway (NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R=2.0 m, H=8.0 m poolwater_interactive.html domain)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (PoolGeometryState SYNTHETIC_SCHEMATIC)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: SYNTHETIC_SCHEMATIC_STATEMENT
+    },
     H2O2: {
       field_id: 'H2O2',
       label: 'Hydrogen Peroxide Radiolysis Field (H2O2)',
+      epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
       units: 'mol/L',
@@ -813,11 +834,12 @@
       source: 'Jay-Gerin (2025) G(H2O2)=0.68 molecules/100 eV; Buxton et al. (1988) rate constants; Stage 1 compute_pool_radiolysis_steady_state_balance',
       model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 steady-state & 3D operator-split PDE)',
       commit_lock: COMMIT_LOCK_STRING,
-      notes: 'Calculated from published primary yields and rate constants on a synthetic pool geometry/flow field. Long reaction-diffusion penetration l_rxn(H2O2) = 118.3 um reaches the coupon biofilm canopy.'
+      notes: 'Calculated from published primary yields and rate constants on the SYNTHETIC_SCHEMATIC pool geometry/flow field. Long reaction-diffusion penetration l_rxn(H2O2) = 118.3 um reaches the coupon biofilm canopy.'
     },
     H2: {
       field_id: 'H2',
       label: 'Molecular Hydrogen Radiolysis Field (H2)',
+      epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
       units: 'mol/L',
@@ -825,11 +847,12 @@
       source: 'Jay-Gerin (2025) G(H2)=0.45 molecules/100 eV; Buxton et al. (1988) rate constants; Stage 1 compute_pool_radiolysis_steady_state_balance',
       model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 steady-state & 3D operator-split PDE)',
       commit_lock: COMMIT_LOCK_STRING,
-      notes: 'Long-lived molecular radiolysis product with reaction-diffusion length l_rxn(H2) = 109.5 um across the coupon concentration boundary layer (delta_c = 528 um).'
+      notes: 'Long-lived molecular radiolysis product with reaction-diffusion length l_rxn(H2) = 109.5 um across the coupon concentration boundary layer (delta_c = 528 um) on SYNTHETIC_SCHEMATIC pool geometry.'
     },
     OH_rad: {
       field_id: 'OH_rad',
       label: 'Hydroxyl Radical Field (*OH)',
+      epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
       units: 'mol/L',
@@ -842,6 +865,7 @@
     e_aq: {
       field_id: 'e_aq',
       label: 'Hydrated Electron Field (e_aq^-)',
+      epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
       units: 'mol/L',
@@ -854,18 +878,20 @@
     dose_rate_Gy_s: {
       field_id: 'dose_rate_Gy_s',
       label: 'Ionizing Dose Rate Field D(r,z) [Gy/s]',
+      epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'Gy/s',
-      coordinate_frame: 'Cylindrical pool (r, theta, z) [cm]',
-      source: 'Stage 1 radial + axial attenuation law D(r,z) from 10 MW generic MTR core shroud to r = 500 cm stainless-steel liner',
+      coordinate_frame: 'Cylindrical pool (r, theta, z) [cm] [SYNTHETIC_SCHEMATIC]',
+      source: 'Stage 1 radial + axial attenuation law D(r,z) from 10 MW schematic core shroud to r = 500 cm stainless-steel liner',
       model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 PoolGeometryState)',
       commit_lock: COMMIT_LOCK_STRING,
-      notes: 'Analytical attenuation field on synthetic open-pool MTR geometry; wall coupon dose rates span 0.045 to 0.125 Gy/s.'
+      notes: 'Analytical attenuation field evaluated on SYNTHETIC_SCHEMATIC open-pool geometry; wall coupon dose rates span 0.045 to 0.125 Gy/s.'
     },
     temperature_C: {
       field_id: 'temperature_C',
       label: 'Synthetic Boussinesq Thermal Plume T(r,z) [degC]',
+      epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'degC (bulk 35.0 degC / 308.15 K)',
@@ -878,6 +904,7 @@
     velocity_m_s: {
       field_id: 'velocity_m_s',
       label: 'Synthetic Convection & Boundary-Layer Velocity u(r,z) [m/s]',
+      epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'm/s (U_bulk = 0.15 m/s; tau_w = 0.049 Pa)',
@@ -889,31 +916,36 @@
     },
     pool_geometry_cad: {
       field_id: 'pool_geometry_cad',
-      label: '3D Cylindrical Pool Tank, Core Shroud & 8 Support Fins',
-      data_classification: 'SYNTHETIC',
-      calibration_status: 'SYNTHETIC_SURROGATE',
-      units: 'cm (R = 500 cm, Z in [-200, 200] cm)',
-      coordinate_frame: '3D Cartesian box [-500, 500] x [-500, 500] x [-200, 200] cm & cylindrical (r, theta, z)',
-      source: 'Generic public-domain open-pool MTR test reactor geometry (IAEA TECDOC-643 / generic 10 MW pool)',
-      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (PoolGeometryState)',
+      label: '3D Schematic Cylindrical Pool Tank, Core Shroud & 8 Support Fins [SYNTHETIC_SCHEMATIC]',
+      epistemic_class: 'SYNTHETIC_SCHEMATIC',
+      data_classification: 'SYNTHETIC_SCHEMATIC',
+      is_tecdoc643_benchmark_geometry: false,
+      calibration_status: 'SYNTHETIC_SCHEMATIC_NON_BENCHMARK',
+      units: 'cm (X,Y in [-500, 500] cm, Z in [-200, 200] cm; simplified 3x3 core lattice)',
+      coordinate_frame: '3D Cartesian box [-500, 500] x [-500, 500] x [-200, 200] cm & cylindrical (r, theta, z) [SYNTHETIC_SCHEMATIC]',
+      source: 'SYNTHETIC_SCHEMATIC illustrative open-pool cutaway (NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R=2.0 m, H=8.0 m poolwater_interactive.html domain)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (PoolGeometryState SYNTHETIC_SCHEMATIC)',
       commit_lock: COMMIT_LOCK_STRING,
-      notes: 'Non-facility-specific synthetic cylindrical tank with central core shroud, 8 radial structural support fins, and magenta MTR box-grid core.'
+      notes: SYNTHETIC_SCHEMATIC_STATEMENT
     },
     quarter_wedge_cutaway: {
       field_id: 'quarter_wedge_cutaway',
-      label: '3D Quarter-Wedge Cutaway & Orthogonal r-z / x-y Slice Operator',
-      data_classification: 'CALCULATED',
-      calibration_status: 'SYNTHETIC_SURROGATE',
-      units: 'deg (theta_wedge) & cm (z_slice_cm)',
-      coordinate_frame: 'Orthogonal vertical r-z cutaway planes + horizontal x-y slice plane',
-      source: 'Coordinated 3D visualization slice operator over Stage 1 pool fields',
+      label: '3D Quarter-Wedge Cutaway & Orthogonal r-z / x-y Slice Operator [SYNTHETIC_SCHEMATIC]',
+      epistemic_class: 'SYNTHETIC_SCHEMATIC',
+      data_classification: 'SYNTHETIC_SCHEMATIC',
+      is_tecdoc643_benchmark_geometry: false,
+      calibration_status: 'SYNTHETIC_SCHEMATIC_NON_BENCHMARK',
+      units: 'deg (theta_wedge) & cm (z_slice_cm in [-200, 200] cm)',
+      coordinate_frame: 'Orthogonal vertical r-z cutaway planes + horizontal x-y slice plane on SYNTHETIC_SCHEMATIC domain',
+      source: 'Coordinated 3D visualization slice operator over Stage 1 SYNTHETIC_SCHEMATIC pool domain',
       model_version: 'REACTOR-POOL-BIOFILM-COORDINATED-3D-01 v1.0',
       commit_lock: COMMIT_LOCK_STRING,
-      notes: 'Interactive 3D quarter-wedge cutaway exposing radial core-to-wall gradients, iso-contour lines, and axial plume contours simultaneously.'
+      notes: SYNTHETIC_SCHEMATIC_STATEMENT
     },
     coupon_eps_sorption: {
       field_id: 'coupon_eps_sorption',
       label: 'Stage 2 EPS Protonation & Provisional Co-60 Biosorption',
+      epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'PROVISIONAL_UNCALIBRATED_ASSUMPTION',
       units: 'Bq/cm^2 & mol/m^3 (pKa = 4.82, 6.90, 9.40; log K_Co = 1.60, 2.50, 3.20)',
@@ -926,6 +958,20 @@
     cpm_morphology_stage3: {
       field_id: 'cpm_morphology_stage3',
       label: 'Stage 3 3D Cellular Potts & Morphotype Stratification Lattice',
+      epistemic_class: 'PROVISIONAL_ASSUMPTION',
+      data_classification: 'PROVISIONAL_ASSUMPTION',
+      calibration_status: 'UNCALIBRATED_MCS_LATTICE',
+      units: 'MCS (seconds_per_mcs = NaN; D-PITCH: awaiting_measurement; 40x40x40 lattice)',
+      coordinate_frame: '3D micro coupon lattice (x, y, z) [um] / [voxels]',
+      source: 'Stage 3 FieldConsumerConfig (default lambda_etc = 0.0) & morphotype stratification benchmark (SL, SS, LL, CPM-Hypha)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 3 stage3_cpm_field_consumer_coupling.jl)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Default baseline is lambda_etc = 0.0 (zero radiotrophic coupling). Time step conversion seconds_per_mcs is explicitly NaN awaiting experimental microscopy calibration.'
+    },
+    'CPM-Hypha': {
+      field_id: 'CPM-Hypha',
+      label: 'Stage 3 3D Cellular Potts & Morphotype Stratification Lattice (CPM-Hypha)',
+      epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
       units: 'MCS (seconds_per_mcs = NaN; D-PITCH: awaiting_measurement; 40x40x40 lattice)',
@@ -938,6 +984,20 @@
     morphotype_SL: {
       field_id: 'morphotype_SL',
       label: 'Morphotype SL: Sphere (Cocci) + Long Rod/Hypha Stratification',
+      epistemic_class: 'SYNTHETIC',
+      data_classification: 'SYNTHETIC',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'P(z) in [0, 0.1] vs z in [0, 30] um',
+      coordinate_frame: '3D micro coupon block (x, y, z) [um] & vertical slice x-z',
+      source: '3D vs 2D multispecies mechanical packing benchmark (blue rods/hyphae base vs red cocci upper canopy)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 / biofilms_3d_explorer.html',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Demonstrates shape-driven vertical stratification (z_mean(blue) < z_mean(red)) arising purely from 3D mechanical packing without radiotrophic coupling (lambda_etc = 0.0).'
+    },
+    SL: {
+      field_id: 'SL',
+      label: 'Morphotype SL: Sphere (Cocci) + Long Rod/Hypha Stratification',
+      epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'P(z) in [0, 0.1] vs z in [0, 30] um',
@@ -950,6 +1010,20 @@
     morphotype_SS: {
       field_id: 'morphotype_SS',
       label: 'Morphotype SS: Symmetric Sphere + Sphere Clonal Columns',
+      epistemic_class: 'SYNTHETIC',
+      data_classification: 'SYNTHETIC',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'P(z) in [0, 0.1] vs z in [0, 30] um',
+      coordinate_frame: '3D micro coupon block (x, y, z) [um] & vertical slice x-z',
+      source: '3D vs 2D symmetric cocci-cocci clonal column control benchmark',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 / biofilms_3d_explorer.html',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Symmetric sphere-sphere control showing side-by-side clonal sectors with overlapping vertical height distributions (z_mean(blue) ~ z_mean(red)).'
+    },
+    SS: {
+      field_id: 'SS',
+      label: 'Morphotype SS: Symmetric Sphere + Sphere Clonal Columns',
+      epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'P(z) in [0, 0.1] vs z in [0, 30] um',
@@ -962,6 +1036,20 @@
     morphotype_LL: {
       field_id: 'morphotype_LL',
       label: 'Morphotype LL: Symmetric Long Rod + Long Rod Entangled Canopy',
+      epistemic_class: 'SYNTHETIC',
+      data_classification: 'SYNTHETIC',
+      calibration_status: 'SYNTHETIC_SURROGATE',
+      units: 'P(z) in [0, 0.1] vs z in [0, 30] um',
+      coordinate_frame: '3D micro coupon block (x, y, z) [um] & vertical slice x-z',
+      source: '3D vs 2D symmetric rod-rod entangled packing control benchmark',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 / biofilms_3d_explorer.html',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'Symmetric rod-rod control showing entangled horizontal and vertical rod domains with overlapping P(z) curves (z_mean(blue) ~ z_mean(red)).'
+    },
+    LL: {
+      field_id: 'LL',
+      label: 'Morphotype LL: Symmetric Long Rod + Long Rod Entangled Canopy',
+      epistemic_class: 'SYNTHETIC',
       data_classification: 'SYNTHETIC',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'P(z) in [0, 0.1] vs z in [0, 30] um',
@@ -974,10 +1062,11 @@
     'PIE-COUPON-SS316L-01': {
       field_id: 'PIE-COUPON-SS316L-01',
       label: 'Wall Coupon Locator PIE-COUPON-SS316L-01 (SS316L Stainless Steel)',
+      epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'r = 500 cm, theta = 25 deg, z = -40 cm | D = 0.0820 Gy/s | H2O2 = 1.42 uM',
-      coordinate_frame: 'Cylindrical pool wall r = R_pool = 500 cm + local coupon normal z [um]',
+      coordinate_frame: 'Cylindrical pool wall r = R_pool = 500 cm + local coupon normal z [um] [SYNTHETIC_SCHEMATIC]',
       source: 'Stage 1 PoolGeometryState & compute_coupon_boundary_layer at mid-core below-midplane station',
       model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 -> Stage 2 boundary condition)',
       commit_lock: COMMIT_LOCK_STRING,
@@ -986,10 +1075,11 @@
     'TRIGA-WALL-SS304L-02': {
       field_id: 'TRIGA-WALL-SS304L-02',
       label: 'Wall Coupon Locator TRIGA-WALL-SS304L-02 (SS304L Pool Liner)',
+      epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'r = 500 cm, theta = 115 deg, z = +10 cm | D = 0.0540 Gy/s | H2O2 = 1.12 uM',
-      coordinate_frame: 'Cylindrical pool wall r = R_pool = 500 cm + local coupon normal z [um]',
+      coordinate_frame: 'Cylindrical pool wall r = R_pool = 500 cm + local coupon normal z [um] [SYNTHETIC_SCHEMATIC]',
       source: 'Stage 1 PoolGeometryState & compute_coupon_boundary_layer at upper thermal plume station',
       model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 -> Stage 2 boundary condition)',
       commit_lock: COMMIT_LOCK_STRING,
@@ -998,10 +1088,11 @@
     'SURROGATE-COUPON-AL6061-03': {
       field_id: 'SURROGATE-COUPON-AL6061-03',
       label: 'Wall Coupon Locator SURROGATE-COUPON-AL6061-03 (Al-6061 Rack)',
+      epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'SYNTHETIC_SURROGATE',
       units: 'r = 500 cm, theta = 215 deg, z = -95 cm | D = 0.1180 Gy/s | H2O2 = 1.76 uM',
-      coordinate_frame: 'Cylindrical pool wall r = R_pool = 500 cm + local coupon normal z [um]',
+      coordinate_frame: 'Cylindrical pool wall r = R_pool = 500 cm + local coupon normal z [um] [SYNTHETIC_SCHEMATIC]',
       source: 'Stage 1 PoolGeometryState & compute_coupon_boundary_layer at lower high-dose rack station',
       model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 1 -> Stage 2 boundary condition)',
       commit_lock: COMMIT_LOCK_STRING,
@@ -1010,8 +1101,10 @@
     coccomyxa_actinabiotis_benchmark: {
       field_id: 'coccomyxa_actinabiotis_benchmark',
       label: 'Empirical Benchmark: Coccomyxa actinabiotis & Sarro (2005) Co-60',
-      data_classification: 'MEASURED',
-      calibration_status: 'PUBLISHED_G_VALUE',
+      epistemic_class: 'CALCULATED',
+      data_classification: 'CALCULATED',
+      empirical_benchmark_classification: 'MEASURED',
+      calibration_status: 'PUBLISHED_EMPIRICAL_BENCHMARK',
       units: 'K_d = 4.5e5 mL/g (lab Ag-110m) | ~310 MBq removed in 360 m^3 pool over 21 d | Co-60 = 5,521 Bq/cm^2 (Sarro 2005)',
       coordinate_frame: 'Laboratory batch effluent & 360 m^3 storage pool / open-pool coupon surfaces',
       source: 'Rivasseau et al. (2013, 2016) Coccomyxa actinabiotis Ag-110m uptake; Sarro et al. (2005) Co-60 accumulation on stainless-steel coupons (lacking sterile control)',
@@ -1022,6 +1115,7 @@
     baseline_no_coupling_default: {
       field_id: 'baseline_no_coupling_default',
       label: 'Control 1: Baseline Null (lambda_etc = 0.0) vs Exploratory Hypothesis',
+      epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
       units: 'lambda_etc (dimensionless; default = 0.0) & delta_H_etc',
@@ -1034,6 +1128,7 @@
     five_way_radionuclide_retention: {
       field_id: 'five_way_radionuclide_retention',
       label: 'Controls 2-4: 5-Way Radionuclide Retention Partition & Fein (1997) EPS',
+      epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'PROVISIONAL_UNCALIBRATED_ASSUMPTION',
       units: 'Bq/cm^2 across 5 retention channels',
@@ -1046,6 +1141,7 @@
     equal_dose_power_schedules: {
       field_id: 'equal_dose_power_schedules',
       label: 'Control 5: Equal-Dose Power Schedules (Regime-Dependent Control)',
+      epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
       units: 'Integrated Dose = 295.2 Gy | Y_H2 = 1.68e-4 M, Y_H2O2 = 2.54e-4 M',
@@ -1058,6 +1154,7 @@
     control_5a_spatial_bias_null: {
       field_id: 'control_5a_spatial_bias_null',
       label: 'Control 5a: Spatial-Bias Magnetic Null under Uniform Field (B_0, theta_B)',
+      epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
       units: 'grad J_ETC = 0.0 | delta_H(:gradient_difference) = 0.0 | j_base_b0_zero = 0.420',
@@ -1070,7 +1167,25 @@
     control_5b_rpm_sensitivity: {
       field_id: 'control_5b_rpm_sensitivity',
       label: 'Control 5b: Biochemical Magnetic-Response Parametric Sensitivity',
-      data_classification: 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS',
+      epistemic_class: 'PROVISIONAL_ASSUMPTION',
+      data_classification: 'PROVISIONAL_ASSUMPTION',
+      output_classification: 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS',
+      epistemic_badge: 'ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION',
+      calibration_status: 'ILLUSTRATIVE_SENSITIVITY_FORMULA',
+      units: 'Dimensionless relative yield & J_ETC [mol m^-3 s^-1] vs B_0 [uT] and theta_B [rad]',
+      coordinate_frame: 'Internal spin-angle parameter space (B_0, theta_B)',
+      source: 'Stage 3 evaluate_biochemical_magnetic_sensitivity_control5b (illustrative algebraic formula)',
+      model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 3 Control 5b)',
+      commit_lock: COMMIT_LOCK_STRING,
+      notes: 'ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION: verifies the implemented algebraic sensitivity formula only; does NOT empirically validate a melanin radical-pair mechanism and is NOT grounded in a measured melanin spin Hamiltonian.'
+    },
+    control_5b_biochemical_magnetic_sensitivity: {
+      field_id: 'control_5b_biochemical_magnetic_sensitivity',
+      label: 'Control 5b: Biochemical Magnetic-Response Parametric Sensitivity',
+      epistemic_class: 'PROVISIONAL_ASSUMPTION',
+      data_classification: 'PROVISIONAL_ASSUMPTION',
+      output_classification: 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS',
+      epistemic_badge: 'ILLUSTRATIVE_PARAMETRIC_SENSITIVITY_ANALYSIS_NOT_EMPIRICAL_VALIDATION',
       calibration_status: 'ILLUSTRATIVE_SENSITIVITY_FORMULA',
       units: 'Dimensionless relative yield & J_ETC [mol m^-3 s^-1] vs B_0 [uT] and theta_B [rad]',
       coordinate_frame: 'Internal spin-angle parameter space (B_0, theta_B)',
@@ -1082,6 +1197,7 @@
     control_6_oxidant_chemotropism: {
       field_id: 'control_6_oxidant_chemotropism',
       label: 'Control 6: Non-Radiotrophic Oxidant Chemotropism (M_tot = 0 vs M_tot = 1)',
+      epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
       units: 'Canopy centroid drift [um] (-4.8 um avoidance, +3.6 um aerotaxis)',
@@ -1094,6 +1210,7 @@
     epistemic_gates_eg1_eg4_and_links_l1_l5: {
       field_id: 'epistemic_gates_eg1_eg4_and_links_l1_l5',
       label: 'Epistemic Gates (EG-1..EG-4) & Fault-Tree Links (L1..L5)',
+      epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
       units: '4 Epistemic Gates (EG-1..EG-4) & 5 Causal Chain Links (L1..L5)',
@@ -1106,6 +1223,7 @@
     validated_cfd_pressure_Pa: {
       field_id: 'validated_cfd_pressure_Pa',
       label: 'Facility-Validated 3D CFD Pressure Field [UNAVAILABLE]',
+      epistemic_class: 'UNAVAILABLE',
       data_classification: 'UNAVAILABLE',
       calibration_status: 'UNAVAILABLE_AWAITING_CAMPAIGN',
       units: 'Pa (UNAVAILABLE)',
@@ -1118,6 +1236,7 @@
     empirical_piv_temperature: {
       field_id: 'empirical_piv_temperature',
       label: 'Empirical PIV/LIF Temperature & Velocity Field [UNAVAILABLE]',
+      epistemic_class: 'UNAVAILABLE',
       data_classification: 'UNAVAILABLE',
       calibration_status: 'UNAVAILABLE_AWAITING_CAMPAIGN',
       units: 'K / degC (UNAVAILABLE)',
@@ -1471,6 +1590,29 @@
     sync_camera_rotation: true,
     camera_macro: { yaw: 0.62, pitch: 0.52, zoom: 1.0 },
     camera_micro: { yaw: 0.68, pitch: 0.50, zoom: 1.0 },
+    geometry_provenance: {
+      geometry_classification: 'SYNTHETIC_SCHEMATIC',
+      epistemic_class: 'SYNTHETIC_SCHEMATIC',
+      data_classification: 'SYNTHETIC_SCHEMATIC',
+      is_tecdoc643_benchmark_geometry: false,
+      statement: SYNTHETIC_SCHEMATIC_STATEMENT,
+      schematic_domain: {
+        x_cm: [-500, 500],
+        y_cm: [-500, 500],
+        z_cm: [-200, 200],
+        core_lattice: '3x3_schematic_illustrative'
+      },
+      tecdoc643_benchmark_domain: {
+        core_lattice: '6x7_box_grid_MTR_benchmark',
+        reference_artifact: 'tecdoc643_reference_fixture.jl'
+      },
+      poolwater_interactive_domain: {
+        radius_cm: 200,
+        height_cm: 800,
+        reference_artifact: 'poolwater_interactive.html'
+      },
+      benchmark_field_mapping_requirement: 'EXPLICIT_COORDINATE_MAPPING_REQUIRED_BEFORE_DISPLAYING_BENCHMARK_DERIVED_FIELDS'
+    },
     layers: {
       pool_geometry: true,
       temperature_flow: true,
@@ -1493,6 +1635,7 @@
     commit_locks: {
       reactor_pool_biofilms_version: '0.1.0',
       reactor_pool_biofilms_commit: '903f278',
+      reactor_pool_biofilms_audit_reconciliation_commit: '7c21d35',
       prrt_spatial_cpm_clinical_main: '507fc19c507505233268e058b7b5d7a0bd4e378c',
       prrt_spatial_cpm_remote_pr31_head: '2db2a7b558ea736c61cc459fd6a72c4afa36e3c5',
       prrt_spatial_cpm_local_unpushed_head: '8182c30ab46d3b6a8cee7c853c18f7a44766a59d',
@@ -1742,7 +1885,7 @@
       ctx.fillStyle = 'rgba(148, 163, 184, 0.78)';
       ctx.font = '10px monospace';
       var lblX = projectMacro3D(R, -R, Zmin, cx, cy, scale);
-      ctx.fillText('X,Y in [-500,500] cm', lblX.x - 55, lblX.y + 13);
+      ctx.fillText('X,Y in [-500,500] cm [SYNTHETIC_SCHEMATIC]', lblX.x - 115, lblX.y + 13);
       var lblZ = projectMacro3D(-R, -R, Zmax, cx, cy, scale);
       ctx.fillText('Z=+200 cm', lblZ.x - 18, lblZ.y - 6);
     }
@@ -1837,7 +1980,7 @@
       macroHitRegions.push({ x: pCutHit.x, y: pCutHit.y, r: 42, action: 'provenance', target: st.active_field });
     }
 
-    // 3. Cylindrical Pool Wall + Core Shroud + 8 Radial Structural Support Fins + Magenta MTR Core
+    // 3. Cylindrical Pool Wall + Core Shroud + 8 Radial Structural Support Fins + Magenta 3x3 Schematic Core
     if (st.layers.pool_geometry) {
       var steps = 48;
       var zLevels = [Zmin, st.z_slice_cm, Zmax];
@@ -1885,7 +2028,7 @@
         ctx.stroke();
       }
 
-      // Central Magenta 10 MW MTR 3x3 Box-Grid Core Lattice (r <= 62 cm, z in [-65, 65] cm)
+      // Central Magenta 3x3 Schematic Core Lattice (SYNTHETIC_SCHEMATIC; NOT the 6x7 IAEA-TECDOC-643 benchmark)
       for (var gx = -1; gx <= 1; gx++) {
         for (var gy = -1; gy <= 1; gy++) {
           var bx0 = gx * 26, by0 = gy * 26;
@@ -2574,6 +2717,8 @@
       pitch: preset.micro.pitch,
       zoom: preset.micro.zoom
     };
+    var lblCam = document.getElementById('lbl_camera_preset');
+    if (lblCam) lblCam.textContent = presetName;
     var btns = document.querySelectorAll('[data-cam]');
     for (var i = 0; i < btns.length; i++) {
       btns[i].classList.toggle('active', btns[i].getAttribute('data-cam') === presetName);
@@ -2605,8 +2750,8 @@
         document.getElementById('lbl_z_biofilm_um').textContent = m.toFixed(1) + ' um';
       }
     }
-    var b30 = document.getElementById('btnDepthRange30');
-    var b100 = document.getElementById('btnDepthRange100');
+    var b30 = document.getElementById('btnDepth30') || document.getElementById('btnDepthRange30');
+    var b100 = document.getElementById('btnDepth100') || document.getElementById('btnDepthRange100');
     if (b30) b30.classList.toggle('active', m === 30);
     if (b100) b100.classList.toggle('active', m === 100);
     renderAll();
@@ -2736,12 +2881,29 @@
     var sl = MORPHOTYPE_DATA.SL;
     var ss = MORPHOTYPE_DATA.SS;
     var ll = MORPHOTYPE_DATA.LL;
+    var gp = st.geometry_provenance;
+    var geomOk = Boolean(
+      gp &&
+      gp.geometry_classification === 'SYNTHETIC_SCHEMATIC' &&
+      gp.epistemic_class === 'SYNTHETIC_SCHEMATIC' &&
+      gp.data_classification === 'SYNTHETIC_SCHEMATIC' &&
+      gp.is_tecdoc643_benchmark_geometry === false &&
+      PROVENANCE_REGISTRY.pool_geometry &&
+      PROVENANCE_REGISTRY.pool_geometry.data_classification === 'SYNTHETIC_SCHEMATIC' &&
+      PROVENANCE_REGISTRY.pool_geometry.is_tecdoc643_benchmark_geometry === false &&
+      PROVENANCE_REGISTRY.pool_geometry_cad.data_classification === 'SYNTHETIC_SCHEMATIC' &&
+      PROVENANCE_REGISTRY.pool_geometry_cad.is_tecdoc643_benchmark_geometry === false &&
+      PROVENANCE_REGISTRY.quarter_wedge_cutaway.data_classification === 'SYNTHETIC_SCHEMATIC' &&
+      PROVENANCE_REGISTRY.quarter_wedge_cutaway.is_tecdoc643_benchmark_geometry === false
+    );
 
     var checks = {
       solvers_kept_separate: st.solvers_kept_separate === true,
       solver_level_coupled_validation_claimed: st.solver_level_coupled_validation_claimed === false,
       default_lambda_etc_is_zero: st.default_lambda_etc_on_load === 0.0 && c1.default_lambda_etc === 0.0,
       time_bases_uncoupled: st.time_bases_locked_uncoupled === true && Number.isNaN(st.seconds_per_mcs) && st.d_pitch_status === 'awaiting_measurement',
+      synthetic_schematic_not_tecdoc643_geometry: geomOk,
+      syntheticSchematicNotTecdoc643Geometry: geomOk,
       fein_vs_co60_separated: c2.fein_1997_status === 'LITERATURE_DERIVED_FEIN_1997' && c2.co60_affinity_status === 'PROVISIONAL_ASSUMPTION_AWAITING_CALIBRATION',
       schedule_control_regime_dependent: c5.primary_yields_identical_across_schedules === true &&
         c5.downstream_differences_are_regime_dependent === true &&

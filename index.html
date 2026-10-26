@@ -417,7 +417,7 @@
         <div class="frame-head">
           <div>
             <strong>Coordinated 3D Open-Pool Reactor &amp; Biofilm Coupon Explorer (Stage 1 Radiolysis + Stage 2 EPS Sorption + Stage 3 CPM Morphology)</strong>
-            <span class="badge green">SOLVERS KEPT SEPARATE | Default &lambda;_etc = 0.0 | t_pool [s] != MCS</span>
+            <span class="badge green">SOLVERS KEPT SEPARATE | SYNTHETIC_SCHEMATIC Geometry (Not TECDOC-643 6x7) | Default &lambda;_etc = 0.0 | t_pool [s] != MCS</span>
           </div>
           <div>
             <a href="reactor_pool_biofilm_explorer.html" target="_blank" rel="noopener">Open Standalone 3D Pool + Biofilm HTML</a> |
@@ -680,13 +680,13 @@
           </tr>
           <tr>
             <td class="mono">REACTOR-POOL-BIOFILM-COORDINATED-3D-01<br><span style="color:var(--muted)">(REACTOR-POOL-BIOFILM-3D-01)</span></td>
-            <td><strong>Coordinated 3D Open-Pool Reactor &amp; Biofilm Coupon Explorer</strong><br>3D Pool quarter-wedge cutaway + 3D coupon biofilm block (`SL`, `SS`, `LL`, `CPM-Hypha`) + Row A/B/C stratification + 7 null-model comparisons + provenance on demand</td>
+            <td><strong>Coordinated 3D Open-Pool Reactor &amp; Biofilm Coupon Explorer</strong><br>3D Pool quarter-wedge cutaway (<code>SYNTHETIC_SCHEMATIC</code> <code>[-500,500] cm</code> + simplified <code>3x3</code> core; NOT TECDOC-643 <code>6x7</code> benchmark) + 3D coupon biofilm block (<code>SL</code>, <code>SS</code>, <code>LL</code>, <code>CPM-Hypha</code>) + Row A/B/C stratification + 7 null-model comparisons + provenance on demand</td>
             <td>
               <a href="reactor_pool_biofilm_explorer.html">reactor_pool_biofilm_explorer.html</a><br>
               <span class="mono">aurascoper/reactor-pool-biofilms (903f278, v0.1.0)</span>
             </td>
-            <td class="mono">15f3659f8f6e052e...<br>(143,361 bytes)</td>
-            <td><span class="badge green">Uncoupled Solvers Verified</span><br>Solvers kept strictly separate (`solver_level_coupled_validation_claimed = false`); default `lambda_etc = 0.0`; uncoupled time bases (`t_pool [s] != MCS`, `seconds_per_mcs = NaN`).</td>
+            <td class="mono">79582bfb8c24570a...<br>(154,133 bytes)</td>
+            <td><span class="badge green">Uncoupled Solvers Verified</span><br>Solvers kept strictly separate (<code>solver_level_coupled_validation_claimed = false</code>); Layer 1 pool geometry is <code>SYNTHETIC_SCHEMATIC</code> (<code>is_tecdoc643_benchmark_geometry = false</code>); default <code>lambda_etc = 0.0</code>; uncoupled time bases (<code>t_pool [s] != MCS</code>, <code>seconds_per_mcs = NaN</code>).</td>
           </tr>
           <tr>
             <td class="mono">INDEX-XML-01</td>
@@ -1152,7 +1152,7 @@
         cPoolBiofilm.classList.remove('is-hidden');
         void cPoolBiofilm.offsetWidth;
         ensureIframeLoaded(ifrPoolBiofilm, notifyPoolBiofilmResize);
-        banner.innerHTML = '<strong>Epistemic Status (Coordinated 3D Open-Pool Reactor &amp; Biofilm Coupon Explorer, REACTOR-POOL-BIOFILM-3D-01):</strong> Coordinates Stage 1 open-pool radiolysis yields (`H2O2`, `H2`, `*OH`, `e_aq^-` from Jay-Gerin 2025 &amp; Buxton 1988 on a synthetic 10 MW MTR Boussinesq geometry with quarter-wedge cutaway), Stage 2 coupon EPS sorption (`Fein et al. 1997` protonation `pKa` + provisional `Co-60` affinities + `Coccomyxa actinabiotis` benchmarks), and Stage 3 coupon biofilm stratification (`SL`, `SS`, `LL`, `CPM-Hypha`) while keeping solvers strictly separate (`solver_level_coupled_validation_claimed = false`), defaulting to `lambda_etc = 0.0`, and locking time bases uncoupled (`t_pool [s] != MCS`, `seconds_per_mcs = NaN`).';
+        banner.innerHTML = '<strong>Epistemic Status (Coordinated 3D Open-Pool Reactor &amp; Biofilm Coupon Explorer, REACTOR-POOL-BIOFILM-3D-01):</strong> Coordinates Stage 1 open-pool radiolysis yields (`H2O2`, `H2`, `*OH`, `e_aq^-` from Jay-Gerin 2025 &amp; Buxton 1988 on a `SYNTHETIC_SCHEMATIC` pool cutaway `X,Y in [-500,500] cm, Z in [-200,200] cm` with a simplified `3x3` core lattice, explicitly labeled `is_tecdoc643_benchmark_geometry = false` so it is never mistaken for the IAEA-TECDOC-643 `6x7` box-grid MTR benchmark geometry or the `R = 2.0 m, H = 8.0 m` `poolwater_interactive.html` domain), Stage 2 coupon EPS sorption (`Fein et al. 1997` protonation `pKa` + provisional `Co-60` affinities + `Coccomyxa actinabiotis` benchmarks), and Stage 3 coupon biofilm stratification (`SL`, `SS`, `LL`, `CPM-Hypha`) while keeping solvers strictly separate (`solver_level_coupled_validation_claimed = false`), defaulting to `lambda_etc = 0.0`, and locking time bases uncoupled (`t_pool [s] != MCS`, `seconds_per_mcs = NaN`).';
       }
     }
 

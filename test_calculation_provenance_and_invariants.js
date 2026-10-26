@@ -816,10 +816,22 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   assert.ok(html.includes('empirically_validates_melanin_radical_pair_mechanism: false'), 'Missing Control 5b empirical validation guard');
   assert.ok(html.includes('grounded_in_measured_melanin_spin_hamiltonian: false'), 'Missing Control 5b spin Hamiltonian guard');
 
-  // 6. Provenance registry, label field & commit locks + POOLWATER_WORKFLOW_SPEC.md parity
+  // 6. SYNTHETIC_SCHEMATIC geometry provenance, label field & commit locks + POOLWATER_WORKFLOW_SPEC.md parity
+  assert.strictEqual(html.includes('BENCHMARK_GEOMETRY'), false, 'reactor_pool_biofilm_explorer.html must not label its schematic 3x3 geometry as BENCHMARK_GEOMETRY');
+  assert.ok(html.includes("geometry_classification: 'SYNTHETIC_SCHEMATIC'"), 'Missing geometry_classification: SYNTHETIC_SCHEMATIC');
+  assert.ok(html.includes("epistemic_class: 'SYNTHETIC_SCHEMATIC'"), 'Missing epistemic_class: SYNTHETIC_SCHEMATIC');
+  assert.ok(html.includes("data_classification: 'SYNTHETIC_SCHEMATIC'"), 'Missing data_classification: SYNTHETIC_SCHEMATIC');
+  assert.ok(html.includes('is_tecdoc643_benchmark_geometry: false'), 'Missing is_tecdoc643_benchmark_geometry: false');
+  assert.ok(
+    html.includes('SYNTHETIC_SCHEMATIC: Schematic cylindrical cutaway (X,Y in [-500,500] cm, Z in [-200,200] cm, simplified 3x3 core lattice); NOT the IAEA-TECDOC-643 6x7 box-grid MTR benchmark geometry and NOT the R=2.0 m, H=8.0 m poolwater_interactive.html domain. Displaying benchmark-derived fields requires an explicit coordinate mapping and preserves the distinction between SYNTHETIC_SCHEMATIC geometry and TECDOC-643 benchmark geometry.'),
+    'Missing explicit SYNTHETIC_SCHEMATIC vs TECDOC-643 6x7 and poolwater_interactive.html provenance statement'
+  );
+  assert.ok(html.includes('synthetic_schematic_not_tecdoc643_geometry: geomOk'), 'Missing synthetic_schematic_not_tecdoc643_geometry check in verifyScientificBoundaries');
+  assert.ok(html.includes('syntheticSchematicNotTecdoc643Geometry: geomOk'), 'Missing syntheticSchematicNotTecdoc643Geometry check in verifyScientificBoundaries');
   assert.ok(html.includes('id="prov_label"'), 'Missing prov_label row in Provenance Inspector table');
   for (const commitHash of [
     '903f278',
+    '7c21d35',
     '507fc19c507505233268e058b7b5d7a0bd4e378c',
     '2db2a7b558ea736c61cc459fd6a72c4afa36e3c5',
     '8182c30ab46d3b6a8cee7c853c18f7a44766a59d'
@@ -832,10 +844,14 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   const specPath = path.join(ROOT, 'POOLWATER_WORKFLOW_SPEC.md');
   assert.ok(fs.existsSync(specPath), 'Missing POOLWATER_WORKFLOW_SPEC.md');
   const specTxt = fs.readFileSync(specPath, 'utf8');
+  assert.strictEqual(specTxt.includes('\u2014'), false, 'POOLWATER_WORKFLOW_SPEC.md contains forbidden em-dash');
+  assert.strictEqual(specTxt.includes('\u2013'), false, 'POOLWATER_WORKFLOW_SPEC.md contains forbidden en-dash');
   assert.ok(specTxt.includes('REACTOR-POOL-BIOFILM-COORDINATED-3D-01'), 'POOLWATER_WORKFLOW_SPEC.md missing REACTOR-POOL-BIOFILM-COORDINATED-3D-01');
   assert.ok(specTxt.includes('reactor_pool_biofilm_explorer.html'), 'POOLWATER_WORKFLOW_SPEC.md missing reactor_pool_biofilm_explorer.html');
+  assert.ok(specTxt.includes('SYNTHETIC_SCHEMATIC'), 'POOLWATER_WORKFLOW_SPEC.md missing SYNTHETIC_SCHEMATIC');
+  assert.ok(specTxt.includes('is_tecdoc643_benchmark_geometry = false'), 'POOLWATER_WORKFLOW_SPEC.md missing is_tecdoc643_benchmark_geometry = false');
 
-  console.log('PASS [Coordinated 3D Pool-and-Biofilm Explorer 7/7]: 4 spatial layers, camera views, uncoupled t_pool/MCS time bases, default lambda_etc=0.0, 4 morphotypes (SL/SS/LL/CPM-Hypha), 7 null-model comparisons, Control 5b guards, verifyScientificBoundaries, and provenance commit locks verified.');
+  console.log('PASS [Coordinated 3D Pool-and-Biofilm Explorer 7/7]: 4 spatial layers, SYNTHETIC_SCHEMATIC geometry provenance (not TECDOC-643 6x7), camera views, uncoupled t_pool/MCS time bases, default lambda_etc=0.0, 4 morphotypes (SL/SS/LL/CPM-Hypha), 7 null-model comparisons, Control 5b guards, verifyScientificBoundaries, and provenance commit locks verified.');
 }
 
 function runAll() {
