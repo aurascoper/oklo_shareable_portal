@@ -26,16 +26,16 @@
     "total_pre_existing_frozen_file_count": 11,
     "coordinated_and_companion_files": {
       "reactor_pool_biofilm_explorer.html": {
-        "bytes": 203053,
-        "sha256": "b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32"
+        "bytes": 204031,
+        "sha256": "09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694"
       },
       "POOLWATER_WORKFLOW_SPEC.md": {
-        "bytes": 27723,
-        "sha256": "a58b90704dd273aa4cf388af7007175df2f4b5c2a6b885406857279a6748503d"
+        "bytes": 27761,
+        "sha256": "8a8797bb63b1eac15f35a5bfbb9aa94ad809c85041c6e5a71a158aac40db02cd"
       },
       "index.html": {
-        "bytes": 98176,
-        "sha256": "c1349076ce0e29f1db58b1087b68812d3652658ef96ae615189b08559e80c4e3"
+        "bytes": 98384,
+        "sha256": "e38f8b3599d5d3472e9c4aa0a5274622022f2d0ea431b34fca541c58b2b5bd20"
       }
     },
     "accounting_note": "10 primary pre-existing Gate-0 artifacts + 1 linked sidecar manifest (evidence_manifest.json) = 11 pre-existing frozen files, plus reactor_pool_biofilm_explorer.html and companion portal/specification files."
@@ -110,8 +110,8 @@
       "bytes": 79610,
       "sha256": "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a",
       "spec_relative_path": "POOLWATER_WORKFLOW_SPEC.md",
-      "spec_bytes": 27723,
-      "spec_sha256": "a58b90704dd273aa4cf388af7007175df2f4b5c2a6b885406857279a6748503d",
+      "spec_bytes": 27761,
+      "spec_sha256": "8a8797bb63b1eac15f35a5bfbb9aa94ad809c85041c6e5a71a158aac40db02cd",
       "dataset_id": "poolwater_synthetic_demo_v1",
       "evidence_classification": "synthetic",
       "epistemic_status": "dataset_driven_synthetic_pool_demo (Internal checks pass; separates TECDOC-643 neutron reference, point-reactor kinetics, synthetic Boussinesq pool convection, and isolated surrogate-loop PIE protocol)",
@@ -144,8 +144,8 @@
       "evidence_manifest_bytes": 116876,
       "evidence_manifest_sha256": "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf",
       "invariant_test_relative_path": "test_calculation_provenance_and_invariants.js",
-      "invariant_test_bytes": 68878,
-      "invariant_test_sha256": "46bc77e217120bd9823beb2f379687afbecc458a7a98b30d659b9e11e8b61cd3",
+      "invariant_test_bytes": 70142,
+      "invariant_test_sha256": "f9cbef76a773ad0d63643fb943c89cc6f4a06e030e6a92ac244e706b08558eb2",
       "source_module": "src/track4_mineral_magnetoreception_gates.jl",
       "evidence_classification": "calculated",
       "epistemic_status": "cross_domain_epistemic_gated_4d_viewer (Internal consistency checks pass; EG-1..EG-4 enforced; 4D perspective tesseract w = t / theta_B in [0..360 deg] / D_4 hyperplane rotation; criterial separation of accepted verified candidates vs criterial-pruned candidates vs exploratory particles; uses established magnetotactic bacteria magnetosome chain U_mag / (k_B * T) = 5.69 > 1 as positive code-verification benchmark; highlights Treiber et al. 2012 Nature iron-particle warning; grounds bench follow-up in testable fungal biotite-weathering Fe/K ICP assay against sterile and killed-fungus controls; 3-regime 1 um^3 biotite Fe3O4 superparamagnetic/single-domain/multi-domain inclusion sensitivity)",
@@ -154,8 +154,8 @@
     "REACTOR-POOL-BIOFILM-COORDINATED-3D-01": {
       "relative_path": "reactor_pool_biofilm_explorer.html",
       "public_url": "https://aurascoper.github.io/oklo_shareable_portal/reactor_pool_biofilm_explorer.html",
-      "bytes": 203053,
-      "sha256": "b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32",
+      "bytes": 204031,
+      "sha256": "09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694",
       "source_repo": "aurascoper/reactor-pool-biofilms",
       "source_commit": "903f278",
       "audit_reconciliation_commit": "7c21d35",
@@ -183,8 +183,8 @@
     "REACTOR-POOL-BIOFILM-3D-01": {
       "relative_path": "reactor_pool_biofilm_explorer.html",
       "public_url": "https://aurascoper.github.io/oklo_shareable_portal/reactor_pool_biofilm_explorer.html",
-      "bytes": 203053,
-      "sha256": "b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32",
+      "bytes": 204031,
+      "sha256": "09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694",
       "source_repo": "aurascoper/reactor-pool-biofilms",
       "source_commit": "903f278",
       "audit_reconciliation_commit": "7c21d35",

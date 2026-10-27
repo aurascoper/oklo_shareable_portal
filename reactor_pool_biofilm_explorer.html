@@ -443,7 +443,7 @@
     <a class="nav-pill active" href="reactor_pool_biofilm_explorer.html">3D Pool + Biofilm Explorer</a>
     <a class="nav-pill" href="poolwater_interactive.html">Pool-Water Fault-Tree (1D/2D)</a>
     <a class="nav-pill" href="biofilms_3d_explorer.html">Biofilms 3D/4D Morphodynamics</a>
-    <a class="nav-pill" href="magnetoreception_3d_explorer.html">Magnetoreception Radical-Pair 3D</a>
+    <a class="nav-pill" href="magnetoreception_3d_explorer.html">Biotite &amp; Biomagnetite 4D</a>
     <a class="nav-pill" href="tecdoc643_neutron_walk.html">IAEA TECDOC-643 3D</a>
     <a class="nav-pill" href="spacetime_explorer_4d_shareable.html">4D Spacetime Explorer</a>
   </nav>
@@ -1047,7 +1047,7 @@
       label: 'Stage 3 3D Cellular Potts & Morphotype Stratification Lattice',
       geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
       evidence_classification: 'uncalibrated_model_snapshot',
-      epistemic_status: 'UNCALIBRATED_MODEL_SNAPSHOT_NULL_BASELINE_ENFORCED: 40x40x40 Cellular Potts lattice with D-PITCH awaiting_measurement, seconds_per_mcs = NaN (uncoupled from t_pool [s]), and baseline lambda_etc = 0.0 programmatically enforced under null controls. Software and rendering verification confirm solver isolation and null invariants only, not empirical biological validation.',
+      epistemic_status: 'UNCALIBRATED_MODEL_SNAPSHOT_NULL_BASELINE_ENFORCED: 40x40x40 Cellular Potts lattice with D-PITCH awaiting_measurement, seconds_per_mcs = NaN (uncoupled from t_pool [s]), and baseline lambda_etc = 0.0 programmatically enforced under null controls. Software and rendering verification confirm solver isolation and null invariants only, not empirical biological validation. This demo does not model fouling.',
       epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
@@ -1056,14 +1056,14 @@
       source: 'Stage 3 FieldConsumerConfig (default lambda_etc = 0.0) & morphotype stratification benchmark (SL, SS, LL, CPM-Hypha)',
       model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 3 stage3_cpm_field_consumer_coupling.jl)',
       commit_lock: COMMIT_LOCK_STRING,
-      notes: 'Default baseline is lambda_etc = 0.0 (zero radiotrophic coupling). Time step conversion seconds_per_mcs is explicitly NaN awaiting experimental microscopy calibration.'
+      notes: 'Default baseline is lambda_etc = 0.0 (zero radiotrophic coupling). Time step conversion seconds_per_mcs is explicitly NaN awaiting experimental microscopy calibration. This demo does not model fouling.'
     },
     'CPM-Hypha': {
       field_id: 'CPM-Hypha',
       label: 'Stage 3 3D Cellular Potts & Morphotype Stratification Lattice (CPM-Hypha)',
       geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
       evidence_classification: 'uncalibrated_model_snapshot',
-      epistemic_status: 'UNCALIBRATED_MODEL_SNAPSHOT_NULL_BASELINE_ENFORCED: 40x40x40 Cellular Potts hyphal/biofilm voxel snapshot with seconds_per_mcs = NaN and baseline lambda_etc = 0.0 enforced. Passing rendering and boundary tests verify software implementation only and do not establish biological radiotropism or calibrated biofilm rheology.',
+      epistemic_status: 'UNCALIBRATED_MODEL_SNAPSHOT_NULL_BASELINE_ENFORCED: 40x40x40 Cellular Potts hyphal/biofilm voxel snapshot with seconds_per_mcs = NaN and baseline lambda_etc = 0.0 enforced. Passing rendering and boundary tests verify software implementation only and do not establish biological radiotropism or calibrated biofilm rheology. This demo does not model fouling.',
       epistemic_class: 'PROVISIONAL_ASSUMPTION',
       data_classification: 'PROVISIONAL_ASSUMPTION',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
@@ -1072,7 +1072,7 @@
       source: 'Stage 3 FieldConsumerConfig (default lambda_etc = 0.0) & morphotype stratification benchmark (SL, SS, LL, CPM-Hypha)',
       model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 3 stage3_cpm_field_consumer_coupling.jl)',
       commit_lock: COMMIT_LOCK_STRING,
-      notes: 'Default baseline is lambda_etc = 0.0 (zero radiotrophic coupling). Time step conversion seconds_per_mcs is explicitly NaN awaiting experimental microscopy calibration.'
+      notes: 'Default baseline is lambda_etc = 0.0 (zero radiotrophic coupling). Time step conversion seconds_per_mcs is explicitly NaN awaiting experimental microscopy calibration. This demo does not model fouling.'
     },
     morphotype_SL: {
       field_id: 'morphotype_SL',
@@ -1272,7 +1272,7 @@
       label: 'Control 5: Equal-Dose Power Schedules (Regime-Dependent Control)',
       geometry_classification: 'SYNTHETIC_SCHEMATIC',
       evidence_classification: 'calculated',
-      epistemic_status: 'REGIME_DEPENDENT_ANALYTICAL_SCHEDULE_CONTROL: Proves that equal integrated dose (295.2 Gy) yields identical primary linear radiolytic production across constant, periodic, and shuffled schedules, while downstream differences are strictly regime-dependent (vanishing in the conserved-linear / lambda_etc = 0 regime). Software verification confirms mathematical regime separation only, not empirical biological schedule effects.',
+      epistemic_status: 'REGIME_DEPENDENT_ANALYTICAL_SCHEDULE_CONTROL: Shows under the model\'s linear rate law that equal integrated dose (295.2 Gy) yields identical primary linear radiolytic production across constant, periodic, and shuffled schedules, while downstream differences are strictly regime-dependent (vanishing in the conserved-linear / lambda_etc = 0 regime). Software verification confirms mathematical regime separation only, not empirical biological schedule effects.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
@@ -1288,7 +1288,7 @@
       label: 'Control 5a: Spatial-Bias Magnetic Null under Uniform Field (B_0, theta_B)',
       geometry_classification: 'MICRO_BIOFILM_SLAB_VOXEL',
       evidence_classification: 'calculated',
-      epistemic_status: 'ANALYTICAL_SYMMETRY_NULL_CONTROL: Proves mathematically that a spatially uniform magnetic field (B_0, theta_B) with zero spatial gradient (grad J_ETC = 0) produces zero directional bias under :gradient_difference (delta_H = 0). Software verification confirms symmetry invariance in code only and does not empirically validate cellular magnetoreception.',
+      epistemic_status: 'ANALYTICAL_SYMMETRY_NULL_CONTROL: Shows under the model\'s assumed symmetry that a spatially uniform magnetic field (B_0, theta_B) with zero spatial gradient (grad J_ETC = 0) produces zero directional bias under :gradient_difference (delta_H = 0). Software verification confirms symmetry invariance in code only and does not empirically validate cellular magnetoreception.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'UNCALIBRATED_MCS_LATTICE',
@@ -1297,7 +1297,7 @@
       source: 'Stage 3 evaluate_spatial_bias_magnetic_null_control5a',
       model_version: 'ReactorPoolBiofilms.jl v0.1.0 (Stage 3 Control 5a)',
       commit_lock: COMMIT_LOCK_STRING,
-      notes: 'Proves that a spatially uniform magnetic field produces zero spatial gradient (grad J_ETC = 0) and zero directional bias under :gradient_difference, while shifting uniform :site_occupation energy relative to B_0 = 0.'
+      notes: 'Shows in this model that a spatially uniform magnetic field produces zero spatial gradient (grad J_ETC = 0) and zero directional bias under :gradient_difference, while shifting uniform :site_occupation energy relative to B_0 = 0.'
     },
     control_5b_rpm_sensitivity: {
       field_id: 'control_5b_rpm_sensitivity',
@@ -1356,7 +1356,7 @@
       label: 'Epistemic Gates (EG-1..EG-4) & Fault-Tree Links (L1..L5)',
       geometry_classification: 'SYNTHETIC_SCHEMATIC',
       evidence_classification: 'calculated',
-      epistemic_status: 'CROSS_STAGE_EPISTEMIC_GATE_ARCHITECTURE (EG-1..EG-4 & L1..L5): Enforces architectural separation between Stage 1 radiolysis, Stage 2 sorption, and Stage 3 uncalibrated CPM coupling, with baseline lambda_etc = 0.0 and uncoupled t_pool [s] vs MCS timelines. Software verification confirms guardrail enforcement only and does not empirically validate physical or biological hypotheses.',
+      epistemic_status: 'CROSS_STAGE_EPISTEMIC_GATE_ARCHITECTURE (EG-1..EG-4 & L1..L5): Enforces architectural separation between Stage 1 radiolysis, Stage 2 sorption, and Stage 3 uncalibrated CPM coupling, with baseline lambda_etc = 0.0 and uncoupled t_pool [s] vs MCS timelines; uses established magnetotactic bacteria magnetosome chains (U_mag / (k_B * T) = 5.69 > 1) as the positive code-verification benchmark, highlights the Treiber et al. (2012, Nature) iron-particle warning, and grounds bench follow-up in a testable fungal biotite-weathering (Fe/K ICP against sterile and killed-fungus controls) assay. Software verification confirms guardrail enforcement only and does not empirically validate physical or biological hypotheses.',
       epistemic_class: 'CALCULATED',
       data_classification: 'CALCULATED',
       calibration_status: 'PUBLISHED_G_VALUE',
@@ -1365,7 +1365,7 @@
       source: 'magnetoreception_3d_explorer.html & ReactorPoolBiofilms epistemic gate specification',
       model_version: 'REACTOR-POOL-BIOFILM-COORDINATED-3D-01 v1.0',
       commit_lock: COMMIT_LOCK_STRING,
-      notes: 'Enforces strict separation between established radiolysis/sorption benchmarks (L1-L3), exploratory radiotrophic coupling (L4), and illustrative spin-Hamiltonian sensitivity formulas (L5).'
+      notes: 'Enforces strict separation between established radiolysis/sorption/magnetosome benchmarks (L1-L3), testable fungal biotite-weathering (Fe/K ICP) bench assays, the Treiber et al. (2012) iron-particle warning, exploratory radiotrophic coupling (L4), and illustrative spin-Hamiltonian sensitivity formulas (L5).'
     },
     validated_cfd_pressure_Pa: {
       field_id: 'validated_cfd_pressure_Pa',
@@ -1749,14 +1749,14 @@
       title: 'Epistemic Gates (EG-1..EG-4) & Fault-Tree Links (L1..L5)',
       gates: {
         'EG-1': 'Separates published primary radiolysis yields (Jay-Gerin 2025; Buxton 1988) from unmeasured facility-specific 3D CFD/PIV flow fields.',
-        'EG-2': 'Separates Fein et al. (1997) protonation pKa constants from provisional Co-60 binding affinities and 5-way retention partitions.',
-        'EG-3': 'Enforces strict time-base separation between physical pool PDE time t_pool [s] and uncalibrated CPM steps MCS (seconds_per_mcs = NaN).',
+        'EG-2': 'Separates Fein et al. (1997) protonation pKa constants and established magnetotactic bacteria magnetosome chains (U_mag / (k_B * T) = 5.69 > 1 positive control) from provisional Co-60 binding affinities and inclusion-free biotite.',
+        'EG-3': 'Enforces strict time-base separation between physical pool PDE time t_pool [s] and uncalibrated CPM steps MCS (seconds_per_mcs = NaN), and highlights the Treiber et al. (2012, Nature) iron-particle warning alongside a testable fungal biotite-weathering (Fe/K ICP) bench assay.',
         'EG-4': 'Labels Control 5b radical-pair magnetic curves as ILLUSTRATIVE_SENSITIVITY_ANALYSIS, not empirical validation of melanin spin physics.'
       },
       links: {
         L1: 'ESTABLISHED: Core gamma/neutron leakage + primary water radiolysis yields (G-values).',
         L2: 'SYNTHETIC_SURROGATE: Boussinesq convection + coupon boundary-layer transport (delta_m, delta_T, delta_c).',
-        L3: 'ESTABLISHED_BENCHMARK: EPS biosorption & Coccomyxa actinabiotis Ag-110m/Co-60 retention.',
+        L3: 'ESTABLISHED_BENCHMARK: EPS biosorption, Coccomyxa actinabiotis Ag-110m/Co-60 retention, magnetosome U_mag/(k_B*T) positive control & fungal biotite Fe/K ICP bench assay.',
         L4: 'EXPLORATORY_HYPOTHESIS: Melanin-mediated radiotrophic electron transfer (default lambda_etc = 0.0).',
         L5: 'ILLUSTRATIVE_SENSITIVITY_ANALYSIS: Radical-pair spin-Hamiltonian modulation of melanin electron transfer.'
       }

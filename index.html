@@ -300,19 +300,20 @@
     <div class="header-top">
       <div>
         <h1>Oklo Scientific Visualization Index, Pool-Water Benchmark &amp; Biofilms 3D Portal</h1>
-        <p>Public-literature benchmark &amp; synthetic model portal preserving frozen Revision-0 fixture integrity while indexing R10 4D Geochemistry, Pool-Water Interactive CFD/Kinetics, Biofilms 3D CPM, Biotite &amp; Biomagnetite 4D Magnetoreception, and TECDOC-643 Neutron Walk</p>
+        <p>Public-literature benchmark &amp; synthetic model portal preserving frozen Revision-0 fixture integrity while indexing R10 4D Geochemistry, Pool-Water Interactive CFD/Kinetics, Biofilms 3D CPM, Biotite &amp; Biomagnetite 4D (Magnetosome Positive Control &amp; Fungal Fe/K ICP Bench Assay), and TECDOC-643 Neutron Walk</p>
       </div>
       <div class="author-meta">
-        Author: Mark Hunter Kinder II | Date: October 2026 | License: <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0 1.0 Public Domain</a>
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0 1.0 Public Domain Dedication</a>
       </div>
     </div>
     <div class="plain-language-summary">
+      <div><strong>Author: Mark Hunter Kinder II | Date: October 2026 | License: CC0 1.0 Public Domain</strong></div>
       <strong>What This Portal Is (and Is Not):</strong> This portal collects interactive visualizers for public-literature nuclear benchmarks (the generic IAEA-TECDOC-643 10 MW research-reactor benchmark and idealized Oklo natural-reactor transport) alongside exploratory synthetic models of microbial biofilms and mineral magnetics. All simulations shown here are literature-parameterized educational demonstrations, archived Monte Carlo playbacks, or uncalibrated mathematical models whose badges indicate only that internal software consistency checks pass. None of these interactive tools represent an operating nuclear facility, a live coupled reactor-safety solver, or an experimentally validated biological discovery.
     </div>
     <div class="badge-row">
       <span class="badge green">R10 4D Slice: MERGED (942e3f8)</span>
       <span class="badge blue">Pool-Water Interactive: Internal checks pass</span>
-      <span class="badge green">3D Pool + Biofilm Explorer: Internal consistency checks pass (5a9ff39a)</span>
+      <span class="badge green">3D Pool + Biofilm Explorer: Internal consistency checks pass (09bb3d9c)</span>
       <span class="badge green">Biotite &amp; Biomagnetite 4D: Internal consistency checks pass (e9e50a68)</span>
       <span class="badge amber">TECDOC-643: Reference Audit Only (dc15eb93)</span>
       <span class="badge blue">R0 Fixture: Frozen Unmodified (8dac3ae9)</span>
@@ -331,7 +332,7 @@
       <button id="tabCoupled" onclick="setView('coupled')">7. Coupled Comparison (Pool-Water + TECDOC Reference Panels)</button>
       <button id="tabAudit" onclick="setView('audit')">8. Benchmark Workflow, PIE Demarcation &amp; Precision Audit</button>
       <button id="tabRobinGif" onclick="setView('robingif')">9. Multispecies Biofilm Spatial Model (4-Panel Robin Cylindrical GIF)</button>
-      <button id="tabMagneto" onclick="setView('magneto')">10. Biotite &amp; Biomagnetite 4D Magnetoreception (EG-1..EG-4 Explorer)</button>
+      <button id="tabMagneto" onclick="setView('magneto')">10. Biotite &amp; Biomagnetite 4D (Magnetosome Positive Control &amp; Fungal Fe/K ICP Assay)</button>
       <button id="tabPoolBiofilm" onclick="setView('poolbiofilm')">11. Coordinated 3D Pool-and-Biofilm Explorer (Uncoupled Solvers, Default &lambda;_etc = 0)</button>
     </div>
 
@@ -443,13 +444,13 @@
             <span class="badge green">POSITIVE CONTROL: Magnetosome Chain U_mag/(k_B*T) | BENCH ASSAY: Fungal Biotite Fe/K ICP vs Sterile/Killed Controls | Treiber et al. (2012) Warning</span>
           </div>
           <div>
-            <a href="magnetoreception_3d_explorer.html" target="_blank" rel="noopener">Open Standalone Biotite &amp; Magnetoreception 4D HTML</a> |
+            <a href="magnetoreception_3d_explorer.html" target="_blank" rel="noopener">Open Standalone Biotite &amp; Biomagnetite 4D HTML</a> |
             <a href="reactor_pool_biofilm_explorer.html" target="_blank" rel="noopener">3D Pool + Biofilm Explorer</a> |
             <a href="evidence_manifest.json" target="_blank" rel="noopener">Evidence Manifest v1.3.0 (.json)</a> |
             <span class="mono">Track 4 Ref: track4_mineral_magnetoreception_gates.jl (c4048a6c)</span>
           </div>
         </div>
-        <iframe id="iframeMagneto" data-src="magnetoreception_3d_explorer.html" title="Biotite, Biomagnetite &amp; Cryptochrome 4D Magnetoreception Explorer"></iframe>
+        <iframe id="iframeMagneto" data-src="magnetoreception_3d_explorer.html" title="Biotite, Biomagnetite &amp; Cryptochrome 4D Explorer"></iframe>
       </div>
 
       <div id="cardPoolBiofilm" class="frame-card is-hidden">
@@ -462,7 +463,7 @@
             <a href="reactor_pool_biofilm_explorer.html" target="_blank" rel="noopener">Open Standalone 3D Pool + Biofilm HTML</a> |
             <a href="poolwater_interactive.html" target="_blank" rel="noopener">Pool-Water Fault-Tree</a> |
             <a href="biofilms_3d_explorer.html" target="_blank" rel="noopener">Biofilms 3D Explorer</a> |
-            <a href="magnetoreception_3d_explorer.html" target="_blank" rel="noopener">Magnetoreception 4D</a>
+            <a href="magnetoreception_3d_explorer.html" target="_blank" rel="noopener">Biotite &amp; Biomagnetite 4D</a>
           </div>
         </div>
         <iframe id="iframePoolBiofilm" data-src="reactor_pool_biofilm_explorer.html" title="Coordinated 3D Open-Pool Reactor and Biofilm Coupon Explorer"></iframe>
@@ -614,7 +615,7 @@
     <div id="auditSection" class="card">
       <h2>Indexed Shareable Artifacts, Provenance Hashes, and Embed Links</h2>
       <p style="font-size: 0.78rem; color: var(--muted); line-height: 1.5; margin: 0 0 10px 0;">
-        <strong>Gate-0 Frozen File Accounting:</strong> The repository locks <strong>10 primary pre-existing Gate-0 artifacts</strong> (<code>spacetime_explorer_4d_shareable.html</code>, <code>tecdoc643_neutron_walk.html</code>, <code>tecdoc643_reference_fixture.jl</code>, <code>oklo_r0_fixture_readonly.html</code>, <code>CONFORMANCE_FIXTURE_SPEC.md</code>, <code>biofilms_3d_explorer.html</code>, <code>poolwater_interactive.html</code>, <code>multispecies_biofilm_robin_cylindrical_4panel.gif</code>, <code>clonal_sector_expansion_reference.jpg</code>, and <code>magnetoreception_3d_explorer.html</code>) plus <strong>1 linked sidecar manifest</strong> (<code>evidence_manifest.json</code>, <code>116,876</code> bytes, SHA-256 <code>4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf</code>), totaling <strong>11 pre-existing frozen files</strong>, alongside the frozen coordinated viewer <code>reactor_pool_biofilm_explorer.html</code> (<code>203,053</code> bytes, SHA-256 <code>b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32</code>).
+        <strong>Gate-0 Frozen File Accounting:</strong> The repository locks <strong>10 primary pre-existing Gate-0 artifacts</strong> (<code>spacetime_explorer_4d_shareable.html</code>, <code>tecdoc643_neutron_walk.html</code>, <code>tecdoc643_reference_fixture.jl</code>, <code>oklo_r0_fixture_readonly.html</code>, <code>CONFORMANCE_FIXTURE_SPEC.md</code>, <code>biofilms_3d_explorer.html</code>, <code>poolwater_interactive.html</code>, <code>multispecies_biofilm_robin_cylindrical_4panel.gif</code>, <code>clonal_sector_expansion_reference.jpg</code>, and <code>magnetoreception_3d_explorer.html</code>) plus <strong>1 linked sidecar manifest</strong> (<code>evidence_manifest.json</code>, <code>116,876</code> bytes, SHA-256 <code>4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf</code>), totaling <strong>11 pre-existing frozen files</strong>, alongside the frozen coordinated viewer <code>reactor_pool_biofilm_explorer.html</code> (<code>204,031</code> bytes, SHA-256 <code>09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694</code>).
       </p>
       <table>
         <thead>
@@ -711,7 +712,7 @@
           </tr>
           <tr>
             <td class="mono">BIOTITE-MAGNETORECEPTION-4D-01</td>
-            <td><strong>Biotite, Biomagnetite &amp; Cryptochrome 4D Magnetoreception Explorer</strong><br>3D/4D WebGL + 2D fallback + 4D tesseract hyperplane &amp; D_4 scrubber + EG-1..EG-4 cross-domain epistemic gates + 1920x1080 PNG export</td>
+            <td><strong>Biotite, Biomagnetite &amp; Cryptochrome 4D Explorer (Magnetosome Positive Control &amp; Fungal Fe/K ICP Bench Assay)</strong><br>3D/4D WebGL + 2D fallback + 4D tesseract hyperplane &amp; D_4 scrubber + EG-1..EG-4 cross-domain epistemic gates + 1920x1080 PNG export</td>
             <td>
               <a href="magnetoreception_3d_explorer.html">magnetoreception_3d_explorer.html</a><br>
               <a href="evidence_manifest.json">evidence_manifest.json</a> |
@@ -727,8 +728,8 @@
               <a href="reactor_pool_biofilm_explorer.html">reactor_pool_biofilm_explorer.html</a><br>
               <span class="mono">aurascoper/reactor-pool-biofilms (7c21d35 / 903f278, v0.1.0)</span>
             </td>
-            <td class="mono">b25fa9cc46f7c2bd...<br>(203,053 bytes)</td>
-            <td><span class="badge green">Uncoupled Solvers (Internal checks pass)</span><br>Solvers kept strictly separate (<code>solver_level_coupled_validation_claimed = false</code>); Layer 1 pool geometry is <code>SYNTHETIC_SCHEMATIC</code> (<code>is_tecdoc643_benchmark_geometry = false</code>); separated provenance taxonomy (<code>geometry_classification</code>, lowercase <code>evidence_classification</code>, <code>epistemic_status</code>); programmatic null-control lock (<code>lambda_etc = 0.0</code>) and uncoupled time bases (<code>t_pool [s] != MCS</code>, <code>seconds_per_mcs = NaN</code>).</td>
+            <td class="mono">09bb3d9cbca7757c...<br>(204,031 bytes)</td>
+            <td><span class="badge green">Uncoupled Solvers (Internal checks pass)</span><br>Solvers kept strictly separate (<code>solver_level_coupled_validation_claimed = false</code>); Layer 1 pool geometry is <code>SYNTHETIC_SCHEMATIC</code> (<code>is_tecdoc643_benchmark_geometry = false</code>); separated provenance taxonomy (<code>geometry_classification</code>, lowercase <code>evidence_classification</code>, <code>epistemic_status</code>); programmatic null-control lock (<code>lambda_etc = 0.0</code>) and uncoupled time bases (<code>t_pool [s] != MCS</code>, <code>seconds_per_mcs = NaN</code>). This demo does not model fouling.</td>
           </tr>
           <tr>
             <td class="mono">INDEX-XML-01</td>
@@ -742,10 +743,10 @@
         </tbody>
       </table>
 
-      <h2 style="margin-top:20px">Cross-Domain Epistemic Gates (EG-1 to EG-4): Biotite, Biomagnetite &amp; Cryptochrome 4D Magnetoreception Audit</h2>
+      <h2 style="margin-top:20px">Cross-Domain Epistemic Gates (EG-1 to EG-4): Biotite, Biomagnetite &amp; Cryptochrome 4D Audit</h2>
       <p style="font-size: 0.78rem; color: var(--muted); line-height: 1.5; margin: 0 0 10px 0;">
         <strong>Separating Established Positive Controls, Testable Bench Assays, and Unverified Speculation:</strong>
-        (1) <strong>Established positive control:</strong> magnetotactic bacteria synthesize magnetosome chains (<code>Fe3O4</code>) whose magnetic alignment energy exceeds thermal noise (<code>U_mag / (k_B * T) = 5.69 &gt; 1</code> at <code>50 uT, 300 K</code>), providing a known physical benchmark to verify the <code>U_mag / (k_B * T)</code> calculation, alongside the <strong>Treiber et al. (2012, Nature) warning</strong> that iron-rich cells in pigeon beaks once mistaken for magnetoreceptors proved to be macrophages ("iron particle present" does not equal "magnetic sense").
+        (1) <strong>Established positive control:</strong> magnetotactic bacteria synthesize magnetosome chains (<code>Fe3O4</code>) whose magnetic alignment energy exceeds thermal noise (<code>U_mag / (k_B * T) = 5.69 &gt; 1</code> at <code>50 uT, 300 K</code>), providing a known physical benchmark to verify the <code>U_mag / (k_B * T)</code> calculation, alongside the <strong>Treiber et al. (2012, Nature) warning</strong> that iron-rich cells in pigeon beaks once mistaken for magnetoreceptors turned out to be immune cells (macrophages) ("iron particle present" does not equal "magnetic sense").
         (2) <strong>Testable at the bench:</strong> fungal weathering of biotite flakes measured via dissolved <code>Fe</code> and <code>K</code> release (ICP-MS / ICP-OES and surface microscopy against sterile flakes and heat-killed fungus controls), plus standard magnetic-drop / TEM / rock-magnetism (superparamagnetic vs. single-domain) assays.
         (3) <strong>Unsupported or unverified as framed:</strong> open-ended fungal magnetoreception, direct transfer of avian cryptochrome radical-pair chemistry to fungi/melanin, and unverified reactor-zone biotite at Oklo (<code>oklo_reactor_zone_biotite_verified = false</code>).
       </p>

@@ -79,8 +79,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'POOLWATER_WORKFLOW_SPEC.md',
-      sha256: 'a58b90704dd273aa4cf388af7007175df2f4b5c2a6b885406857279a6748503d',
-      bytes: 27723
+      sha256: '8a8797bb63b1eac15f35a5bfbb9aa94ad809c85041c6e5a71a158aac40db02cd',
+      bytes: 27761
     },
     {
       path: 'multispecies_biofilm_robin_cylindrical_4panel.gif',
@@ -99,8 +99,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'reactor_pool_biofilm_explorer.html',
-      sha256: 'b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32',
-      bytes: 203053
+      sha256: '09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694',
+      bytes: 204031
     },
     {
       path: 'evidence_manifest.json',
@@ -109,12 +109,12 @@ function verifyArtifactHashes() {
     },
     {
       path: 'test_calculation_provenance_and_invariants.js',
-      sha256: '46bc77e217120bd9823beb2f379687afbecc458a7a98b30d659b9e11e8b61cd3',
-      bytes: 68878
+      sha256: 'f9cbef76a773ad0d63643fb943c89cc6f4a06e030e6a92ac244e706b08558eb2',
+      bytes: 70142
     },
     {
       path: 'benchmark_manifest.json',
-      sha256: '96cd892fb0ee30c3a4ddde57f2710ba5f34bb6ff9bc0f64985b8bcc3a595d8e6',
+      sha256: '4dcc3aa85e4dba762ed1a7e79e4a9e22dc6e808983fde353603aeeb4d91856a9',
       bytes: 30757
     }
   ];
@@ -162,7 +162,7 @@ function verifyArtifactHashes() {
   assert.ok(indexHtml.includes('037e2050b70e92b7...'), 'index.html missing BIOFILMS-3D-CPM-01 SHA prefix');
   assert.ok(indexHtml.includes('e73622d6454a3a6a...'), 'index.html missing BIOFILMS-ROBIN-CYL-GIF-01 SHA prefix');
   assert.ok(indexHtml.includes('e9e50a6857b699aa...'), 'index.html missing BIOTITE-MAGNETORECEPTION-4D-01 SHA prefix');
-  assert.ok(indexHtml.includes('b25fa9cc46f7c2bd...'), 'index.html missing REACTOR-POOL-BIOFILM-COORDINATED-3D-01 SHA prefix');
+  assert.ok(indexHtml.includes('09bb3d9cbca7757c...'), 'index.html missing REACTOR-POOL-BIOFILM-COORDINATED-3D-01 SHA prefix');
   console.log('PASS [1/15]: Gate-0 artifact hashes, byte counts, and manifests verified.');
   return expectedFiles;
 }

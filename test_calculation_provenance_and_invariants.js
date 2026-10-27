@@ -1126,16 +1126,16 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   };
   const pinnedCoordinatedAndCompanionFiles = {
     'reactor_pool_biofilm_explorer.html': {
-      bytes: 203053,
-      sha256: 'b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32'
+      bytes: 204031,
+      sha256: '09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694'
     },
     'POOLWATER_WORKFLOW_SPEC.md': {
-      bytes: 27723,
-      sha256: 'a58b90704dd273aa4cf388af7007175df2f4b5c2a6b885406857279a6748503d'
+      bytes: 27761,
+      sha256: '8a8797bb63b1eac15f35a5bfbb9aa94ad809c85041c6e5a71a158aac40db02cd'
     },
     'index.html': {
-      bytes: 98176,
-      sha256: 'c1349076ce0e29f1db58b1087b68812d3652658ef96ae615189b08559e80c4e3'
+      bytes: 98384,
+      sha256: 'e38f8b3599d5d3472e9c4aa0a5274622022f2d0ea431b34fca541c58b2b5bd20'
     }
   };
   assert.strictEqual(Object.keys(pinnedPrimaryGate0Artifacts).length, 10, 'Expected exactly 10 primary pre-existing Gate-0 artifacts');
@@ -1188,25 +1188,40 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
     }
   }
 
-  // Verify Pre-Publication Portal Review Fixes (1-7) & Biotite/Biomagnetite Framing on index.html and editable companion files
+  // Verify Pre-Publication Portal Review Fixes (1-7) & Biotite/Biomagnetite Framing on index.html and all editable companion files
+  const editablePortalFiles = [
+    'index.html',
+    'reactor_pool_biofilm_explorer.html',
+    'POOLWATER_WORKFLOW_SPEC.md',
+    'README.md',
+    'artifact_index.xml',
+    'benchmark_manifest.json'
+  ];
+  const forbiddenHyperRe = new RegExp('hyper' + 'paramagnet', 'i');
+  for (const checkFile of editablePortalFiles) {
+    const txt = fs.readFileSync(path.join(ROOT, checkFile), 'utf8');
+    assert.ok(!/institutional-scrubbed|institutionally scrubbed/i.test(txt), `${checkFile} must not contain Institutional-scrubbed`);
+    assert.ok(!/pre-oct 19|pre-2026-10-19/i.test(txt), `${checkFile} must not contain Pre-Oct 19 Materials`);
+    assert.ok(!/\b(prove|proves|proved|proving|falsification|falsifiable)\b/i.test(txt), `${checkFile} must not contain prove/proves/proved/proving/falsification/falsifiable`);
+    assert.ok(!/implies zero fouling/i.test(txt), `${checkFile} must not contain implies zero fouling`);
+    assert.ok(!forbiddenHyperRe.test(txt), `${checkFile} must use superparamagnetic terminology exclusively`);
+  }
+  const magHtmlText = fs.readFileSync(path.join(ROOT, 'magnetoreception_3d_explorer.html'), 'utf8');
+  assert.ok(!forbiddenHyperRe.test(magHtmlText), 'magnetoreception_3d_explorer.html must use superparamagnetic terminology exclusively');
+
   const indexText = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  assert.ok(!/institutional-scrubbed|institutionally scrubbed/i.test(indexText), 'index.html must not contain Institutional-scrubbed');
-  assert.ok(!/pre-oct 19|pre-2026-10-19/i.test(indexText), 'index.html must not contain Pre-Oct 19 Materials');
-  assert.ok(!/proving|falsification|falsifiable/i.test(indexText), 'index.html must not contain proving/falsification');
-  assert.ok(!/implies zero fouling/i.test(indexText), 'index.html must not contain implies zero fouling');
+  const rpbText = fs.readFileSync(path.join(ROOT, 'reactor_pool_biofilm_explorer.html'), 'utf8');
   assert.ok(indexText.includes('Public-literature benchmark'), 'index.html must include Public-literature benchmark');
   assert.ok(indexText.includes('Archived Playback Only') && indexText.includes('Archived Playback'), 'index.html must include Archived Playback labels');
   assert.ok(indexText.includes('Illustrative Proxy: Monod Rate minus Parcel Hazard, 1/MCS'), 'index.html must declare net_biomass_rate_proxy currency');
-  assert.ok(indexText.includes('This demo does not model fouling.'), 'index.html must state This demo does not model fouling.');
+  assert.ok(indexText.includes('This demo does not model fouling.') && rpbText.includes('This demo does not model fouling.'), 'index.html and reactor_pool_biofilm_explorer.html must state This demo does not model fouling.');
   assert.ok(indexText.includes('O. intermedium AM7 (reclassified as Brucella intermedia)'), 'index.html must note Brucella intermedia reclassification');
-  assert.ok(indexText.includes('Author:') && indexText.includes('Mark Hunter Kinder II') && indexText.includes('CC0 1.0 Public Domain'), 'index.html must include Author, Date, License header');
-  assert.ok(indexText.includes('class="plain-language-summary"'), 'index.html must include plain-language-summary');
+  const summaryMatch = indexText.match(/<div class="plain-language-summary">([\s\S]*?)<\/div>\s*<div class="badge-row">/);
+  assert.ok(summaryMatch && summaryMatch[1].includes('Author: Mark Hunter Kinder II | Date: October 2026 | License: CC0 1.0 Public Domain'), 'index.html .plain-language-summary must include exact Author/Date/License string ahead of badge-row');
+  const rpbPrefix8 = pinnedCoordinatedAndCompanionFiles['reactor_pool_biofilm_explorer.html'].sha256.slice(0, 8);
+  assert.ok(indexText.includes(`3D Pool + Biofilm Explorer: Internal consistency checks pass (${rpbPrefix8})`), `index.html badge must display synchronized 8-char SHA-256 prefix (${rpbPrefix8}) for reactor_pool_biofilm_explorer.html`);
   assert.ok(indexText.includes('positive code-verification benchmark') && indexText.includes('Treiber et al. (2012') && indexText.includes('Fe/K'), 'index.html must highlight magnetosome positive control, Treiber et al. (2012) warning, and fungal biotite Fe/K ICP bench assay');
-  const forbiddenHyperRe = new RegExp('hyper' + 'paramagnet', 'i');
-  for (const checkFile of ['index.html', 'POOLWATER_WORKFLOW_SPEC.md', 'README.md', 'artifact_index.xml', 'benchmark_manifest.json', 'magnetoreception_3d_explorer.html']) {
-    const txt = fs.readFileSync(path.join(ROOT, checkFile), 'utf8');
-    assert.ok(!forbiddenHyperRe.test(txt), `${checkFile} must use superparamagnetic terminology exclusively`);
-  }
+  assert.ok(rpbText.includes('U_mag / (k_B * T) = 5.69 > 1') && rpbText.includes('Treiber et al. (2012') && rpbText.includes('Fe/K'), 'reactor_pool_biofilm_explorer.html must highlight magnetosome positive control, Treiber et al. (2012) warning, and fungal biotite Fe/K ICP bench assay');
 
   console.log('PASS [Coordinated 3D Pool-and-Biofilm Explorer 7/7]: Gate 1 separated provenance taxonomy, Gate 2 explicit on-disk SHA-256 verification of all 10 primary Gate-0 frozen inputs + 1 sidecar manifest + coordinated/companion files, Gate 3 narrow validation claims and programmatic baseline/timeline firewall (including VM runtime execution), 4 spatial layers, 4 morphotypes, 7 null-model comparisons, and pre-publication portal review invariants verified.');
 }

@@ -4,8 +4,8 @@
     <Title>Oklo 4D Spatiotemporal, Conformance Fixture, Biofilms 3D, TECDOC-643 Neutron Walk, and Pool-Water Interactive Shareable Index</Title>
     <PublicPortalUrl>https://aurascoper.github.io/oklo_shareable_portal/</PublicPortalUrl>
     <RelativePortalPath>index.html</RelativePortalPath>
-    <PortalBytes>98176</PortalBytes>
-    <PortalSHA256>c1349076ce0e29f1db58b1087b68812d3652658ef96ae615189b08559e80c4e3</PortalSHA256>
+    <PortalBytes>98384</PortalBytes>
+    <PortalSHA256>e38f8b3599d5d3472e9c4aa0a5274622022f2d0ea431b34fca541c58b2b5bd20</PortalSHA256>
     <RelativeManifestPath>artifact_index.xml</RelativeManifestPath>
     <RelativeBenchmarkContractPath>benchmark_manifest.json</RelativeBenchmarkContractPath>
     <RelativePoolWaterSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativePoolWaterSpecPath>
@@ -106,12 +106,12 @@
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/poolwater_interactive.html</PublicArtifactUrl>
       <RelativeSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativeSpecPath>
       <PublicSpecUrl>https://aurascoper.github.io/oklo_shareable_portal/POOLWATER_WORKFLOW_SPEC.md</PublicSpecUrl>
-      <SpecBytes>27723</SpecBytes>
-      <SpecSHA256>a58b90704dd273aa4cf388af7007175df2f4b5c2a6b885406857279a6748503d</SpecSHA256>
+      <SpecBytes>27761</SpecBytes>
+      <SpecSHA256>8a8797bb63b1eac15f35a5bfbb9aa94ad809c85041c6e5a71a158aac40db02cd</SpecSHA256>
       <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
       <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
       <BenchmarkManifestBytes>30757</BenchmarkManifestBytes>
-      <BenchmarkManifestSHA256>96cd892fb0ee30c3a4ddde57f2710ba5f34bb6ff9bc0f64985b8bcc3a595d8e6</BenchmarkManifestSHA256>
+      <BenchmarkManifestSHA256>4dcc3aa85e4dba762ed1a7e79e4a9e22dc6e808983fde353603aeeb4d91856a9</BenchmarkManifestSHA256>
       <Bytes>79610</Bytes>
       <SHA256>fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
@@ -150,7 +150,7 @@
     </Artifact>
 
     <Artifact id="BIOTITE-MAGNETORECEPTION-4D-01">
-      <Title>Biotite, Biomagnetite and Cryptochrome 4D Magnetoreception Explorer</Title>
+      <Title>Biotite, Biomagnetite and Cryptochrome 4D Explorer (Magnetosome Positive Control and Fungal Fe/K ICP Bench Assay)</Title>
       <Requirement>Cross-Domain Epistemic Gating (EG-1 to EG-4), 4D Spatiotemporal Visualization Invariants, and 3-Regime Biotite Inclusion Sensitivity</Requirement>
       <EpistemicStatus>cross_domain_epistemic_gated_4d_viewer (Internal consistency checks pass; EG-1 Geochemical Provenance separates Oklo RZ1-RZ16 verified mineral inventory with oklo_reactor_zone_biotite_verified = false from comparative biotite and separates Robin boundary condition at cylinder wall r = R from European robin Erithacus rubecula magnetoreception; EG-2 Physical Mechanism uses the established magnetotactic bacteria single-domain Fe3O4 magnetosome chain U_mag / (k_B * T) = 5.69 &gt; 1 as the positive code-verification benchmark against inclusion-free paramagnetic biotite mica K(Mg,Fe)3AlSi3O10(F,OH)2 with (001) cleavage and 5.8943e-8 k_B T volume-matched / 6.0040e-5 k_B T at 1 um^3, 50 uT, 300 K and cryptochrome [FADdot- ... TrpHdot+] spin chemistry, and evaluates 3-regime superparamagnetic/single-domain/multi-domain Fe3O4 inclusion sensitivity across f_inc in [0, 1e-4, 1e-2] plus 3-tier irradiation hierarchy and specimen-encoding gate; EG-3 Cellular Transduction records unresolved transduction gap to fungal hyphal or mitochondrial response, highlights the Treiber et al. 2012 Nature warning that iron-rich particles alone do not establish magnetoreception, and grounds bench follow-up in a testable fungal biotite-weathering Fe/K ICP assay against sterile and killed-fungus controls; EG-4 Evolutionary Origin records untested evolutionary bridge between prebiotic mineral surface ordering H5 and evolved magnetoreception H6 while enforcing 4D perspective tesseract projection with criterial separation)</EpistemicStatus>
       <EvidenceClassification>calculated</EvidenceClassification>
@@ -163,8 +163,8 @@
       <EvidenceManifestBytes>116876</EvidenceManifestBytes>
       <EvidenceManifestSHA256>4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf</EvidenceManifestSHA256>
       <InvariantTestRelativePath>test_calculation_provenance_and_invariants.js</InvariantTestRelativePath>
-      <InvariantTestBytes>68878</InvariantTestBytes>
-      <InvariantTestSHA256>46bc77e217120bd9823beb2f379687afbecc458a7a98b30d659b9e11e8b61cd3</InvariantTestSHA256>
+      <InvariantTestBytes>70142</InvariantTestBytes>
+      <InvariantTestSHA256>f9cbef76a773ad0d63643fb943c89cc6f4a06e030e6a92ac244e706b08558eb2</InvariantTestSHA256>
       <SourceModule>src/track4_mineral_magnetoreception_gates.jl</SourceModule>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
@@ -173,12 +173,12 @@
       <Title>Coordinated 3D Open-Pool Reactor and Biofilm Coupon Explorer</Title>
       <Requirement>Coordinated 3D Macro Pool Cutaway and Micro Coupon Biofilm Explorer with Uncoupled Solvers, Default lambda_etc = 0.0, Seven Null-Model Comparisons, and Provenance on Demand</Requirement>
       <GeometryClassification>SYNTHETIC_SCHEMATIC</GeometryClassification>
-      <EpistemicStatus>COORDINATED_SYNTHETIC_AND_REDUCED_ORDER_EXPLORER (geometry_classification=SYNTHETIC_SCHEMATIC, not TECDOC-643 6x7 benchmark geometry; combines synthetic flow/geometry, reduced-order calculated radiolysis, uncalibrated_model_snapshot biofilm/sorption layers, and unavailable validated CFD; passing rendering and boundary tests verify software implementation only, not empirical physical or biological validation; baseline lambda_etc=0.0 and uncoupled t_pool [s] vs MCS timelines strictly enforced)</EpistemicStatus>
+      <EpistemicStatus>COORDINATED_SYNTHETIC_AND_REDUCED_ORDER_EXPLORER (geometry_classification=SYNTHETIC_SCHEMATIC, not TECDOC-643 6x7 benchmark geometry; combines synthetic flow/geometry, reduced-order calculated radiolysis, uncalibrated_model_snapshot biofilm/sorption layers, and unavailable validated CFD; passing rendering and boundary tests verify software implementation only, not empirical physical or biological validation; baseline lambda_etc=0.0 and uncoupled t_pool [s] vs MCS timelines strictly enforced. This demo does not model fouling.)</EpistemicStatus>
       <EvidenceClassification>synthetic</EvidenceClassification>
       <RelativePortalPath>reactor_pool_biofilm_explorer.html</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/reactor_pool_biofilm_explorer.html</PublicArtifactUrl>
-      <Bytes>203053</Bytes>
-      <SHA256>b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32</SHA256>
+      <Bytes>204031</Bytes>
+      <SHA256>09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694</SHA256>
       <SourceRepository>aurascoper/reactor-pool-biofilms</SourceRepository>
       <ExecutionSourceCommitSHA>903f278</ExecutionSourceCommitSHA>
       <PRRTSpatialCPMClinicalMainCommit>507fc19c507505233268e058b7b5d7a0bd4e378c</PRRTSpatialCPMClinicalMainCommit>
@@ -191,12 +191,12 @@
       <Title>Coordinated 3D Open-Pool Reactor and Biofilm Coupon Explorer (Alias)</Title>
       <Requirement>Coordinated 3D Macro Pool Cutaway and Micro Coupon Biofilm Explorer with Uncoupled Solvers, Default lambda_etc = 0.0, Seven Null-Model Comparisons, and Provenance on Demand</Requirement>
       <GeometryClassification>SYNTHETIC_SCHEMATIC</GeometryClassification>
-      <EpistemicStatus>COORDINATED_SYNTHETIC_AND_REDUCED_ORDER_EXPLORER (geometry_classification=SYNTHETIC_SCHEMATIC, not TECDOC-643 6x7 benchmark geometry; combines synthetic flow/geometry, reduced-order calculated radiolysis, uncalibrated_model_snapshot biofilm/sorption layers, and unavailable validated CFD; passing rendering and boundary tests verify software implementation only, not empirical physical or biological validation; baseline lambda_etc=0.0 and uncoupled t_pool [s] vs MCS timelines strictly enforced)</EpistemicStatus>
+      <EpistemicStatus>COORDINATED_SYNTHETIC_AND_REDUCED_ORDER_EXPLORER (geometry_classification=SYNTHETIC_SCHEMATIC, not TECDOC-643 6x7 benchmark geometry; combines synthetic flow/geometry, reduced-order calculated radiolysis, uncalibrated_model_snapshot biofilm/sorption layers, and unavailable validated CFD; passing rendering and boundary tests verify software implementation only, not empirical physical or biological validation; baseline lambda_etc=0.0 and uncoupled t_pool [s] vs MCS timelines strictly enforced. This demo does not model fouling.)</EpistemicStatus>
       <EvidenceClassification>synthetic</EvidenceClassification>
       <RelativePortalPath>reactor_pool_biofilm_explorer.html</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/reactor_pool_biofilm_explorer.html</PublicArtifactUrl>
-      <Bytes>203053</Bytes>
-      <SHA256>b25fa9cc46f7c2bd181b84c961e4efc42fc981a4b50733e8555c1d122ac94b32</SHA256>
+      <Bytes>204031</Bytes>
+      <SHA256>09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694</SHA256>
       <SourceRepository>aurascoper/reactor-pool-biofilms</SourceRepository>
       <ExecutionSourceCommitSHA>903f278</ExecutionSourceCommitSHA>
       <PRRTSpatialCPMClinicalMainCommit>507fc19c507505233268e058b7b5d7a0bd4e378c</PRRTSpatialCPMClinicalMainCommit>
