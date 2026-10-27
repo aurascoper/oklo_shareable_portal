@@ -79,7 +79,7 @@ function verifyArtifactHashes() {
     },
     {
       path: 'POOLWATER_WORKFLOW_SPEC.md',
-      sha256: '8a8797bb63b1eac15f35a5bfbb9aa94ad809c85041c6e5a71a158aac40db02cd',
+      sha256: '31c087db524581303f26760926efbccf1c8d97d95beed92e9eaf122b93a8dc38',
       bytes: 27761
     },
     {
@@ -109,12 +109,12 @@ function verifyArtifactHashes() {
     },
     {
       path: 'test_calculation_provenance_and_invariants.js',
-      sha256: 'f9cbef76a773ad0d63643fb943c89cc6f4a06e030e6a92ac244e706b08558eb2',
-      bytes: 70142
+      sha256: '26aaf4e5b812b5ed091c07cb59ea24146158ffe6cd0a36bbf613ab99e5576239',
+      bytes: 70474
     },
     {
       path: 'benchmark_manifest.json',
-      sha256: '4dcc3aa85e4dba762ed1a7e79e4a9e22dc6e808983fde353603aeeb4d91856a9',
+      sha256: '43976bde861e01c3e3c90ce090b1360c7fb75591a5343fdaa41976ab34d45e3f',
       bytes: 30757
     }
   ];

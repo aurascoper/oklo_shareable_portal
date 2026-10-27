@@ -32,14 +32,14 @@ end
             "tecdoc643_reference_fixture.jl"                    => (6018,   "ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d"),
             "proto_biofilms_geyser_fission_research_program.md" => (48056,  "da50d4002e6bcca94234045c3d371e16af243806cdb1ed99e0beff074c1cfb11"),
             "poolwater_interactive.html"                         => (79610,   "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a"),
-            "POOLWATER_WORKFLOW_SPEC.md"                         => (27761,   "8a8797bb63b1eac15f35a5bfbb9aa94ad809c85041c6e5a71a158aac40db02cd"),
+            "POOLWATER_WORKFLOW_SPEC.md"                         => (27761,   "31c087db524581303f26760926efbccf1c8d97d95beed92e9eaf122b93a8dc38"),
             "multispecies_biofilm_robin_cylindrical_4panel.gif"  => (2571435, "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997"),
             "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
             "magnetoreception_3d_explorer.html"                  => (263619,  "e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064"),
             "reactor_pool_biofilm_explorer.html"                 => (204031,  "09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694"),
             "evidence_manifest.json"                             => (116876,  "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf"),
-            "test_calculation_provenance_and_invariants.js"      => (70142,   "f9cbef76a773ad0d63643fb943c89cc6f4a06e030e6a92ac244e706b08558eb2"),
-            "benchmark_manifest.json"                            => (30757,   "4dcc3aa85e4dba762ed1a7e79e4a9e22dc6e808983fde353603aeeb4d91856a9"),
+            "test_calculation_provenance_and_invariants.js"      => (70474,   "26aaf4e5b812b5ed091c07cb59ea24146158ffe6cd0a36bbf613ab99e5576239"),
+            "benchmark_manifest.json"                            => (30757,   "43976bde861e01c3e3c90ce090b1360c7fb75591a5343fdaa41976ab34d45e3f"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")

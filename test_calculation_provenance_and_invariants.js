@@ -1131,11 +1131,11 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
     },
     'POOLWATER_WORKFLOW_SPEC.md': {
       bytes: 27761,
-      sha256: '8a8797bb63b1eac15f35a5bfbb9aa94ad809c85041c6e5a71a158aac40db02cd'
+      sha256: '31c087db524581303f26760926efbccf1c8d97d95beed92e9eaf122b93a8dc38'
     },
     'index.html': {
-      bytes: 98384,
-      sha256: 'e38f8b3599d5d3472e9c4aa0a5274622022f2d0ea431b34fca541c58b2b5bd20'
+      bytes: 98610,
+      sha256: 'fd4945a25d45be3466d5d1a0deddee1cfc16c2e94e4518435ce1c56e41c49833'
     }
   };
   assert.strictEqual(Object.keys(pinnedPrimaryGate0Artifacts).length, 10, 'Expected exactly 10 primary pre-existing Gate-0 artifacts');
@@ -1205,6 +1205,8 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
     assert.ok(!/\b(prove|proves|proved|proving|falsification|falsifiable)\b/i.test(txt), `${checkFile} must not contain prove/proves/proved/proving/falsification/falsifiable`);
     assert.ok(!/implies zero fouling/i.test(txt), `${checkFile} must not contain implies zero fouling`);
     assert.ok(!forbiddenHyperRe.test(txt), `${checkFile} must use superparamagnetic terminology exclusively`);
+    assert.ok(!/\bCC0\b/i.test(txt), `${checkFile} must not use CC0 license`);
+    assert.ok(!/Mark Hunter Kinder II/.test(txt), `${checkFile} must use unified author line Hunter Kinder (Mark Kinder II)`);
   }
   const magHtmlText = fs.readFileSync(path.join(ROOT, 'magnetoreception_3d_explorer.html'), 'utf8');
   assert.ok(!forbiddenHyperRe.test(magHtmlText), 'magnetoreception_3d_explorer.html must use superparamagnetic terminology exclusively');
@@ -1217,7 +1219,7 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   assert.ok(indexText.includes('This demo does not model fouling.') && rpbText.includes('This demo does not model fouling.'), 'index.html and reactor_pool_biofilm_explorer.html must state This demo does not model fouling.');
   assert.ok(indexText.includes('O. intermedium AM7 (reclassified as Brucella intermedia)'), 'index.html must note Brucella intermedia reclassification');
   const summaryMatch = indexText.match(/<div class="plain-language-summary">([\s\S]*?)<\/div>\s*<div class="badge-row">/);
-  assert.ok(summaryMatch && summaryMatch[1].includes('Author: Mark Hunter Kinder II | Date: October 2026 | License: CC0 1.0 Public Domain'), 'index.html .plain-language-summary must include exact Author/Date/License string ahead of badge-row');
+  assert.ok(summaryMatch && summaryMatch[1].includes('Author: Hunter Kinder (Mark Kinder II) | Date: October 2026 | License: CC BY 4.0 (original portal materials; TECDOC-643 reference walk panel excluded pending contributor and institutional release confirmation)'), 'index.html .plain-language-summary must include exact Author/Date/License string ahead of badge-row');
   const rpbPrefix8 = pinnedCoordinatedAndCompanionFiles['reactor_pool_biofilm_explorer.html'].sha256.slice(0, 8);
   assert.ok(indexText.includes(`3D Pool + Biofilm Explorer: Internal consistency checks pass (${rpbPrefix8})`), `index.html badge must display synchronized 8-char SHA-256 prefix (${rpbPrefix8}) for reactor_pool_biofilm_explorer.html`);
   assert.ok(indexText.includes('positive code-verification benchmark') && indexText.includes('Treiber et al. (2012') && indexText.includes('Fe/K'), 'index.html must highlight magnetosome positive control, Treiber et al. (2012) warning, and fungal biotite Fe/K ICP bench assay');

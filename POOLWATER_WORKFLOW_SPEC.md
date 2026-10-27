@@ -42,7 +42,7 @@ All existing benchmark and reference artifacts are pinned by commit SHA, byte co
 - [`magnetoreception_3d_explorer.html`](magnetoreception_3d_explorer.html): `263,619` bytes, SHA-256 `e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064` (`biotite_biomagnetite_cryptochrome_4d_explorer`, untouched).
 - [`evidence_manifest.json`](evidence_manifest.json): `116,876` bytes, SHA-256 `4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf` (`linked_sidecar_manifest`, untouched).
 - [`reactor_pool_biofilm_explorer.html`](reactor_pool_biofilm_explorer.html): `204,031` bytes, SHA-256 `09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694` (`coordinated_3d_pool_and_biofilm_explorer`, artifact ID `REACTOR-POOL-BIOFILM-COORDINATED-3D-01` / `REACTOR-POOL-BIOFILM-3D-01`; `geometry_classification = "SYNTHETIC_SCHEMATIC"`, `evidence_classification = "synthetic"`).
-- [`index.html`](index.html): `98,384` bytes, SHA-256 `e38f8b3599d5d3472e9c4aa0a5274622022f2d0ea431b34fca541c58b2b5bd20` (`unified_shareable_portal_shell`).
+- [`index.html`](index.html): `98,610` bytes, SHA-256 `fd4945a25d45be3466d5d1a0deddee1cfc16c2e94e4518435ce1c56e41c49833` (`unified_shareable_portal_shell`).
 
 ### Gate 1: Normalize the Benchmark Contract
 [`benchmark_manifest.json`](benchmark_manifest.json) defines schema `oklo_tecdoc_poolwater_benchmark_contract_v1`, normalizing:

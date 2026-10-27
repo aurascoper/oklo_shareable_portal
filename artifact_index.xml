@@ -4,8 +4,8 @@
     <Title>Oklo 4D Spatiotemporal, Conformance Fixture, Biofilms 3D, TECDOC-643 Neutron Walk, and Pool-Water Interactive Shareable Index</Title>
     <PublicPortalUrl>https://aurascoper.github.io/oklo_shareable_portal/</PublicPortalUrl>
     <RelativePortalPath>index.html</RelativePortalPath>
-    <PortalBytes>98384</PortalBytes>
-    <PortalSHA256>e38f8b3599d5d3472e9c4aa0a5274622022f2d0ea431b34fca541c58b2b5bd20</PortalSHA256>
+    <PortalBytes>98610</PortalBytes>
+    <PortalSHA256>fd4945a25d45be3466d5d1a0deddee1cfc16c2e94e4518435ce1c56e41c49833</PortalSHA256>
     <RelativeManifestPath>artifact_index.xml</RelativeManifestPath>
     <RelativeBenchmarkContractPath>benchmark_manifest.json</RelativeBenchmarkContractPath>
     <RelativePoolWaterSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativePoolWaterSpecPath>
@@ -107,11 +107,11 @@
       <RelativeSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativeSpecPath>
       <PublicSpecUrl>https://aurascoper.github.io/oklo_shareable_portal/POOLWATER_WORKFLOW_SPEC.md</PublicSpecUrl>
       <SpecBytes>27761</SpecBytes>
-      <SpecSHA256>8a8797bb63b1eac15f35a5bfbb9aa94ad809c85041c6e5a71a158aac40db02cd</SpecSHA256>
+      <SpecSHA256>31c087db524581303f26760926efbccf1c8d97d95beed92e9eaf122b93a8dc38</SpecSHA256>
       <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
       <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
       <BenchmarkManifestBytes>30757</BenchmarkManifestBytes>
-      <BenchmarkManifestSHA256>4dcc3aa85e4dba762ed1a7e79e4a9e22dc6e808983fde353603aeeb4d91856a9</BenchmarkManifestSHA256>
+      <BenchmarkManifestSHA256>43976bde861e01c3e3c90ce090b1360c7fb75591a5343fdaa41976ab34d45e3f</BenchmarkManifestSHA256>
       <Bytes>79610</Bytes>
       <SHA256>fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
@@ -163,8 +163,8 @@
       <EvidenceManifestBytes>116876</EvidenceManifestBytes>
       <EvidenceManifestSHA256>4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf</EvidenceManifestSHA256>
       <InvariantTestRelativePath>test_calculation_provenance_and_invariants.js</InvariantTestRelativePath>
-      <InvariantTestBytes>70142</InvariantTestBytes>
-      <InvariantTestSHA256>f9cbef76a773ad0d63643fb943c89cc6f4a06e030e6a92ac244e706b08558eb2</InvariantTestSHA256>
+      <InvariantTestBytes>70474</InvariantTestBytes>
+      <InvariantTestSHA256>26aaf4e5b812b5ed091c07cb59ea24146158ffe6cd0a36bbf613ab99e5576239</InvariantTestSHA256>
       <SourceModule>src/track4_mineral_magnetoreception_gates.jl</SourceModule>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
