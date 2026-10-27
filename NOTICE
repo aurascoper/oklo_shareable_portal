@@ -1,0 +1,15 @@
+Oklo Shareable Portal
+Copyright (c) 2026 Hunter Kinder (Mark Hunter Kinder II)
+
+Dual License Split:
+Code: MIT · Content: CC BY 4.0
+
+Code in this repository is licensed under the MIT License (see LICENSE).
+Prose, figures, .md specifications, explainer text, and documentation manifests are licensed under Creative Commons Attribution 4.0 International (see LICENSE-docs) with attribution to Hunter Kinder (Mark Hunter Kinder II).
+
+Exclusion Notice:
+The TECDOC-643 reference walk panel (tecdoc643_neutron_walk.html) and reference fixture (tecdoc643_reference_fixture.jl) are explicitly excluded from these license grants pending written contributor and institutional release confirmation.
+
+Fixture Provenance and Revision Note (for contributor review):
+1. Facility-Neutral Wording Scrub: tecdoc643_reference_fixture.jl was updated to replace facility-specific wording with generic, facility-neutral language (lines 8-9 and line 25), reinforcing that the IAEA box-grid MTR benchmark fixture tests generic reactivity algebra and does not establish facility-specific physics.
+2. Line 72 worth_sigma_pcm: In blade_sweep(), the worth uncertainty for the 100% withdrawn self-comparison row evaluates to 0.0 pcm (rather than an independent-sample error propagation), because Delta rho = (1/k_out - 1/k_out) = 0 identically against itself.

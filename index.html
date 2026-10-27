@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Hunter Kinder (Mark Hunter Kinder II)">
   <title>Oklo 4D Spatiotemporal, Pool-Water Interactive &amp; TECDOC-643 Shareable Portal</title>
   <style>
     :root {
@@ -303,18 +304,19 @@
         <p>Public-literature benchmark &amp; synthetic model portal preserving frozen Revision-0 fixture integrity while indexing R10 4D Geochemistry, Pool-Water Interactive CFD/Kinetics, Biofilms 3D CPM, Biotite &amp; Biomagnetite 4D (Magnetosome Positive Control &amp; Fungal Fe/K ICP Bench Assay), and TECDOC-643 Neutron Walk</p>
       </div>
       <div class="author-meta">
-        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0 (original portal materials; TECDOC-643 reference walk panel excluded pending contributor and institutional release confirmation)</a>
+        <div><strong>Author: Hunter Kinder (Mark Hunter Kinder II)</strong></div>
+        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">Code: MIT · Content: CC BY 4.0 (original portal materials; TECDOC-643 reference walk panel excluded pending contributor and institutional release confirmation)</a>
       </div>
     </div>
     <div class="plain-language-summary">
-      <div><strong>Author: Hunter Kinder (Mark Kinder II) | Date: October 2026 | License: CC BY 4.0 (original portal materials; TECDOC-643 reference walk panel excluded pending contributor and institutional release confirmation)</strong></div>
+      <div><strong>Author: Hunter Kinder (Mark Hunter Kinder II) | Date: October 2026 | License: Code: MIT · Content: CC BY 4.0 (original portal materials; TECDOC-643 reference walk panel excluded pending contributor and institutional release confirmation)</strong></div>
       <strong>What This Portal Is (and Is Not):</strong> This portal collects interactive visualizers for public-literature nuclear benchmarks (the generic IAEA-TECDOC-643 10 MW research-reactor benchmark and idealized Oklo natural-reactor transport) alongside exploratory synthetic models of microbial biofilms and mineral magnetics. All simulations shown here are literature-parameterized educational demonstrations, archived Monte Carlo playbacks, or uncalibrated mathematical models whose badges indicate only that internal software consistency checks pass. None of these interactive tools represent an operating nuclear facility, a live coupled reactor-safety solver, or an experimentally validated biological discovery.
     </div>
     <div class="badge-row">
       <span class="badge green">R10 4D Slice: MERGED (942e3f8)</span>
       <span class="badge blue">Pool-Water Interactive: Internal checks pass</span>
       <span class="badge green">3D Pool + Biofilm Explorer: Internal consistency checks pass (09bb3d9c)</span>
-      <span class="badge green">Biotite &amp; Biomagnetite 4D: Internal consistency checks pass (e9e50a68)</span>
+      <span class="badge green">Biotite &amp; Biomagnetite 4D: Internal consistency checks pass (33503922)</span>
       <span class="badge amber">TECDOC-643: Reference Audit Only (dc15eb93)</span>
       <span class="badge blue">R0 Fixture: Frozen Unmodified (8dac3ae9)</span>
       <span class="badge blue">Provenance: Public-literature benchmark (literature-parameterized)</span>
@@ -433,6 +435,9 @@
             <a href="CONFORMANCE_FIXTURE_SPEC.md" target="_blank" rel="noopener">CONFORMANCE_FIXTURE_SPEC.md</a> |
             <span class="mono" title="Upstream repository aurascoper/oklo_pool_mobile is private (owner-only)">Upstream Ref: Draft PR #12 (Owner-Only Private Repo)</span>
           </div>
+        </div>
+        <div style="padding: 10px 16px; font-size: 12px; color: var(--muted); background: var(--panel-alt); border-bottom: 1px solid var(--border); line-height: 1.5;">
+          <strong>Rendering Clarification:</strong> In <code class="mono">oklo_r0_fixture_readonly.html</code>, the <strong>Volumetric Raycast</strong> mode renders a depth-sorted thresholded voxel cloud, <strong>Iso-Density Threshold</strong> represents a relative fraction of the active scalar field range, and the 2D slice hover readout (<code class="mono">#inspValue</code>) displays a static placeholder (<code class="mono">216.4 deg C</code>) until the cursor moves over the 2D slice.
         </div>
         <iframe id="iframeR0" data-src="oklo_r0_fixture_readonly.html" title="Frozen Revision-0 Oklo Conformance Fixture"></iframe>
       </div>
@@ -646,7 +651,7 @@
               <a href="POOLWATER_WORKFLOW_SPEC.md">POOLWATER_WORKFLOW_SPEC.md</a> |
               <a href="benchmark_manifest.json">benchmark_manifest.json</a>
             </td>
-            <td class="mono">fa0f0dc30c45681a...<br>(79,610 bytes)</td>
+            <td class="mono">34b3e9f50689dd5f...<br>(79,614 bytes)</td>
             <td><span class="badge blue">Internal checks pass</span><br>Decouples `NeutronTransportReference`, `PoolThermalHydraulicsSynthetic`, `ReactorKineticsAlgebra`, and `SurrogateLoopBiofilmPIEBoundary`; missing CFD/PIV fields stay `UNAVAILABLE`.</td>
           </tr>
           <tr>
@@ -656,7 +661,7 @@
               <a href="biofilms_3d_explorer.html">biofilms_3d_explorer.html</a><br>
               <span class="mono">aurascoper/Biofilms (c766e7b / de8d88e)</span>
             </td>
-            <td class="mono">037e2050b70e92b7...<br>(869,267 bytes)</td>
+            <td class="mono">eea45e31e898c2f5...<br>(869,353 bytes)</td>
             <td><span class="badge amber">Uncalibrated Reference</span><br>40x40x40 lattice (`D-PITCH: awaiting_measurement`, `seconds_per_mcs = NaN`); all 28 TOST 90% CIs lie inside `[-0.05, +0.05] r/R`. This demo does not model fouling.</td>
           </tr>
           <tr>
@@ -687,15 +692,16 @@
             <td>
               <a href="tecdoc643_reference_fixture.jl" target="_blank" rel="noopener">tecdoc643_reference_fixture.jl</a>
             </td>
-            <td class="mono">ec440f838d6c7026...<br>(6,018 bytes)<br><span style="color:var(--muted)">Raw: 813c9e9f... (5,951 B)</span></td>
-            <td><span class="badge amber">Quarantined Test Fixture</span><br>Verifies generic `rho = (k-1)/k` algebra; does not transfer rectangular MTR results to annular MTR core.</td>
+            <td class="mono">15eb6da017d61010...<br>(6,040 bytes)<br><span style="color:var(--muted)">Raw: 813c9e9f... (5,951 B)</span></td>
+            <td><span class="badge amber">Quarantined Test Fixture</span><br>Verifies generic `rho = (k-1)/k` algebra; does not transfer generic MTR results to facility-specific physics.</td>
           </tr>
           <tr>
             <td class="mono">OKLO-R0-FIXTURE</td>
             <td><strong>Oklo Revision-0 GUI Conformance Fixture</strong><br>Frozen 6-field 32x32x32 analytic benchmark</td>
             <td>
               <a href="oklo_r0_fixture_readonly.html" target="_blank" rel="noopener">oklo_r0_fixture_readonly.html</a><br>
-              <a href="CONFORMANCE_FIXTURE_SPEC.md" target="_blank" rel="noopener">CONFORMANCE_FIXTURE_SPEC.md</a>
+              <a href="CONFORMANCE_FIXTURE_SPEC.md" target="_blank" rel="noopener">CONFORMANCE_FIXTURE_SPEC.md</a><br>
+              <span style="font-size:11px;color:var(--muted);">Volumetric Raycast mode renders a depth-sorted thresholded voxel cloud; Iso-Density Threshold is a relative fraction of active scalar field range; the 2D slice hover readout (#inspValue) displays a static placeholder (216.4 deg C) until the cursor moves over the 2D slice.</span>
             </td>
             <td class="mono">8dac3ae9b8268a47...<br>(77,117 bytes)</td>
             <td><span class="badge blue">Frozen Revision 0</span><br>Kept byte-identical per CONFORMANCE_FIXTURE_SPEC.md Section 2; never overwritten in place.</td>
@@ -718,7 +724,7 @@
               <a href="evidence_manifest.json">evidence_manifest.json</a> |
               <a href="test_calculation_provenance_and_invariants.js">test_calculation_provenance_and_invariants.js</a>
             </td>
-            <td class="mono">e9e50a6857b699aa...<br>(263,619 bytes)<br><span style="color:var(--muted)">Manifest: 4f61d995... (116,876 B)</span></td>
+            <td class="mono">335039227479d970...<br>(263,873 bytes)<br><span style="color:var(--muted)">Manifest: 4f61d995... (116,876 B)</span></td>
             <td><span class="badge green">Internal consistency checks pass (v1.3.0)</span><br>Uses established <strong>magnetotactic bacteria magnetosome chains (<code>U_mag/(k_B*T) = 5.69</code>)</strong> as the positive code-verification benchmark; enforces the <strong>Treiber et al. (2012, Nature) warning</strong> that iron-rich particles alone do not establish magnetoreception; and frames <strong>fungal biotite-weathering (<code>Fe/K</code> ICP leachate &amp; microscopy against sterile and killed-fungus controls)</strong> as the testable bench assay rather than open-ended fungal magnetoreception or avian cryptochrome transfer claims.</td>
           </tr>
           <tr>
@@ -826,7 +832,7 @@
             <td><strong>Day 0 to Day 5 Net Reactivity Drop</strong></td>
             <td class="mono">-3,214.224 pcm (k = 1.19676 to 1.15243)</td>
             <td class="mono">-3,214 pcm</td>
-            <td>Report as total core reactivity change; do not attribute solely to Xe-135 + Sm-149 without isotopic worth decomposition, and do not multiply MTR equilibrium Xe-135 by an annular MTR shutdown factor (11.82x).</td>
+            <td>Report as total core reactivity change; do not attribute solely to Xe-135 + Sm-149 without isotopic worth decomposition, and do not apply a facility-specific Xe-135 shutdown factor.</td>
           </tr>
           <tr>
             <td><strong>UO2-Clay-Fracture Coupled Framework &amp; Polymer Gate</strong></td>
@@ -930,6 +936,11 @@
 &lt;iframe src="https://aurascoper.github.io/oklo_shareable_portal/spacetime_explorer_4d_shareable.html" width="100%" height="860" style="border:1px solid #22364d;border-radius:8px;"&gt;&lt;/iframe&gt;</pre>
     </div>
   </div>
+
+  <footer style="margin: 40px auto 20px; padding: 20px; max-width: 1400px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); text-align: center;">
+    <div><strong>Author: Hunter Kinder (Mark Hunter Kinder II)</strong></div>
+    <div style="margin-top: 4px;">License: <strong>Code: MIT · Content: CC BY 4.0</strong> (original portal materials; TECDOC-643 reference walk panel and reference fixture excluded pending contributor and institutional release confirmation).</div>
+  </footer>
 
   <script>
     let savedIndependentBladeState = null;

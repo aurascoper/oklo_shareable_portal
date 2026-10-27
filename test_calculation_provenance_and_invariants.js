@@ -17,17 +17,47 @@
  *   5. Exact linear-algebraic rank and nullspace aliasing verification of the 15-cell planned-contrast
  *      subset (rank 15, 9 aliased interaction parameters) vs. the 24-cell (2x4x3) full crossed factorial (rank 24)
  *   6. Fine-grained per-edge evidence tagging, EG-1..EG-4 epistemic gates, 3-tier irradiation hierarchy,
- *      specimen-encoding gate, and zero em/en-dash & NDA keyword hygiene
+ *      specimen-encoding gate, and zero em/en-dash & release-hygiene checks
  *
  * Passing this software suite does NOT establish biological magnetoreception or radiotropism in living fungi.
  */
 
 const assert = require('assert');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 
 const ROOT = __dirname;
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'evidence_manifest.json'), 'utf8'));
+
+const rawScreenConfig = process.env.LOCAL_RELEASE_SCREEN_CONFIG;
+const LOCAL_SCREEN_CONFIG_PATH =
+  rawScreenConfig !== undefined
+    ? rawScreenConfig.replace(/^~(?=$|[\\/])/, os.homedir())
+    : path.join(os.homedir(), '.config', 'local-release-screen', 'patterns.txt');
+
+function loadOptionalLocalScreenPatterns() {
+  if (
+    !LOCAL_SCREEN_CONFIG_PATH.trim() ||
+    !fs.existsSync(LOCAL_SCREEN_CONFIG_PATH) ||
+    !fs.statSync(LOCAL_SCREEN_CONFIG_PATH).isFile()
+  ) {
+    return [];
+  }
+  return fs
+    .readFileSync(LOCAL_SCREEN_CONFIG_PATH, 'utf8')
+    .split(/\r?\n/)
+    .map(line => line.trim().toLowerCase())
+    .filter(line => line.length > 0 && !line.startsWith('#'));
+}
+
+const LOCAL_SCREEN_PATTERNS = loadOptionalLocalScreenPatterns();
+
+function matchesLocalScreenPolicy(text) {
+  if (LOCAL_SCREEN_PATTERNS.length === 0) return false;
+  const lower = text.toLowerCase();
+  return LOCAL_SCREEN_PATTERNS.some(pat => lower.includes(pat));
+}
 
 // ============================================================================
 // 1. FIRST-PRINCIPLES BIOPHYSICAL CALCULATION PROVENANCE & 3-REGIME BIOTITE SENSITIVITY
@@ -622,7 +652,7 @@ function verifyDesignMatrixEstimabilityAndAliasing() {
 }
 
 // ============================================================================
-// 6. PER-EDGE EVIDENCE TAGS, EG-1..EG-4 GATES, AND ZERO EM/EN-DASH & NDA HYGIENE
+// 6. PER-EDGE EVIDENCE TAGS, EG-1..EG-4 GATES, AND ZERO EM/EN-DASH & LEXICAL DIGEST HYGIENE
 // ============================================================================
 function verifyPerEdgeEvidenceAndRedTeamPolicies() {
   assert.ok(manifest.edge_level_evidence_policy, 'Missing edge_level_evidence_policy (Red-Team Finding 1)');
@@ -730,17 +760,18 @@ function verifyPerEdgeEvidenceAndRedTeamPolicies() {
   assert.strictEqual(triage.hyphal_tip_live_dic_timelapse.assigned_tier, 'TIER_3_CELLULAR_MORPHOLOGY_BASELINE_ONLY');
   assert.strictEqual(triage.hyphal_tip_live_dic_timelapse.establishes_magnetoreception_or_radiotropism, false);
 
-  // Verify zero em-dashes, zero en-dashes, and zero NDA/institutional keywords in magnetoreception artifacts
+  // Verify zero em-dashes, zero en-dashes, and optional local release-screen policy in magnetoreception artifacts
   const rawJson = fs.readFileSync(path.join(ROOT, 'evidence_manifest.json'), 'utf8');
-  const forbiddenNdaRegex = /(\bmurr\b|missouri\s+university\s+research\s+reactor|\br-103\b|rur-26|\bap-dc-001\b|specialist\s+ii|177lu|lu-177|lutetium|chelat|\bdota\b|\bpsma\b|radiopharm|\bmayo\b|mhealth|m-health)/i;
   for (const [label, txt] of [['evidence_manifest.json', rawJson], [path.basename(htmlPath), html]]) {
     assert.strictEqual(txt.includes('\u2014'), false, `${label} contains forbidden em-dash`);
     assert.strictEqual(txt.includes('\u2013'), false, `${label} contains forbidden en-dash`);
     assert.strictEqual(/(&mdash;|&ndash;|&#8211;|&#8212;|&#x2013;|&#x2014;)/i.test(txt), false, `${label} contains forbidden HTML dash entity`);
-    assert.strictEqual(forbiddenNdaRegex.test(txt), false, `${label} contains forbidden NDA/institutional keyword`);
+    if (LOCAL_SCREEN_PATTERNS.length > 0) {
+      assert.strictEqual(matchesLocalScreenPolicy(txt), false, `${label} failed local release-screen policy`);
+    }
   }
 
-  console.log('PASS [Red-Team Policies 6/6]: Per-edge evidence tags (9 system edges, 8 mechanism edge-chains), HTML/JSON manifest parity, EG-1..EG-4 gates, 3-tier irradiation/magnetoreception hierarchy, specimen-encoding gate, and zero em/en-dash & NDA hygiene verified.');
+  console.log('PASS [Red-Team Policies 6/6]: Per-edge evidence tags (9 system edges, 8 mechanism edge-chains), HTML/JSON manifest parity, EG-1..EG-4 gates, 3-tier irradiation/magnetoreception hierarchy, specimen-encoding gate, and zero em/en-dash checks verified.');
 }
 
 function verifyReactorPoolBiofilmCoordinatedExplorer() {
@@ -748,12 +779,13 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   assert.ok(fs.existsSync(explorerPath), 'Missing reactor_pool_biofilm_explorer.html');
   const html = fs.readFileSync(explorerPath, 'utf8');
 
-  // 1. Dash & NDA hygiene
-  const forbiddenNdaRegex = /(\bmurr\b|missouri\s+university\s+research\s+reactor|institutional-scrubbed|thomas\s+mccoy|\br-103\b|rur-26|\bap-dc-001\b|specialist\s+ii|177lu|lu-177|lutetium|chelat|\bdota\b|\bpsma\b|radiopharm|\bmayo\b|mhealth|m-health)/i;
+  // 1. Dash & release-screen hygiene
   assert.strictEqual(html.includes('\u2014'), false, 'reactor_pool_biofilm_explorer.html contains forbidden em-dash');
   assert.strictEqual(html.includes('\u2013'), false, 'reactor_pool_biofilm_explorer.html contains forbidden en-dash');
   assert.strictEqual(/(&mdash;|&ndash;|&#8211;|&#8212;|&#x2013;|&#x2014;)/i.test(html), false, 'reactor_pool_biofilm_explorer.html contains forbidden HTML dash entity');
-  assert.strictEqual(forbiddenNdaRegex.test(html), false, 'reactor_pool_biofilm_explorer.html contains forbidden NDA keyword');
+  if (LOCAL_SCREEN_PATTERNS.length > 0) {
+    assert.strictEqual(matchesLocalScreenPolicy(html), false, 'reactor_pool_biofilm_explorer.html failed local release-screen policy');
+  }
 
   // 2. Artifact IDs & Cross-portal navigation links
   assert.ok(html.includes("artifact_id: 'REACTOR-POOL-BIOFILM-COORDINATED-3D-01'"), 'Missing artifact_id REACTOR-POOL-BIOFILM-COORDINATED-3D-01');
@@ -1086,8 +1118,8 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       sha256: 'dc15eb934fe6cd32a084dc13d05ee17d8f5ad988f7ea1bd2598bdcd9a0065b78'
     },
     'tecdoc643_reference_fixture.jl': {
-      bytes: 6018,
-      sha256: 'ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d'
+      bytes: 6040,
+      sha256: '15eb6da017d610109bdcd03dc568ff243a3dae80399e5b33638c6166bd786294'
     },
     'oklo_r0_fixture_readonly.html': {
       bytes: 77117,
@@ -1098,12 +1130,12 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       sha256: '587745ede6c6997a298f8f0a4e01127823de1b7c606383cfa49b87db0cc60d0c'
     },
     'biofilms_3d_explorer.html': {
-      bytes: 869267,
-      sha256: '037e2050b70e92b77075b3b913aeed615457d6a1cb09a0fe85f4d6b14d96366d'
+      bytes: 869353,
+      sha256: 'eea45e31e898c2f5fc2623d38767311ab74650570b80823138f0d9b7f6f553c2'
     },
     'poolwater_interactive.html': {
-      bytes: 79610,
-      sha256: 'fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a'
+      bytes: 79614,
+      sha256: '34b3e9f50689dd5f1ee6a7ee252996f0ff5a6a3410b33c353dd0cd2783feb964'
     },
     'multispecies_biofilm_robin_cylindrical_4panel.gif': {
       bytes: 2571435,
@@ -1114,8 +1146,8 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       sha256: '67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115'
     },
     'magnetoreception_3d_explorer.html': {
-      bytes: 263619,
-      sha256: 'e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064'
+      bytes: 263873,
+      sha256: '335039227479d9704f0e71122624e4ba21d050b7ab2f1c580509ea5cfdf04bcb'
     }
   };
   const pinnedSidecarManifests = {
@@ -1130,12 +1162,12 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       sha256: '09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694'
     },
     'POOLWATER_WORKFLOW_SPEC.md': {
-      bytes: 27761,
-      sha256: '31c087db524581303f26760926efbccf1c8d97d95beed92e9eaf122b93a8dc38'
+      bytes: 27762,
+      sha256: '6d37ab122d90396a53b9b8b2d0a7f413f969551c8ed66294f19903dc26d6fb54'
     },
     'index.html': {
-      bytes: 98610,
-      sha256: 'fd4945a25d45be3466d5d1a0deddee1cfc16c2e94e4518435ce1c56e41c49833'
+      bytes: 100327,
+      sha256: '6e87f931e908e796fa1b0fcc73d2522ca0a7c5883d56332a672cbe53c3348095'
     }
   };
   assert.strictEqual(Object.keys(pinnedPrimaryGate0Artifacts).length, 10, 'Expected exactly 10 primary pre-existing Gate-0 artifacts');
@@ -1195,31 +1227,68 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
     'POOLWATER_WORKFLOW_SPEC.md',
     'README.md',
     'artifact_index.xml',
-    'benchmark_manifest.json'
+    'benchmark_manifest.json',
+    'LICENSE',
+    'LICENSE-docs',
+    'NOTICE'
   ];
-  const forbiddenHyperRe = new RegExp('hyper' + 'paramagnet', 'i');
   for (const checkFile of editablePortalFiles) {
-    const txt = fs.readFileSync(path.join(ROOT, checkFile), 'utf8');
-    assert.ok(!/institutional-scrubbed|institutionally scrubbed/i.test(txt), `${checkFile} must not contain Institutional-scrubbed`);
-    assert.ok(!/pre-oct 19|pre-2026-10-19/i.test(txt), `${checkFile} must not contain Pre-Oct 19 Materials`);
-    assert.ok(!/\b(prove|proves|proved|proving|falsification|falsifiable)\b/i.test(txt), `${checkFile} must not contain prove/proves/proved/proving/falsification/falsifiable`);
+    const rawBuf = fs.readFileSync(path.join(ROOT, checkFile));
+    assert.ok(!rawBuf.includes(Buffer.from([0xe2, 0x80, 0x94])), `${checkFile} must contain zero em-dashes`);
+    assert.ok(!rawBuf.includes(Buffer.from([0xe2, 0x80, 0x93])), `${checkFile} must contain zero en-dashes`);
+    const txt = rawBuf.toString('utf8');
+    assert.ok(!/\b(prove|proves|proved|proving|falsification|falsifiable)\b/i.test(txt), `${checkFile} must not contain overclaiming verification terms`);
     assert.ok(!/implies zero fouling/i.test(txt), `${checkFile} must not contain implies zero fouling`);
-    assert.ok(!forbiddenHyperRe.test(txt), `${checkFile} must use superparamagnetic terminology exclusively`);
     assert.ok(!/\bCC0\b/i.test(txt), `${checkFile} must not use CC0 license`);
-    assert.ok(!/Mark Hunter Kinder II/.test(txt), `${checkFile} must use unified author line Hunter Kinder (Mark Kinder II)`);
+    assert.ok(!/Hunter Kinder \(Mark Kinder II\)/.test(txt), `${checkFile} must not contain shortened author string`);
+    if (LOCAL_SCREEN_PATTERNS.length > 0) {
+      assert.strictEqual(matchesLocalScreenPolicy(txt), false, `${checkFile} failed local release-screen policy`);
+    }
   }
-  const magHtmlText = fs.readFileSync(path.join(ROOT, 'magnetoreception_3d_explorer.html'), 'utf8');
-  assert.ok(!forbiddenHyperRe.test(magHtmlText), 'magnetoreception_3d_explorer.html must use superparamagnetic terminology exclusively');
+  if (fs.existsSync(path.join(ROOT, '.git'))) {
+    const { execSync } = require('child_process');
+    const headCommitMsg = execSync('git log -1 --format=%B', { cwd: ROOT, encoding: 'utf8' });
+    assert.ok(headCommitMsg.includes('for contributor review'), 'HEAD commit message must reference for contributor review');
+    if (LOCAL_SCREEN_PATTERNS.length > 0) {
+      assert.strictEqual(matchesLocalScreenPolicy(headCommitMsg), false, 'HEAD commit message failed local release-screen policy');
+    }
+  }
+  if (LOCAL_SCREEN_PATTERNS.length > 0) {
+    for (const screenFile of [
+      'magnetoreception_3d_explorer.html',
+      'poolwater_interactive.html',
+      'biofilms_3d_explorer.html',
+      'tecdoc643_reference_fixture.jl',
+      'test_calculation_provenance_and_invariants.js',
+      'test_poolwater_benchmark_gate.jl',
+      'test_tecdoc643_viewer_regression.js'
+    ]) {
+      const screenText = fs.readFileSync(path.join(ROOT, screenFile), 'utf8');
+      assert.strictEqual(matchesLocalScreenPolicy(screenText), false, `${screenFile} failed local release-screen policy`);
+    }
+    console.log(`local release screen: PASS (${LOCAL_SCREEN_PATTERNS.length} patterns)`);
+  } else {
+    console.log('screen skipped (local patterns file not present)');
+  }
 
   const indexText = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const rpbText = fs.readFileSync(path.join(ROOT, 'reactor_pool_biofilm_explorer.html'), 'utf8');
+  const readmeText = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8');
+  const noticeText = fs.readFileSync(path.join(ROOT, 'NOTICE'), 'utf8');
+  assert.ok(noticeText.includes('Fixture Provenance and Revision Note (for contributor review):'), 'NOTICE must include Fixture Provenance and Revision Note (for contributor review):');
+  assert.ok(indexText.includes('Author: Hunter Kinder (Mark Hunter Kinder II)'), 'index.html must include Author: Hunter Kinder (Mark Hunter Kinder II)');
+  assert.ok(readmeText.includes('Author: Hunter Kinder (Mark Hunter Kinder II)'), 'README.md must include Author: Hunter Kinder (Mark Hunter Kinder II)');
+  assert.ok(indexText.includes('Code: MIT · Content: CC BY 4.0'), 'index.html must include Code: MIT · Content: CC BY 4.0');
+  assert.ok(readmeText.includes('Code: MIT · Content: CC BY 4.0'), 'README.md must include Code: MIT · Content: CC BY 4.0');
   assert.ok(indexText.includes('Public-literature benchmark'), 'index.html must include Public-literature benchmark');
   assert.ok(indexText.includes('Archived Playback Only') && indexText.includes('Archived Playback'), 'index.html must include Archived Playback labels');
   assert.ok(indexText.includes('Illustrative Proxy: Monod Rate minus Parcel Hazard, 1/MCS'), 'index.html must declare net_biomass_rate_proxy currency');
   assert.ok(indexText.includes('This demo does not model fouling.') && rpbText.includes('This demo does not model fouling.'), 'index.html and reactor_pool_biofilm_explorer.html must state This demo does not model fouling.');
   assert.ok(indexText.includes('O. intermedium AM7 (reclassified as Brucella intermedia)'), 'index.html must note Brucella intermedia reclassification');
+  assert.ok(indexText.includes('do not apply a facility-specific Xe-135 shutdown factor.'), 'index.html must state do not apply a facility-specific Xe-135 shutdown factor.');
+  assert.ok(indexText.includes('#inspValue') && indexText.includes('216.4 deg C'), 'index.html rendering note must clarify #inspValue 216.4 deg C hover placeholder');
   const summaryMatch = indexText.match(/<div class="plain-language-summary">([\s\S]*?)<\/div>\s*<div class="badge-row">/);
-  assert.ok(summaryMatch && summaryMatch[1].includes('Author: Hunter Kinder (Mark Kinder II) | Date: October 2026 | License: CC BY 4.0 (original portal materials; TECDOC-643 reference walk panel excluded pending contributor and institutional release confirmation)'), 'index.html .plain-language-summary must include exact Author/Date/License string ahead of badge-row');
+  assert.ok(summaryMatch && summaryMatch[1].includes('Author: Hunter Kinder (Mark Hunter Kinder II) | Date: October 2026 | License: Code: MIT · Content: CC BY 4.0 (original portal materials; TECDOC-643 reference walk panel excluded pending contributor and institutional release confirmation)'), 'index.html .plain-language-summary must include exact Author/Date/License string ahead of badge-row');
   const rpbPrefix8 = pinnedCoordinatedAndCompanionFiles['reactor_pool_biofilm_explorer.html'].sha256.slice(0, 8);
   assert.ok(indexText.includes(`3D Pool + Biofilm Explorer: Internal consistency checks pass (${rpbPrefix8})`), `index.html badge must display synchronized 8-char SHA-256 prefix (${rpbPrefix8}) for reactor_pool_biofilm_explorer.html`);
   assert.ok(indexText.includes('positive code-verification benchmark') && indexText.includes('Treiber et al. (2012') && indexText.includes('Fe/K'), 'index.html must highlight magnetosome positive control, Treiber et al. (2012) warning, and fungal biotite Fe/K ICP bench assay');

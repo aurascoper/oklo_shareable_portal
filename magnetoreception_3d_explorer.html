@@ -668,6 +668,7 @@
             </thead>
             <tbody id="selectionAuditBody"></tbody>
           </table>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;">Note: Species S7 (O. intermedium AM7) is now classified as Brucella intermedia.</div>
         </div>
 
         <div class="ctrl-box">
@@ -932,8 +933,7 @@
     </div>
   </div>
 
-  <script id="evidence-manifest" type="application/json">
-{
+  <script id="evidence-manifest" type="application/json">{
   "schema_version": "2.2.0",
   "red_team_audit_revision": "2.3.0-redteam-hardened",
   "project": "magnetoreception_3d_prototype",
@@ -2291,7 +2291,7 @@
           const tr = document.createElement('tr');
           const fmtS = v => (v >= 0 ? '+' : '') + v.toFixed(4);
           tr.innerHTML = `
-            <td><strong>S${r.species_id} ${r.name}</strong> (<code>${r.alpha_Gy_inv}</code>)</td>
+            <td><strong>S${r.species_id} ${r.species_id === 7 || r.name === 'O. intermedium AM7' ? `${r.name} (now Brucella intermedia)` : r.name}</strong> (<code>${r.alpha_Gy_inv}</code>)</td>
             <td class="mono">${r.alive_diff.toFixed(2)} [${r.alive_ci95[0].toFixed(2)}, ${r.alive_ci95[1].toFixed(2)}]</td>
             <td class="mono" style="color:var(--amber);">${fmtS(r.surv_r_diff)} [${fmtS(r.surv_r_ci95[0])}, ${fmtS(r.surv_r_ci95[1])}]</td>
             <td class="mono" style="color:var(--accent);">${fmtS(r.init_surv_r_diff)} [${fmtS(r.init_surv_r_ci95[0])}, ${fmtS(r.init_surv_r_ci95[1])}]</td>

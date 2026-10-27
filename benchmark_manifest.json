@@ -30,12 +30,12 @@
         "sha256": "09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694"
       },
       "POOLWATER_WORKFLOW_SPEC.md": {
-        "bytes": 27761,
-        "sha256": "31c087db524581303f26760926efbccf1c8d97d95beed92e9eaf122b93a8dc38"
+        "bytes": 27762,
+        "sha256": "6d37ab122d90396a53b9b8b2d0a7f413f969551c8ed66294f19903dc26d6fb54"
       },
       "index.html": {
-        "bytes": 98610,
-        "sha256": "fd4945a25d45be3466d5d1a0deddee1cfc16c2e94e4518435ce1c56e41c49833"
+        "bytes": 100327,
+        "sha256": "6e87f931e908e796fa1b0fcc73d2522ca0a7c5883d56332a672cbe53c3348095"
       }
     },
     "accounting_note": "10 primary pre-existing Gate-0 artifacts + 1 linked sidecar manifest (evidence_manifest.json) = 11 pre-existing frozen files, plus reactor_pool_biofilm_explorer.html and companion portal/specification files."
@@ -68,13 +68,13 @@
     "REF-NW-JL-FIX": {
       "relative_path": "tecdoc643_reference_fixture.jl",
       "public_url": "https://aurascoper.github.io/oklo_shareable_portal/tecdoc643_reference_fixture.jl",
-      "bytes": 6018,
-      "sha256": "ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d",
+      "bytes": 6040,
+      "sha256": "15eb6da017d610109bdcd03dc568ff243a3dae80399e5b33638c6166bd786294",
       "upstream_raw_downloads_bytes": 5951,
       "upstream_raw_downloads_sha256": "813c9e9fb33e47d9ceead8ea8f08bf07122583cf4292aab651d4f919a572a849",
       "dataset_id": "tecdoc643_neutron_walk_transcribed_table_v0",
       "evidence_classification": "transcribed",
-      "epistemic_status": "transcribed_unverified_reference_fixture (Public-literature benchmark; Generic IAEA-TECDOC-643 Vol. 1 10 MW MTR benchmark; illustrative OpenMC proof of concept; not modeled on any operating reactor. Tests generic reactivity algebra; does not transfer box-grid MTR results to annular MTR core)",
+      "epistemic_status": "transcribed_unverified_reference_fixture (Public-literature benchmark; Generic IAEA-TECDOC-643 Vol. 1 10 MW MTR benchmark; illustrative OpenMC proof of concept; not modeled on any operating reactor. Tests generic reactivity algebra; does not transfer box-grid MTR results to facility-specific physics)",
       "frozen_gate0": true
     },
     "OKLO-R0-FROZEN-FIXTURE": {
@@ -92,8 +92,8 @@
     "BIOFILMS-3D-CPM-01": {
       "relative_path": "biofilms_3d_explorer.html",
       "public_url": "https://aurascoper.github.io/oklo_shareable_portal/biofilms_3d_explorer.html",
-      "bytes": 869267,
-      "sha256": "037e2050b70e92b77075b3b913aeed615457d6a1cb09a0fe85f4d6b14d96366d",
+      "bytes": 869353,
+      "sha256": "eea45e31e898c2f5fc2623d38767311ab74650570b80823138f0d9b7f6f553c2",
       "bundle_schema": "biofilms_cpm_snapshot_bundle_v1",
       "source_repo": "aurascoper/Biofilms",
       "source_commit": "c766e7be31144f707155416b788bf7d1ba473ab9",
@@ -107,11 +107,11 @@
     "POOLWATER-3D-INTERACTIVE-01": {
       "relative_path": "poolwater_interactive.html",
       "public_url": "https://aurascoper.github.io/oklo_shareable_portal/poolwater_interactive.html",
-      "bytes": 79610,
-      "sha256": "fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a",
+      "bytes": 79614,
+      "sha256": "34b3e9f50689dd5f1ee6a7ee252996f0ff5a6a3410b33c353dd0cd2783feb964",
       "spec_relative_path": "POOLWATER_WORKFLOW_SPEC.md",
-      "spec_bytes": 27761,
-      "spec_sha256": "31c087db524581303f26760926efbccf1c8d97d95beed92e9eaf122b93a8dc38",
+      "spec_bytes": 27762,
+      "spec_sha256": "6d37ab122d90396a53b9b8b2d0a7f413f969551c8ed66294f19903dc26d6fb54",
       "dataset_id": "poolwater_synthetic_demo_v1",
       "evidence_classification": "synthetic",
       "epistemic_status": "dataset_driven_synthetic_pool_demo (Internal checks pass; separates TECDOC-643 neutron reference, point-reactor kinetics, synthetic Boussinesq pool convection, and isolated surrogate-loop PIE protocol)",
@@ -138,14 +138,14 @@
     "BIOTITE-MAGNETORECEPTION-4D-01": {
       "relative_path": "magnetoreception_3d_explorer.html",
       "public_url": "https://aurascoper.github.io/oklo_shareable_portal/magnetoreception_3d_explorer.html",
-      "bytes": 263619,
-      "sha256": "e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064",
+      "bytes": 263873,
+      "sha256": "335039227479d9704f0e71122624e4ba21d050b7ab2f1c580509ea5cfdf04bcb",
       "evidence_manifest_relative_path": "evidence_manifest.json",
       "evidence_manifest_bytes": 116876,
       "evidence_manifest_sha256": "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf",
       "invariant_test_relative_path": "test_calculation_provenance_and_invariants.js",
-      "invariant_test_bytes": 70474,
-      "invariant_test_sha256": "26aaf4e5b812b5ed091c07cb59ea24146158ffe6cd0a36bbf613ab99e5576239",
+      "invariant_test_bytes": 73416,
+      "invariant_test_sha256": "cd3023c73f13f61fa88383b90b487d12f2be7fb5f4bab4a76392660690a9c5e5",
       "source_module": "src/track4_mineral_magnetoreception_gates.jl",
       "evidence_classification": "calculated",
       "epistemic_status": "cross_domain_epistemic_gated_4d_viewer (Internal consistency checks pass; EG-1..EG-4 enforced; 4D perspective tesseract w = t / theta_B in [0..360 deg] / D_4 hyperplane rotation; criterial separation of accepted verified candidates vs criterial-pruned candidates vs exploratory particles; uses established magnetotactic bacteria magnetosome chain U_mag / (k_B * T) = 5.69 > 1 as positive code-verification benchmark; highlights Treiber et al. 2012 Nature iron-particle warning; grounds bench follow-up in testable fungal biotite-weathering Fe/K ICP assay against sterile and killed-fungus controls; 3-regime 1 um^3 biotite Fe3O4 superparamagnetic/single-domain/multi-domain inclusion sensitivity)",
@@ -272,7 +272,7 @@
     "tecdoc643_recorded_benchmark": {
       "reactor_type": "IAEA-TECDOC-643 10 MW MTR generic 6x7 lattice core (23 SFE + 5 CFE + 2 FT + 12 GR)",
       "evidence_classification": "transcribed",
-      "transfers_to_annular_mtr_core": false,
+      "transfers_to_facility_specific_core": false,
       "blade_sweep": [
         { "withdrawn_pct": 0.0,   "k_eff": 0.97943, "sigma_k": 0.00102, "reactivity_pcm": -2100.201137396238, "worth_to_100_pcm": 18634.714116279465, "worth_sigma_pcm": 120.3749252933642 },
         { "withdrawn_pct": 25.0,  "k_eff": 1.02804, "sigma_k": 0.00115, "reactivity_pcm": 2727.520329948254,  "worth_to_100_pcm": 13806.992648934972, "worth_sigma_pcm": 122.42902821922595 },
@@ -374,7 +374,7 @@
     "forbidden_couplings": {
       "oklo_r0_analytic_voxels_to_pool_cfd": false,
       "toy_neutron_walk_claimed_as_live_openmc": false,
-      "mtr_box_core_transferred_to_annular_mtr": false,
+      "mtr_box_core_transferred_to_facility_specific_core": false,
       "biofilm_or_radiotropism_alters_reactor_kinetics_or_cgmp": false,
       "robin_boundary_condition_conflated_with_erithacus_rubecula": false,
       "geological_biotite_conflated_with_biogenic_magnetite_compass": false,

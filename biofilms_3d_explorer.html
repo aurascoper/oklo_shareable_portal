@@ -380,7 +380,7 @@
               <option value="2">2. D. radiodurans (DR, pos beta_ion=1e-4)</option>
               <option value="5">5. A. niger (AN, pos beta_ion, alpha_M=0.03)</option>
               <option value="6">6. S. oneidensis (SO, pos beta_ion=2.5e-2)</option>
-              <option value="7">7. O. intermedium AM7 (OI, pos beta_ion=5e-3)</option>
+              <option value="7">7. O. intermedium AM7 (now Brucella intermedia)</option>
             </select>
           </label>
         </div>
@@ -536,7 +536,7 @@
             <span class="sp-swatch" style="background:${sp.color}"></span>
           </label>
           <div>
-            <strong>${sp.name}</strong> <span class="mono">(parcels ${sp.parcels})</span>
+            <strong>${sp.name === 'O. intermedium AM7' ? 'O. intermedium AM7 (now Brucella intermedia)' : sp.name}</strong> <span class="mono">(parcels ${sp.parcels})</span>
             <div style="font-size:10.5px;color:var(--muted);">${sp.role}</div>
           </div>
           <div class="mono" title="beta_ion">beta=${sp.beta_ion}</div>

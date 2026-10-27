@@ -64,23 +64,23 @@ function verifyArtifactHashes() {
     },
     {
       path: 'tecdoc643_reference_fixture.jl',
-      sha256: 'ec440f838d6c70263dcad3efef11da2159ab7f4d793d885367e4811415f8147d',
-      bytes: 6018
+      sha256: '15eb6da017d610109bdcd03dc568ff243a3dae80399e5b33638c6166bd786294',
+      bytes: 6040
     },
     {
       path: 'biofilms_3d_explorer.html',
-      sha256: '037e2050b70e92b77075b3b913aeed615457d6a1cb09a0fe85f4d6b14d96366d',
-      bytes: 869267
+      sha256: 'eea45e31e898c2f5fc2623d38767311ab74650570b80823138f0d9b7f6f553c2',
+      bytes: 869353
     },
     {
       path: 'poolwater_interactive.html',
-      sha256: 'fa0f0dc30c45681a3b774db8533110370ebdce77b91317b003bfdc065a639b5a',
-      bytes: 79610
+      sha256: '34b3e9f50689dd5f1ee6a7ee252996f0ff5a6a3410b33c353dd0cd2783feb964',
+      bytes: 79614
     },
     {
       path: 'POOLWATER_WORKFLOW_SPEC.md',
-      sha256: '31c087db524581303f26760926efbccf1c8d97d95beed92e9eaf122b93a8dc38',
-      bytes: 27761
+      sha256: '6d37ab122d90396a53b9b8b2d0a7f413f969551c8ed66294f19903dc26d6fb54',
+      bytes: 27762
     },
     {
       path: 'multispecies_biofilm_robin_cylindrical_4panel.gif',
@@ -94,8 +94,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'magnetoreception_3d_explorer.html',
-      sha256: 'e9e50a6857b699aa0c102b536842790f5555bf5d228f01b430282049f0ed2064',
-      bytes: 263619
+      sha256: '335039227479d9704f0e71122624e4ba21d050b7ab2f1c580509ea5cfdf04bcb',
+      bytes: 263873
     },
     {
       path: 'reactor_pool_biofilm_explorer.html',
@@ -109,13 +109,13 @@ function verifyArtifactHashes() {
     },
     {
       path: 'test_calculation_provenance_and_invariants.js',
-      sha256: '26aaf4e5b812b5ed091c07cb59ea24146158ffe6cd0a36bbf613ab99e5576239',
-      bytes: 70474
+      sha256: 'cd3023c73f13f61fa88383b90b487d12f2be7fb5f4bab4a76392660690a9c5e5',
+      bytes: 73416
     },
     {
       path: 'benchmark_manifest.json',
-      sha256: '43976bde861e01c3e3c90ce090b1360c7fb75591a5343fdaa41976ab34d45e3f',
-      bytes: 30757
+      sha256: '0b7cb0befac0ba4b3e880f2cf76d880a107a88e19902adaaf3941f2260c5dd05',
+      bytes: 30784
     }
   ];
 
@@ -158,10 +158,10 @@ function verifyArtifactHashes() {
     }
   }
   assert.ok(indexHtml.includes('dc15eb934fe6cd32...'), 'index.html missing Gate-0 REF-NW-HTML-01 SHA prefix');
-  assert.ok(indexHtml.includes('fa0f0dc30c45681a...'), 'index.html missing POOLWATER-3D-INTERACTIVE-01 SHA prefix');
-  assert.ok(indexHtml.includes('037e2050b70e92b7...'), 'index.html missing BIOFILMS-3D-CPM-01 SHA prefix');
+  assert.ok(indexHtml.includes('34b3e9f50689dd5f...'), 'index.html missing POOLWATER-3D-INTERACTIVE-01 SHA prefix');
+  assert.ok(indexHtml.includes('eea45e31e898c2f5...'), 'index.html missing BIOFILMS-3D-CPM-01 SHA prefix');
   assert.ok(indexHtml.includes('e73622d6454a3a6a...'), 'index.html missing BIOFILMS-ROBIN-CYL-GIF-01 SHA prefix');
-  assert.ok(indexHtml.includes('e9e50a6857b699aa...'), 'index.html missing BIOTITE-MAGNETORECEPTION-4D-01 SHA prefix');
+  assert.ok(indexHtml.includes('335039227479d970...'), 'index.html missing BIOTITE-MAGNETORECEPTION-4D-01 SHA prefix');
   assert.ok(indexHtml.includes('09bb3d9cbca7757c...'), 'index.html missing REACTOR-POOL-BIOFILM-COORDINATED-3D-01 SHA prefix');
   console.log('PASS [1/15]: Gate-0 artifact hashes, byte counts, and manifests verified.');
   return expectedFiles;

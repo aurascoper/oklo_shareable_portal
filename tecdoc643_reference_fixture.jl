@@ -5,8 +5,8 @@ A quarantined, test-only transcription of the benchmark values pasted into the
 conversation. This module is NOT evidence that the values have been regenerated
 from OpenMC statepoints, depletion results, or raw HDF5 track files.
 
-Keep this IAEA generic MTR fixture separate from annular MTR simulation/calibration
-inputs. It can test generic reactivity algebra; it cannot establish annular MTR physics.
+Keep this IAEA generic MTR fixture separate from any facility-specific simulation/calibration inputs.
+It can test generic reactivity algebra; it cannot establish facility-specific physics.
 """
 
 export source_metadata, blade_sweep, burnup_table, interpolated_k_crossing_day,
@@ -22,7 +22,7 @@ const SOURCE_METADATA = (
         "Hash and archive the actual OpenMC input deck, materials, cross_sections.xml, statepoints, summary, track files and depletion outputs.",
         "Record OpenMC build, nuclear-data library revision, tally definitions, settings, source/batch counts and uncertainty definitions.",
         "Tie each table to an explicit run/configuration ID; do not merge the independent 0.98057/1.19621 pair with the sweep endpoints 0.97943/1.19810.",
-        "Do not infer annular MTR power peaking, blade worth, isotope inventory or shutdown transient from this IAEA box-grid MTR fixture."
+        "Do not infer facility-specific power peaking, blade worth, isotope inventory or shutdown transient from this IAEA box-grid MTR fixture."
     ]
 )
 
