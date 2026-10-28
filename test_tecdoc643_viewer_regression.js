@@ -79,8 +79,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'POOLWATER_WORKFLOW_SPEC.md',
-      sha256: '9761aba9a16395c20f696270021cbb5ac43c06ec76ead09abeebbdb210aeecc0',
-      bytes: 34347
+      sha256: '8db73b265e40539744e5c7013d55bef7af35725f2f4864999697df11a4095d6b',
+      bytes: 34504
     },
     {
       path: 'multispecies_biofilm_robin_cylindrical_4panel.gif',
@@ -104,13 +104,13 @@ function verifyArtifactHashes() {
     },
     {
       path: 'oklo_hydrothermal_cycle_explorer.html',
-      sha256: '967b30e7883fbdd90a2cca7b33b5c09c267d65aa112255f0845fd8d622ac8897',
-      bytes: 89755
+      sha256: '6e9eb39d182a7859f3c600255b09487483c4991a1af0bcbbf0c421e342da5eee',
+      bytes: 97472
     },
     {
       path: 'oklo_coupled_hydrothermal_cycle.cxc',
-      sha256: 'a583a05349b51d34dd09d306fd69e71e753e4546e3ecdf1071cd3015a5bd4368',
-      bytes: 8879
+      sha256: 'a891f9dd5433fdd05a69ff71df95625dfd0433e8aace3ce0908b1a1186640742',
+      bytes: 8978
     },
     {
       path: 'evidence_manifest.json',
@@ -119,13 +119,13 @@ function verifyArtifactHashes() {
     },
     {
       path: 'test_calculation_provenance_and_invariants.js',
-      sha256: '5b89b77a80d41a1fc07d974245cf93cef93e2b9aa55a56f80b9cfd2d6d25b9ac',
-      bytes: 78250
+      sha256: 'd05dcfaa4743f90935d4d93c1257f283218d7f6576674ae08654e745f8670a87',
+      bytes: 78887
     },
     {
       path: 'benchmark_manifest.json',
-      sha256: '813da01e0132f63d198c30f25e500a30171d3c9fd5eb85ed50a73b09c5fe427a',
-      bytes: 32735
+      sha256: '83d141a8f65b89f7fdfcfdd7274ca6ea3739d2ce1dec756bb4372e5245666900',
+      bytes: 32783
     }
   ];
 
@@ -1337,6 +1337,9 @@ async function runTests() {
         assert.strictEqual(hydroCycleState.gates.oklo_gangue_equivalent_to_montmorillonite, false);
         assert.strictEqual(hydroCycleState.gates.cellular_eps_or_cell_wall_included, false);
         assert.strictEqual(hydroCycleState.gates.continuous_pulse_fixes_b017_discontinuity, true);
+        assert.strictEqual(hydroCycleState.gates.c1_derivative_continuous_at_b017, true);
+        assert.strictEqual(hydroCycleState.gates.extreme_slider_and_alias_edge_cases_passed, true);
+        assert.strictEqual(hydroCycleState.gates.cxc_syntax_valid_single_transparency_per_volume, true);
         assert.strictEqual(hydroCycleState.gates.oligomer_synthesis_vs_destruction_competition_visible, true);
         assert.strictEqual(hydroCycleState.pngWidth, 1920);
         assert.strictEqual(hydroCycleState.pngHeight, 1080);

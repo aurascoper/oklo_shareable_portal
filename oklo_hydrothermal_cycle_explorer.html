@@ -357,7 +357,7 @@
   </div>
   <div class="boundary-card">
     <span class="epi-badge epi-CAVEAT">2. MINERALOGICAL CAVEAT</span>
-    <div style="margin-top:3px;"><strong>Oklo Sudoite/Chlorite vs Montmorillonite:</strong> Oklo hydrothermal clays include di-trioctahedral chlorites such as <strong>sudoite</strong> and illite (<strong>Pourcelot &amp; Gauthier-Lafaye, 1998</strong>). Laboratory <strong>montmorillonite</strong> (<strong>Ferris et al., 1996</strong>, up to 55-mers) is a prebiotic analogue, not verified Oklo core gangue.</div>
+    <div style="margin-top:3px;"><strong>Oklo Sudoite/Chlorite vs Montmorillonite:</strong> Oklo hydrothermal clays include di-trioctahedral chlorites such as <strong>sudoite</strong> and illite (<strong>Pourcelot &amp; Gauthier-Lafaye, 1998</strong>, <em>Chem. Geol.</em> 145:103-115, <code>doi:10.1016/S0009-2541(98)00194-6</code>). Laboratory <strong>montmorillonite</strong> (<strong>Ferris et al., 1996</strong>, <em>Nature</em> 381:59-61, <code>doi:10.1038/381059a0</code>, up to 55-mers) is a prebiotic analogue, not verified Oklo core gangue.</div>
   </div>
   <div class="boundary-card emerald">
     <span class="epi-badge epi-FIREWALL">3. ABIOTIC FIREWALL &amp; SCALE SEPARATION</span>
@@ -459,7 +459,7 @@
           <span>Fault / Sandstone Permeability Ratio (k_frac / k_sand)</span>
           <span class="control-val" id="lblPermRatio">100x</span>
         </div>
-        <input type="range" id="sliderPermRatio" min="1" max="3" step="0.5" value="2" oninput="onModelConfigChange()">
+        <input type="range" id="sliderPermRatio" min="0" max="4" step="0.5" value="2" oninput="onModelConfigChange()">
       </div>
 
       <div class="control-group">
@@ -674,7 +674,7 @@
     title: 'Inferred Oklo reactor cycling and hypothetical hydrothermal transport',
     epistemic_status: 'HYPOTHETICAL_COUPLED_HYDROTHERMAL_AND_PREBIOTIC_MODEL_RUNG_4',
     geometry_classification: 'IDEALIZED_OKLO_COMPARTMENT_32X32X32_0P5M',
-    evidence_classification: 'calculated',
+    evidence_classification: 'synthetic',
     xenon_isotope_record_shows_surface_geyser: false,
     oklo_gangue_equivalent_to_montmorillonite: false,
     cellular_eps_or_cell_wall_included: false,
@@ -709,6 +709,14 @@
     frame_count: 0
   };
 
+  function isLegacyR0PulseMode(mode) {
+    return mode === 'legacy_r0_discontinuous' || mode === 'r0_discontinuous';
+  }
+
+  function isMontmorilloniteMode(mode) {
+    return mode !== 'sudoite_chlorite_oklo_gangue' && mode !== 'oklo_sudoite_illite_gangue';
+  }
+
   // Precompute 60-frame coupled cycle trajectory (moderator feedback, thermal inertia, two-phase boiling, pressure, velocity)
   const CYCLE_SERIES = [];
 
@@ -719,23 +727,41 @@
     return Math.max(0.0, Math.exp(-(p - b) * 8.0));
   }
 
-  // Smooth C^1 pulse envelope coupled to moderator saturation and thermal relaxation (zero jump at b = 0.17)
+  // Exact C^1-continuous pulse envelope coupled to moderator saturation and thermal relaxation (zero jump in value OR slope at pPeak = 0.085 and p = b = 0.17)
   function continuousCoupledPulse(p, b) {
-    // Active criticality window rises smoothly as sin^2 and transitions C^1-continuously at p = b into exponential thermal/decay relaxation
     const pPeak = 0.085; // Peak power at ~15.3 min (midway through 30-min active fission window)
+    const vb = 0.72;
+    const alpha = 6.5;
     if (p <= pPeak) {
       const u = p / pPeak;
-      return Math.sin(0.5 * Math.PI * u) * Math.sin(0.5 * Math.PI * u);
+      const s = Math.sin(0.5 * Math.PI * u);
+      return s * s;
     } else if (p <= b) {
-      // Smooth C^1 transition from peak 1.0 at pPeak to 0.72 at p = b where moderator voiding triggers shutdown
-      const u = (p - pPeak) / (b - pPeak);
-      return 1.0 - 0.28 * (3.0 * u * u - 2.0 * u * u * u);
+      // Cubic Hermite spline matching H(0)=1, H'(0)=0 at pPeak and H(1)=vb, H'(1)=slope_b*(b-pPeak) at p = b
+      const dp1 = b - pPeak;
+      const u = (p - pPeak) / dp1;
+      const slopeAtB = vb * (-alpha - 2.0 / (1.0 - b));
+      const m1 = slopeAtB * dp1;
+      return 1.0 - (1.0 - vb) * (3.0 * u * u - 2.0 * u * u * u) + m1 * u * u * (u - 1.0);
     } else {
-      // At p = b+, value is exactly 0.72 (matching p = b-) and decays smoothly during shutdown/cooldown, returning to 0 by p = 1.0
-      const tail = 0.72 * Math.exp(-6.5 * (p - b));
-      const endTaper = Math.pow(1.0 - (p - b) / (1.0 - b), 2.0);
+      const dp = p - b;
+      const tail = vb * Math.exp(-alpha * dp);
+      const endTaper = Math.pow(1.0 - dp / (1.0 - b), 2.0);
       return tail * endTaper;
     }
+  }
+
+  // Exact C^1-continuous thermal energy envelope across p = b = 0.17 (matching value 1.0 and zero slope at p = b)
+  function continuousThermalEnvelope(p, b) {
+    const beta = 4.8;
+    if (p <= b) {
+      const s = Math.sin(0.5 * Math.PI * (p / b));
+      return 0.18 + 0.82 * Math.pow(s, 2.0);
+    }
+    const dp = p - b;
+    const c1 = beta + 2.0 / (1.0 - b);
+    const u2 = dp / (1.0 - b);
+    return 0.18 + 0.82 * (1.0 + c1 * dp) * Math.exp(-beta * dp) * Math.pow(1.0 - u2, 2.0);
   }
 
   function classifyPhase(frameIdx) {
@@ -784,13 +810,7 @@
       const tMin = p * PERIOD_MIN;
       const pCont = continuousCoupledPulse(p, b);
       const pR0 = r0DiscontinuousPulse(p, b);
-
-      // Thermal energy state lags power pulse slightly and stays continuous across all 60 frames
-      const thermalEnv = 0.18 + 0.82 * (
-        p < b
-          ? Math.pow(Math.sin(0.5 * Math.PI * (p / b)), 1.35)
-          : Math.exp(-4.8 * (p - b)) * Math.pow(1.0 - (p - b) / (1.0 - b), 1.5)
-      );
+      const thermalEnv = continuousThermalEnvelope(p, b);
 
       // Vapor fraction in core/fracture rises during Phase 3 (frames 8..18) when T exceeds local T_sat(P) ~ 212 C
       const boilingEnv = Math.max(0.0, Math.min(0.78, 0.85 * Math.exp(-Math.pow((p - 0.21) / 0.085, 2.0))));
@@ -850,7 +870,7 @@
   function evaluateVoxelState(ix, iy, iz, frameIdx) {
     const st = CYCLE_SERIES[frameIdx] || CYCLE_SERIES[9];
     const ind = compartmentIndicators(ix, iy, iz);
-    const pulseVal = STATE.pulse_mode === 'legacy_r0_discontinuous' ? st.pulse_r0_discontinuous : st.thermal_envelope;
+    const pulseVal = isLegacyR0PulseMode(STATE.pulse_mode) ? st.pulse_r0_discontinuous : st.thermal_envelope;
     const permRatio = Math.pow(10.0, STATE.perm_ratio_log10);
 
     // Depth z_m in [0, 16] m (iz=0 bottom deep, iz=31 top shallow)
@@ -885,7 +905,7 @@
     const darcy_velocity_m_s = Math.max(1.0e-15, Math.sqrt(ux * ux + uy * uy + uz * uz));
 
     // Layer 3 & 4: Mineral catalysis & 6-term Abiotic Oligomer PDE rates in umol/(L min)
-    const isMontmorillonite = STATE.mineralogy_mode === 'montmorillonite_prebiotic_analogue';
+    const isMontmorillonite = isMontmorilloniteMode(STATE.mineralogy_mode);
     const coordBoost = STATE.coordination_mode === 'interchain_or_mineral_bridge' ? 1.0 : (STATE.coordination_mode === 'intrachain_self_loop' ? 0.42 : 0.28);
     const mineralCatFactor = isMontmorillonite ? (1.0 * coordBoost) : (0.14 * coordBoost);
 
@@ -929,7 +949,7 @@
   function evaluatePoreAndMolecularState(compName, frameIdx) {
     const [ix, iy, iz] = getCompartmentRepresentativeVoxel(compName);
     const vox = evaluateVoxelState(ix, iy, iz, frameIdx);
-    const isMont = STATE.mineralogy_mode === 'montmorillonite_prebiotic_analogue';
+    const isMont = isMontmorilloniteMode(STATE.mineralogy_mode);
 
     // Pore-scale pH, water activity, and surface complexation (>OH, >O-, >OM2+)
     const pH = compName === 'core' ? (5.85 - 0.35 * vox.vapor_fraction_Sv)
@@ -966,10 +986,14 @@
       basal_d001_nm,
       cycle_rank_beta1,
       mineral_label: isMont
-        ? 'Na/Ca-Montmorillonite (Prebiotic Lab Analogue, Ferris et al. 1996)'
-        : 'Sudoite / Di-trioctahedral Chlorite + Illite (Oklo Reported Gangue, Pourcelot 1998)',
+        ? 'Na/Ca-Montmorillonite (Prebiotic Lab Analogue, Ferris et al. 1996, doi:10.1038/381059a0)'
+        : 'Sudoite / Di-trioctahedral Chlorite + Illite (Oklo Reported Gangue, Pourcelot 1998, doi:10.1016/S0009-2541(98)00194-6)',
       fe_speciation: compName === 'core' ? 'Radiolytic Fe(III)/Fe(II) redox cycling' : 'Octahedral Fe(II)/Fe(III) + sorbed >OFe+'
     };
+  }
+
+  function computeDisplayCutoffTempC() {
+    return 40.0 + STATE.display_cutoff_norm * 240.0;
   }
 
   // Color helpers
@@ -1124,6 +1148,7 @@
     const fIdx = STATE.frame_index;
     const sliceIdx = STATE.fence_slice_idx;
     const fieldName = STATE.active_macro_field;
+    const cutoffTempC = computeDisplayCutoffTempC();
 
     if (STATE.webgl_context_created && gl && glProg) {
       const cvs = document.getElementById('glMacroCanvas');
@@ -1168,11 +1193,34 @@
           pushLine(xn - dx, yn, zn, xn + dx, yn, zn, cr / 255, cg / 255, cb / 255, 0.85);
           pushLine(xn, yn, zn - dx, xn, yn, zn + dx, cr / 255, cg / 255, cb / 255, 0.85);
 
+          // Layer 2: Display cutoff contour vs physical T_sat(P) boiling threshold highlight
+          if (STATE.layers_enabled.layer2_heat_phase_change && Math.abs(vox.temperature_C - cutoffTempC) < 11.0) {
+            pushLine(xn - dx, yn, zn - dx, xn + dx, yn, zn + dx, 1.0, 0.92, 0.25, 0.95);
+          }
+
+          // Layer 4: Net oligomer accumulation contour highlight
+          if (STATE.layers_enabled.layer4_abiotic_polymer_pde && vox.net_oligomer_rate_dc_dt > 0.045) {
+            pushLine(xn - dx * 0.7, yn, zn + dx * 0.7, xn + dx * 0.7, yn, zn - dx * 0.7, 0.13, 0.85, 0.37, 0.90);
+          }
+
+          // Layer 1: Directed Darcy velocity vectors with magnitude scaling and arrowheads
           if (STATE.layers_enabled.layer1_groundwater_darcy && ix % 4 === 0 && iz % 4 === 0) {
-            const vScale = 0.14 / Math.max(1e-10, vox.darcy_velocity_m_s);
-            const vx = Math.max(-0.18, Math.min(0.18, vox.ux * vScale));
-            const vz = Math.max(-0.18, Math.min(0.18, vox.uz * vScale));
-            pushLine(xn, yn, zn, xn + vx, yn, zn + vz, 0.96, 0.98, 1.0, 0.95);
+            const magXZ = Math.max(1e-15, Math.sqrt(vox.ux * vox.ux + vox.uz * vox.uz));
+            const logNorm = Math.max(0.18, Math.min(1.0, (Math.log10(vox.darcy_velocity_m_s) - (-10.0)) / 4.2));
+            const arrowLen = 0.05 + 0.15 * logNorm;
+            const dirX = vox.ux / magXZ;
+            const dirZ = vox.uz / magXZ;
+            const tipX = xn + dirX * arrowLen;
+            const tipZ = zn + dirZ * arrowLen;
+            pushLine(xn, yn, zn, tipX, yn, tipZ, 0.96, 0.98, 1.0, 0.95);
+            // Two 3D arrowhead barbs
+            const headLen = arrowLen * 0.32;
+            const perpX = -dirZ * headLen * 0.55;
+            const perpZ = dirX * headLen * 0.55;
+            const baseH_X = tipX - dirX * headLen;
+            const baseH_Z = tipZ - dirZ * headLen;
+            pushLine(tipX, yn, tipZ, baseH_X + perpX, yn, baseH_Z + perpZ, 0.96, 0.98, 1.0, 0.95);
+            pushLine(tipX, yn, tipZ, baseH_X - perpX, yn, baseH_Z - perpZ, 0.96, 0.98, 1.0, 0.95);
           }
         }
         for (let iy = 0; iy < NY; iy += 2) {
@@ -1223,13 +1271,17 @@
         const [r, g, b] = mapFieldToRgb(fieldName, vox);
         ctx.fillStyle = `rgb(${r},${g},${b})`;
         ctx.fillRect(padL + ix * cellW, padT + iz * cellH, Math.ceil(cellW), Math.ceil(cellH));
+        if (STATE.layers_enabled.layer2_heat_phase_change && Math.abs(vox.temperature_C - cutoffTempC) < 9.0) {
+          ctx.fillStyle = '#fde047';
+          ctx.fillRect(padL + ix * cellW, padT + iz * cellH, Math.max(2, cellW * 0.45), Math.max(2, cellH * 0.45));
+        }
       }
     }
     ctx.strokeStyle = '#38bdf8';
     ctx.strokeRect(padL, padT, pw, ph);
     ctx.fillStyle = '#e2e8f0';
     ctx.font = 'bold 11px ui-monospace, monospace';
-    ctx.fillText(`2D Fence Slice Fallback (Y=${sliceIdx}/32, Field=${fieldName}, Frame=${fIdx})`, padL, 20);
+    ctx.fillText(`2D Fence Slice Fallback (Y=${sliceIdx}/32, Field=${fieldName}, Cutoff=${cutoffTempC.toFixed(0)}C, Frame=${fIdx})`, padL, 20);
   }
 
   // Render Viewport 2: 4-Panel Reference Synthesis (Faulted Sandstone Fence + FLAC3D Cut-Plane + VOF Evaporating Surface)
@@ -1243,6 +1295,7 @@
     const fIdx = STATE.frame_index;
     const st = CYCLE_SERIES[fIdx];
     const sliceIdx = STATE.fence_slice_idx;
+    const cutoffTempC = computeDisplayCutoffTempC();
     const halfW = Math.floor(W / 2) - 6;
     const halfH = Math.floor(H / 2) - 6;
 
@@ -1277,26 +1330,42 @@
           ctx.fillStyle = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
           ctx.fillRect(gx0 + kx * cw, gy0 + kz * ch, Math.ceil(cw), Math.ceil(ch));
 
-          // Contours 210 C and 270 C (and display cutoff 160 C) on Panel (b)
-          if (mode === 'temp_contours') {
+          // Contours 210 C and 270 C plus interactive Display Cutoff (default 160 C) on Panel (b)
+          if (mode === 'temp_contours' && STATE.layers_enabled.layer2_heat_phase_change) {
             if (Math.abs(vox.temperature_C - 210.0) < 9.0 || Math.abs(vox.temperature_C - 270.0) < 9.0) {
               ctx.fillStyle = '#ffffff';
               ctx.fillRect(gx0 + kx * cw, gy0 + kz * ch, Math.max(2, cw * 0.4), Math.max(2, ch * 0.4));
             }
+            if (Math.abs(vox.temperature_C - cutoffTempC) < 8.5) {
+              ctx.fillStyle = '#fde047';
+              ctx.fillRect(gx0 + kx * cw, gy0 + kz * ch, Math.max(2, cw * 0.45), Math.max(2, ch * 0.45));
+            }
           }
 
-          // Specific discharge arrows on Panels (a) and (c)
-          if ((mode === 'darcy_fence' || mode === 'flac3d_cutplane') && kx % 3 === 1 && kz % 3 === 1) {
+          // Specific discharge arrows with arrowheads & magnitude scaling on Panels (a) and (c)
+          if (STATE.layers_enabled.layer1_groundwater_darcy && (mode === 'darcy_fence' || mode === 'flac3d_cutplane') && kx % 3 === 1 && kz % 3 === 1) {
             const cxPx = gx0 + (kx + 0.5) * cw;
             const cyPx = gy0 + (kz + 0.5) * ch;
-            const mag = Math.max(1e-12, Math.sqrt(vox.ux * vox.ux + vox.uz * vox.uz));
-            const dxPx = (vox.ux / mag) * 8.0;
-            const dzPx = -(vox.uz / mag) * 8.0;
+            const mag = Math.max(1e-15, Math.sqrt(vox.ux * vox.ux + vox.uz * vox.uz));
+            const logScale = Math.max(0.35, Math.min(1.25, (Math.log10(vox.darcy_velocity_m_s) - (-10.0)) / 3.8));
+            const lenPx = 4.5 + 6.5 * logScale;
+            const uxUnit = vox.ux / mag;
+            const uzUnit = -vox.uz / mag;
+            const tipX = cxPx + uxUnit * lenPx;
+            const tipY = cyPx + uzUnit * lenPx;
             ctx.strokeStyle = mode === 'flac3d_cutplane' ? '#0f172a' : '#f8fafc';
-            ctx.lineWidth = 1.2;
+            ctx.lineWidth = 1.25;
             ctx.beginPath();
             ctx.moveTo(cxPx, cyPx);
-            ctx.lineTo(cxPx + dxPx, cyPx + dzPx);
+            ctx.lineTo(tipX, tipY);
+            // Arrowhead barbs
+            const ah = 3.2;
+            const pxPerp = -uzUnit * ah * 0.6;
+            const pyPerp = uxUnit * ah * 0.6;
+            ctx.moveTo(tipX, tipY);
+            ctx.lineTo(tipX - uxUnit * ah + pxPerp, tipY - uzUnit * ah + pyPerp);
+            ctx.moveTo(tipX, tipY);
+            ctx.lineTo(tipX - uxUnit * ah - pxPerp, tipY - uzUnit * ah - pyPerp);
             ctx.stroke();
           }
         }
@@ -1317,6 +1386,8 @@
         ctx.font = 'bold 9.5px ui-monospace, monospace';
         ctx.fillText('210 C', faultX - 30, gy0 + gh * 0.36);
         ctx.fillText('270 C', faultX - 30, gy0 + gh * 0.56);
+        ctx.fillStyle = '#fde047';
+        ctx.fillText('Cutoff ' + cutoffTempC.toFixed(0) + ' C', x0 + 8, y0 + ph - 4);
       } else if (mode === 'flac3d_cutplane') {
         ctx.fillStyle = '#fcd34d';
         ctx.font = '9px ui-monospace, monospace';
@@ -1383,19 +1454,21 @@
     ctx.setLineDash([]);
 
     // Upward steam/vapor phase-change arrows from evaporating surface
-    ctx.strokeStyle = '#fde047';
-    ctx.lineWidth = 1.3;
-    const arrowLen = 8.0 + 16.0 * st.boiling_envelope;
-    for (let k = 1; k <= 7; k++) {
-      const ax = bx + (k / 8) * bw;
-      const ay = meanLevel - 3;
-      ctx.beginPath();
-      ctx.moveTo(ax, ay);
-      ctx.lineTo(ax, ay - arrowLen);
-      ctx.lineTo(ax - 2.5, ay - arrowLen + 4);
-      ctx.moveTo(ax, ay - arrowLen);
-      ctx.lineTo(ax + 2.5, ay - arrowLen + 4);
-      ctx.stroke();
+    if (STATE.layers_enabled.layer2_heat_phase_change) {
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 1.3;
+      const arrowLen = 8.0 + 16.0 * st.boiling_envelope;
+      for (let k = 1; k <= 7; k++) {
+        const ax = bx + (k / 8) * bw;
+        const ay = meanLevel - 3;
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(ax, ay - arrowLen);
+        ctx.lineTo(ax - 2.5, ay - arrowLen + 4);
+        ctx.moveTo(ax, ay - arrowLen);
+        ctx.lineTo(ax + 2.5, ay - arrowLen + 4);
+        ctx.stroke();
+      }
     }
 
     ctx.fillStyle = '#f8fafc';
@@ -1439,7 +1512,7 @@
     ctx.fillRect(px, py, pw, ph);
 
     // Clay/chlorite mineral walls top and bottom
-    const isMont = STATE.mineralogy_mode === 'montmorillonite_prebiotic_analogue';
+    const isMont = isMontmorilloniteMode(STATE.mineralogy_mode);
     ctx.fillStyle = isMont ? '#b45309' : '#15803d';
     ctx.fillRect(px, py, pw, 26);
     ctx.fillRect(px, py + ph - 26, pw, 26);
@@ -1452,7 +1525,13 @@
     const barY = py + ph + 16;
     ctx.fillStyle = '#e2e8f0';
     ctx.font = 'bold 10px ui-monospace, monospace';
-    ctx.fillText('Calculated Surface-Site Occupancy (theta_OH + theta_O- + theta_OM2+ = 1):', 12, barY);
+    ctx.fillText(
+      STATE.layers_enabled.layer3_mineral_chemistry
+        ? 'Calculated Surface-Site Occupancy (theta_OH + theta_O- + theta_OM2+ = 1):'
+        : 'Layer 3 Disabled (Check Layer 3 to animate surface-site speciation):',
+      12,
+      barY
+    );
 
     const sites = [
       { label: '>OH (Protonated)', val: pm.theta_OH, col: '#64748b' },
@@ -1466,13 +1545,13 @@
       ctx.fillText(`${s.label}: ${(s.val * 100).toFixed(1)}%`, 14, sy + 10);
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(14, sy + 14, pw, 12);
-      ctx.fillStyle = s.col;
+      ctx.fillStyle = STATE.layers_enabled.layer3_mineral_chemistry ? s.col : '#334155';
       ctx.fillRect(14, sy + 14, pw * s.val, 12);
     });
 
     ctx.fillStyle = '#fbbf24';
     ctx.font = '9.5px -apple-system, sans-serif';
-    ctx.fillText('Caveat: Oklo gangue (sudoite/chlorite) != lab montmorillonite.', 12, H - 12);
+    ctx.fillText('Caveat: Oklo gangue (sudoite/chlorite, doi:10.1016/S0009-2541(98)00194-6) != lab montmorillonite.', 12, H - 12);
     ctx.restore();
 
     // Right Half: Window 3 - Molecular Interlayer & Abiotic Ligand Layer (nm)
@@ -1505,47 +1584,51 @@
 
     // Draw cations and oligomer chains inside the interlayer
     const midY = my + mh * 0.5;
-    for (let k = 1; k <= 5; k++) {
-      const cx = mx + (k / 6) * mw;
-      // Divalent cation sphere
-      ctx.fillStyle = '#22c55e';
-      ctx.beginPath();
-      ctx.arc(cx, midY - 16, 6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#041019';
-      ctx.font = 'bold 8px ui-monospace, monospace';
-      ctx.fillText('M2+', cx - 7, midY - 13);
+    if (STATE.layers_enabled.layer3_mineral_chemistry) {
+      for (let k = 1; k <= 5; k++) {
+        const cx = mx + (k / 6) * mw;
+        // Divalent cation sphere
+        ctx.fillStyle = '#22c55e';
+        ctx.beginPath();
+        ctx.arc(cx, midY - 16, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#041019';
+        ctx.font = 'bold 8px ui-monospace, monospace';
+        ctx.fillText('M2+', cx - 7, midY - 13);
 
-      // Coordination lines according to selected mode
-      ctx.strokeStyle = STATE.coordination_mode === 'interchain_or_mineral_bridge' ? '#38bdf8' : '#f59e0b';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      if (STATE.coordination_mode === 'interchain_or_mineral_bridge') {
-        // Bridges upper mineral sheet to oligomer phosphate backbone
-        ctx.moveTo(cx, my + 36);
-        ctx.lineTo(cx, midY - 16);
-        ctx.lineTo(cx, midY + 14);
-      } else if (STATE.coordination_mode === 'intrachain_self_loop') {
-        // Self-loop to same chain
-        ctx.arc(cx, midY + 2, 12, 0, Math.PI * 2);
-      } else {
-        // Single-site pendant
-        ctx.moveTo(cx, midY - 10);
-        ctx.lineTo(cx, midY + 12);
+        // Coordination lines according to selected mode
+        ctx.strokeStyle = STATE.coordination_mode === 'interchain_or_mineral_bridge' ? '#38bdf8' : '#f59e0b';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        if (STATE.coordination_mode === 'interchain_or_mineral_bridge') {
+          // Bridges upper mineral sheet to oligomer phosphate backbone
+          ctx.moveTo(cx, my + 36);
+          ctx.lineTo(cx, midY - 16);
+          ctx.lineTo(cx, midY + 14);
+        } else if (STATE.coordination_mode === 'intrachain_self_loop') {
+          // Self-loop to same chain
+          ctx.arc(cx, midY + 2, 12, 0, Math.PI * 2);
+        } else {
+          // Single-site pendant
+          ctx.moveTo(cx, midY - 10);
+          ctx.lineTo(cx, midY + 12);
+        }
+        ctx.stroke();
       }
-      ctx.stroke();
     }
 
     // Abiotic RNA/oligomer chain segment (strictly no cellular EPS!)
-    ctx.strokeStyle = pm.macro.net_oligomer_rate_dc_dt >= 0 ? '#a855f7' : '#f43f5e';
-    ctx.lineWidth = 3.0;
-    ctx.beginPath();
-    ctx.moveTo(mx + 22, midY + 15);
-    for (let k = 1; k <= 5; k++) {
-      const cx = mx + (k / 6) * mw;
-      ctx.lineTo(cx, midY + 12 + (k % 2 === 0 ? 6 : -4));
+    if (STATE.layers_enabled.layer4_abiotic_polymer_pde) {
+      ctx.strokeStyle = pm.macro.net_oligomer_rate_dc_dt >= 0 ? '#a855f7' : '#f43f5e';
+      ctx.lineWidth = 3.0;
+      ctx.beginPath();
+      ctx.moveTo(mx + 22, midY + 15);
+      for (let k = 1; k <= 5; k++) {
+        const cx = mx + (k / 6) * mw;
+        ctx.lineTo(cx, midY + 12 + (k % 2 === 0 ? 6 : -4));
+      }
+      ctx.stroke();
     }
-    ctx.stroke();
 
     // Summary text under molecular diagram
     ctx.fillStyle = '#e2e8f0';
@@ -1604,7 +1687,7 @@
 
     // Plot Legacy R0 Discontinuous Pulse (red dashed)
     ctx.strokeStyle = '#f43f5e';
-    ctx.lineWidth = 1.6;
+    ctx.lineWidth = isLegacyR0PulseMode(STATE.pulse_mode) ? 2.4 : 1.5;
     ctx.setLineDash([4, 3]);
     ctx.beginPath();
     CYCLE_SERIES.forEach((s, idx) => {
@@ -1618,7 +1701,7 @@
 
     // Plot Continuous Coupled Pulse (emerald solid)
     ctx.strokeStyle = '#10b981';
-    ctx.lineWidth = 2.2;
+    ctx.lineWidth = isLegacyR0PulseMode(STATE.pulse_mode) ? 1.5 : 2.3;
     ctx.beginPath();
     CYCLE_SERIES.forEach((s, idx) => {
       const sx = px + (idx / 59) * pw;
@@ -1641,9 +1724,9 @@
     ctx.stroke();
 
     ctx.fillStyle = '#10b981';
-    ctx.fillText('Green: Continuous Coupled Power', px + 180, py + 13);
+    ctx.fillText('Green: C^1 Coupled Power', px + 180, py + 13);
     ctx.fillStyle = '#38bdf8';
-    ctx.fillText('Cyan: Thermal Envelope T(t)', px + 355, py + 13);
+    ctx.fillText('Cyan: C^1 Thermal T(t)', px + 345, py + 13);
     ctx.fillStyle = '#f43f5e';
     ctx.fillText('Red Dashed: R0 Discontinuous', px + 180, py + 26);
 
@@ -1675,7 +1758,7 @@
 
     comps.forEach((c, idx) => {
       const stComp = evaluatePoreAndMolecularState(c.id, STATE.frame_index).macro;
-      const net = stComp.net_oligomer_rate_dc_dt;
+      const net = STATE.layers_enabled.layer4_abiotic_polymer_pde ? stComp.net_oligomer_rate_dc_dt : 0.0;
       const cx = px + (idx + 0.5) * (pw / comps.length);
       const bwBar = 48;
       const scaleY = (bh * 0.42) / 0.22;
@@ -1697,11 +1780,13 @@
   function generateCoupledCxcScriptText() {
     const st = CYCLE_SERIES[STATE.frame_index];
     const pm = evaluatePoreAndMolecularState(STATE.selected_compartment, STATE.frame_index);
+    const cutoffTempC = computeDisplayCutoffTempC().toFixed(0);
     return [
       '# oklo_coupled_hydrothermal_cycle.cxc',
       '# Title: Inferred Oklo reactor cycling and hypothetical hydrothermal transport',
       '# Epistemic Tag: [HYPOTHETICAL COUPLED MODEL - RUNG_4_MODEL]',
       '# Reference: Meshik et al. (2004, PRL 93:182302); Ibekwe et al. (2020, Prog. Nucl. Energy 118:103080)',
+      '# Clays: Pourcelot & Gauthier-Lafaye (1998, Chem. Geol. 145:103-115, doi:10.1016/S0009-2541(98)00194-6) vs Ferris et al. (1996, Nature 381:59-61, doi:10.1038/381059a0)',
       `# Active Frame: ${st.frame}/59 (phase p = ${st.phase.toFixed(4)}, t = ${st.time_min.toFixed(1)} min, ${st.phase_name})`,
       `# Mineralogy Mode: ${STATE.mineralogy_mode} (Oklo sudoite/chlorite != lab montmorillonite)`,
       `# Pulse Mode: ${STATE.pulse_mode} (C^1 continuous across b = 0.17; Frame 10 P_cont = ${CYCLE_SERIES[10].pulse_continuous.toFixed(4)} vs R0 = ${CYCLE_SERIES[10].pulse_r0_discontinuous.toFixed(4)})`,
@@ -1715,10 +1800,10 @@
       'open out/coupled_series/vapor_fraction_Sv_f*.mrc vseries true',
       'open out/coupled_series/pressure_delta_MPa_f*.mrc vseries true',
       'open out/coupled_series/net_oligomer_rate_dc_dt_f*.mrc vseries true',
-      'volume #4 style surface level 160 color #ef4444 transparency 0.25 level 210 color #f97316 transparency 0.20 level 270 color #fef08a transparency 0.15',
+      `volume #4 style surface level ${cutoffTempC} color #ef4444 level 210 color #f97316 level 270 color #fef08a transparency 0.22`,
       'volume #5 style surface level 0.50 color #38bdf8 transparency 0.45',
       'volume #6 style surface level 0.20 color #f8fafc transparency 0.35',
-      'volume #8 style surface level -0.05 color #f43f5e transparency 0.35 level 0.05 color #22c55e transparency 0.25',
+      'volume #8 style surface level -0.05 color #f43f5e level 0.05 color #22c55e transparency 0.30',
       'open flow_vectors_3_venting_scene_0p5m.bild',
       'open streamlines_3_venting_scene_0p5m.bild',
       'open pathlines_full_cycle_scene_0p5m.bild',
@@ -1736,7 +1821,7 @@
     document.getElementById('phaseBannerText').textContent =
       `${st.phase_name} (Frame ${st.frame} / 59 | t = ${st.time_min.toFixed(1)} / 180.0 min | p = ${st.phase.toFixed(4)})`;
     document.getElementById('moderatorStatusBadge').textContent =
-      `k_eff = ${st.k_eff.toFixed(3)} | Core S_l = ${st.sl_core.toFixed(2)}, S_v = ${st.sv_core.toFixed(2)} | T_core = ${(STATE.pulse_mode === 'legacy_r0_discontinuous' ? st.T_core_r0_C : st.T_core_continuous_C).toFixed(1)} C`;
+      `k_eff = ${st.k_eff.toFixed(3)} | Core S_l = ${st.sl_core.toFixed(2)}, S_v = ${st.sv_core.toFixed(2)} | T_core = ${(isLegacyR0PulseMode(STATE.pulse_mode) ? st.T_core_r0_C : st.T_core_continuous_C).toFixed(1)} C`;
 
     for (let id = 1; id <= 5; id++) {
       const pill = document.getElementById('phasePill' + id);
@@ -1843,10 +1928,24 @@
   };
 
   window.onLayerToggle = function() {
-    STATE.layers_enabled.layer1_groundwater_darcy = document.getElementById('chkLayer1').checked;
-    STATE.layers_enabled.layer2_heat_phase_change = document.getElementById('chkLayer2').checked;
-    STATE.layers_enabled.layer3_mineral_chemistry = document.getElementById('chkLayer3').checked;
-    STATE.layers_enabled.layer4_abiotic_polymer_pde = document.getElementById('chkLayer4').checked;
+    const c1 = document.getElementById('chkLayer1');
+    const c2 = document.getElementById('chkLayer2');
+    const c3 = document.getElementById('chkLayer3');
+    const c4 = document.getElementById('chkLayer4');
+    STATE.layers_enabled.layer1_groundwater_darcy = c1 ? Boolean(c1.checked) : true;
+    STATE.layers_enabled.layer2_heat_phase_change = c2 ? Boolean(c2.checked) : true;
+    STATE.layers_enabled.layer3_mineral_chemistry = c3 ? Boolean(c3.checked) : true;
+    STATE.layers_enabled.layer4_abiotic_polymer_pde = c4 ? Boolean(c4.checked) : true;
+    const cardMap = [
+      ['layerCard1', STATE.layers_enabled.layer1_groundwater_darcy],
+      ['layerCard2', STATE.layers_enabled.layer2_heat_phase_change],
+      ['layerCard3', STATE.layers_enabled.layer3_mineral_chemistry],
+      ['layerCard4', STATE.layers_enabled.layer4_abiotic_polymer_pde]
+    ];
+    cardMap.forEach(([cardId, active]) => {
+      const el = document.getElementById(cardId);
+      if (el && el.classList) el.classList.toggle('active', active);
+    });
     renderAll();
   };
 
@@ -1865,7 +1964,7 @@
     document.getElementById('lblFenceSlice').textContent =
       `${STATE.fence_slice_idx} / 32 (${(STATE.fence_slice_idx * DX_M).toFixed(1)} m)`;
     document.getElementById('lblDisplayCutoff').textContent =
-      `${(40.0 + STATE.display_cutoff_norm * 240.0).toFixed(1)} deg C (Display Cutoff)`;
+      `${computeDisplayCutoffTempC().toFixed(1)} deg C (Display Cutoff)`;
     renderAll();
   };
 
@@ -1930,8 +2029,7 @@
     const phaseIds = new Set(CYCLE_SERIES.map(s => s.phase_id));
     const hasAll5Phases = phaseIds.size === 5 && [1, 2, 3, 4, 5].every(id => phaseIds.has(id));
 
-    // 2. Verify R0 pulse discontinuity at Frame 10 (p = 0.1667, just before b = 0.17) vs Continuous Coupled Pulse
-    const f9 = CYCLE_SERIES[9];
+    // 2. Verify R0 pulse discontinuity at Frame 10 (p = 0.1667, just before b = 0.17) vs Continuous C^1 Coupled Pulse
     const f10 = CYCLE_SERIES[10];
     const f11 = CYCLE_SERIES[11];
     const r0DropsNearZeroAtF10 = f10.pulse_r0_discontinuous < 0.08 && f11.pulse_r0_discontinuous > 0.85;
@@ -1940,19 +2038,56 @@
       Math.abs(f11.pulse_continuous - f10.pulse_continuous) < 0.12 &&
       f10.T_core_continuous_C > 160.0;
 
-    // 3. Verify Mineralogical Caveat & Oligomer Competition (Montmorillonite distal halo vs Core destruction vs Sudoite low catalysis)
+    // 2b. Verify exact mathematical C^1 continuity (value AND first derivative) at p = b = 0.17 and pPeak = 0.085
+    const b = 0.17;
+    const eps = 1e-7;
+    const dPulseLeftB = (continuousCoupledPulse(b, b) - continuousCoupledPulse(b - eps, b)) / eps;
+    const dPulseRightB = (continuousCoupledPulse(b + eps, b) - continuousCoupledPulse(b, b)) / eps;
+    const dThermLeftB = (continuousThermalEnvelope(b, b) - continuousThermalEnvelope(b - eps, b)) / eps;
+    const dThermRightB = (continuousThermalEnvelope(b + eps, b) - continuousThermalEnvelope(b, b)) / eps;
+    const c1DerivativeContinuousAtB017 =
+      Math.abs(continuousCoupledPulse(b - eps, b) - continuousCoupledPulse(b + eps, b)) < 2e-6 &&
+      Math.abs(dPulseRightB - dPulseLeftB) < 1e-4 &&
+      Math.abs(dThermRightB - dThermLeftB) < 1e-4;
+
+    // 3. Verify Mineralogical Caveat, Oligomer Competition, and Extreme Slider / Alias Edge Cases
     const prevMin = STATE.mineralogy_mode;
     const prevCoord = STATE.coordination_mode;
+    const prevPulse = STATE.pulse_mode;
+    const prevPerm = STATE.perm_ratio_log10;
+
     STATE.mineralogy_mode = 'montmorillonite_prebiotic_analogue';
     STATE.coordination_mode = 'interchain_or_mineral_bridge';
+    STATE.pulse_mode = 'continuous_coupled';
+    STATE.perm_ratio_log10 = 2.0;
     const haloMont = evaluatePoreAndMolecularState('clay_halo', 9);
     const coreMont = evaluatePoreAndMolecularState('core', 9);
 
     STATE.mineralogy_mode = 'sudoite_chlorite_oklo_gangue';
     const haloSudoite = evaluatePoreAndMolecularState('clay_halo', 9);
 
+    // Test extreme permeability ratios (perm_ratio_log10 = 0 vs 4) and aliases ('r0_discontinuous', 'oklo_sudoite_illite_gangue') across Frame 10 -> Frame 11
+    STATE.perm_ratio_log10 = 0.0;
+    const fracPerm0 = evaluateVoxelState(16, 16, 22, 9);
+    STATE.perm_ratio_log10 = 4.0;
+    const fracPerm4 = evaluateVoxelState(16, 16, 22, 9);
+    STATE.pulse_mode = 'r0_discontinuous';
+    STATE.mineralogy_mode = 'oklo_sudoite_illite_gangue';
+    const coreR0F10 = evaluateVoxelState(16, 16, 11, 10);
+    const coreR0F11 = evaluateVoxelState(16, 16, 11, 11);
+    STATE.pulse_mode = 'continuous_coupled';
+    const coreContF10 = evaluateVoxelState(16, 16, 11, 10);
+
     STATE.mineralogy_mode = prevMin;
     STATE.coordination_mode = prevCoord;
+    STATE.pulse_mode = prevPulse;
+    STATE.perm_ratio_log10 = prevPerm;
+
+    const extremeEdgeCasesOk =
+      fracPerm4.darcy_velocity_m_s > fracPerm0.darcy_velocity_m_s * 50.0 &&
+      coreR0F10.temperature_C < 160.0 &&
+      coreR0F11.temperature_C > 160.0 &&
+      coreContF10.temperature_C > 160.0;
 
     const siteConservationOk =
       Math.abs((haloMont.theta_OH + haloMont.theta_O_minus + haloMont.theta_OM2_plus) - 1.0) < 1e-12 &&
@@ -1964,6 +2099,10 @@
       coreMont.macro.net_oligomer_rate_dc_dt < 0.0 &&
       coreMont.macro.niche_survival_lambda < 1.0 &&
       haloSudoite.macro.R_poly < haloMont.macro.R_poly * 0.25;
+
+    const cxcText = generateCoupledCxcScriptText();
+    const cxcLines = cxcText.split('\n').filter(l => l.trim().startsWith('volume '));
+    const cxcSyntaxValidSingleTransparency = cxcLines.length >= 4 && cxcLines.every(l => (l.match(/\btransparency\b/g) || []).length <= 1);
 
     return {
       artifact_id: ARTIFACT_ID,
@@ -1979,6 +2118,9 @@
       vseries_is_fluid_solver: STATE.vseries_is_fluid_solver,
       r0_drops_near_zero_at_frame10: r0DropsNearZeroAtF10,
       continuous_pulse_fixes_b017_discontinuity: continuousHasNoSpuriousJumpAtF10,
+      c1_derivative_continuous_at_b017: c1DerivativeContinuousAtB017,
+      extreme_slider_and_alias_edge_cases_passed: extremeEdgeCasesOk,
+      cxc_syntax_valid_single_transparency_per_volume: cxcSyntaxValidSingleTransparency,
       surface_site_conservation_exact: siteConservationOk,
       oligomer_synthesis_vs_destruction_competition_visible: competitionVisibleOk,
       all_passed:
@@ -1991,6 +2133,9 @@
         !STATE.uncorrected_metric_scale_mixing_allowed &&
         r0DropsNearZeroAtF10 &&
         continuousHasNoSpuriousJumpAtF10 &&
+        c1DerivativeContinuousAtB017 &&
+        extremeEdgeCasesOk &&
+        cxcSyntaxValidSingleTransparency &&
         siteConservationOk &&
         competitionVisibleOk
     };
@@ -2000,6 +2145,9 @@
   window.OKLO_HYDROTHERMAL_EXPLORER = {
     STATE,
     CYCLE_SERIES,
+    continuousCoupledPulse,
+    continuousThermalEnvelope,
+    r0DiscontinuousPulse,
     evaluateVoxelState,
     evaluatePoreAndMolecularState,
     generateCoupledCxcScriptText,

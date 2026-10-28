@@ -54,16 +54,16 @@ end
             "tecdoc643_reference_fixture.jl"                    => (6040,   "15eb6da017d610109bdcd03dc568ff243a3dae80399e5b33638c6166bd786294"),
             "proto_biofilms_geyser_fission_research_program.md" => (48056,  "da50d4002e6bcca94234045c3d371e16af243806cdb1ed99e0beff074c1cfb11"),
             "poolwater_interactive.html"                         => (79614,   "34b3e9f50689dd5f1ee6a7ee252996f0ff5a6a3410b33c353dd0cd2783feb964"),
-            "POOLWATER_WORKFLOW_SPEC.md"                         => (34347,   "9761aba9a16395c20f696270021cbb5ac43c06ec76ead09abeebbdb210aeecc0"),
+            "POOLWATER_WORKFLOW_SPEC.md"                         => (34504,   "8db73b265e40539744e5c7013d55bef7af35725f2f4864999697df11a4095d6b"),
             "multispecies_biofilm_robin_cylindrical_4panel.gif"  => (2571435, "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997"),
             "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
             "magnetoreception_3d_explorer.html"                  => (263873,  "335039227479d9704f0e71122624e4ba21d050b7ab2f1c580509ea5cfdf04bcb"),
             "reactor_pool_biofilm_explorer.html"                 => (204031,  "09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694"),
-            "oklo_hydrothermal_cycle_explorer.html"              => (89755,   "967b30e7883fbdd90a2cca7b33b5c09c267d65aa112255f0845fd8d622ac8897"),
-            "oklo_coupled_hydrothermal_cycle.cxc"                => (8879,    "a583a05349b51d34dd09d306fd69e71e753e4546e3ecdf1071cd3015a5bd4368"),
+            "oklo_hydrothermal_cycle_explorer.html"              => (97472,   "6e9eb39d182a7859f3c600255b09487483c4991a1af0bcbbf0c421e342da5eee"),
+            "oklo_coupled_hydrothermal_cycle.cxc"                => (8978,    "a891f9dd5433fdd05a69ff71df95625dfd0433e8aace3ce0908b1a1186640742"),
             "evidence_manifest.json"                             => (116876,  "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf"),
-            "test_calculation_provenance_and_invariants.js"      => (78250,   "5b89b77a80d41a1fc07d974245cf93cef93e2b9aa55a56f80b9cfd2d6d25b9ac"),
-            "benchmark_manifest.json"                            => (32735,   "813da01e0132f63d198c30f25e500a30171d3c9fd5eb85ed50a73b09c5fe427a"),
+            "test_calculation_provenance_and_invariants.js"      => (78887,   "d05dcfaa4743f90935d4d93c1257f283218d7f6576674ae08654e745f8670a87"),
+            "benchmark_manifest.json"                            => (32783,   "83d141a8f65b89f7fdfcfdd7274ca6ea3739d2ce1dec756bb4372e5245666900"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")
@@ -158,8 +158,8 @@ end
         @test occursin("(204,031 bytes)", index_info.text)
         @test occursin("oklo_hydrothermal_cycle_explorer.html", index_info.text)
         @test occursin("oklo_coupled_hydrothermal_cycle.cxc", index_info.text)
-        @test occursin("967b30e7883fbdd9...", index_info.text)
-        @test occursin("(89,755 bytes)", index_info.text)
+        @test occursin("6e9eb39d182a7859...", index_info.text)
+        @test occursin("(97,472 bytes)", index_info.text)
         @test occursin("https://github.com/aurascoper/Biofilms", index_info.text)
 
         @test !occursin("file://", xml_info.text)
@@ -540,6 +540,8 @@ end
             "Ibekwe et al.",
             "sudoite",
             "montmorillonite",
+            "doi:10.1016/S0009-2541(98)00194-6",
+            "doi:10.1038/381059a0",
             "b = 0.17",
         ]
             @test occursin(tok, hydro_html)
@@ -553,6 +555,9 @@ end
             "cellular_eps_or_cell_wall_included: false",
             "scales_separated_with_explicit_transform: true",
             "uncorrected_metric_scale_mixing_allowed: false",
+            "c1_derivative_continuous_at_b017",
+            "extreme_slider_and_alias_edge_cases_passed",
+            "cxc_syntax_valid_single_transparency_per_volume",
             "verifyOkloHydrothermalExplorerGates",
             "exportCompetitionPng1080p",
         ]
@@ -563,6 +568,7 @@ end
         @test occursin("\"xenon_isotope_record_shows_surface_geyser\": false", manifest_txt)
         @test occursin("\"oklo_gangue_equivalent_to_montmorillonite\": false", manifest_txt)
         @test occursin("\"cellular_eps_or_cell_wall_included\": false", manifest_txt)
+        @test occursin("\"c1_derivative_continuous_at_b017\": true", manifest_txt)
     end
 
     # --------------------------------------------------------------------------

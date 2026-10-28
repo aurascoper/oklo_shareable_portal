@@ -1162,20 +1162,20 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       sha256: '09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694'
     },
     'oklo_hydrothermal_cycle_explorer.html': {
-      bytes: 89755,
-      sha256: '967b30e7883fbdd90a2cca7b33b5c09c267d65aa112255f0845fd8d622ac8897'
+      bytes: 97472,
+      sha256: '6e9eb39d182a7859f3c600255b09487483c4991a1af0bcbbf0c421e342da5eee'
     },
     'oklo_coupled_hydrothermal_cycle.cxc': {
-      bytes: 8879,
-      sha256: 'a583a05349b51d34dd09d306fd69e71e753e4546e3ecdf1071cd3015a5bd4368'
+      bytes: 8978,
+      sha256: 'a891f9dd5433fdd05a69ff71df95625dfd0433e8aace3ce0908b1a1186640742'
     },
     'POOLWATER_WORKFLOW_SPEC.md': {
-      bytes: 34347,
-      sha256: '9761aba9a16395c20f696270021cbb5ac43c06ec76ead09abeebbdb210aeecc0'
+      bytes: 34504,
+      sha256: '8db73b265e40539744e5c7013d55bef7af35725f2f4864999697df11a4095d6b'
     },
     'index.html': {
       bytes: 105375,
-      sha256: 'e367ffcc3ed323ddbb0b405edda5ebce8a700b7be6664b13f7b3c62b1e87ccf1'
+      sha256: '4e4b84d257e58c445572acb901e39e7ed656280af7b4e9d595007e8faf979d5c'
     }
   };
   assert.strictEqual(Object.keys(pinnedPrimaryGate0Artifacts).length, 10, 'Expected exactly 10 primary pre-existing Gate-0 artifacts');
@@ -1328,10 +1328,19 @@ function verifyOkloHydrothermalCoupledCycleExplorer() {
     'Ibekwe et al.',
     'sudoite',
     'montmorillonite',
+    'doi:10.1016/S0009-2541(98)00194-6',
+    'doi:10.1038/381059a0',
     'b = 0.17'
   ]) {
     assert.ok(html.includes(token), `oklo_hydrothermal_cycle_explorer.html missing token: ${token}`);
     assert.ok(cxc.includes(token), `oklo_coupled_hydrothermal_cycle.cxc missing token: ${token}`);
+  }
+  for (const line of cxc.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('volume ')) {
+      const matches = trimmed.match(/\btransparency\b/g) || [];
+      assert.ok(matches.length <= 1, `oklo_coupled_hydrothermal_cycle.cxc volume line has repeated transparency keyword: ${trimmed}`);
+    }
   }
 
   // Execute inline script in Node VM and verify all gates
@@ -1385,6 +1394,9 @@ function verifyOkloHydrothermalCoupledCycleExplorer() {
   assert.strictEqual(gates.uncorrected_metric_scale_mixing_allowed, false);
   assert.strictEqual(gates.r0_drops_near_zero_at_frame10, true);
   assert.strictEqual(gates.continuous_pulse_fixes_b017_discontinuity, true);
+  assert.strictEqual(gates.c1_derivative_continuous_at_b017, true);
+  assert.strictEqual(gates.extreme_slider_and_alias_edge_cases_passed, true);
+  assert.strictEqual(gates.cxc_syntax_valid_single_transparency_per_volume, true);
   assert.strictEqual(gates.surface_site_conservation_exact, true);
   assert.strictEqual(gates.oligomer_synthesis_vs_destruction_competition_visible, true);
 
@@ -1392,7 +1404,7 @@ function verifyOkloHydrothermalCoupledCycleExplorer() {
   assert.strictEqual(pngRes.width, 1920);
   assert.strictEqual(pngRes.height, 1080);
 
-  console.log('PASS [Inferred Oklo Reactor Cycling & Hypothetical Hydrothermal Transport 5/5]: 5-phase/60-frame schedule, Meshik (2004) & Ibekwe (2020) framing, sudoite/chlorite vs montmorillonite caveat, continuous C^1 pulse fix across b = 0.17, 6-term abiotic oligomer PDE competition, and ChimeraX .cxc script verified.');
+  console.log('PASS [Inferred Oklo Reactor Cycling & Hypothetical Hydrothermal Transport 5/5]: 5-phase/60-frame schedule, Meshik (2004) & Ibekwe (2020) framing, sudoite/chlorite vs montmorillonite caveat, continuous C^1 pulse & derivative fix across b = 0.17, 6-term abiotic oligomer PDE competition, and ChimeraX .cxc script verified.');
 }
 
 function runAll() {

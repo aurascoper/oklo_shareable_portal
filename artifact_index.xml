@@ -5,7 +5,7 @@
     <PublicPortalUrl>https://aurascoper.github.io/oklo_shareable_portal/</PublicPortalUrl>
     <RelativePortalPath>index.html</RelativePortalPath>
     <PortalBytes>105375</PortalBytes>
-    <PortalSHA256>e367ffcc3ed323ddbb0b405edda5ebce8a700b7be6664b13f7b3c62b1e87ccf1</PortalSHA256>
+    <PortalSHA256>4e4b84d257e58c445572acb901e39e7ed656280af7b4e9d595007e8faf979d5c</PortalSHA256>
     <RelativeManifestPath>artifact_index.xml</RelativeManifestPath>
     <RelativeBenchmarkContractPath>benchmark_manifest.json</RelativeBenchmarkContractPath>
     <RelativePoolWaterSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativePoolWaterSpecPath>
@@ -106,12 +106,12 @@
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/poolwater_interactive.html</PublicArtifactUrl>
       <RelativeSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativeSpecPath>
       <PublicSpecUrl>https://aurascoper.github.io/oklo_shareable_portal/POOLWATER_WORKFLOW_SPEC.md</PublicSpecUrl>
-      <SpecBytes>34347</SpecBytes>
-      <SpecSHA256>9761aba9a16395c20f696270021cbb5ac43c06ec76ead09abeebbdb210aeecc0</SpecSHA256>
+      <SpecBytes>34504</SpecBytes>
+      <SpecSHA256>8db73b265e40539744e5c7013d55bef7af35725f2f4864999697df11a4095d6b</SpecSHA256>
       <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
       <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
-      <BenchmarkManifestBytes>32735</BenchmarkManifestBytes>
-      <BenchmarkManifestSHA256>813da01e0132f63d198c30f25e500a30171d3c9fd5eb85ed50a73b09c5fe427a</BenchmarkManifestSHA256>
+      <BenchmarkManifestBytes>32783</BenchmarkManifestBytes>
+      <BenchmarkManifestSHA256>83d141a8f65b89f7fdfcfdd7274ca6ea3739d2ce1dec756bb4372e5245666900</BenchmarkManifestSHA256>
       <Bytes>79614</Bytes>
       <SHA256>34b3e9f50689dd5f1ee6a7ee252996f0ff5a6a3410b33c353dd0cd2783feb964</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
@@ -163,8 +163,8 @@
       <EvidenceManifestBytes>116876</EvidenceManifestBytes>
       <EvidenceManifestSHA256>4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf</EvidenceManifestSHA256>
       <InvariantTestRelativePath>test_calculation_provenance_and_invariants.js</InvariantTestRelativePath>
-      <InvariantTestBytes>78250</InvariantTestBytes>
-      <InvariantTestSHA256>5b89b77a80d41a1fc07d974245cf93cef93e2b9aa55a56f80b9cfd2d6d25b9ac</InvariantTestSHA256>
+      <InvariantTestBytes>78887</InvariantTestBytes>
+      <InvariantTestSHA256>d05dcfaa4743f90935d4d93c1257f283218d7f6576674ae08654e745f8670a87</InvariantTestSHA256>
       <SourceModule>src/track4_mineral_magnetoreception_gates.jl</SourceModule>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
@@ -212,12 +212,12 @@
       <EvidenceClassification>synthetic</EvidenceClassification>
       <RelativePortalPath>oklo_hydrothermal_cycle_explorer.html</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/oklo_hydrothermal_cycle_explorer.html</PublicArtifactUrl>
-      <Bytes>89755</Bytes>
-      <SHA256>967b30e7883fbdd90a2cca7b33b5c09c267d65aa112255f0845fd8d622ac8897</SHA256>
+      <Bytes>97472</Bytes>
+      <SHA256>6e9eb39d182a7859f3c600255b09487483c4991a1af0bcbbf0c421e342da5eee</SHA256>
       <CompanionReferenceRelativePath>oklo_coupled_hydrothermal_cycle.cxc</CompanionReferenceRelativePath>
       <CompanionReferencePublicUrl>https://aurascoper.github.io/oklo_shareable_portal/oklo_coupled_hydrothermal_cycle.cxc</CompanionReferencePublicUrl>
-      <CompanionReferenceBytes>8879</CompanionReferenceBytes>
-      <CompanionReferenceSHA256>a583a05349b51d34dd09d306fd69e71e753e4546e3ecdf1071cd3015a5bd4368</CompanionReferenceSHA256>
+      <CompanionReferenceBytes>8978</CompanionReferenceBytes>
+      <CompanionReferenceSHA256>a891f9dd5433fdd05a69ff71df95625dfd0433e8aace3ce0908b1a1186640742</CompanionReferenceSHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
 
