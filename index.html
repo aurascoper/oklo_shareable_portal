@@ -316,6 +316,7 @@
       <span class="badge green">R10 4D Slice: MERGED (942e3f8)</span>
       <span class="badge blue">Pool-Water Interactive: Internal checks pass</span>
       <span class="badge green">3D Pool + Biofilm Explorer: Internal consistency checks pass (09bb3d9c)</span>
+      <span class="badge green">Coupled Hydrothermal Cycle: Internal consistency checks pass (967b30e7)</span>
       <span class="badge green">Biotite &amp; Biomagnetite 4D: Internal consistency checks pass (33503922)</span>
       <span class="badge amber">TECDOC-643: Reference Audit Only (dc15eb93)</span>
       <span class="badge blue">R0 Fixture: Frozen Unmodified (8dac3ae9)</span>
@@ -336,6 +337,7 @@
       <button id="tabRobinGif" onclick="setView('robingif')">9. Multispecies Biofilm Spatial Model (4-Panel Robin Cylindrical GIF)</button>
       <button id="tabMagneto" onclick="setView('magneto')">10. Biotite &amp; Biomagnetite 4D (Magnetosome Positive Control &amp; Fungal Fe/K ICP Assay)</button>
       <button id="tabPoolBiofilm" onclick="setView('poolbiofilm')">11. Coordinated 3D Pool-and-Biofilm Explorer (Uncoupled Solvers, Default &lambda;_etc = 0)</button>
+      <button id="tabHydroCycle" onclick="setView('hydrocycle')">12. Inferred Oklo Reactor Cycling &amp; Hypothetical Hydrothermal Transport (5-Phase / 60-Frame)</button>
     </div>
 
     <div id="bannerTxt" class="banner">
@@ -472,6 +474,22 @@
           </div>
         </div>
         <iframe id="iframePoolBiofilm" data-src="reactor_pool_biofilm_explorer.html" title="Coordinated 3D Open-Pool Reactor and Biofilm Coupon Explorer"></iframe>
+      </div>
+
+      <div id="cardHydroCycle" class="frame-card is-hidden">
+        <div class="frame-head">
+          <div>
+            <strong>Inferred Oklo Reactor Cycling and Hypothetical Hydrothermal Transport (5-Phase / 60-Frame Coupled Darcy-Heat-Boiling-Mineral-Oligomer Explorer)</strong>
+            <span class="badge green">HYPOTHETICAL COUPLED MODEL | Meshik et al. (2004) &amp; Ibekwe et al. (2020) | Sudoite vs Montmorillonite Caveat | Continuous Pulse Fix (b = 0.17)</span>
+          </div>
+          <div>
+            <a href="oklo_hydrothermal_cycle_explorer.html" target="_blank" rel="noopener">Open Standalone Hydrothermal-Cycle HTML</a> |
+            <a href="oklo_coupled_hydrothermal_cycle.cxc" target="_blank" rel="noopener">ChimeraX Script (.cxc)</a> |
+            <a href="oklo_r0_fixture_readonly.html" target="_blank" rel="noopener">Frozen R0 Fixture</a> |
+            <a href="proto_biofilms_geyser_fission_research_program.md" target="_blank" rel="noopener">10-Part Research Program (.md)</a>
+          </div>
+        </div>
+        <iframe id="iframeHydroCycle" data-src="oklo_hydrothermal_cycle_explorer.html" title="Inferred Oklo Reactor Cycling and Hypothetical Hydrothermal Transport"></iframe>
       </div>
     </div>
 
@@ -738,6 +756,16 @@
             <td><span class="badge green">Uncoupled Solvers (Internal checks pass)</span><br>Solvers kept strictly separate (<code>solver_level_coupled_validation_claimed = false</code>); Layer 1 pool geometry is <code>SYNTHETIC_SCHEMATIC</code> (<code>is_tecdoc643_benchmark_geometry = false</code>); separated provenance taxonomy (<code>geometry_classification</code>, lowercase <code>evidence_classification</code>, <code>epistemic_status</code>); programmatic null-control lock (<code>lambda_etc = 0.0</code>) and uncoupled time bases (<code>t_pool [s] != MCS</code>, <code>seconds_per_mcs = NaN</code>). This demo does not model fouling.</td>
           </tr>
           <tr>
+            <td class="mono">OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01</td>
+            <td><strong>Inferred Oklo Reactor Cycling and Hypothetical Hydrothermal Transport</strong><br>5-phase / 60-frame (180 min) 3D WebGL + 2D fallback + 4-panel fence/cut-plane/VOF explorer + 3 synchronized scale windows (<code>m</code>, <code>um</code>, <code>nm</code>) + 6-term abiotic oligomer PDE + companion ChimeraX script</td>
+            <td>
+              <a href="oklo_hydrothermal_cycle_explorer.html">oklo_hydrothermal_cycle_explorer.html</a><br>
+              <a href="oklo_coupled_hydrothermal_cycle.cxc">oklo_coupled_hydrothermal_cycle.cxc</a>
+            </td>
+            <td class="mono">967b30e7883fbdd9...<br>(89,755 bytes)<br><span style="color:var(--muted)">CXC: a583a053... (8,879 B)</span></td>
+            <td><span class="badge green">Hypothetical Coupled Model (Internal checks pass)</span><br>Distinguishes xenon-isotope cycling inference (Meshik et al. 2004, ~30 min active / ~2.5 h dormancy; does not directly show a surface geyser erupting) from coupled flow/heating modeling (Ibekwe et al. 2020); fixes R0 pulse discontinuity at <code>b = 0.17</code>; distinguishes Oklo gangue (sudoite/chlorite + illite) from laboratory montmorillonite; strictly excludes modern cellular EPS from Window 3 abiotic ligand adsorption.</td>
+          </tr>
+          <tr>
             <td class="mono">INDEX-XML-01</td>
             <td><strong>Machine-Readable XML Artifact Manifest</strong><br>Structured XML index of all URLs, relative portal paths, SHAs, and gates</td>
             <td>
@@ -920,7 +948,10 @@
       </table>
 
       <h2 style="margin-top:20px">Shareable Embed Snippets (HTML &amp; Markdown)</h2>
-      <pre>&lt;!-- Embed the Self-Contained Coordinated 3D Open-Pool Reactor &amp; Biofilm Coupon Explorer --&gt;
+      <pre>&lt;!-- Embed the Self-Contained Inferred Oklo Reactor Cycling &amp; Hypothetical Hydrothermal Transport Explorer --&gt;
+&lt;iframe src="https://aurascoper.github.io/oklo_shareable_portal/oklo_hydrothermal_cycle_explorer.html" width="100%" height="860" style="border:1px solid #22364d;border-radius:8px;"&gt;&lt;/iframe&gt;
+
+&lt;!-- Embed the Self-Contained Coordinated 3D Open-Pool Reactor &amp; Biofilm Coupon Explorer --&gt;
 &lt;iframe src="https://aurascoper.github.io/oklo_shareable_portal/reactor_pool_biofilm_explorer.html" width="100%" height="860" style="border:1px solid #22364d;border-radius:8px;"&gt;&lt;/iframe&gt;
 
 &lt;!-- Embed the Self-Contained Biotite, Biomagnetite &amp; Cryptochrome 4D Magnetoreception Viewer --&gt;
@@ -981,6 +1012,16 @@
       if (!ifr || !ifr.contentDocument || !ifr.contentWindow) return false;
       requestAnimationFrame(() => {
         ifr.contentWindow.dispatchEvent(new Event('resize'));
+      });
+      return true;
+    }
+
+    function notifyHydroCycleResize() {
+      const ifr = document.getElementById('iframeHydroCycle');
+      if (!ifr || !ifr.contentDocument || !ifr.contentWindow) return false;
+      requestAnimationFrame(() => {
+        ifr.contentWindow.dispatchEvent(new Event('resize'));
+        ifr.contentWindow.postMessage({ type: 'oklo-hydrocycle-resize' }, '*');
       });
       return true;
     }
@@ -1113,16 +1154,18 @@
       const cR0 = document.getElementById('cardR0');
       const cMagneto = document.getElementById('cardMagneto');
       const cPoolBiofilm = document.getElementById('cardPoolBiofilm');
+      const cHydroCycle = document.getElementById('cardHydroCycle');
       const ifrPool = document.getElementById('iframePool');
       const ifrNw = document.getElementById('iframeNw');
       const ifrBio = document.getElementById('iframeBio');
       const ifrR0 = document.getElementById('iframeR0');
       const ifrMagneto = document.getElementById('iframeMagneto');
       const ifrPoolBiofilm = document.getElementById('iframePoolBiofilm');
+      const ifrHydroCycle = document.getElementById('iframeHydroCycle');
       const banner = document.getElementById('bannerTxt');
       const syncBar = document.getElementById('coupledSyncBar');
 
-      ['tab4d','tabNw','tabSplit','tabBio','tabR0','tabPool','tabCoupled','tabAudit','tabRobinGif','tabMagneto','tabPoolBiofilm'].forEach(id => {
+      ['tab4d','tabNw','tabSplit','tabBio','tabR0','tabPool','tabCoupled','tabAudit','tabRobinGif','tabMagneto','tabPoolBiofilm','tabHydroCycle'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
       });
@@ -1136,6 +1179,7 @@
       cR0.classList.add('is-hidden');
       if (cMagneto) cMagneto.classList.add('is-hidden');
       if (cPoolBiofilm) cPoolBiofilm.classList.add('is-hidden');
+      if (cHydroCycle) cHydroCycle.classList.add('is-hidden');
 
       if (mode === '4d') {
         document.getElementById('tab4d').classList.add('active');
@@ -1213,6 +1257,12 @@
         void cPoolBiofilm.offsetWidth;
         ensureIframeLoaded(ifrPoolBiofilm, notifyPoolBiofilmResize);
         banner.innerHTML = '<strong>Epistemic Status (Coordinated 3D Open-Pool Reactor &amp; Biofilm Coupon Explorer, REACTOR-POOL-BIOFILM-3D-01):</strong> Coordinates Stage 1 open-pool radiolysis yields (`H2O2`, `H2`, `*OH`, `e_aq^-` from Jay-Gerin 2025 &amp; Buxton 1988 on a `SYNTHETIC_SCHEMATIC` pool cutaway `X,Y in [-500,500] cm, Z in [-200,200] cm` with a simplified `3x3` core lattice, explicitly labeled `is_tecdoc643_benchmark_geometry = false` so it is never mistaken for the IAEA-TECDOC-643 `6x7` box-grid MTR benchmark geometry or the `R = 2.0 m, H = 8.0 m` `poolwater_interactive.html` domain), Stage 2 coupon EPS sorption (`Fein et al. 1997` protonation `pKa` + provisional `Co-60` affinities + `Coccomyxa actinabiotis` benchmarks), and Stage 3 coupon biofilm stratification (`SL`, `SS`, `LL`, `CPM-Hypha`) while keeping solvers strictly separate (`solver_level_coupled_validation_claimed = false`), defaulting to `lambda_etc = 0.0`, and locking time bases uncoupled (`t_pool [s] != MCS`, `seconds_per_mcs = NaN`).';
+      } else if (mode === 'hydrocycle') {
+        document.getElementById('tabHydroCycle').classList.add('active');
+        cHydroCycle.classList.remove('is-hidden');
+        void cHydroCycle.offsetWidth;
+        ensureIframeLoaded(ifrHydroCycle, notifyHydroCycleResize);
+        banner.innerHTML = '<strong>Epistemic Status (Inferred Oklo Reactor Cycling and Hypothetical Hydrothermal Transport, OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01):</strong> Explicitly distinguishes the xenon-isotope cycling inference (Meshik et al. 2004, <em>PRL</em> 93:182302: ~30 min active fission / ~2.5 h dormancy over a 180 min period; isotope record does not directly show a surface geyser erupting) from coupled flow and heating modeling (Ibekwe et al. 2020, <em>Prog. Nucl. Energy</em> 118:103080). Synchronizes 5 phases across 60 frames with 3 scale windows (Window 1 Macroscale <code>16 m</code>, Window 2 Pore/Mineral <code>um..nm</code> with Oklo sudoite/chlorite vs. laboratory montmorillonite caveat, Window 3 Molecular Interlayer <code>nm</code> excluding modern cellular EPS), a 6-term abiotic oligomer PDE competition ledger, and a continuous coupled pulse that repairs the legacy R0 discontinuity at <code>b = 0.17</code>.';
       }
     }
 
@@ -1529,7 +1579,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       drawRobinCounterfactualCanvas('all');
       const h = (window.location.hash || '').replace('#', '').toLowerCase();
-      if (['4d', 'nw', 'split', 'bio', 'r0', 'pool', 'coupled', 'audit', 'robingif', 'magneto', 'poolbiofilm'].includes(h)) {
+      if (['4d', 'nw', 'split', 'bio', 'r0', 'pool', 'coupled', 'audit', 'robingif', 'magneto', 'poolbiofilm', 'hydrocycle'].includes(h)) {
         setView(h);
       }
     });

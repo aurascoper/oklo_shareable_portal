@@ -1,7 +1,7 @@
 {
   "schema": "oklo_portal_ci_verification_receipt_v1",
-  "generated_at": "2026-10-26T13:42:31.475Z",
-  "gate0_files_verified": 15,
+  "generated_at": "2026-10-28T18:00:12.412Z",
+  "gate0_files_verified": 17,
   "tests": {
     "lazy_init": "PASS",
     "tecdoc643_3d_webgl": {
@@ -9,7 +9,7 @@
       "glHeight": 630,
       "glHidden": false,
       "slHidden": true,
-      "kval": "1.094 ± 0.110",
+      "kval": "1.033 ± 0.110",
       "ntot": "(120 neutrons)"
     },
     "split_view_layout": {
@@ -286,6 +286,29 @@
       "timelineCouplingProgrammaticallyBlocked": true,
       "baselineNullControlEnforcesLambdaZero": true
     },
+    "oklo_hydrothermal_cycle_3d_explorer": {
+      "glMacroWidth": 600,
+      "glMacroHeight": 410,
+      "renderMode": "webgl+2d_synchronized",
+      "gates": {
+        "artifact_id": "OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01",
+        "title": "Inferred Oklo reactor cycling and hypothetical hydrothermal transport",
+        "frames_count": 60,
+        "has_all_5_synchronized_phases": true,
+        "xenon_isotope_record_shows_surface_geyser": false,
+        "oklo_gangue_equivalent_to_montmorillonite": false,
+        "cellular_eps_or_cell_wall_included": false,
+        "scales_separated_with_explicit_transform": true,
+        "uncorrected_metric_scale_mixing_allowed": false,
+        "emerges_from_boundary_and_moderator_feedback": true,
+        "vseries_is_fluid_solver": false,
+        "r0_drops_near_zero_at_frame10": true,
+        "continuous_pulse_fixes_b017_discontinuity": true,
+        "surface_site_conservation_exact": true,
+        "oligomer_synthesis_vs_destruction_competition_visible": true,
+        "all_passed": true
+      }
+    },
     "biofilms_disabled_webgl_fallback": {
       "glHidden": true,
       "slHidden": false,
@@ -321,6 +344,14 @@
       "cBio2dWidth": 560,
       "cBio2dHeight": 360,
       "frameCount": 1,
+      "gatesPass": true
+    },
+    "oklo_hydrothermal_cycle_disabled_webgl_fallback": {
+      "renderMode": "canvas2d_fallback",
+      "webglContextCreated": false,
+      "fallbackTriggered": true,
+      "cMacroFbWidth": 600,
+      "cMacroFbHeight": 410,
       "gatesPass": true
     }
   }

@@ -54,14 +54,16 @@ end
             "tecdoc643_reference_fixture.jl"                    => (6040,   "15eb6da017d610109bdcd03dc568ff243a3dae80399e5b33638c6166bd786294"),
             "proto_biofilms_geyser_fission_research_program.md" => (48056,  "da50d4002e6bcca94234045c3d371e16af243806cdb1ed99e0beff074c1cfb11"),
             "poolwater_interactive.html"                         => (79614,   "34b3e9f50689dd5f1ee6a7ee252996f0ff5a6a3410b33c353dd0cd2783feb964"),
-            "POOLWATER_WORKFLOW_SPEC.md"                         => (27762,   "6d37ab122d90396a53b9b8b2d0a7f413f969551c8ed66294f19903dc26d6fb54"),
+            "POOLWATER_WORKFLOW_SPEC.md"                         => (34347,   "9761aba9a16395c20f696270021cbb5ac43c06ec76ead09abeebbdb210aeecc0"),
             "multispecies_biofilm_robin_cylindrical_4panel.gif"  => (2571435, "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997"),
             "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
             "magnetoreception_3d_explorer.html"                  => (263873,  "335039227479d9704f0e71122624e4ba21d050b7ab2f1c580509ea5cfdf04bcb"),
             "reactor_pool_biofilm_explorer.html"                 => (204031,  "09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694"),
+            "oklo_hydrothermal_cycle_explorer.html"              => (89755,   "967b30e7883fbdd90a2cca7b33b5c09c267d65aa112255f0845fd8d622ac8897"),
+            "oklo_coupled_hydrothermal_cycle.cxc"                => (8879,    "a583a05349b51d34dd09d306fd69e71e753e4546e3ecdf1071cd3015a5bd4368"),
             "evidence_manifest.json"                             => (116876,  "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf"),
-            "test_calculation_provenance_and_invariants.js"      => (73416,   "cd3023c73f13f61fa88383b90b487d12f2be7fb5f4bab4a76392660690a9c5e5"),
-            "benchmark_manifest.json"                            => (30784,   "0b7cb0befac0ba4b3e880f2cf76d880a107a88e19902adaaf3941f2260c5dd05"),
+            "test_calculation_provenance_and_invariants.js"      => (78250,   "5b89b77a80d41a1fc07d974245cf93cef93e2b9aa55a56f80b9cfd2d6d25b9ac"),
+            "benchmark_manifest.json"                            => (32735,   "813da01e0132f63d198c30f25e500a30171d3c9fd5eb85ed50a73b09c5fe427a"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")
@@ -85,6 +87,8 @@ end
                        "clonal_sector_expansion_reference.jpg",
                        "magnetoreception_3d_explorer.html",
                        "reactor_pool_biofilm_explorer.html",
+                       "oklo_hydrothermal_cycle_explorer.html",
+                       "oklo_coupled_hydrothermal_cycle.cxc",
                        "evidence_manifest.json",
                        "test_calculation_provenance_and_invariants.js")
                 @test occursin(exp_sha, manifest_info.text)
@@ -103,6 +107,7 @@ end
             "BIOTITE-MAGNETORECEPTION-4D-01",
             "REACTOR-POOL-BIOFILM-COORDINATED-3D-01",
             "REACTOR-POOL-BIOFILM-3D-01",
+            "OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01",
         ]
         g0_section_match = match(r"\"gate_0_frozen_inputs\"\s*:\s*\{(.*?)\n  \},"s, manifest_info.text)
         @test g0_section_match !== nothing
@@ -151,6 +156,10 @@ end
         @test occursin("reactor_pool_biofilm_explorer.html", index_info.text)
         @test occursin("09bb3d9cbca7757c...", index_info.text)
         @test occursin("(204,031 bytes)", index_info.text)
+        @test occursin("oklo_hydrothermal_cycle_explorer.html", index_info.text)
+        @test occursin("oklo_coupled_hydrothermal_cycle.cxc", index_info.text)
+        @test occursin("967b30e7883fbdd9...", index_info.text)
+        @test occursin("(89,755 bytes)", index_info.text)
         @test occursin("https://github.com/aurascoper/Biofilms", index_info.text)
 
         @test !occursin("file://", xml_info.text)
@@ -308,6 +317,8 @@ end
             "proto_biofilms_geyser_fission_research_program.md",
             "magnetoreception_3d_explorer.html",
             "reactor_pool_biofilm_explorer.html",
+            "oklo_hydrothermal_cycle_explorer.html",
+            "oklo_coupled_hydrothermal_cycle.cxc",
             "evidence_manifest.json",
             "test_calculation_provenance_and_invariants.js",
             "test_tecdoc643_viewer_regression.js",
@@ -346,6 +357,8 @@ end
             "proto_biofilms_geyser_fission_research_program.md",
             "magnetoreception_3d_explorer.html",
             "reactor_pool_biofilm_explorer.html",
+            "oklo_hydrothermal_cycle_explorer.html",
+            "oklo_coupled_hydrothermal_cycle.cxc",
             "evidence_manifest.json",
             "test_calculation_provenance_and_invariants.js",
             "test_tecdoc643_viewer_regression.js",
@@ -514,6 +527,45 @@ end
     end
 
     # --------------------------------------------------------------------------
+    # Gate 7: Inferred Oklo Reactor Cycling and Hypothetical Hydrothermal Transport
+    # --------------------------------------------------------------------------
+    @testset "Gate 7: Inferred Oklo Reactor Cycling and Hypothetical Hydrothermal Transport (OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01)" begin
+        hydro_html = file_sha256_and_bytes("oklo_hydrothermal_cycle_explorer.html").text
+        hydro_cxc = file_sha256_and_bytes("oklo_coupled_hydrothermal_cycle.cxc").text
+        manifest_txt = file_sha256_and_bytes("benchmark_manifest.json").text
+
+        for tok in [
+            "Inferred Oklo reactor cycling and hypothetical hydrothermal transport",
+            "Meshik et al. (2004",
+            "Ibekwe et al.",
+            "sudoite",
+            "montmorillonite",
+            "b = 0.17",
+        ]
+            @test occursin(tok, hydro_html)
+            @test occursin(tok, hydro_cxc)
+        end
+
+        for html_tok in [
+            "const ARTIFACT_ID = 'OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01'",
+            "xenon_isotope_record_shows_surface_geyser: false",
+            "oklo_gangue_equivalent_to_montmorillonite: false",
+            "cellular_eps_or_cell_wall_included: false",
+            "scales_separated_with_explicit_transform: true",
+            "uncorrected_metric_scale_mixing_allowed: false",
+            "verifyOkloHydrothermalExplorerGates",
+            "exportCompetitionPng1080p",
+        ]
+            @test occursin(html_tok, hydro_html)
+        end
+
+        @test occursin("\"OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01\"", manifest_txt)
+        @test occursin("\"xenon_isotope_record_shows_surface_geyser\": false", manifest_txt)
+        @test occursin("\"oklo_gangue_equivalent_to_montmorillonite\": false", manifest_txt)
+        @test occursin("\"cellular_eps_or_cell_wall_included\": false", manifest_txt)
+    end
+
+    # --------------------------------------------------------------------------
     # Licensing, Attribution, Hygiene & Facility-Neutral Wording Checks
     # --------------------------------------------------------------------------
     @testset "Licensing, Attribution, Hygiene & Dash-Clean Invariants" begin
@@ -528,6 +580,8 @@ end
         # Enforce release-hygiene and public terminology checks across all checked portal docs
         portal_docs = [
             "index.html",
+            "oklo_hydrothermal_cycle_explorer.html",
+            "oklo_coupled_hydrothermal_cycle.cxc",
             "README.md",
             "POOLWATER_WORKFLOW_SPEC.md",
             "artifact_index.xml",

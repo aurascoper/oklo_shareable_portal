@@ -1161,13 +1161,21 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       bytes: 204031,
       sha256: '09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694'
     },
+    'oklo_hydrothermal_cycle_explorer.html': {
+      bytes: 89755,
+      sha256: '967b30e7883fbdd90a2cca7b33b5c09c267d65aa112255f0845fd8d622ac8897'
+    },
+    'oklo_coupled_hydrothermal_cycle.cxc': {
+      bytes: 8879,
+      sha256: 'a583a05349b51d34dd09d306fd69e71e753e4546e3ecdf1071cd3015a5bd4368'
+    },
     'POOLWATER_WORKFLOW_SPEC.md': {
-      bytes: 27762,
-      sha256: '6d37ab122d90396a53b9b8b2d0a7f413f969551c8ed66294f19903dc26d6fb54'
+      bytes: 34347,
+      sha256: '9761aba9a16395c20f696270021cbb5ac43c06ec76ead09abeebbdb210aeecc0'
     },
     'index.html': {
-      bytes: 100327,
-      sha256: '6e87f931e908e796fa1b0fcc73d2522ca0a7c5883d56332a672cbe53c3348095'
+      bytes: 105375,
+      sha256: 'e367ffcc3ed323ddbb0b405edda5ebce8a700b7be6664b13f7b3c62b1e87ccf1'
     }
   };
   assert.strictEqual(Object.keys(pinnedPrimaryGate0Artifacts).length, 10, 'Expected exactly 10 primary pre-existing Gate-0 artifacts');
@@ -1224,6 +1232,8 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   const editablePortalFiles = [
     'index.html',
     'reactor_pool_biofilm_explorer.html',
+    'oklo_hydrothermal_cycle_explorer.html',
+    'oklo_coupled_hydrothermal_cycle.cxc',
     'POOLWATER_WORKFLOW_SPEC.md',
     'README.md',
     'artifact_index.xml',
@@ -1258,6 +1268,8 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       'magnetoreception_3d_explorer.html',
       'poolwater_interactive.html',
       'biofilms_3d_explorer.html',
+      'oklo_hydrothermal_cycle_explorer.html',
+      'oklo_coupled_hydrothermal_cycle.cxc',
       'tecdoc643_reference_fixture.jl',
       'test_calculation_provenance_and_invariants.js',
       'test_poolwater_benchmark_gate.jl',
@@ -1291,10 +1303,96 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
   assert.ok(summaryMatch && summaryMatch[1].includes('Author: Hunter Kinder (Mark Hunter Kinder II) | Date: October 2026 | License: Code: MIT · Content: CC BY 4.0 (original portal materials; TECDOC-643 reference walk panel excluded pending contributor and institutional release confirmation)'), 'index.html .plain-language-summary must include exact Author/Date/License string ahead of badge-row');
   const rpbPrefix8 = pinnedCoordinatedAndCompanionFiles['reactor_pool_biofilm_explorer.html'].sha256.slice(0, 8);
   assert.ok(indexText.includes(`3D Pool + Biofilm Explorer: Internal consistency checks pass (${rpbPrefix8})`), `index.html badge must display synchronized 8-char SHA-256 prefix (${rpbPrefix8}) for reactor_pool_biofilm_explorer.html`);
+  const hydroPrefix8 = pinnedCoordinatedAndCompanionFiles['oklo_hydrothermal_cycle_explorer.html'].sha256.slice(0, 8);
+  assert.ok(indexText.includes(`Coupled Hydrothermal Cycle: Internal consistency checks pass (${hydroPrefix8})`), `index.html badge must display synchronized 8-char SHA-256 prefix (${hydroPrefix8}) for oklo_hydrothermal_cycle_explorer.html`);
   assert.ok(indexText.includes('positive code-verification benchmark') && indexText.includes('Treiber et al. (2012') && indexText.includes('Fe/K'), 'index.html must highlight magnetosome positive control, Treiber et al. (2012) warning, and fungal biotite Fe/K ICP bench assay');
   assert.ok(rpbText.includes('U_mag / (k_B * T) = 5.69 > 1') && rpbText.includes('Treiber et al. (2012') && rpbText.includes('Fe/K'), 'reactor_pool_biofilm_explorer.html must highlight magnetosome positive control, Treiber et al. (2012) warning, and fungal biotite Fe/K ICP bench assay');
 
   console.log('PASS [Coordinated 3D Pool-and-Biofilm Explorer 7/7]: Gate 1 separated provenance taxonomy, Gate 2 explicit on-disk SHA-256 verification of all 10 primary Gate-0 frozen inputs + 1 sidecar manifest + coordinated/companion files, Gate 3 narrow validation claims and programmatic baseline/timeline firewall (including VM runtime execution), 4 spatial layers, 4 morphotypes, 7 null-model comparisons, and pre-publication portal review invariants verified.');
+}
+
+function verifyOkloHydrothermalCoupledCycleExplorer() {
+  const vm = require('vm');
+  const htmlPath = path.join(ROOT, 'oklo_hydrothermal_cycle_explorer.html');
+  const cxcPath = path.join(ROOT, 'oklo_coupled_hydrothermal_cycle.cxc');
+  assert.ok(fs.existsSync(htmlPath), 'Missing oklo_hydrothermal_cycle_explorer.html');
+  assert.ok(fs.existsSync(cxcPath), 'Missing oklo_coupled_hydrothermal_cycle.cxc');
+
+  const html = fs.readFileSync(htmlPath, 'utf8');
+  const cxc = fs.readFileSync(cxcPath, 'utf8');
+
+  // Verify all Section 1-5 requirements in both HTML explorer and ChimeraX .cxc script
+  for (const token of [
+    'Inferred Oklo reactor cycling and hypothetical hydrothermal transport',
+    'Meshik et al. (2004',
+    'Ibekwe et al.',
+    'sudoite',
+    'montmorillonite',
+    'b = 0.17'
+  ]) {
+    assert.ok(html.includes(token), `oklo_hydrothermal_cycle_explorer.html missing token: ${token}`);
+    assert.ok(cxc.includes(token), `oklo_coupled_hydrothermal_cycle.cxc missing token: ${token}`);
+  }
+
+  // Execute inline script in Node VM and verify all gates
+  const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
+  assert.ok(scriptMatch && scriptMatch[1], 'Missing <script> in oklo_hydrothermal_cycle_explorer.html');
+  const dummyCtx = new Proxy({}, {
+    get: (t, p) => {
+      if (p === 'measureText') return () => ({ width: 50 });
+      if (p === 'createLinearGradient') return () => ({ addColorStop: () => {} });
+      return typeof t[p] !== 'undefined' ? t[p] : () => {};
+    },
+    set: (t, p, v) => { t[p] = v; return true; }
+  });
+  const makeEl = (id) => ({
+    id,
+    width: 640,
+    height: 360,
+    style: {},
+    value: '0',
+    checked: true,
+    textContent: '',
+    classList: { toggle: () => {}, add: () => {}, remove: () => {} },
+    getContext: (type) => type === '2d' ? dummyCtx : null,
+    addEventListener: () => {},
+    toDataURL: () => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ'
+  });
+  const sandbox = {
+    window: null,
+    document: {
+      getElementById: (id) => makeEl(id),
+      createElement: (tag) => makeEl(tag)
+    },
+    Blob: class {},
+    URL: { createObjectURL: () => 'blob:test' },
+    setInterval: () => 1,
+    clearInterval: () => {},
+    Math, Number, String, Object, Array, Set, Float32Array, Uint16Array, console
+  };
+  sandbox.window = sandbox;
+  sandbox.window.addEventListener = (ev, cb) => { if (ev === 'DOMContentLoaded') cb(); };
+  vm.runInNewContext(scriptMatch[1], sandbox);
+
+  const gates = sandbox.window.verifyOkloHydrothermalExplorerGates();
+  assert.ok(gates && gates.all_passed === true, `verifyOkloHydrothermalExplorerGates() failed: ${JSON.stringify(gates)}`);
+  assert.strictEqual(gates.frames_count, 60);
+  assert.strictEqual(gates.has_all_5_synchronized_phases, true);
+  assert.strictEqual(gates.xenon_isotope_record_shows_surface_geyser, false);
+  assert.strictEqual(gates.oklo_gangue_equivalent_to_montmorillonite, false);
+  assert.strictEqual(gates.cellular_eps_or_cell_wall_included, false);
+  assert.strictEqual(gates.scales_separated_with_explicit_transform, true);
+  assert.strictEqual(gates.uncorrected_metric_scale_mixing_allowed, false);
+  assert.strictEqual(gates.r0_drops_near_zero_at_frame10, true);
+  assert.strictEqual(gates.continuous_pulse_fixes_b017_discontinuity, true);
+  assert.strictEqual(gates.surface_site_conservation_exact, true);
+  assert.strictEqual(gates.oligomer_synthesis_vs_destruction_competition_visible, true);
+
+  const pngRes = sandbox.window.exportCompetitionPng1080p();
+  assert.strictEqual(pngRes.width, 1920);
+  assert.strictEqual(pngRes.height, 1080);
+
+  console.log('PASS [Inferred Oklo Reactor Cycling & Hypothetical Hydrothermal Transport 5/5]: 5-phase/60-frame schedule, Meshik (2004) & Ibekwe (2020) framing, sudoite/chlorite vs montmorillonite caveat, continuous C^1 pulse fix across b = 0.17, 6-term abiotic oligomer PDE competition, and ChimeraX .cxc script verified.');
 }
 
 function runAll() {
@@ -1305,6 +1403,7 @@ function runAll() {
   verifyDesignMatrixEstimabilityAndAliasing();
   verifyPerEdgeEvidenceAndRedTeamPolicies();
   verifyReactorPoolBiofilmCoordinatedExplorer();
+  verifyOkloHydrothermalCoupledCycleExplorer();
   console.log('ALL SCIENTIFIC PROVENANCE, TRAJECTORY COUNTERFACTUAL, AND ESTIMABILITY TESTS PASSED.');
 }
 

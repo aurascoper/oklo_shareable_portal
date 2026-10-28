@@ -4,8 +4,8 @@
     <Title>Oklo 4D Spatiotemporal, Conformance Fixture, Biofilms 3D, TECDOC-643 Neutron Walk, and Pool-Water Interactive Shareable Index</Title>
     <PublicPortalUrl>https://aurascoper.github.io/oklo_shareable_portal/</PublicPortalUrl>
     <RelativePortalPath>index.html</RelativePortalPath>
-    <PortalBytes>100327</PortalBytes>
-    <PortalSHA256>6e87f931e908e796fa1b0fcc73d2522ca0a7c5883d56332a672cbe53c3348095</PortalSHA256>
+    <PortalBytes>105375</PortalBytes>
+    <PortalSHA256>e367ffcc3ed323ddbb0b405edda5ebce8a700b7be6664b13f7b3c62b1e87ccf1</PortalSHA256>
     <RelativeManifestPath>artifact_index.xml</RelativeManifestPath>
     <RelativeBenchmarkContractPath>benchmark_manifest.json</RelativeBenchmarkContractPath>
     <RelativePoolWaterSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativePoolWaterSpecPath>
@@ -106,12 +106,12 @@
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/poolwater_interactive.html</PublicArtifactUrl>
       <RelativeSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativeSpecPath>
       <PublicSpecUrl>https://aurascoper.github.io/oklo_shareable_portal/POOLWATER_WORKFLOW_SPEC.md</PublicSpecUrl>
-      <SpecBytes>27762</SpecBytes>
-      <SpecSHA256>6d37ab122d90396a53b9b8b2d0a7f413f969551c8ed66294f19903dc26d6fb54</SpecSHA256>
+      <SpecBytes>34347</SpecBytes>
+      <SpecSHA256>9761aba9a16395c20f696270021cbb5ac43c06ec76ead09abeebbdb210aeecc0</SpecSHA256>
       <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
       <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
-      <BenchmarkManifestBytes>30784</BenchmarkManifestBytes>
-      <BenchmarkManifestSHA256>0b7cb0befac0ba4b3e880f2cf76d880a107a88e19902adaaf3941f2260c5dd05</BenchmarkManifestSHA256>
+      <BenchmarkManifestBytes>32735</BenchmarkManifestBytes>
+      <BenchmarkManifestSHA256>813da01e0132f63d198c30f25e500a30171d3c9fd5eb85ed50a73b09c5fe427a</BenchmarkManifestSHA256>
       <Bytes>79614</Bytes>
       <SHA256>34b3e9f50689dd5f1ee6a7ee252996f0ff5a6a3410b33c353dd0cd2783feb964</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
@@ -163,8 +163,8 @@
       <EvidenceManifestBytes>116876</EvidenceManifestBytes>
       <EvidenceManifestSHA256>4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf</EvidenceManifestSHA256>
       <InvariantTestRelativePath>test_calculation_provenance_and_invariants.js</InvariantTestRelativePath>
-      <InvariantTestBytes>73416</InvariantTestBytes>
-      <InvariantTestSHA256>cd3023c73f13f61fa88383b90b487d12f2be7fb5f4bab4a76392660690a9c5e5</InvariantTestSHA256>
+      <InvariantTestBytes>78250</InvariantTestBytes>
+      <InvariantTestSHA256>5b89b77a80d41a1fc07d974245cf93cef93e2b9aa55a56f80b9cfd2d6d25b9ac</InvariantTestSHA256>
       <SourceModule>src/track4_mineral_magnetoreception_gates.jl</SourceModule>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
@@ -202,6 +202,22 @@
       <PRRTSpatialCPMClinicalMainCommit>507fc19c507505233268e058b7b5d7a0bd4e378c</PRRTSpatialCPMClinicalMainCommit>
       <PRRTSpatialCPMRemotePR31Head>2db2a7b558ea736c61cc459fd6a72c4afa36e3c5</PRRTSpatialCPMRemotePR31Head>
       <PRRTSpatialCPMLocalUnpushedHead>8182c30ab46d3b6a8cee7c853c18f7a44766a59d</PRRTSpatialCPMLocalUnpushedHead>
+      <OfflineSelfContained>true</OfflineSelfContained>
+    </Artifact>
+
+    <Artifact id="OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01">
+      <Title>Inferred Oklo Reactor Cycling and Hypothetical Hydrothermal Transport</Title>
+      <Requirement>5-Phase 60-Frame Coupled Hydrothermal-Cycle Model (4 Layers: Darcy Flow, Heat and Two-Phase Boiling, Pore/Mineral Surface Complexation, and 6-Term Abiotic Oligomer PDE across 3 Scale Windows m/um/nm)</Requirement>
+      <EpistemicStatus>HYPOTHETICAL_COUPLED_HYDROTHERMAL_AND_PREBIOTIC_MODEL_RUNG_4 (Meshik et al. 2004 PRL 93:182302 xenon-isotope cycling inference ~30 min active / ~2.5 h dormancy over 180 min vs Ibekwe et al. 2020 Prog. Nucl. Energy 118:103080 coupled fluid-flow and fission-heating sensitivity; xenon_isotope_record_shows_surface_geyser=false; Oklo sudoite/chlorite vs laboratory montmorillonite caveat oklo_gangue_equivalent_to_montmorillonite=false; modern cellular EPS excluded cellular_eps_or_cell_wall_included=false; continuous C^1 pulse fix across b = 0.17)</EpistemicStatus>
+      <EvidenceClassification>synthetic</EvidenceClassification>
+      <RelativePortalPath>oklo_hydrothermal_cycle_explorer.html</RelativePortalPath>
+      <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/oklo_hydrothermal_cycle_explorer.html</PublicArtifactUrl>
+      <Bytes>89755</Bytes>
+      <SHA256>967b30e7883fbdd90a2cca7b33b5c09c267d65aa112255f0845fd8d622ac8897</SHA256>
+      <CompanionReferenceRelativePath>oklo_coupled_hydrothermal_cycle.cxc</CompanionReferenceRelativePath>
+      <CompanionReferencePublicUrl>https://aurascoper.github.io/oklo_shareable_portal/oklo_coupled_hydrothermal_cycle.cxc</CompanionReferencePublicUrl>
+      <CompanionReferenceBytes>8879</CompanionReferenceBytes>
+      <CompanionReferenceSHA256>a583a05349b51d34dd09d306fd69e71e753e4546e3ecdf1071cd3015a5bd4368</CompanionReferenceSHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
 

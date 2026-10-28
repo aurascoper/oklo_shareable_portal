@@ -1,0 +1,131 @@
+# ==============================================================================
+# oklo_coupled_hydrothermal_cycle.cxc
+# Title: Inferred Oklo reactor cycling and hypothetical hydrothermal transport
+# Epistemic Status: [HYPOTHETICAL COUPLED MODEL - RUNG_4_MODEL]
+# Author: Hunter Kinder (Mark Hunter Kinder II)
+# License: Code: MIT . Content: CC BY 4.0
+# ==============================================================================
+#
+# 1. WHAT THE OKLO CYCLE ACTUALLY REPRESENTS
+#    - Meshik et al. (2004, Phys. Rev. Lett. 93:182302, PMID 15525157) analyzed
+#      trapped fission-product xenon isotopes in aluminous phosphate minerals to
+#      infer cyclic reactor operation of roughly 30 minutes active fission
+#      separated by about 2.5 hours (150 minutes) of dormancy (180-minute full
+#      period, 60 frames at 3.0 minutes per frame).
+#    - The xenon isotope record does NOT directly show a surface geyser erupting.
+#      Rather than treating "the Oklo geyser" as an observed object or using a
+#      "natural kiln" ceramic-firing analogy, this scene represents a proposed
+#      pulsed, water-moderated hydrothermal system (Ibekwe et al., 2020, Prog.
+#      Nucl. Energy 118:103080, S0149197019301817):
+#        Phase 1 (Frames 00..02, 0..9 min)    : Groundwater recharge
+#        Phase 2 (Frames 03..08, 9..27 min)   : Heating (fission pulse & buoyancy)
+#        Phase 3 (Frames 09..17, 27..51 min)  : Boiling and expulsion (two-phase)
+#        Phase 4 (Frames 18..47, 54..141 min) : Shutdown and cooldown (condensation)
+#        Phase 5 (Frames 48..59, 144..180 min): Refill and repeat (matrix suction)
+#
+# 2. FIVE LIMITATIONS FIXED RELATIVE TO FROZEN REVISION-0 oklo_cycle.cxc
+#    (a) Separated 4-Layer Coupled Model vs Prescribed R0 Indices:
+#        Replaces the uncoupled Revision-0 algebraic indices with four distinct
+#        coupled model layers:
+#          Layer 1: Groundwater motion & two-phase Darcy flow (S_l, S_v, Delta_P, u)
+#          Layer 2: Heat, moderator feedback & boiling phase change (T, Delta_T)
+#          Layer 3: Pore/mineral surface chemistry (>OH, >O-, >OCa+ / >OMg+, pH)
+#          Layer 4: Abiotic oligomer reaction-transport PDE (dc_n/dt, Lambda)
+#    (b) Display Cutoffs vs Physical Thresholds:
+#        Isosurface levels (T = 160 C, 210 C, 270 C; S_l = 0.50; S_v = 0.20;
+#        dc_n/dt = +/-0.05 umol/(L min)) are legibility display choices, kept
+#        explicitly distinct from the physical boiling curve T_sat(P) and
+#        moderator criticality threshold S_crit = 0.62.
+#    (c) Continuous Pulse & Thermal Envelope (Fixing the b = 0.17 Discontinuity):
+#        In Revision 0, pulse(p, b=0.17) = sin(pi*p/b) for p < b falls to ~0.06
+#        at Frame 10 (p = 0.1667) and jumps discontinuously to exp(-8*(p-b)) = 1.0
+#        at p = b+ (Frame 11), causing the 160 C surface to vanish at Frame 10 and
+#        reappear at Frame 11. Here, reactor power Q_fiss(S_l, T) is coupled to
+#        moderator density and thermal inertia so P_cont(p) and T(x,t) are C^1
+#        continuous across p = 0.17 with zero spurious frame gap.
+#    (d) Physical Coordinate Convention & Multi-Scale Firewall:
+#        Header cell lengths are 16.0 units per side (32x32x32 voxels, step 0.5).
+#        By declared macroscopic convention, 1 scene unit = 1.0 m (voxel = 0.5 m),
+#        even though ChimeraX labels map units as Angstroms. Pore/mineral (um-nm)
+#        and molecular interlayer (nm) windows are kept in separate coordinate
+#        frames and never mixed into the 16 m geological grid without explicit
+#        coordinate transformation.
+#    (e) External Coupled Solver + Synchronized .mrc Volumes & .bild Vectors:
+#        ChimeraX vseries playback is not a fluid solver. Water velocity u,
+#        pressure anomaly Delta_P, temperature T, liquid saturation S_l, vapor
+#        fraction S_v, and net oligomer accumulation rate dc_n/dt are solved
+#        externally and exported as synchronized 60-frame .mrc volume series plus
+#        3D .bild Darcy velocity arrows, RK4 streamlines, and parcel pathlines.
+#
+# 3. MINERALOGICAL & ABIOTIC FIREWALL CAVEATS
+#    - Oklo hydrothermal clays include di-trioctahedral chlorites such as sudoite
+#      and illite (Pourcelot & Gauthier-Lafaye, 1998, Chem. Geol. 151:95-108),
+#      which are NOT automatically equivalent to laboratory montmorillonite
+#      (Ferris et al., 1996, Nature 381:59-61).
+#    - Abiotic model (H_5) investigates generic oligomer phosphate/nucleobase
+#      adsorption and mineral bridging; modern cellular EPS and cell-wall bridging
+#      (H_6) are strictly excluded.
+# ==============================================================================
+
+set bgColor #080d14
+
+# --- Layer 0: Static Geological Compartment Context (#1..#3) ---
+open clay_halo_mask_scene_0p5m.mrc
+rename #1 "Compartment: Argillaceous Halo (sudoite/chlorite/illite gangue; montmorillonite is lab analogue only)"
+volume #1 style mesh level 0.5 color #d4a373 transparency 0.65
+
+open fracture_mask_scene_0p5m.mrc
+rename #2 "Compartment: Vertical Fracture Fault Conduit (k_frac >> k_sand)"
+volume #2 style surface level 0.5 color #94a3b8 transparency 0.80
+
+open core_mask_scene_0p5m.mrc
+rename #3 "Compartment: Uraninite-Rich Reactor Core Zone (fission heat & radiolysis source)"
+volume #3 style surface level 0.5 color #d97706 transparency 0.72
+
+# --- Layer 1 & 2: Coupled 60-Frame Hydrothermal Volume Series (#4..#8) ---
+# (Generated over 60 frames, phase p = i/60, dt = 3.0 min/frame, continuous at b = 0.17)
+open out/coupled_series/temperature_C_f*.mrc vseries true
+rename #4 "Layer 2: Coupled Temperature T (deg C, continuous C^1 pulse+thermal envelope; 160/210/270 C display levels)"
+volume #4 style surface level 160 color #ef4444 transparency 0.25 level 210 color #f97316 transparency 0.20 level 270 color #fef08a transparency 0.15
+
+open out/coupled_series/liquid_saturation_Sl_f*.mrc vseries true
+rename #5 "Layer 1: Liquid Water Saturation S_l (dimensionless in [0,1]; display level 0.50 vs S_crit = 0.62)"
+volume #5 style surface level 0.50 color #38bdf8 transparency 0.45
+
+open out/coupled_series/vapor_fraction_Sv_f*.mrc vseries true
+rename #6 "Layer 2: Two-Phase Steam/Vapor Fraction S_v = 1 - S_l (where T >= T_sat(P); display level 0.20)"
+volume #6 style surface level 0.20 color #f8fafc transparency 0.35
+
+open out/coupled_series/pressure_delta_MPa_f*.mrc vseries true
+rename #7 "Layer 1: Pore Pressure Anomaly Delta_P (MPa relative to hydrostatic; drives venting & recharge)"
+volume #7 style surface level 0.15 color #a855f7 transparency 0.55
+
+# --- Layer 4: Abiotic Oligomer Reaction-Transport Competition (#8) ---
+# Net rate dc_n/dt = R_poly - R_hyd - R_rad - div(u c_n) + div(D_n grad c_n) + R_surface
+# Green (+0.05 umol/(L min)): Protected distal halo niche where catalysis > degradation
+# Red   (-0.05 umol/(L min)): Hot/radiolytic core & fracture throat where hydrolysis + radiolysis + washout dominate
+open out/coupled_series/net_oligomer_rate_dc_dt_f*.mrc vseries true
+rename #8 "Layer 4: Net Abiotic Oligomer Rate dc_n/dt (umol/(L min); green > 0 accumulation vs red < 0 destruction)"
+volume #8 style surface level -0.05 color #f43f5e transparency 0.35 level 0.05 color #22c55e transparency 0.25
+
+# --- Synchronized 3D Darcy Specific-Discharge Arrows, Streamlines & Pathlines (#9..#19) ---
+open flow_vectors_1_before_pulse_scene_0p5m.bild
+open streamlines_1_before_pulse_scene_0p5m.bild
+open flow_vectors_2_heating_scene_0p5m.bild
+open streamlines_2_heating_scene_0p5m.bild
+open flow_vectors_3_venting_scene_0p5m.bild
+open streamlines_3_venting_scene_0p5m.bild
+open flow_vectors_4_cooldown_scene_0p5m.bild
+open streamlines_4_cooldown_scene_0p5m.bild
+open flow_vectors_5_recharge_scene_0p5m.bild
+open streamlines_5_recharge_scene_0p5m.bild
+open pathlines_full_cycle_scene_0p5m.bild
+
+# --- 2D HUD Annotations (Strictly Zero Em/En-Dashes) ---
+2dlabels create title_hud text "Inferred Oklo Reactor Cycling & Hypothetical Hydrothermal Transport [HYPOTHETICAL COUPLED MODEL - RUNG_4_MODEL]" xpos 0.02 ypos 0.96 size 15 color #f8fafc
+2dlabels create scale_hud text "Macroscale Domain: 16.0 m x 16.0 m x 16.0 m (1 map unit = 1.0 m, dx = 0.5 m; ChimeraX labels map units as Angstrom) | Separate Pore (um) & Molecular (nm) Windows" xpos 0.02 ypos 0.92 size 12 color #94a3b8
+2dlabels create phase_hud text "Synchronized 5-Phase Cycle (60 frames = 180 min): Phase 1 Recharge -> Phase 2 Heating -> Phase 3 Boiling/Expulsion -> Phase 4 Shutdown/Cooldown -> Phase 5 Refill" xpos 0.02 ypos 0.88 size 12 color #38bdf8
+2dlabels create caveat_hud text "Caveats: Meshik 2004 Xe cycling != observed surface geyser | Oklo sudoite/chlorite != lab montmorillonite (Ferris 1996) | Abiotic H_5 only (no cellular EPS)" xpos 0.02 ypos 0.03 size 11 color #fbbf24
+
+view
+log text Coupled Oklo hydrothermal model loaded. Play synchronized 60-frame series with: vseries play #4-8 loop true

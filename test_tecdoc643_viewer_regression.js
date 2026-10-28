@@ -79,8 +79,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'POOLWATER_WORKFLOW_SPEC.md',
-      sha256: '6d37ab122d90396a53b9b8b2d0a7f413f969551c8ed66294f19903dc26d6fb54',
-      bytes: 27762
+      sha256: '9761aba9a16395c20f696270021cbb5ac43c06ec76ead09abeebbdb210aeecc0',
+      bytes: 34347
     },
     {
       path: 'multispecies_biofilm_robin_cylindrical_4panel.gif',
@@ -103,19 +103,29 @@ function verifyArtifactHashes() {
       bytes: 204031
     },
     {
+      path: 'oklo_hydrothermal_cycle_explorer.html',
+      sha256: '967b30e7883fbdd90a2cca7b33b5c09c267d65aa112255f0845fd8d622ac8897',
+      bytes: 89755
+    },
+    {
+      path: 'oklo_coupled_hydrothermal_cycle.cxc',
+      sha256: 'a583a05349b51d34dd09d306fd69e71e753e4546e3ecdf1071cd3015a5bd4368',
+      bytes: 8879
+    },
+    {
       path: 'evidence_manifest.json',
       sha256: '4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf',
       bytes: 116876
     },
     {
       path: 'test_calculation_provenance_and_invariants.js',
-      sha256: 'cd3023c73f13f61fa88383b90b487d12f2be7fb5f4bab4a76392660690a9c5e5',
-      bytes: 73416
+      sha256: '5b89b77a80d41a1fc07d974245cf93cef93e2b9aa55a56f80b9cfd2d6d25b9ac',
+      bytes: 78250
     },
     {
       path: 'benchmark_manifest.json',
-      sha256: '0b7cb0befac0ba4b3e880f2cf76d880a107a88e19902adaaf3941f2260c5dd05',
-      bytes: 30784
+      sha256: '813da01e0132f63d198c30f25e500a30171d3c9fd5eb85ed50a73b09c5fe427a',
+      bytes: 32735
     }
   ];
 
@@ -1278,6 +1288,65 @@ async function runTests() {
           timelineCouplingProgrammaticallyBlocked: poolBiofilmState.timelineCouplingProgrammaticallyBlocked,
           baselineNullControlEnforcesLambdaZero: poolBiofilmState.baselineNullControlEnforcesLambdaZero
         };
+
+        // Test 12: Tab 12 Inferred Oklo Reactor Cycling & Hypothetical Hydrothermal Transport (oklo_hydrothermal_cycle_explorer.html)
+        await evalJson(`(() => { setView('hydrocycle'); return 'true'; })()`);
+        await new Promise(r => setTimeout(r, 1500));
+        const hydroCycleState = await evalJson(`(() => {
+          const ifr = document.getElementById('iframeHydroCycle');
+          const d = ifr.contentDocument;
+          const w = ifr.contentWindow;
+          const glMacro = d.getElementById('glMacroCanvas');
+          const cMacroFb = d.getElementById('canvasMacro2dFallback');
+          const cMacro4p = d.getElementById('canvasMacro4Panel');
+          const cMulti = d.getElementById('canvasMultiScale');
+          const cKin = d.getElementById('canvasKineticsAndCxc');
+          const gates = w.verifyOkloHydrothermalExplorerGates();
+          const png1080 = w.exportCompetitionPng1080p();
+          w.setFrameIndex(12);
+          const st12 = w.HYDRO_CYCLE_STATE;
+          const frame12TimeMin = st12.time_min;
+          w.setFrameIndex(9);
+          return JSON.stringify({
+            tabActive: document.getElementById('tabHydroCycle').classList.contains('active'),
+            glMacroWidth: glMacro.width,
+            glMacroHeight: glMacro.height,
+            cMacroFbWidth: cMacroFb.width,
+            cMacro4pWidth: cMacro4p.width,
+            cMultiWidth: cMulti.width,
+            cKinWidth: cKin.width,
+            renderMode: st12.render_mode,
+            webglContextCreated: st12.webgl_context_created,
+            fallbackTriggered: st12.fallback_triggered,
+            frame12TimeMin,
+            gates,
+            pngWidth: png1080.width,
+            pngHeight: png1080.height
+          });
+        })()`);
+        assert.strictEqual(hydroCycleState.tabActive, true);
+        assert.strictEqual(hydroCycleState.webglContextCreated, true);
+        assert.strictEqual(hydroCycleState.fallbackTriggered, false);
+        assert.strictEqual(hydroCycleState.renderMode, 'webgl+2d_synchronized');
+        assert.ok(hydroCycleState.glMacroWidth > 350 && hydroCycleState.glMacroHeight > 220);
+        assert.strictEqual(hydroCycleState.frame12TimeMin, 36.0);
+        assert.strictEqual(hydroCycleState.gates.all_passed, true);
+        assert.strictEqual(hydroCycleState.gates.frames_count, 60);
+        assert.strictEqual(hydroCycleState.gates.has_all_5_synchronized_phases, true);
+        assert.strictEqual(hydroCycleState.gates.xenon_isotope_record_shows_surface_geyser, false);
+        assert.strictEqual(hydroCycleState.gates.oklo_gangue_equivalent_to_montmorillonite, false);
+        assert.strictEqual(hydroCycleState.gates.cellular_eps_or_cell_wall_included, false);
+        assert.strictEqual(hydroCycleState.gates.continuous_pulse_fixes_b017_discontinuity, true);
+        assert.strictEqual(hydroCycleState.gates.oligomer_synthesis_vs_destruction_competition_visible, true);
+        assert.strictEqual(hydroCycleState.pngWidth, 1920);
+        assert.strictEqual(hydroCycleState.pngHeight, 1080);
+        console.log(`PASS [12/16]: Inferred Oklo Reactor Cycling & Hypothetical Hydrothermal Transport WebGL (${hydroCycleState.glMacroWidth}x${hydroCycleState.glMacroHeight}), 5-phase/60-frame schedule, 3 scale windows, C^1 pulse fix across b=0.17, 6-term oligomer PDE, & 1920x1080 PNG export verified.`);
+        receipt.tests.oklo_hydrothermal_cycle_3d_explorer = {
+          glMacroWidth: hydroCycleState.glMacroWidth,
+          glMacroHeight: hydroCycleState.glMacroHeight,
+          renderMode: hydroCycleState.renderMode,
+          gates: hydroCycleState.gates
+        };
       }
     );
 
@@ -1308,7 +1377,7 @@ async function runTests() {
         assert.ok(bioFallback.slWidth > 400 && bioFallback.slHeight > 350);
         assert.strictEqual(bioFallback.btn3dDisabled, true);
         assert.strictEqual(bioFallback.kpiOcc, '4,888');
-        console.log(`PASS [12/15]: Biofilms 3-D disabled-WebGL 2-D Slice fallback verified (${bioFallback.slWidth}x${bioFallback.slHeight}, sites=${bioFallback.kpiOcc}).`);
+        console.log(`PASS [13/16]: Biofilms 3-D disabled-WebGL 2-D Slice fallback verified (${bioFallback.slWidth}x${bioFallback.slHeight}, sites=${bioFallback.kpiOcc}).`);
         receipt.tests.biofilms_disabled_webgl_fallback = bioFallback;
 
         await evalJson(`(() => { setView('pool'); return 'true'; })()`);
@@ -1335,7 +1404,7 @@ async function runTests() {
         assert.ok(poolFallback.slWidth > 400 && poolFallback.slHeight > 350);
         assert.strictEqual(poolFallback.btn3dDisabled, true);
         assert.strictEqual(poolFallback.gatesPass, true);
-        console.log(`PASS [13/15]: Pool-Water Interactive disabled-WebGL 2-D Cut-Plane fallback verified (${poolFallback.slWidth}x${poolFallback.slHeight}, T_max=${poolFallback.kpiTemp}).`);
+        console.log(`PASS [14/16]: Pool-Water Interactive disabled-WebGL 2-D Cut-Plane fallback verified (${poolFallback.slWidth}x${poolFallback.slHeight}, T_max=${poolFallback.kpiTemp}).`);
         receipt.tests.poolwater_disabled_webgl_fallback = poolFallback;
 
         await evalJson(`(() => { setView('magneto'); return 'true'; })()`);
@@ -1361,7 +1430,7 @@ async function runTests() {
         assert.ok(magnetoFallback.fbWidth > 400 && magnetoFallback.fbHeight > 350);
         assert.strictEqual(magnetoFallback.btn3dDisabled, true);
         assert.strictEqual(magnetoFallback.gates4dPass, true);
-        console.log(`PASS [14/15]: Biotite 4D Magnetoreception disabled-WebGL 2-D Cross-Section fallback verified (${magnetoFallback.fbWidth}x${magnetoFallback.fbHeight}).`);
+        console.log(`PASS [15/16]: Biotite 4D Magnetoreception disabled-WebGL 2-D Cross-Section fallback verified (${magnetoFallback.fbWidth}x${magnetoFallback.fbHeight}).`);
         receipt.tests.biotite_magnetoreception_disabled_webgl_fallback = magnetoFallback;
 
         await evalJson(`(() => { setView('poolbiofilm'); return 'true'; })()`);
@@ -1395,8 +1464,34 @@ async function runTests() {
         assert.ok(poolBiofilmFallback.cBio2dWidth > 350 && poolBiofilmFallback.cBio2dHeight > 240);
         assert.ok(poolBiofilmFallback.frameCount >= 1);
         assert.strictEqual(poolBiofilmFallback.gatesPass, true);
-        console.log(`PASS [15/15]: Coordinated 3D Pool-and-Biofilm disabled-WebGL 2-D Cutaway fallback verified (Pool=${poolBiofilmFallback.cPool2dWidth}x${poolBiofilmFallback.cPool2dHeight}, Biofilm=${poolBiofilmFallback.cBio2dWidth}x${poolBiofilmFallback.cBio2dHeight}).`);
+        console.log(`PASS [16a/16]: Coordinated 3D Pool-and-Biofilm disabled-WebGL 2-D Cutaway fallback verified (Pool=${poolBiofilmFallback.cPool2dWidth}x${poolBiofilmFallback.cPool2dHeight}, Biofilm=${poolBiofilmFallback.cBio2dWidth}x${poolBiofilmFallback.cBio2dHeight}).`);
         receipt.tests.reactor_pool_biofilm_disabled_webgl_fallback = poolBiofilmFallback;
+
+        await evalJson(`(() => { setView('hydrocycle'); return 'true'; })()`);
+        await new Promise(r => setTimeout(r, 1500));
+        const hydroCycleFallback = await evalJson(`(() => {
+          const ifr = document.getElementById('iframeHydroCycle');
+          const d = ifr.contentDocument;
+          const w = ifr.contentWindow;
+          const cMacroFb = d.getElementById('canvasMacro2dFallback');
+          const st = w.HYDRO_CYCLE_STATE;
+          const gates = w.verifyOkloHydrothermalExplorerGates();
+          return JSON.stringify({
+            renderMode: st.render_mode,
+            webglContextCreated: st.webgl_context_created,
+            fallbackTriggered: st.fallback_triggered,
+            cMacroFbWidth: cMacroFb.width,
+            cMacroFbHeight: cMacroFb.height,
+            gatesPass: gates.all_passed
+          });
+        })()`);
+        assert.strictEqual(hydroCycleFallback.renderMode, 'canvas2d_fallback');
+        assert.strictEqual(hydroCycleFallback.webglContextCreated, false);
+        assert.strictEqual(hydroCycleFallback.fallbackTriggered, true);
+        assert.ok(hydroCycleFallback.cMacroFbWidth > 350 && hydroCycleFallback.cMacroFbHeight > 220);
+        assert.strictEqual(hydroCycleFallback.gatesPass, true);
+        console.log(`PASS [16b/16]: Oklo Coupled Hydrothermal Cycle disabled-WebGL 2-D Cut-Plane & Fence fallback verified (${hydroCycleFallback.cMacroFbWidth}x${hydroCycleFallback.cMacroFbHeight}).`);
+        receipt.tests.oklo_hydrothermal_cycle_disabled_webgl_fallback = hydroCycleFallback;
       }
     );
 
