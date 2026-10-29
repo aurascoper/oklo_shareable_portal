@@ -1162,20 +1162,20 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       sha256: '09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694'
     },
     'oklo_hydrothermal_cycle_explorer.html': {
-      bytes: 107109,
-      sha256: '2d2af229d7fc17352124ecfbb5e0b270d607cd7b3d7395581bad22ecba2a18f2'
+      bytes: 107429,
+      sha256: '823ce4131280e21d4b520555d2362cb9fd2651c9ee899a1aeafb21cf966ccfe0'
     },
     'oklo_coupled_hydrothermal_cycle.cxc': {
       bytes: 8978,
       sha256: 'a891f9dd5433fdd05a69ff71df95625dfd0433e8aace3ce0908b1a1186640742'
     },
     'POOLWATER_WORKFLOW_SPEC.md': {
-      bytes: 36018,
-      sha256: '3e4acd57118d38eae11d40a08d11e3f3196f41090be6eb9ebb4e0fa2a49708d3'
+      bytes: 36107,
+      sha256: '2963fb4dbf511dc5cde10a0b939533cfa81fc8906fd45156268a711979ff26fb'
     },
     'index.html': {
-      bytes: 116070,
-      sha256: '17c05fe445663e6219cb7f0b1600d1d950e0ba35a939deafd0b80b4d8b7459a8'
+      bytes: 116418,
+      sha256: '1883ff77bf838dde30ccb711ecba16549d8e9312a11043d22f15264831ac36ff'
     }
   };
   assert.strictEqual(Object.keys(pinnedPrimaryGate0Artifacts).length, 10, 'Expected exactly 10 primary pre-existing Gate-0 artifacts');
@@ -1339,6 +1339,7 @@ function verifyOkloHydrothermalCoupledCycleExplorer() {
     'open_6fields_cycle.pml',
     'open_polymer_yield.cxc',
     'open_polymer_yield.pml',
+    'oklo_polymer_yield_phase0.57.mrc',
     'oklo_coupled_hydrothermal_cycle_pymol.py',
     'oklo_geyser.cxs',
     'hydrated_biopolymers.cxs'
@@ -1350,6 +1351,12 @@ function verifyOkloHydrothermalCoupledCycleExplorer() {
 
   const html = fs.readFileSync(htmlPath, 'utf8');
   const cxc = fs.readFileSync(cxcPath, 'utf8');
+  const pml6 = fs.readFileSync(path.join(ROOT, 'open_6fields_cycle.pml'), 'utf8');
+  const pmlPoly = fs.readFileSync(path.join(ROOT, 'open_polymer_yield.pml'), 'utf8');
+  const pymolHydro = fs.readFileSync(path.join(ROOT, 'oklo_coupled_hydrothermal_cycle_pymol.py'), 'utf8');
+  assert.ok(pml6.includes('_resolve_series_dir') && pml6.includes('_write_ccp4_map'), 'open_6fields_cycle.pml must resolve series dir across working dirs and include standalone synthetic fallback');
+  assert.ok(pmlPoly.includes('_load_polymer_yield_map') && pmlPoly.includes('tempfile.mkstemp'), 'open_polymer_yield.pml must resolve MRC path across working dirs and include standalone synthetic fallback');
+  assert.ok(pymolHydro.includes('_load_synthetic_ccp4') && pymolHydro.includes('build_fallback_pathlines_cgo'), 'oklo_coupled_hydrothermal_cycle_pymol.py must synthesize fallback CCP4 volumes and pathlines when standalone');
 
   // Verify all Section 1-5 requirements in both HTML explorer and ChimeraX .cxc script
   for (const token of [

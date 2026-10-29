@@ -77,11 +77,53 @@ STAGE_SPECS = [
 ]
 
 
-def load_mrc2014_as_ccp4(filename, map_name):
+def _load_synthetic_ccp4(map_name, kind, stage_idx=1):
+    """Synthesize a 12x12x12 CCP4 volume (cell length 5.5 units, step 0.5) when external .mrc files are absent."""
+    nx, ny, nz = 12, 12, 12
+    vals = []
+    for iz in range(nz):
+        z = (iz + 0.5) / nz - 0.5
+        for iy in range(ny):
+            y = (iy + 0.5) / ny - 0.5
+            for ix in range(nx):
+                x = (ix + 0.5) / nx - 0.5
+                r_xy = math.sqrt(x * x + y * y)
+                r_3d = math.sqrt(x * x + y * y + (z + 0.18) ** 2)
+                if kind == "clay_halo":
+                    v = 0.85 if (0.18 <= r_3d <= 0.42) else 0.10
+                elif kind == "fracture":
+                    v = 0.85 if (r_xy <= 0.14 and z >= -0.15) else 0.10
+                elif kind == "core":
+                    v = 0.85 if r_3d <= 0.20 else 0.10
+                elif kind == "water":
+                    void_r = 0.26 if stage_idx == 3 else (0.15 if stage_idx in (2, 4) else 0.0)
+                    v = 0.25 if (r_xy <= void_r and z >= -0.20) else 0.78
+                else:
+                    amp = {1: 0.03, 2: 0.22, 3: 0.85, 4: 0.12, 5: 0.45}.get(stage_idx, 0.25)
+                    v = amp * math.exp(-((r_xy - 0.14) ** 2) / 0.025)
+                vals.append(v)
+    hdr = bytearray(1024)
+    struct.pack_into("<10i", hdr, 0, nx, ny, nz, 2, 0, 0, 0, nx - 1, ny - 1, nz - 1)
+    struct.pack_into("<6f", hdr, 40, 5.5, 5.5, 5.5, 90.0, 90.0, 90.0)
+    struct.pack_into("<3i", hdr, 64, 1, 2, 3)
+    struct.pack_into("<3f", hdr, 76, min(vals), max(vals), sum(vals) / len(vals))
+    hdr[208:212] = b"MAP "
+    hdr[212:216] = b"\x44\x44\x00\x00"
+    fd, tmp_p = tempfile.mkstemp(suffix=".ccp4")
+    os.close(fd)
+    with open(tmp_p, "wb") as tf:
+        tf.write(hdr)
+        tf.write(struct.pack(f"<{len(vals)}f", *vals))
+    cmd.load(tmp_p, map_name, format="ccp4")
+    os.remove(tmp_p)
+    return True
+
+
+def load_mrc2014_as_ccp4(filename, map_name, fallback_kind="water", stage_idx=1):
     """Load an MRC2014 volume into PyMOL by stripping extended NSYMBT header bytes if present."""
     path = filename if os.path.isabs(filename) else os.path.join(SCRIPT_DIR, filename)
     if not os.path.isfile(path):
-        return False
+        return _load_synthetic_ccp4(map_name, fallback_kind, stage_idx)
     with open(path, "rb") as f:
         raw = bytearray(f.read())
     nsymbt = struct.unpack("<i", raw[92:96])[0]
@@ -139,6 +181,29 @@ def parse_bild_to_cgo(bild_filename, default_rgb=(0.2, 0.4, 0.8)):
     return cgo_data
 
 
+def build_fallback_pathlines_cgo():
+    """Generate analytical full-cycle parcel pathlines if pathlines_full_cycle_scene_0p5m.bild is absent."""
+    cgo_data = []
+    for k in range(6):
+        ang0 = k * (math.pi / 3.0)
+        for s in range(16):
+            u0 = s / 16.0
+            u1 = (s + 1) / 16.0
+            r0 = 0.55 + 1.15 * math.sin(math.pi * u0)
+            r1 = 0.55 + 1.15 * math.sin(math.pi * u1)
+            x1 = 2.75 + r0 * math.cos(ang0 + 0.8 * u0)
+            y1 = 2.75 + r0 * math.sin(ang0 + 0.8 * u0)
+            z1 = 1.20 + 2.80 * math.sin(math.pi * u0)
+            x2 = 2.75 + r1 * math.cos(ang0 + 0.8 * u1)
+            y2 = 2.75 + r1 * math.sin(ang0 + 0.8 * u1)
+            z2 = 1.20 + 2.80 * math.sin(math.pi * u1)
+            cgo_data.extend([
+                cgo.CYLINDER, x1, y1, z1, x2, y2, z2, 0.032,
+                0.85, 0.35, 0.15, 0.85, 0.35, 0.15,
+            ])
+    return cgo_data
+
+
 def build_fallback_stage_cgo(stage_idx):
     """Generate analytical 3D Darcy velocity arrows and streamlines if external .bild files are absent."""
     arrows = []
@@ -184,9 +249,9 @@ def setup_scene():
     cmd.set("two_sided_lighting", 1)
 
     # 1. Static Geological Compartments (Clay Halo, Fracture Conduit, Core Zone)
-    has_halo = load_mrc2014_as_ccp4("clay_halo_mask_scene_0p5m.mrc", "clay_halo_map")
-    has_frac = load_mrc2014_as_ccp4("fracture_mask_scene_0p5m.mrc", "fracture_map")
-    has_core = load_mrc2014_as_ccp4("core_mask_scene_0p5m.mrc", "core_map")
+    has_halo = load_mrc2014_as_ccp4("clay_halo_mask_scene_0p5m.mrc", "clay_halo_map", fallback_kind="clay_halo")
+    has_frac = load_mrc2014_as_ccp4("fracture_mask_scene_0p5m.mrc", "fracture_map", fallback_kind="fracture")
+    has_core = load_mrc2014_as_ccp4("core_mask_scene_0p5m.mrc", "core_map", fallback_kind="core")
 
     for st_idx, _, _, _ in STAGE_SPECS:
         if has_halo:
@@ -207,17 +272,18 @@ def setup_scene():
 
     # 2. Full-Cycle Parcel Pathlines across States 1..5
     pathlines_cgo = parse_bild_to_cgo("pathlines_full_cycle_scene_0p5m.bild", default_rgb=(0.85, 0.35, 0.15))
-    if pathlines_cgo:
-        for st_idx, _, _, _ in STAGE_SPECS:
-            cmd.load_cgo(pathlines_cgo, "pathlines_cgo", state=st_idx)
+    if not pathlines_cgo:
+        pathlines_cgo = build_fallback_pathlines_cgo()
+    for st_idx, _, _, _ in STAGE_SPECS:
+        cmd.load_cgo(pathlines_cgo, "pathlines_cgo", state=st_idx)
 
     # 3. Five-Stage Coupled Water Saturation, Vorticity, Darcy Vectors & Streamlines
     for st_idx, st_name, vort_iso, banner_txt in STAGE_SPECS:
         w_map = f"water_map_{st_idx}"
         v_map = f"vort_map_{st_idx}"
-        if load_mrc2014_as_ccp4(f"water_volume_fraction_{st_name}_scene_0p5m.mrc", w_map):
+        if load_mrc2014_as_ccp4(f"water_volume_fraction_{st_name}_scene_0p5m.mrc", w_map, fallback_kind="water", stage_idx=st_idx):
             cmd.isosurface("water_surf", w_map, 0.5, state=st_idx)
-        if load_mrc2014_as_ccp4(f"vorticity_mag_{st_name}_scene_0p5m.mrc", v_map):
+        if load_mrc2014_as_ccp4(f"vorticity_mag_{st_name}_scene_0p5m.mrc", v_map, fallback_kind="vorticity", stage_idx=st_idx):
             cmd.isosurface("vorticity_surf", v_map, vort_iso, state=st_idx)
 
         vec_cgo = parse_bild_to_cgo(f"flow_vectors_{st_name}_scene_0p5m.bild", default_rgb=(0.2, 0.4, 0.8))

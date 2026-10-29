@@ -32,10 +32,67 @@ set depth_cue, 0
 set movie_fps, 15
 
 python
+import math
 import os
+import struct
+import sys
+import tempfile
 from pymol import cmd
 
-SERIES_DIR = os.environ.get("OKLO_SERIES_DIR", "out/series/b0.17")
+def _write_ccp4_map(path, nx, ny, nz, cell_len, vals):
+    hdr = bytearray(1024)
+    struct.pack_into("<10i", hdr, 0, nx, ny, nz, 2, 0, 0, 0, nx - 1, ny - 1, nz - 1)
+    struct.pack_into("<6f", hdr, 40, cell_len, cell_len, cell_len, 90.0, 90.0, 90.0)
+    struct.pack_into("<3i", hdr, 64, 1, 2, 3)
+    struct.pack_into("<3f", hdr, 76, min(vals), max(vals), sum(vals) / len(vals))
+    hdr[208:212] = b"MAP "
+    hdr[212:216] = b"\x44\x44\x00\x00"
+    with open(path, "wb") as tf:
+        tf.write(hdr)
+        tf.write(struct.pack(f"<{len(vals)}f", *vals))
+
+def _resolve_series_dir():
+    env_dir = os.environ.get("OKLO_SERIES_DIR", "")
+    if env_dir and os.path.isdir(env_dir):
+        return env_dir
+    candidates = [os.path.join(os.getcwd(), "out", "series", "b0.17")]
+    for arg in sys.argv:
+        if arg.endswith(".pml") and os.path.exists(arg):
+            sdir = os.path.dirname(os.path.abspath(arg))
+            candidates.append(os.path.join(sdir, "out", "series", "b0.17"))
+            candidates.append(os.path.join(sdir, "..", "oklo_pool_mobile", "out", "series", "b0.17"))
+    candidates.append(os.path.join(os.getcwd(), "..", "oklo_pool_mobile", "out", "series", "b0.17"))
+    for c in candidates:
+        if os.path.isdir(c) and os.path.isfile(os.path.join(c, "temperature_f00.mrc")):
+            return c
+    tmp_dir = tempfile.mkdtemp(prefix="oklo_6fields_series_")
+    nx, ny, nz = 12, 12, 12
+    for i in range(60):
+        p = i / 60.0
+        pulse = math.sin(math.pi * min(p / 0.17, 1.0)) if p < 0.17 else math.exp(-6.0 * (p - 0.17))
+        for fname, bmin, bmax in [
+            ("temperature", 30.0, 175.0 + 65.0 * pulse),
+            ("hydration", 0.35, 0.95),
+            ("h2_concentration", 0.4, 2.2 + 0.6 * pulse),
+            ("u235_ratio", 0.0056, 0.0072),
+            ("polymer_yield", 1.5, 8.8 + 1.5 * math.sin(2.0 * math.pi * p)),
+            ("compartments", 1.0, 3.8 if (8 <= i <= 19) else 3.0),
+        ]:
+            vals = []
+            for iz in range(nz):
+                z = (iz + 0.5) / nz - 0.5
+                for iy in range(ny):
+                    y = (iy + 0.5) / ny - 0.5
+                    for ix in range(nx):
+                        x = (ix + 0.5) / nx - 0.5
+                        r2 = x * x + y * y + z * z
+                        w = math.exp(-r2 / 0.12)
+                        v = (bmax - (bmax - bmin) * w) if fname in ("hydration", "u235_ratio") else (bmin + (bmax - bmin) * w)
+                        vals.append(v)
+            _write_ccp4_map(os.path.join(tmp_dir, f"{fname}_f{i:02d}.mrc"), nx, ny, nz, 15.5, vals)
+    return tmp_dir
+
+SERIES_DIR = _resolve_series_dir()
 
 fields_cfg = [
     (1, "temperature",      75.0,   "temp_mesh", 160.0,  "temp_core", 0.30),

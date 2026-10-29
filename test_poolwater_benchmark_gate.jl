@@ -54,16 +54,16 @@ end
             "tecdoc643_reference_fixture.jl"                    => (6040,   "15eb6da017d610109bdcd03dc568ff243a3dae80399e5b33638c6166bd786294"),
             "proto_biofilms_geyser_fission_research_program.md" => (48056,  "da50d4002e6bcca94234045c3d371e16af243806cdb1ed99e0beff074c1cfb11"),
             "poolwater_interactive.html"                         => (79614,   "34b3e9f50689dd5f1ee6a7ee252996f0ff5a6a3410b33c353dd0cd2783feb964"),
-            "POOLWATER_WORKFLOW_SPEC.md"                         => (36018,   "3e4acd57118d38eae11d40a08d11e3f3196f41090be6eb9ebb4e0fa2a49708d3"),
+            "POOLWATER_WORKFLOW_SPEC.md"                         => (36107,   "2963fb4dbf511dc5cde10a0b939533cfa81fc8906fd45156268a711979ff26fb"),
             "multispecies_biofilm_robin_cylindrical_4panel.gif"  => (2571435, "e73622d6454a3a6ad16af88f15b8d5e21161c801d51059050244303af5148997"),
             "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
             "magnetoreception_3d_explorer.html"                  => (263873,  "335039227479d9704f0e71122624e4ba21d050b7ab2f1c580509ea5cfdf04bcb"),
             "reactor_pool_biofilm_explorer.html"                 => (204031,  "09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694"),
-            "oklo_hydrothermal_cycle_explorer.html"              => (107109,  "2d2af229d7fc17352124ecfbb5e0b270d607cd7b3d7395581bad22ecba2a18f2"),
+            "oklo_hydrothermal_cycle_explorer.html"              => (107429,  "823ce4131280e21d4b520555d2362cb9fd2651c9ee899a1aeafb21cf966ccfe0"),
             "oklo_coupled_hydrothermal_cycle.cxc"                => (8978,    "a891f9dd5433fdd05a69ff71df95625dfd0433e8aace3ce0908b1a1186640742"),
             "evidence_manifest.json"                             => (116876,  "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf"),
-            "test_calculation_provenance_and_invariants.js"      => (80507,   "7e51de55b4df4be04eeca1c16df96c1d6005ceb67d0d67bd38ae7c5605d7a951"),
-            "benchmark_manifest.json"                            => (32785,   "88c2c85f1e2e661df4f0e7ce86d8462b1d6dddd26ef64fe99f86912abcb537ef"),
+            "test_calculation_provenance_and_invariants.js"      => (81455,   "332ff7007e41b1139522bb88255b23cc22d8ce0effb071c3a3244316251252e4"),
+            "benchmark_manifest.json"                            => (32785,   "007e97bb163b84100a659c0c8e0c30bb6e40dd3ecf3d20161675d6908c5f6217"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")
@@ -159,8 +159,8 @@ end
         @test occursin("oklo_hydrothermal_cycle_explorer.html", index_info.text)
         @test occursin("oklo_coupled_hydrothermal_cycle.cxc", index_info.text)
         @test occursin("oklo_coupled_hydrothermal_cycle_pymol.py", index_info.text)
-        @test occursin("2d2af229d7fc1735...", index_info.text)
-        @test occursin("(107,109 bytes)", index_info.text)
+        @test occursin("823ce4131280e21d...", index_info.text)
+        @test occursin("(107,429 bytes)", index_info.text)
         @test occursin("https://github.com/aurascoper/Biofilms", index_info.text)
 
         @test !occursin("file://", xml_info.text)
@@ -570,6 +570,26 @@ end
         @test occursin("\"oklo_gangue_equivalent_to_montmorillonite\": false", manifest_txt)
         @test occursin("\"cellular_eps_or_cell_wall_included\": false", manifest_txt)
         @test occursin("\"c1_derivative_continuous_at_b017\": true", manifest_txt)
+
+        for companion_asset in [
+            "chimerax_oklo_6fields_60frames_1080p.mp4",
+            "pymol_oklo_6fields_60frames_1080p.mp4",
+            "chimerax_hydro_5stage_animation_1080p.mp4",
+            "pymol_hydro_5stage_animation_1080p.mp4",
+            "chimerax_oklo_polymer_yield_1080p.mp4",
+            "pymol_oklo_polymer_yield_1080p.mp4",
+            "open_6fields_cycle.cxc",
+            "open_6fields_cycle.pml",
+            "open_polymer_yield.cxc",
+            "open_polymer_yield.pml",
+            "oklo_polymer_yield_phase0.57.mrc",
+            "oklo_coupled_hydrothermal_cycle_pymol.py",
+            "oklo_geyser.cxs",
+            "hydrated_biopolymers.cxs",
+        ]
+            @test isfile(joinpath(PORTAL_ROOT, companion_asset))
+            @test filesize(joinpath(PORTAL_ROOT, companion_asset)) > 1000
+        end
     end
 
     # --------------------------------------------------------------------------
@@ -589,6 +609,11 @@ end
             "index.html",
             "oklo_hydrothermal_cycle_explorer.html",
             "oklo_coupled_hydrothermal_cycle.cxc",
+            "oklo_coupled_hydrothermal_cycle_pymol.py",
+            "open_6fields_cycle.cxc",
+            "open_6fields_cycle.pml",
+            "open_polymer_yield.cxc",
+            "open_polymer_yield.pml",
             "README.md",
             "POOLWATER_WORKFLOW_SPEC.md",
             "artifact_index.xml",

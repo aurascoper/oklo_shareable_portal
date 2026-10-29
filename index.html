@@ -316,7 +316,7 @@
       <span class="badge green">R10 4D Slice: MERGED (942e3f8)</span>
       <span class="badge blue">Pool-Water Interactive: Internal checks pass</span>
       <span class="badge green">3D Pool + Biofilm Explorer: Internal consistency checks pass (09bb3d9c)</span>
-      <span class="badge green">Coupled Hydrothermal Cycle: Internal consistency checks pass (2d2af229)</span>
+      <span class="badge green">Coupled Hydrothermal Cycle: Internal consistency checks pass (823ce413)</span>
       <span class="badge green">Biotite &amp; Biomagnetite 4D: Internal consistency checks pass (33503922)</span>
       <span class="badge amber">TECDOC-643: Reference Audit Only (dc15eb93)</span>
       <span class="badge blue">R0 Fixture: Frozen Unmodified (8dac3ae9)</span>
@@ -694,6 +694,7 @@
           <a href="oklo_coupled_hydrothermal_cycle_pymol.py" target="_blank" rel="noopener">oklo_coupled_hydrothermal_cycle_pymol.py</a> |
           <a href="open_polymer_yield.cxc" target="_blank" rel="noopener">open_polymer_yield.cxc</a> |
           <a href="open_polymer_yield.pml" target="_blank" rel="noopener">open_polymer_yield.pml</a> |
+          <a href="oklo_polymer_yield_phase0.57.mrc" download="oklo_polymer_yield_phase0.57.mrc">oklo_polymer_yield_phase0.57.mrc</a> |
           <a href="oklo_geyser.cxs" target="_blank" rel="noopener">oklo_geyser.cxs</a> |
           <a href="hydrated_biopolymers.cxs" target="_blank" rel="noopener">hydrated_biopolymers.cxs</a>
         </div>
@@ -732,7 +733,8 @@
               pmScript: 'open_polymer_yield.pml'
             }
           };
-          var cfg = modes[mode] || modes['6fields'];
+          var normMode = (mode === 'hydro5stage' || mode === 'polymeryield') ? mode : '6fields';
+          var cfg = modes[normMode];
           var cxV = document.getElementById('portalCxVideoPlayer');
           var pmV = document.getElementById('portalPmVideoPlayer');
           if (cxV) { cxV.src = cfg.cxVideo; cxV.play().catch(function(){}); }
@@ -759,12 +761,13 @@
               b.style.fontWeight = '600';
               b.style.borderColor = '#334155';
             });
-            var active = mode === 'hydro5stage' ? b2 : (mode === 'polymeryield' ? b3 : b1);
+            var active = normMode === 'hydro5stage' ? b2 : (normMode === 'polymeryield' ? b3 : b1);
             active.style.background = '#0ea5e9';
             active.style.color = '#0f172a';
             active.style.fontWeight = '700';
             active.style.borderColor = '#38bdf8';
           }
+          return normMode;
         }
       </script>
     </div>
@@ -898,10 +901,11 @@
               <a href="oklo_coupled_hydrothermal_cycle_pymol.py">oklo_coupled_hydrothermal_cycle_pymol.py</a><br>
               <a href="open_6fields_cycle.cxc">open_6fields_cycle.cxc</a> |
               <a href="open_6fields_cycle.pml">open_6fields_cycle.pml</a> |
+              <a href="oklo_polymer_yield_phase0.57.mrc">oklo_polymer_yield_phase0.57.mrc</a> |
               <a href="oklo_geyser.cxs">oklo_geyser.cxs</a> |
               <a href="hydrated_biopolymers.cxs">hydrated_biopolymers.cxs</a>
             </td>
-            <td class="mono">2d2af229d7fc1735...<br>(107,109 bytes)<br><span style="color:var(--muted)">CXC: a891f9dd... (8,978 B)<br>PyMOL: 2aadf59f... (13,599 B)</span></td>
+            <td class="mono">823ce4131280e21d...<br>(107,429 bytes)<br><span style="color:var(--muted)">CXC: a891f9dd... (8,978 B)<br>PyMOL: a2c8f343... (16,718 B)</span></td>
             <td><span class="badge green">Hypothetical Coupled Model (Internal checks pass)</span><br>Distinguishes xenon-isotope cycling inference (Meshik et al. 2004, ~30 min active / ~2.5 h dormancy; does not directly show a surface geyser erupting) from coupled flow/heating modeling (Ibekwe et al. 2020); fixes R0 pulse discontinuity at <code>b = 0.17</code>; distinguishes Oklo gangue (sudoite/chlorite + illite) from laboratory montmorillonite; strictly excludes modern cellular EPS from Window 3 abiotic ligand adsorption.</td>
           </tr>
           <tr>
