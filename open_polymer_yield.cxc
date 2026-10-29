@@ -1,0 +1,42 @@
+# ChimeraX command script for Oklo prebiotic compartment visualization & animation
+# Compatible with UCSF ChimeraX 1.12
+# Fixes the original filename mismatch (oklo_polymer_yield_phase0.57.mrc) and
+# replaces the out-of-range level 150 with multi-shell physical umol/L contours [0.0025, 8.0794].
+# Strictly zero em-dashes and zero en-dashes across all labels.
+
+windowsize 1600 960
+set bgColor #0b0f19
+
+open oklo_polymer_yield_phase0.57.mrc
+open oklo_polymer_yield_phase0.57.mrc
+open oklo_polymer_yield_phase0.57.mrc
+open oklo_polymer_yield_phase0.57.mrc
+open oklo_polymer_yield_phase0.57.mrc
+
+rename #1 "Porous Sandstone Matrix & Core Cavity (2.50 umol/L)"
+rename #2 "Hydrated Conduit Plume (4.65 umol/L)"
+rename #3 "Wetting-Drying Terrace Neck (5.25 umol/L)"
+rename #4 "Oligomer Condensation Zone (6.15 umol/L)"
+rename #5 "Peak Oligomer Yield Locus (6.95 umol/L)"
+
+volume #1 style mesh level 2.50 color #38bdf8 step 1 capFaces false showOutlineBox true outlineBoxRgb #64748b
+volume #2 style surface level 4.65 color #6366f1 transparency 0.70 step 1 capFaces false
+volume #3 style mesh level 5.25 color #10b981 step 1 capFaces false
+volume #4 style mesh level 6.15 color #f59e0b step 1 capFaces false
+volume #5 style surface level 6.95 color #f43f5e transparency 0.00 step 1 capFaces false
+
+lighting soft
+graphics silhouettes true
+
+view orient
+turn x -72
+turn z 25 coordinateSystem #1
+zoom 0.84
+
+2dlabels create title text 'OKLO PREBIOTIC COMPARTMENT: 3D POLYMER YIELD (UCSF ChimeraX 1.12)' xpos 0.03 ypos 0.94 color #f8fafc size 20 bold true
+2dlabels create meta text 'Experiment: OKLO-PREBIOTIC-CHIMERAX-01 | Grid: 32x32x32 (16.0m Cube, dx=0.5m) | Range: 0.0025 to 8.08 umol/L' xpos 0.03 ypos 0.90 color #94a3b8 size 14
+2dlabels create leg1 text 'Shells: [2.50 umol/L Cyan Mesh: Matrix & Core Cavity]  [4.65 umol/L Indigo Surface: Hydrated Conduit Plume]' xpos 0.03 ypos 0.06 color #38bdf8 size 13
+2dlabels create leg2 text 'Terrace Core: [5.25 umol/L Emerald Mesh: Neck]  [6.15 umol/L Amber Mesh: Zone]  [6.95 umol/L Rose Solid: Peak Locus]' xpos 0.03 ypos 0.025 color #f59e0b size 13
+
+# Continuous 360-degree vertical-axis turntable animation (7200 frames = 4 minutes continuous)
+turn z 1.5 7200 coordinateSystem #1

@@ -79,8 +79,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'POOLWATER_WORKFLOW_SPEC.md',
-      sha256: '8db73b265e40539744e5c7013d55bef7af35725f2f4864999697df11a4095d6b',
-      bytes: 34504
+      sha256: '3e4acd57118d38eae11d40a08d11e3f3196f41090be6eb9ebb4e0fa2a49708d3',
+      bytes: 36018
     },
     {
       path: 'multispecies_biofilm_robin_cylindrical_4panel.gif',
@@ -104,8 +104,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'oklo_hydrothermal_cycle_explorer.html',
-      sha256: '6e9eb39d182a7859f3c600255b09487483c4991a1af0bcbbf0c421e342da5eee',
-      bytes: 97472
+      sha256: '2d2af229d7fc17352124ecfbb5e0b270d607cd7b3d7395581bad22ecba2a18f2',
+      bytes: 107109
     },
     {
       path: 'oklo_coupled_hydrothermal_cycle.cxc',
@@ -119,13 +119,13 @@ function verifyArtifactHashes() {
     },
     {
       path: 'test_calculation_provenance_and_invariants.js',
-      sha256: 'd05dcfaa4743f90935d4d93c1257f283218d7f6576674ae08654e745f8670a87',
-      bytes: 78887
+      sha256: '7e51de55b4df4be04eeca1c16df96c1d6005ceb67d0d67bd38ae7c5605d7a951',
+      bytes: 80507
     },
     {
       path: 'benchmark_manifest.json',
-      sha256: '83d141a8f65b89f7fdfcfdd7274ca6ea3739d2ce1dec756bb4372e5245666900',
-      bytes: 32783
+      sha256: '88c2c85f1e2e661df4f0e7ce86d8462b1d6dddd26ef64fe99f86912abcb537ef',
+      bytes: 32785
     }
   ];
 
@@ -173,6 +173,7 @@ function verifyArtifactHashes() {
   assert.ok(indexHtml.includes('e73622d6454a3a6a...'), 'index.html missing BIOFILMS-ROBIN-CYL-GIF-01 SHA prefix');
   assert.ok(indexHtml.includes('335039227479d970...'), 'index.html missing BIOTITE-MAGNETORECEPTION-4D-01 SHA prefix');
   assert.ok(indexHtml.includes('09bb3d9cbca7757c...'), 'index.html missing REACTOR-POOL-BIOFILM-COORDINATED-3D-01 SHA prefix');
+  assert.ok(indexHtml.includes('2d2af229d7fc1735...'), 'index.html missing OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01 SHA prefix');
   console.log('PASS [1/15]: Gate-0 artifact hashes, byte counts, and manifests verified.');
   return expectedFiles;
 }
@@ -215,6 +216,7 @@ async function startStaticServer(preferredPort) {
         ext === '.js' ? 'text/javascript' :
         ext === '.json' ? 'application/json' :
         ext === '.gif' ? 'image/gif' :
+        ext === '.mp4' ? 'video/mp4' :
         ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' :
         ext === '.png' ? 'image/png' :
         ext === '.xml' ? 'application/xml' : 'text/plain';
@@ -1307,6 +1309,18 @@ async function runTests() {
           const st12 = w.HYDRO_CYCLE_STATE;
           const frame12TimeMin = st12.time_min;
           w.setFrameIndex(9);
+          setPortalHydroAnimMode('hydro5stage');
+          const portal5StageSrc = document.getElementById('portalCxVideoPlayer').getAttribute('src');
+          setPortalHydroAnimMode('polymeryield');
+          const portalPolySrc = document.getElementById('portalPmVideoPlayer').getAttribute('src');
+          setPortalHydroAnimMode('6fields');
+          const portal6FieldsSrc = document.getElementById('portalCxVideoPlayer').getAttribute('src');
+          w.setAnimationGalleryMode('hydro5stage');
+          const inner5StageSrc = d.getElementById('videoChimeraX').getAttribute('src');
+          w.setAnimationGalleryMode('polymeryield');
+          const innerPolySrc = d.getElementById('videoPyMOL').getAttribute('src');
+          w.setAnimationGalleryMode('6fields');
+          const inner6FieldsSrc = d.getElementById('videoChimeraX').getAttribute('src');
           return JSON.stringify({
             tabActive: document.getElementById('tabHydroCycle').classList.contains('active'),
             glMacroWidth: glMacro.width,
@@ -1321,7 +1335,13 @@ async function runTests() {
             frame12TimeMin,
             gates,
             pngWidth: png1080.width,
-            pngHeight: png1080.height
+            pngHeight: png1080.height,
+            portal5StageSrc,
+            portalPolySrc,
+            portal6FieldsSrc,
+            inner5StageSrc,
+            innerPolySrc,
+            inner6FieldsSrc
           });
         })()`);
         assert.strictEqual(hydroCycleState.tabActive, true);
@@ -1343,7 +1363,13 @@ async function runTests() {
         assert.strictEqual(hydroCycleState.gates.oligomer_synthesis_vs_destruction_competition_visible, true);
         assert.strictEqual(hydroCycleState.pngWidth, 1920);
         assert.strictEqual(hydroCycleState.pngHeight, 1080);
-        console.log(`PASS [12/16]: Inferred Oklo Reactor Cycling & Hypothetical Hydrothermal Transport WebGL (${hydroCycleState.glMacroWidth}x${hydroCycleState.glMacroHeight}), 5-phase/60-frame schedule, 3 scale windows, C^1 pulse fix across b=0.17, 6-term oligomer PDE, & 1920x1080 PNG export verified.`);
+        assert.strictEqual(hydroCycleState.portal5StageSrc, 'chimerax_hydro_5stage_animation_1080p.mp4');
+        assert.strictEqual(hydroCycleState.portalPolySrc, 'pymol_oklo_polymer_yield_1080p.mp4');
+        assert.strictEqual(hydroCycleState.portal6FieldsSrc, 'chimerax_oklo_6fields_60frames_1080p.mp4');
+        assert.strictEqual(hydroCycleState.inner5StageSrc, 'chimerax_hydro_5stage_animation_1080p.mp4');
+        assert.strictEqual(hydroCycleState.innerPolySrc, 'pymol_oklo_polymer_yield_1080p.mp4');
+        assert.strictEqual(hydroCycleState.inner6FieldsSrc, 'chimerax_oklo_6fields_60frames_1080p.mp4');
+        console.log(`PASS [12/16]: Inferred Oklo Reactor Cycling & Hypothetical Hydrothermal Transport WebGL (${hydroCycleState.glMacroWidth}x${hydroCycleState.glMacroHeight}), 5-phase/60-frame schedule, 3 scale windows, C^1 pulse fix across b=0.17, 6-term oligomer PDE, ChimeraX/PyMOL 1080p video switchers, & 1920x1080 PNG export verified.`);
         receipt.tests.oklo_hydrothermal_cycle_3d_explorer = {
           glMacroWidth: hydroCycleState.glMacroWidth,
           glMacroHeight: hydroCycleState.glMacroHeight,

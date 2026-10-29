@@ -1162,20 +1162,20 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       sha256: '09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694'
     },
     'oklo_hydrothermal_cycle_explorer.html': {
-      bytes: 97472,
-      sha256: '6e9eb39d182a7859f3c600255b09487483c4991a1af0bcbbf0c421e342da5eee'
+      bytes: 107109,
+      sha256: '2d2af229d7fc17352124ecfbb5e0b270d607cd7b3d7395581bad22ecba2a18f2'
     },
     'oklo_coupled_hydrothermal_cycle.cxc': {
       bytes: 8978,
       sha256: 'a891f9dd5433fdd05a69ff71df95625dfd0433e8aace3ce0908b1a1186640742'
     },
     'POOLWATER_WORKFLOW_SPEC.md': {
-      bytes: 34504,
-      sha256: '8db73b265e40539744e5c7013d55bef7af35725f2f4864999697df11a4095d6b'
+      bytes: 36018,
+      sha256: '3e4acd57118d38eae11d40a08d11e3f3196f41090be6eb9ebb4e0fa2a49708d3'
     },
     'index.html': {
-      bytes: 105375,
-      sha256: '4e4b84d257e58c445572acb901e39e7ed656280af7b4e9d595007e8faf979d5c'
+      bytes: 116070,
+      sha256: '17c05fe445663e6219cb7f0b1600d1d950e0ba35a939deafd0b80b4d8b7459a8'
     }
   };
   assert.strictEqual(Object.keys(pinnedPrimaryGate0Artifacts).length, 10, 'Expected exactly 10 primary pre-existing Gate-0 artifacts');
@@ -1234,6 +1234,11 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
     'reactor_pool_biofilm_explorer.html',
     'oklo_hydrothermal_cycle_explorer.html',
     'oklo_coupled_hydrothermal_cycle.cxc',
+    'oklo_coupled_hydrothermal_cycle_pymol.py',
+    'open_6fields_cycle.cxc',
+    'open_6fields_cycle.pml',
+    'open_polymer_yield.cxc',
+    'open_polymer_yield.pml',
     'POOLWATER_WORKFLOW_SPEC.md',
     'README.md',
     'artifact_index.xml',
@@ -1270,6 +1275,11 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       'biofilms_3d_explorer.html',
       'oklo_hydrothermal_cycle_explorer.html',
       'oklo_coupled_hydrothermal_cycle.cxc',
+      'oklo_coupled_hydrothermal_cycle_pymol.py',
+      'open_6fields_cycle.cxc',
+      'open_6fields_cycle.pml',
+      'open_polymer_yield.cxc',
+      'open_polymer_yield.pml',
       'tecdoc643_reference_fixture.jl',
       'test_calculation_provenance_and_invariants.js',
       'test_poolwater_benchmark_gate.jl',
@@ -1318,6 +1328,26 @@ function verifyOkloHydrothermalCoupledCycleExplorer() {
   assert.ok(fs.existsSync(htmlPath), 'Missing oklo_hydrothermal_cycle_explorer.html');
   assert.ok(fs.existsSync(cxcPath), 'Missing oklo_coupled_hydrothermal_cycle.cxc');
 
+  for (const mediaAsset of [
+    'chimerax_oklo_6fields_60frames_1080p.mp4',
+    'pymol_oklo_6fields_60frames_1080p.mp4',
+    'chimerax_hydro_5stage_animation_1080p.mp4',
+    'pymol_hydro_5stage_animation_1080p.mp4',
+    'chimerax_oklo_polymer_yield_1080p.mp4',
+    'pymol_oklo_polymer_yield_1080p.mp4',
+    'open_6fields_cycle.cxc',
+    'open_6fields_cycle.pml',
+    'open_polymer_yield.cxc',
+    'open_polymer_yield.pml',
+    'oklo_coupled_hydrothermal_cycle_pymol.py',
+    'oklo_geyser.cxs',
+    'hydrated_biopolymers.cxs'
+  ]) {
+    const assetPath = path.join(ROOT, mediaAsset);
+    assert.ok(fs.existsSync(assetPath), `Missing companion animation/script/session asset: ${mediaAsset}`);
+    assert.ok(fs.statSync(assetPath).size > 1000, `Companion asset ${mediaAsset} unexpectedly small`);
+  }
+
   const html = fs.readFileSync(htmlPath, 'utf8');
   const cxc = fs.readFileSync(cxcPath, 'utf8');
 
@@ -1362,6 +1392,10 @@ function verifyOkloHydrothermalCoupledCycleExplorer() {
     value: '0',
     checked: true,
     textContent: '',
+    innerHTML: '',
+    href: '',
+    src: '',
+    play: () => Promise.resolve(),
     classList: { toggle: () => {}, add: () => {}, remove: () => {} },
     getContext: (type) => type === '2d' ? dummyCtx : null,
     addEventListener: () => {},
@@ -1382,6 +1416,11 @@ function verifyOkloHydrothermalCoupledCycleExplorer() {
   sandbox.window = sandbox;
   sandbox.window.addEventListener = (ev, cb) => { if (ev === 'DOMContentLoaded') cb(); };
   vm.runInNewContext(scriptMatch[1], sandbox);
+
+  assert.strictEqual(sandbox.window.setAnimationGalleryMode('hydro5stage'), 'hydro5stage');
+  assert.strictEqual(sandbox.window.setAnimationGalleryMode('polymeryield'), 'polymeryield');
+  assert.strictEqual(sandbox.window.setAnimationGalleryMode('6fields'), '6fields');
+  assert.strictEqual(sandbox.window.setAnimationGalleryMode('nonexistent_mode'), '6fields');
 
   const gates = sandbox.window.verifyOkloHydrothermalExplorerGates();
   assert.ok(gates && gates.all_passed === true, `verifyOkloHydrothermalExplorerGates() failed: ${JSON.stringify(gates)}`);
@@ -1404,7 +1443,7 @@ function verifyOkloHydrothermalCoupledCycleExplorer() {
   assert.strictEqual(pngRes.width, 1920);
   assert.strictEqual(pngRes.height, 1080);
 
-  console.log('PASS [Inferred Oklo Reactor Cycling & Hypothetical Hydrothermal Transport 5/5]: 5-phase/60-frame schedule, Meshik (2004) & Ibekwe (2020) framing, sudoite/chlorite vs montmorillonite caveat, continuous C^1 pulse & derivative fix across b = 0.17, 6-term abiotic oligomer PDE competition, and ChimeraX .cxc script verified.');
+  console.log('PASS [Inferred Oklo Reactor Cycling & Hypothetical Hydrothermal Transport 5/5]: 5-phase/60-frame schedule, Meshik (2004) & Ibekwe (2020) framing, sudoite/chlorite vs montmorillonite caveat, continuous C^1 pulse & derivative fix across b = 0.17, 6-term abiotic oligomer PDE competition, and ChimeraX/PyMOL animations, scripts, and sessions verified.');
 }
 
 function runAll() {

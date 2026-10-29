@@ -4,8 +4,8 @@
     <Title>Oklo 4D Spatiotemporal, Conformance Fixture, Biofilms 3D, TECDOC-643 Neutron Walk, and Pool-Water Interactive Shareable Index</Title>
     <PublicPortalUrl>https://aurascoper.github.io/oklo_shareable_portal/</PublicPortalUrl>
     <RelativePortalPath>index.html</RelativePortalPath>
-    <PortalBytes>105375</PortalBytes>
-    <PortalSHA256>4e4b84d257e58c445572acb901e39e7ed656280af7b4e9d595007e8faf979d5c</PortalSHA256>
+    <PortalBytes>116070</PortalBytes>
+    <PortalSHA256>17c05fe445663e6219cb7f0b1600d1d950e0ba35a939deafd0b80b4d8b7459a8</PortalSHA256>
     <RelativeManifestPath>artifact_index.xml</RelativeManifestPath>
     <RelativeBenchmarkContractPath>benchmark_manifest.json</RelativeBenchmarkContractPath>
     <RelativePoolWaterSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativePoolWaterSpecPath>
@@ -106,12 +106,12 @@
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/poolwater_interactive.html</PublicArtifactUrl>
       <RelativeSpecPath>POOLWATER_WORKFLOW_SPEC.md</RelativeSpecPath>
       <PublicSpecUrl>https://aurascoper.github.io/oklo_shareable_portal/POOLWATER_WORKFLOW_SPEC.md</PublicSpecUrl>
-      <SpecBytes>34504</SpecBytes>
-      <SpecSHA256>8db73b265e40539744e5c7013d55bef7af35725f2f4864999697df11a4095d6b</SpecSHA256>
+      <SpecBytes>36018</SpecBytes>
+      <SpecSHA256>3e4acd57118d38eae11d40a08d11e3f3196f41090be6eb9ebb4e0fa2a49708d3</SpecSHA256>
       <RelativeBenchmarkManifestPath>benchmark_manifest.json</RelativeBenchmarkManifestPath>
       <PublicBenchmarkManifestUrl>https://aurascoper.github.io/oklo_shareable_portal/benchmark_manifest.json</PublicBenchmarkManifestUrl>
-      <BenchmarkManifestBytes>32783</BenchmarkManifestBytes>
-      <BenchmarkManifestSHA256>83d141a8f65b89f7fdfcfdd7274ca6ea3739d2ce1dec756bb4372e5245666900</BenchmarkManifestSHA256>
+      <BenchmarkManifestBytes>32785</BenchmarkManifestBytes>
+      <BenchmarkManifestSHA256>88c2c85f1e2e661df4f0e7ce86d8462b1d6dddd26ef64fe99f86912abcb537ef</BenchmarkManifestSHA256>
       <Bytes>79614</Bytes>
       <SHA256>34b3e9f50689dd5f1ee6a7ee252996f0ff5a6a3410b33c353dd0cd2783feb964</SHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
@@ -163,8 +163,8 @@
       <EvidenceManifestBytes>116876</EvidenceManifestBytes>
       <EvidenceManifestSHA256>4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf</EvidenceManifestSHA256>
       <InvariantTestRelativePath>test_calculation_provenance_and_invariants.js</InvariantTestRelativePath>
-      <InvariantTestBytes>78887</InvariantTestBytes>
-      <InvariantTestSHA256>d05dcfaa4743f90935d4d93c1257f283218d7f6576674ae08654e745f8670a87</InvariantTestSHA256>
+      <InvariantTestBytes>80507</InvariantTestBytes>
+      <InvariantTestSHA256>7e51de55b4df4be04eeca1c16df96c1d6005ceb67d0d67bd38ae7c5605d7a951</InvariantTestSHA256>
       <SourceModule>src/track4_mineral_magnetoreception_gates.jl</SourceModule>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
@@ -212,12 +212,21 @@
       <EvidenceClassification>synthetic</EvidenceClassification>
       <RelativePortalPath>oklo_hydrothermal_cycle_explorer.html</RelativePortalPath>
       <PublicArtifactUrl>https://aurascoper.github.io/oklo_shareable_portal/oklo_hydrothermal_cycle_explorer.html</PublicArtifactUrl>
-      <Bytes>97472</Bytes>
-      <SHA256>6e9eb39d182a7859f3c600255b09487483c4991a1af0bcbbf0c421e342da5eee</SHA256>
+      <Bytes>107109</Bytes>
+      <SHA256>2d2af229d7fc17352124ecfbb5e0b270d607cd7b3d7395581bad22ecba2a18f2</SHA256>
       <CompanionReferenceRelativePath>oklo_coupled_hydrothermal_cycle.cxc</CompanionReferenceRelativePath>
       <CompanionReferencePublicUrl>https://aurascoper.github.io/oklo_shareable_portal/oklo_coupled_hydrothermal_cycle.cxc</CompanionReferencePublicUrl>
       <CompanionReferenceBytes>8978</CompanionReferenceBytes>
       <CompanionReferenceSHA256>a891f9dd5433fdd05a69ff71df95625dfd0433e8aace3ce0908b1a1186640742</CompanionReferenceSHA256>
+      <CompanionPyMOLScriptRelativePath>oklo_coupled_hydrothermal_cycle_pymol.py</CompanionPyMOLScriptRelativePath>
+      <CompanionPyMOLScriptBytes>13599</CompanionPyMOLScriptBytes>
+      <CompanionPyMOLScriptSHA256>2aadf59f69e5b3853344c766a7b5273445c5c51def1d3d8b708dd4993584a37b</CompanionPyMOLScriptSHA256>
+      <Companion6FieldsChimeraXScriptRelativePath>open_6fields_cycle.cxc</Companion6FieldsChimeraXScriptRelativePath>
+      <Companion6FieldsChimeraXScriptBytes>4353</Companion6FieldsChimeraXScriptBytes>
+      <Companion6FieldsChimeraXScriptSHA256>e6f4490f68038fac78911b4c96f467efe6f6f78843ef133c7d76bc6cddd1ff2d</Companion6FieldsChimeraXScriptSHA256>
+      <Companion6FieldsPyMOLScriptRelativePath>open_6fields_cycle.pml</Companion6FieldsPyMOLScriptRelativePath>
+      <Companion6FieldsPyMOLScriptBytes>3092</Companion6FieldsPyMOLScriptBytes>
+      <Companion6FieldsPyMOLScriptSHA256>de4031463ba913453e508be811bdad63dfe3e4683656ad2d1d69feb8f38f3f4e</Companion6FieldsPyMOLScriptSHA256>
       <OfflineSelfContained>true</OfflineSelfContained>
     </Artifact>
 

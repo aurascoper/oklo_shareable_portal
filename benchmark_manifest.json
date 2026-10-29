@@ -30,20 +30,20 @@
         "sha256": "09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694"
       },
       "oklo_hydrothermal_cycle_explorer.html": {
-        "bytes": 97472,
-        "sha256": "6e9eb39d182a7859f3c600255b09487483c4991a1af0bcbbf0c421e342da5eee"
+        "bytes": 107109,
+        "sha256": "2d2af229d7fc17352124ecfbb5e0b270d607cd7b3d7395581bad22ecba2a18f2"
       },
       "oklo_coupled_hydrothermal_cycle.cxc": {
         "bytes": 8978,
         "sha256": "a891f9dd5433fdd05a69ff71df95625dfd0433e8aace3ce0908b1a1186640742"
       },
       "POOLWATER_WORKFLOW_SPEC.md": {
-        "bytes": 34504,
-        "sha256": "8db73b265e40539744e5c7013d55bef7af35725f2f4864999697df11a4095d6b"
+        "bytes": 36018,
+        "sha256": "3e4acd57118d38eae11d40a08d11e3f3196f41090be6eb9ebb4e0fa2a49708d3"
       },
       "index.html": {
-        "bytes": 105375,
-        "sha256": "4e4b84d257e58c445572acb901e39e7ed656280af7b4e9d595007e8faf979d5c"
+        "bytes": 116070,
+        "sha256": "17c05fe445663e6219cb7f0b1600d1d950e0ba35a939deafd0b80b4d8b7459a8"
       }
     },
     "accounting_note": "10 primary pre-existing Gate-0 artifacts + 1 linked sidecar manifest (evidence_manifest.json) = 11 pre-existing frozen files, plus reactor_pool_biofilm_explorer.html, oklo_hydrothermal_cycle_explorer.html, oklo_coupled_hydrothermal_cycle.cxc, and companion portal/specification files."
@@ -118,8 +118,8 @@
       "bytes": 79614,
       "sha256": "34b3e9f50689dd5f1ee6a7ee252996f0ff5a6a3410b33c353dd0cd2783feb964",
       "spec_relative_path": "POOLWATER_WORKFLOW_SPEC.md",
-      "spec_bytes": 34504,
-      "spec_sha256": "8db73b265e40539744e5c7013d55bef7af35725f2f4864999697df11a4095d6b",
+      "spec_bytes": 36018,
+      "spec_sha256": "3e4acd57118d38eae11d40a08d11e3f3196f41090be6eb9ebb4e0fa2a49708d3",
       "dataset_id": "poolwater_synthetic_demo_v1",
       "evidence_classification": "synthetic",
       "epistemic_status": "dataset_driven_synthetic_pool_demo (Internal checks pass; separates TECDOC-643 neutron reference, point-reactor kinetics, synthetic Boussinesq pool convection, and isolated surrogate-loop PIE protocol)",
@@ -152,8 +152,8 @@
       "evidence_manifest_bytes": 116876,
       "evidence_manifest_sha256": "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf",
       "invariant_test_relative_path": "test_calculation_provenance_and_invariants.js",
-      "invariant_test_bytes": 78887,
-      "invariant_test_sha256": "d05dcfaa4743f90935d4d93c1257f283218d7f6576674ae08654e745f8670a87",
+      "invariant_test_bytes": 80507,
+      "invariant_test_sha256": "7e51de55b4df4be04eeca1c16df96c1d6005ceb67d0d67bd38ae7c5605d7a951",
       "source_module": "src/track4_mineral_magnetoreception_gates.jl",
       "evidence_classification": "calculated",
       "epistemic_status": "cross_domain_epistemic_gated_4d_viewer (Internal consistency checks pass; EG-1..EG-4 enforced; 4D perspective tesseract w = t / theta_B in [0..360 deg] / D_4 hyperplane rotation; criterial separation of accepted verified candidates vs criterial-pruned candidates vs exploratory particles; uses established magnetotactic bacteria magnetosome chain U_mag / (k_B * T) = 5.69 > 1 as positive code-verification benchmark; highlights Treiber et al. 2012 Nature iron-particle warning; grounds bench follow-up in testable fungal biotite-weathering Fe/K ICP assay against sterile and killed-fungus controls; 3-regime 1 um^3 biotite Fe3O4 superparamagnetic/single-domain/multi-domain inclusion sensitivity)",
@@ -220,8 +220,8 @@
     "OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01": {
       "relative_path": "oklo_hydrothermal_cycle_explorer.html",
       "public_url": "https://aurascoper.github.io/oklo_shareable_portal/oklo_hydrothermal_cycle_explorer.html",
-      "bytes": 97472,
-      "sha256": "6e9eb39d182a7859f3c600255b09487483c4991a1af0bcbbf0c421e342da5eee",
+      "bytes": 107109,
+      "sha256": "2d2af229d7fc17352124ecfbb5e0b270d607cd7b3d7395581bad22ecba2a18f2",
       "companion_reference_relative_path": "oklo_coupled_hydrothermal_cycle.cxc",
       "companion_reference_bytes": 8978,
       "companion_reference_sha256": "a891f9dd5433fdd05a69ff71df95625dfd0433e8aace3ce0908b1a1186640742",

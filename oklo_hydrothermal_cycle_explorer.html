@@ -345,6 +345,11 @@
     <a class="nav-pill" href="index.html">Portal Index</a>
     <a class="nav-pill" href="oklo_r0_fixture_readonly.html">Frozen R0 Fixture</a>
     <a class="nav-pill" href="oklo_coupled_hydrothermal_cycle.cxc" target="_blank" rel="noopener">Coupled ChimeraX (.cxc)</a>
+    <a class="nav-pill" href="oklo_coupled_hydrothermal_cycle_pymol.py" target="_blank" rel="noopener">Coupled PyMOL (.py)</a>
+    <a class="nav-pill" href="open_6fields_cycle.cxc" target="_blank" rel="noopener">6-Field ChimeraX (.cxc)</a>
+    <a class="nav-pill" href="open_6fields_cycle.pml" target="_blank" rel="noopener">6-Field PyMOL (.pml)</a>
+    <a class="nav-pill" href="oklo_geyser.cxs" download="oklo_geyser.cxs">Oklo Geyser (.cxs)</a>
+    <a class="nav-pill" href="hydrated_biopolymers.cxs" download="hydrated_biopolymers.cxs">Biopolymers (.cxs)</a>
     <a class="nav-pill" href="reactor_pool_biofilm_explorer.html">3D Pool + Biofilm</a>
     <button type="button" class="nav-pill active" id="btnExport1080p" onclick="exportCompetitionPng1080p()">Export 1920x1080 PNG</button>
   </div>
@@ -582,6 +587,49 @@
         <canvas id="canvasKineticsAndCxc" width="600" height="390"></canvas>
       </div>
     </div>
+
+    <div class="panel" id="chimeraxPymolAnimationGallery" style="margin-top:8px;">
+      <div class="panel-header">
+        <div>
+          <span class="panel-title">Synchronized UCSF ChimeraX 1.12 &amp; PyMOL 3.1.9 1080p Looping Animations (6-Field 60-Frame Cycle, 5-Stage Hydrothermal &amp; Polymer Yield)</span>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn active" id="btnAnim6Fields" onclick="setAnimationGalleryMode('6fields')">1. 6-Field 60-Frame Cycle (f00..f59)</button>
+          <button type="button" class="btn" id="btnAnimHydro5" onclick="setAnimationGalleryMode('hydro5stage')">2. 5-Stage Coupled Hydrothermal</button>
+          <button type="button" class="btn" id="btnAnimPolyYield" onclick="setAnimationGalleryMode('polymeryield')">3. 3D Polymer Yield (5-Shell)</button>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;">
+        <span id="animGalleryDesc"><strong>Active Pair:</strong> 6-Field 60-Frame Synchronized Cycle (<code>f00..f59</code>, <code>b = 0.17</code>): <strong>Left:</strong> UCSF ChimeraX 1.12 (12 volume series <code>#1..#12</code> in 3x2 grid, <code>vseries play #1-12 loop true</code>, <a href="open_6fields_cycle.cxc" target="_blank" rel="noopener" style="color:#38bdf8;"><code>open_6fields_cycle.cxc</code></a>). <strong>Right:</strong> PyMOL 3.1.9 (60 states in <code>grid_mode = 1</code>, <code>normalize_ccp4_maps = 0</code>, <code>mplay</code>, <a href="open_6fields_cycle.pml" target="_blank" rel="noopener" style="color:#38bdf8;"><code>open_6fields_cycle.pml</code></a>).</span>
+        <span>
+          <strong>Sessions &amp; Scripts:</strong>
+          <a href="oklo_geyser.cxs" download="oklo_geyser.cxs" style="color:#34d399;">oklo_geyser.cxs</a> |
+          <a href="hydrated_biopolymers.cxs" download="hydrated_biopolymers.cxs" style="color:#34d399;">hydrated_biopolymers.cxs</a> |
+          <a href="open_6fields_cycle.cxc" target="_blank" rel="noopener" style="color:#38bdf8;">open_6fields_cycle.cxc</a> |
+          <a href="open_6fields_cycle.pml" target="_blank" rel="noopener" style="color:#38bdf8;">open_6fields_cycle.pml</a> |
+          <a href="oklo_coupled_hydrothermal_cycle.cxc" target="_blank" rel="noopener" style="color:#38bdf8;">oklo_coupled_hydrothermal_cycle.cxc</a> |
+          <a href="oklo_coupled_hydrothermal_cycle_pymol.py" target="_blank" rel="noopener" style="color:#38bdf8;">oklo_coupled_hydrothermal_cycle_pymol.py</a> |
+          <a href="open_polymer_yield.cxc" target="_blank" rel="noopener" style="color:#38bdf8;">open_polymer_yield.cxc</a> |
+          <a href="open_polymer_yield.pml" target="_blank" rel="noopener" style="color:#38bdf8;">open_polymer_yield.pml</a>
+        </span>
+      </div>
+      <div class="stage-grid">
+        <div class="canvas-box">
+          <div class="canvas-head">
+            <span id="lblVideoChimeraX">UCSF ChimeraX 1.12: 6-Field 60-Frame Cycle (vseries play #1-12 loop true)</span>
+            <a id="lnkVideoChimeraX" href="chimerax_oklo_6fields_60frames_1080p.mp4" target="_blank" rel="noopener" style="color:#38bdf8;">1920x1080 MP4</a>
+          </div>
+          <video id="videoChimeraX" src="chimerax_oklo_6fields_60frames_1080p.mp4" autoplay loop muted playsinline controls style="width:100%;height:auto;display:block;background:#040810;"></video>
+        </div>
+        <div class="canvas-box">
+          <div class="canvas-head">
+            <span id="lblVideoPyMOL">PyMOL 3.1.9: 60-State 6-Field Cycle (grid_mode = 1, normalize_ccp4_maps = 0)</span>
+            <a id="lnkVideoPyMOL" href="pymol_oklo_6fields_60frames_1080p.mp4" target="_blank" rel="noopener" style="color:#38bdf8;">1920x1080 MP4</a>
+          </div>
+          <video id="videoPyMOL" src="pymol_oklo_6fields_60frames_1080p.mp4" autoplay loop muted playsinline controls style="width:100%;height:auto;display:block;background:#040810;"></video>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- RIGHT COLUMN: LIVE QUANTITATIVE READOUTS, 6-TERM PDE LEDGER, AND CHIMERAX .CXC GENERATOR -->
@@ -645,8 +693,11 @@
 
     <div class="panel">
       <div class="panel-header">
-        <span class="panel-title">Synchronized ChimeraX Script (oklo_coupled_hydrothermal_cycle.cxc)</span>
-        <button type="button" class="btn" onclick="downloadCoupledCxc()">Download .cxc</button>
+        <span class="panel-title">Synchronized ChimeraX &amp; PyMOL Scripts (.cxc / .pml / .py / .cxs)</span>
+        <div class="btn-row">
+          <button type="button" class="btn" onclick="downloadCoupledCxc()">Download .cxc</button>
+          <a class="btn" href="oklo_coupled_hydrothermal_cycle_pymol.py" download="oklo_coupled_hydrothermal_cycle_pymol.py" style="text-decoration:none;">Download .py</a>
+        </div>
       </div>
       <pre class="cxc-pre" id="cxcPreviewBox"></pre>
     </div>
@@ -1863,6 +1914,7 @@
   }
 
   // Interactive handlers exposed on window
+  let playTimer = null;
   window.setFrameIndex = function(fIdx) {
     const clamped = ((Math.round(fIdx) % TOTAL_FRAMES) + TOTAL_FRAMES) % TOTAL_FRAMES;
     STATE.frame_index = clamped;
@@ -1870,6 +1922,12 @@
     STATE.time_min = STATE.phase * PERIOD_MIN;
     const sl = document.getElementById('sliderFrame');
     if (sl) sl.value = String(clamped);
+    if (STATE.playing && playTimer) {
+      clearInterval(playTimer);
+      playTimer = setInterval(() => {
+        window.stepFrame(1);
+      }, 180);
+    }
     renderAll();
     return STATE;
   };
@@ -1878,12 +1936,12 @@
     return window.setFrameIndex(STATE.frame_index + delta);
   };
 
-  let playTimer = null;
   window.togglePlayCycle = function() {
     STATE.playing = !STATE.playing;
     const btn = document.getElementById('btnPlayPause');
     if (btn) btn.textContent = STATE.playing ? 'Pause Cycle' : 'Play Cycle';
     if (STATE.playing) {
+      if (playTimer) clearInterval(playTimer);
       playTimer = setInterval(() => {
         window.stepFrame(1);
       }, 180);
@@ -1891,6 +1949,63 @@
       clearInterval(playTimer);
       playTimer = null;
     }
+  };
+
+  const ANIM_GALLERY_MODES = {
+    '6fields': {
+      btnId: 'btnAnim6Fields',
+      cxLabel: 'UCSF ChimeraX 1.12: 6-Field 60-Frame Cycle (vseries play #1-12 loop true)',
+      cxSrc: 'chimerax_oklo_6fields_60frames_1080p.mp4',
+      pmLabel: 'PyMOL 3.1.9: 60-State 6-Field Cycle (grid_mode = 1, normalize_ccp4_maps = 0)',
+      pmSrc: 'pymol_oklo_6fields_60frames_1080p.mp4',
+      descHtml: '<strong>Active Pair:</strong> 6-Field 60-Frame Synchronized Cycle (<code>f00..f59</code>, <code>b = 0.17</code>): <strong>Left:</strong> UCSF ChimeraX 1.12 (12 volume series <code>#1..#12</code> in 3x2 grid, <code>vseries play #1-12 loop true</code>, <a href="open_6fields_cycle.cxc" target="_blank" rel="noopener" style="color:#38bdf8;"><code>open_6fields_cycle.cxc</code></a>). <strong>Right:</strong> PyMOL 3.1.9 (60 states in <code>grid_mode = 1</code>, <code>normalize_ccp4_maps = 0</code>, <code>mplay</code>, <a href="open_6fields_cycle.pml" target="_blank" rel="noopener" style="color:#38bdf8;"><code>open_6fields_cycle.pml</code></a>).'
+    },
+    'hydro5stage': {
+      btnId: 'btnAnimHydro5',
+      cxLabel: 'UCSF ChimeraX 1.12: 5-Stage Coupled Hydrothermal Darcy-Vorticity Cycle',
+      cxSrc: 'chimerax_hydro_5stage_animation_1080p.mp4',
+      pmLabel: 'PyMOL 3.1.9: 5-Stage Coupled Hydrothermal Multi-State CGO Cycle',
+      pmSrc: 'pymol_hydro_5stage_animation_1080p.mp4',
+      descHtml: '<strong>Active Pair:</strong> 5-Stage Coupled Hydrothermal Darcy-Vorticity Cycle (<code>1_before_pulse</code> to <code>5_recharge</code>): <strong>Left:</strong> UCSF ChimeraX 1.12 (<a href="oklo_coupled_hydrothermal_cycle.cxc" target="_blank" rel="noopener" style="color:#38bdf8;"><code>oklo_coupled_hydrothermal_cycle.cxc</code></a> &amp; session <a href="oklo_geyser.cxs" download="oklo_geyser.cxs" style="color:#34d399;"><code>oklo_geyser.cxs</code></a>). <strong>Right:</strong> PyMOL 3.1.9 (<a href="oklo_coupled_hydrothermal_cycle_pymol.py" target="_blank" rel="noopener" style="color:#38bdf8;"><code>oklo_coupled_hydrothermal_cycle_pymol.py</code></a>).'
+    },
+    'polymeryield': {
+      btnId: 'btnAnimPolyYield',
+      cxLabel: 'UCSF ChimeraX 1.12: 3D Prebiotic Compartment Polymer Yield (5-Shell Contours)',
+      cxSrc: 'chimerax_oklo_polymer_yield_1080p.mp4',
+      pmLabel: 'PyMOL 3.1.9: 3D Prebiotic Compartment Polymer Yield (Turntable & Threshold Sweep)',
+      pmSrc: 'pymol_oklo_polymer_yield_1080p.mp4',
+      descHtml: '<strong>Active Pair:</strong> 3D Prebiotic Compartment Polymer Yield (5-Shell Contours <code>2.50..6.95 umol/L</code>): <strong>Left:</strong> UCSF ChimeraX 1.12 (<a href="open_polymer_yield.cxc" target="_blank" rel="noopener" style="color:#38bdf8;"><code>open_polymer_yield.cxc</code></a> &amp; session <a href="hydrated_biopolymers.cxs" download="hydrated_biopolymers.cxs" style="color:#34d399;"><code>hydrated_biopolymers.cxs</code></a>). <strong>Right:</strong> PyMOL 3.1.9 (<a href="open_polymer_yield.pml" target="_blank" rel="noopener" style="color:#38bdf8;"><code>open_polymer_yield.pml</code></a>).'
+    }
+  };
+
+  window.setAnimationGalleryMode = function(mode) {
+    const cfg = ANIM_GALLERY_MODES[mode] || ANIM_GALLERY_MODES['6fields'];
+    STATE.animation_gallery_mode = mode in ANIM_GALLERY_MODES ? mode : '6fields';
+    Object.entries(ANIM_GALLERY_MODES).forEach(([k, m]) => {
+      const btn = document.getElementById(m.btnId);
+      if (btn && btn.classList) btn.classList.toggle('active', k === STATE.animation_gallery_mode);
+    });
+    const lblCx = document.getElementById('lblVideoChimeraX');
+    const lnkCx = document.getElementById('lnkVideoChimeraX');
+    const vidCx = document.getElementById('videoChimeraX');
+    const lblPm = document.getElementById('lblVideoPyMOL');
+    const lnkPm = document.getElementById('lnkVideoPyMOL');
+    const vidPm = document.getElementById('videoPyMOL');
+    const desc = document.getElementById('animGalleryDesc');
+    if (lblCx) lblCx.textContent = cfg.cxLabel;
+    if (lnkCx) lnkCx.href = cfg.cxSrc;
+    if (vidCx) {
+      vidCx.src = cfg.cxSrc;
+      if (typeof vidCx.play === 'function') { try { vidCx.play().catch(() => {}); } catch (_) {} }
+    }
+    if (lblPm) lblPm.textContent = cfg.pmLabel;
+    if (lnkPm) lnkPm.href = cfg.pmSrc;
+    if (vidPm) {
+      vidPm.src = cfg.pmSrc;
+      if (typeof vidPm.play === 'function') { try { vidPm.play().catch(() => {}); } catch (_) {} }
+    }
+    if (desc) desc.innerHTML = cfg.descHtml;
+    return STATE.animation_gallery_mode;
   };
 
   window.selectMacroField = function(fieldName) {
@@ -2155,6 +2270,7 @@
     setFrameIndex: window.setFrameIndex,
     selectMacroField: window.selectMacroField,
     selectCompartment: window.selectCompartment,
+    setAnimationGalleryMode: window.setAnimationGalleryMode,
     exportCompetitionPng1080p: window.exportCompetitionPng1080p
   };
 
@@ -2170,6 +2286,9 @@
   window.addEventListener('DOMContentLoaded', () => {
     initMacroWebGL();
     renderAll();
+    if (!STATE.playing) {
+      window.togglePlayCycle();
+    }
   });
 })();
 </script>

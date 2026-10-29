@@ -1,0 +1,92 @@
+# open_6fields_cycle.cxc
+# Interactive 6-Field 60-Frame Cycle Visualization & Animation in UCSF ChimeraX 1.12
+# Strictly zero em-dashes and zero en-dashes across all labels.
+
+close session
+windowsize 1800 1020
+set bgColor #0b0f19
+
+open out/series/b0.17/temperature_f*.mrc vseries true
+open out/series/b0.17/temperature_f*.mrc vseries true
+open out/series/b0.17/hydration_f*.mrc vseries true
+open out/series/b0.17/hydration_f*.mrc vseries true
+open out/series/b0.17/h2_concentration_f*.mrc vseries true
+open out/series/b0.17/h2_concentration_f*.mrc vseries true
+open out/series/b0.17/u235_ratio_f*.mrc vseries true
+open out/series/b0.17/u235_ratio_f*.mrc vseries true
+open out/series/b0.17/polymer_yield_f*.mrc vseries true
+open out/series/b0.17/polymer_yield_f*.mrc vseries true
+open out/series/b0.17/compartments_f*.mrc vseries true
+open out/series/b0.17/compartments_f*.mrc vseries true
+
+rename #1 "1a. Temperature Mesh (75 deg C)"
+rename #2 "1b. Temperature Core (160 deg C)"
+rename #3 "2a. Hydration Mesh (0.85)"
+rename #4 "2b. Hydration Steam Void (0.50)"
+rename #5 "3a. H2 Plume Mesh (1.20 mmol/L)"
+rename #6 "3b. H2 Core (2.00 mmol/L)"
+rename #7 "4a. 235U/238U Mesh (0.0068)"
+rename #8 "4b. 235U/238U Depletion Core (0.0060)"
+rename #9 "5a. Polymer Yield Mesh (3.20 umol/L)"
+rename #10 "5b. Polymer Yield Core (8.00 umol/L)"
+rename #11 "6a. Compartments Clay/Sandstone Mesh (Zone 1/2)"
+rename #12 "6b. Compartments Active Conduit (Zone 3/4)"
+
+volume #1 style mesh level 75.0 color #fb923c step 1 capFaces false showOutlineBox true outlineBoxRgb #475569
+volume #2 style surface level 160.0 color #ef4444 transparency 0.20 step 1 capFaces false
+
+volume #3 style mesh level 0.85 color #38bdf8 step 1 capFaces false showOutlineBox true outlineBoxRgb #475569
+volume #4 style surface level 0.50 color #3b82f6 transparency 0.18 step 1 capFaces false
+
+volume #5 style mesh level 1.20 color #34d399 step 1 capFaces false showOutlineBox true outlineBoxRgb #475569
+volume #6 style surface level 2.00 color #10b981 transparency 0.20 step 1 capFaces false
+
+volume #7 style mesh level 0.0068 color #fde047 step 1 capFaces false showOutlineBox true outlineBoxRgb #475569
+volume #8 style surface level 0.0060 color #eab308 transparency 0.22 step 1 capFaces false
+
+volume #9 style mesh level 3.20 color #c084fc step 1 capFaces false showOutlineBox true outlineBoxRgb #475569
+volume #10 style surface level 8.00 color #a855f7 transparency 0.20 step 1 capFaces false
+
+volume #11 style mesh level 1.50 color #94a3b8 step 1 capFaces false showOutlineBox true outlineBoxRgb #475569
+volume #12 style surface level 2.50 color #06b6d4 transparency 0.20 step 1 capFaces false
+
+turn x -68 models #1,2 center 7.75,7.75,7.75
+turn z 25 models #1,2 center 7.75,7.75,7.75 coordinateSystem #1
+move x -29.0 models #1,2
+move y 11.0 models #1,2
+
+turn x -68 models #3,4 center 7.75,7.75,7.75
+turn z 25 models #3,4 center 7.75,7.75,7.75 coordinateSystem #3
+move x 0.0 models #3,4
+move y 11.0 models #3,4
+
+turn x -68 models #5,6 center 7.75,7.75,7.75
+turn z 25 models #5,6 center 7.75,7.75,7.75 coordinateSystem #5
+move x 29.0 models #5,6
+move y 11.0 models #5,6
+
+turn x -68 models #7,8 center 7.75,7.75,7.75
+turn z 25 models #7,8 center 7.75,7.75,7.75 coordinateSystem #7
+move x -29.0 models #7,8
+move y -13.0 models #7,8
+
+turn x -68 models #9,10 center 7.75,7.75,7.75
+turn z 25 models #9,10 center 7.75,7.75,7.75 coordinateSystem #9
+move x 0.0 models #9,10
+move y -13.0 models #9,10
+
+turn x -68 models #11,12 center 7.75,7.75,7.75
+turn z 25 models #11,12 center 7.75,7.75,7.75 coordinateSystem #11
+move x 29.0 models #11,12
+move y -13.0 models #11,12
+
+lighting soft
+graphics silhouettes true
+view
+zoom 1.42
+
+2dlabels create h1 text 'OKLO 6-FIELD 4D CYCLE SYNCHRONIZED VIEW (UCSF ChimeraX 1.12 | 60-Frame Series b=0.17)' xpos 0.03 ypos 0.95 color #f8fafc size 20 bold true
+2dlabels create row1 text 'Top Row:  [1. Temperature (75 C mesh, 160 C core)]          [2. Hydration (0.85 mesh, 0.50 steam void)]          [3. H2 Radiolytic Index (1.20 mesh, 2.00 core)]' xpos 0.03 ypos 0.91 color #38bdf8 size 14
+2dlabels create row2 text 'Bottom Row:  [4. 235U/238U Ratio (0.0068, 0.0060)]          [5. Polymer Yield (3.20 mesh, 8.00 core)]          [6. Compartments (Zones 1/2 mesh, Zone 3/4 conduit)]' xpos 0.03 ypos 0.03 color #f59e0b size 14
+
+vseries play #1-12 loop true maxFrameRate 12
