@@ -104,8 +104,8 @@ function verifyArtifactHashes() {
     },
     {
       path: 'oklo_hydrothermal_cycle_explorer.html',
-      sha256: '823ce4131280e21d4b520555d2362cb9fd2651c9ee899a1aeafb21cf966ccfe0',
-      bytes: 107429
+      sha256: '28754664e91de2c9439384ca0297f8e0927143a47fd4dafa4d89a168bfc63381',
+      bytes: 120157
     },
     {
       path: 'oklo_coupled_hydrothermal_cycle.cxc',
@@ -119,12 +119,12 @@ function verifyArtifactHashes() {
     },
     {
       path: 'test_calculation_provenance_and_invariants.js',
-      sha256: '332ff7007e41b1139522bb88255b23cc22d8ce0effb071c3a3244316251252e4',
-      bytes: 81455
+      sha256: '04d39c70b38a096aed55d30448cff863143579ca1e71725852974bb7dde6813e',
+      bytes: 81645
     },
     {
       path: 'benchmark_manifest.json',
-      sha256: '007e97bb163b84100a659c0c8e0c30bb6e40dd3ecf3d20161675d6908c5f6217',
+      sha256: 'a9f39e0728166e2d39dc2f010baab9e4e474c6d33ef5751f443d347d7930e611',
       bytes: 32785
     }
   ];
@@ -173,7 +173,7 @@ function verifyArtifactHashes() {
   assert.ok(indexHtml.includes('e73622d6454a3a6a...'), 'index.html missing BIOFILMS-ROBIN-CYL-GIF-01 SHA prefix');
   assert.ok(indexHtml.includes('335039227479d970...'), 'index.html missing BIOTITE-MAGNETORECEPTION-4D-01 SHA prefix');
   assert.ok(indexHtml.includes('09bb3d9cbca7757c...'), 'index.html missing REACTOR-POOL-BIOFILM-COORDINATED-3D-01 SHA prefix');
-  assert.ok(indexHtml.includes('823ce4131280e21d...'), 'index.html missing OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01 SHA prefix');
+  assert.ok(indexHtml.includes('28754664e91de2c9...'), 'index.html missing OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01 SHA prefix');
   console.log('PASS [1/15]: Gate-0 artifact hashes, byte counts, and manifests verified.');
   return expectedFiles;
 }
@@ -1277,7 +1277,16 @@ async function runTests() {
           ifr.src = 'reactor_pool_biofilm_explorer.html?force2d=1';
           return 'true';
         })()`);
-        await new Promise(r => setTimeout(r, 1500));
+        for (let waitIdx = 0; waitIdx < 25; waitIdx++) {
+          await new Promise(r => setTimeout(r, 250));
+          const ready = await evalJson(`(() => {
+            const ifr = document.getElementById('iframePoolBiofilm');
+            const w = ifr && ifr.contentWindow;
+            const st = w && w.EXPLORER_STATE;
+            return JSON.stringify(Boolean(st && st.fallback_triggered === true && st.render_mode_macro === 'canvas2d_fallback'));
+          })()`);
+          if (ready === true) break;
+        }
         const force2dState = await evalJson(`(() => {
           const ifr = document.getElementById('iframePoolBiofilm');
           const w = ifr.contentWindow;
@@ -1388,6 +1397,8 @@ async function runTests() {
         assert.strictEqual(hydroCycleState.gates.extreme_slider_and_alias_edge_cases_passed, true);
         assert.strictEqual(hydroCycleState.gates.cxc_syntax_valid_single_transparency_per_volume, true);
         assert.strictEqual(hydroCycleState.gates.oligomer_synthesis_vs_destruction_competition_visible, true);
+        assert.strictEqual(hydroCycleState.gates.bruggeman_3d_ema_exact_verified, true);
+        assert.strictEqual(hydroCycleState.gates.operator_sweep_animation_verified, true);
         assert.strictEqual(hydroCycleState.pngWidth, 1920);
         assert.strictEqual(hydroCycleState.pngHeight, 1080);
         assert.strictEqual(hydroCycleState.portal5StageSrc, 'chimerax_hydro_5stage_animation_1080p.mp4');

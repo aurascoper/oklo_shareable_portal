@@ -484,12 +484,38 @@
       </div>
 
       <div class="control-group">
+        <div class="control-label">
+          <span><label style="cursor:pointer;"><input type="checkbox" id="chkShow3DShells" checked onchange="onShellControlChange()"> 3D Spherical Clay-Halo &amp; Cylindrical Fracture Shells</label></span>
+          <span class="control-val" id="lblShellCut">35 deg</span>
+        </div>
+        <input type="range" id="sliderShellCut" min="0" max="180" step="1" value="35" oninput="onShellControlChange()">
+      </div>
+
+      <div class="control-group">
         <div class="control-label"><span>Inspected Geological Compartment (Syncs Windows 2 &amp; 3):</span></div>
         <div class="btn-row">
           <button type="button" class="btn emerald active" id="btnCompHalo" onclick="selectCompartment('clay_halo')">Distal Clay Halo</button>
           <button type="button" class="btn" id="btnCompCore" onclick="selectCompartment('core')">Reactor Core</button>
           <button type="button" class="btn" id="btnCompFrac" onclick="selectCompartment('fracture')">Fracture Conduit</button>
           <button type="button" class="btn" id="btnCompSand" onclick="selectCompartment('sandstone')">Host Sandstone</button>
+        </div>
+      </div>
+
+      <div class="control-group" style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(56,189,248,0.28);">
+        <div class="control-label">
+          <span style="color:#38bdf8;font-weight:700;">Operator Control Sweep Animator:</span>
+          <span class="control-val" id="lblOperatorSweepStatus">Sweep Active (Step 0)</span>
+        </div>
+        <div class="btn-row" style="margin-bottom:6px;">
+          <button type="button" class="btn emerald active" id="btnAnimateOperators" onclick="toggleOperatorAnimation()">Pause Operator Sweep</button>
+          <button type="button" class="btn" id="btnStepOperators" onclick="stepOperatorSweep(1)">Step Operators +1</button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;font-size:10.5px;color:var(--text-dim);">
+          <label style="cursor:pointer;"><input type="checkbox" id="chkAnimSlice" checked onchange="onOperatorChannelChange()"> Slice X/Y</label>
+          <label style="cursor:pointer;"><input type="checkbox" id="chkAnimCutoff" checked onchange="onOperatorChannelChange()"> Cutoff T</label>
+          <label style="cursor:pointer;"><input type="checkbox" id="chkAnimPerm" checked onchange="onOperatorChannelChange()"> Perm Ratio</label>
+          <label style="cursor:pointer;"><input type="checkbox" id="chkAnimShellOrbit" checked onchange="onOperatorChannelChange()"> 3D Shells &amp; Orbit</label>
+          <label style="cursor:pointer;"><input type="checkbox" id="chkAnimCompartment" onchange="onOperatorChannelChange()"> Cycle Compartments</label>
         </div>
       </div>
     </div>
@@ -504,6 +530,7 @@
         </div>
         <div class="btn-row">
           <button type="button" class="btn active" id="btnPlayPause" onclick="togglePlayCycle()">Play Cycle</button>
+          <button type="button" class="btn emerald active" id="btnAnimateOperatorsTop" onclick="toggleOperatorAnimation()">Pause Operator Sweep</button>
           <button type="button" class="btn" onclick="stepFrame(-1)">-1 Frame (-3m)</button>
           <button type="button" class="btn" onclick="stepFrame(1)">+1 Frame (+3m)</button>
           <button type="button" class="btn amber" onclick="setFrameIndex(9)" title="Checked R0 conformance case p = 0.15">Frame 9 (p=0.15)</button>
@@ -702,6 +729,22 @@
       </div>
       <pre class="cxc-pre" id="cxcPreviewBox"></pre>
     </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Exact 3D Bruggeman EMA &amp; Mycorrhizal EG-3 Audit</span>
+        <span class="epi-badge epi-MODEL">f_c = 1/3 Exact</span>
+      </div>
+      <div style="font-size:11px;color:var(--text-dim);display:flex;flex-direction:column;gap:5px;">
+        <div><strong style="color:#f8fafc;">3D Bruggeman Percolation Fix (<code>f_c = 1/3</code>):</strong> Exact quadratic root <code>D_eff = (-B + sqrt(B^2 + 8 D_m D_i)) / 4</code> yields <code>D_eff/D_m = 2.500, 5.256, 7.325</code> at <code>D_i/D_m = 10, 50, 100</code> (<span id="lblBruggemanLive" style="color:#34d399;">f_inc=0.333 -&gt; 5.256</span>).</div>
+        <div><strong style="color:#f8fafc;">Mycorrhizal Structural Hysteresis:</strong> Tagged <code>[MODEL ISOMORPHISM - RUNG_4_MODEL / RUNG_6_ANALOGY]</code> with origin-symmetric loops <code>M(-H) = -M(H)</code> and <code>EG-3</code> sham-controlled 90% Welch power at <code>N = 12, 37, 55</code> hyphae/arm (<code>Delta_T &lt; 0.1 C</code>).</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:2px;">
+          <a class="btn" href="oklo_unified_pde_4d_ema_mycorrhizal_suite.html" target="_blank" rel="noopener" style="text-decoration:none;">Open 4-Tab Unified Suite</a>
+          <a class="btn" href="percolation_sweep_corrected_51.csv" download="percolation_sweep_corrected_51.csv" style="text-decoration:none;">51-Pt CSV</a>
+          <a class="btn" href="percolation_sweep_corrected_101.csv" download="percolation_sweep_corrected_101.csv" style="text-decoration:none;">101-Pt CSV</a>
+        </div>
+      </div>
+    </div>
   </section>
 </main>
 
@@ -746,6 +789,17 @@
     perm_ratio_log10: 2.0, // 10^2 = 100x
     fence_slice_idx: 16,
     display_cutoff_norm: 0.5,
+    show_3d_shells: true,
+    shell_cut_deg: 35,
+    operator_animating: false,
+    operator_sweep_step: 0,
+    operator_channels: {
+      slice: true,
+      cutoff: true,
+      perm: true,
+      shell_orbit: true,
+      compartment: false
+    },
     layers_enabled: {
       layer1_groundwater_darcy: true,
       layer2_heat_phase_change: true,
@@ -1285,6 +1339,40 @@
         }
       }
 
+      // 3D Spherical Clay-Halo H_clay(r) & Upper Cylindrical Fracture Conduit F_frac(rho, z) Coordinate Shells
+      if (STATE.show_3d_shells) {
+        const cutRad = (STATE.shell_cut_deg * Math.PI) / 180.0;
+        const rHalo = 0.54;
+        const zCenter = -0.25;
+        for (let lat = -60; lat <= 60; lat += 30) {
+          const latRad = (lat * Math.PI) / 180.0;
+          const rRing = rHalo * Math.cos(latRad);
+          const zRing = zCenter + rHalo * Math.sin(latRad);
+          for (let deg = 0; deg < 300; deg += 20) {
+            const a1 = cutRad + (deg * Math.PI) / 180.0;
+            const a2 = cutRad + ((deg + 20) * Math.PI) / 180.0;
+            pushLine(
+              rRing * Math.cos(a1), rRing * Math.sin(a1), zRing,
+              rRing * Math.cos(a2), rRing * Math.sin(a2), zRing,
+              0.13, 0.85, 0.38, 0.88
+            );
+          }
+        }
+        const rCyl = 0.16;
+        for (let zk = 0; zk <= 4; zk++) {
+          const zCyl = 0.12 + zk * 0.18;
+          for (let deg = 0; deg < 360; deg += 30) {
+            const a1 = (deg * Math.PI) / 180.0;
+            const a2 = ((deg + 30) * Math.PI) / 180.0;
+            pushLine(
+              rCyl * Math.cos(a1), rCyl * Math.sin(a1), zCyl,
+              rCyl * Math.cos(a2), rCyl * Math.sin(a2), zCyl,
+              0.22, 0.74, 0.97, 0.90
+            );
+          }
+        }
+      }
+
       const posF32 = new Float32Array(posArr);
       const colF32 = new Float32Array(colArr);
       const aPosLoc = gl.getAttribLocation(glProg, 'aPos');
@@ -1331,6 +1419,18 @@
     }
     ctx.strokeStyle = '#38bdf8';
     ctx.strokeRect(padL, padT, pw, ph);
+    if (STATE.show_3d_shells) {
+      const cx2d = padL + pw * 0.5;
+      const cy2d = padT + ph * 0.62;
+      const cutRad = (STATE.shell_cut_deg * Math.PI) / 180.0;
+      ctx.strokeStyle = '#22c55e';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.arc(cx2d, cy2d, pw * 0.24, cutRad * 0.5, cutRad * 0.5 + Math.PI * 1.55);
+      ctx.stroke();
+      ctx.strokeStyle = '#38bdf8';
+      ctx.strokeRect(cx2d - pw * 0.06, padT + ph * 0.08, pw * 0.12, ph * 0.34);
+    }
     ctx.fillStyle = '#e2e8f0';
     ctx.font = 'bold 11px ui-monospace, monospace';
     ctx.fillText(`2D Fence Slice Fallback (Y=${sliceIdx}/32, Field=${fieldName}, Cutoff=${cutoffTempC.toFixed(0)}C, Frame=${fIdx})`, padL, 20);
@@ -1903,6 +2003,22 @@
     netBadge.style.color = m.net_oligomer_rate_dc_dt >= 0 ? '#86efac' : '#fda4af';
 
     document.getElementById('cxcPreviewBox').textContent = generateCoupledCxcScriptText();
+    const fIncSweep = Math.max(0.0, Math.min(1.0, 0.15 + 0.70 * (STATE.fence_slice_idx - 4) / 24.0));
+    const dEff50 = calculateDeffExact(fIncSweep, 1.0, 50.0);
+    const lblBrug = document.getElementById('lblBruggemanLive');
+    if (lblBrug) {
+      lblBrug.textContent = `f_inc=${fIncSweep.toFixed(3)} -> D_eff/D_m(50)=${dEff50.toFixed(3)}`;
+    }
+    const lblSweep = document.getElementById('lblOperatorSweepStatus');
+    if (lblSweep) {
+      lblSweep.textContent = `${STATE.operator_animating ? 'Sweep Active' : 'Sweep Paused'} (Step ${STATE.operator_sweep_step})`;
+    }
+  }
+
+  function calculateDeffExact(fInc, dm = 1.0, di = 50.0) {
+    const f = Math.max(0.0, Math.min(1.0, Number(fInc)));
+    const bTerm = (3.0 * f - 2.0) * dm + (1.0 - 3.0 * f) * di;
+    return (-bTerm + Math.sqrt(bTerm * bTerm + 8.0 * dm * di)) / 4.0;
   }
 
   function renderAll() {
@@ -2084,6 +2200,106 @@
     renderAll();
   };
 
+  window.onShellControlChange = function() {
+    const chk = document.getElementById('chkShow3DShells');
+    const sl = document.getElementById('sliderShellCut');
+    if (chk) STATE.show_3d_shells = Boolean(chk.checked);
+    if (sl) STATE.shell_cut_deg = Number(sl.value);
+    const lbl = document.getElementById('lblShellCut');
+    if (lbl) lbl.textContent = `${STATE.shell_cut_deg} deg`;
+    renderAll();
+  };
+
+  window.onOperatorChannelChange = function() {
+    const cSlice = document.getElementById('chkAnimSlice');
+    const cCut = document.getElementById('chkAnimCutoff');
+    const cPerm = document.getElementById('chkAnimPerm');
+    const cShell = document.getElementById('chkAnimShellOrbit');
+    const cComp = document.getElementById('chkAnimCompartment');
+    if (cSlice) STATE.operator_channels.slice = Boolean(cSlice.checked);
+    if (cCut) STATE.operator_channels.cutoff = Boolean(cCut.checked);
+    if (cPerm) STATE.operator_channels.perm = Boolean(cPerm.checked);
+    if (cShell) STATE.operator_channels.shell_orbit = Boolean(cShell.checked);
+    if (cComp) STATE.operator_channels.compartment = Boolean(cComp.checked);
+    return STATE.operator_channels;
+  };
+
+  window.stepOperatorSweep = function(delta = 1) {
+    STATE.operator_sweep_step += delta;
+    const k = STATE.operator_sweep_step;
+    const theta = k * 0.12;
+
+    if (STATE.operator_channels.slice) {
+      STATE.fence_slice_idx = Math.round(16 + 10 * Math.sin(theta));
+      const sl = document.getElementById('sliderFenceSlice');
+      if (sl) sl.value = String(STATE.fence_slice_idx);
+      const lbl = document.getElementById('lblFenceSlice');
+      if (lbl) lbl.textContent = `${STATE.fence_slice_idx} / 32 (${(STATE.fence_slice_idx * DX_M).toFixed(1)} m)`;
+    }
+
+    if (STATE.operator_channels.cutoff) {
+      STATE.display_cutoff_norm = Number((0.50 + 0.25 * Math.sin(theta * 0.75)).toFixed(2));
+      const sl = document.getElementById('sliderDisplayCutoff');
+      if (sl) sl.value = String(STATE.display_cutoff_norm);
+      const lbl = document.getElementById('lblDisplayCutoff');
+      if (lbl) lbl.textContent = `${computeDisplayCutoffTempC().toFixed(1)} deg C (Display Cutoff)`;
+    }
+
+    if (STATE.operator_channels.perm) {
+      STATE.perm_ratio_log10 = Number((2.0 + 1.5 * Math.sin(theta * 0.5)).toFixed(1));
+      const sl = document.getElementById('sliderPermRatio');
+      if (sl) sl.value = String(STATE.perm_ratio_log10);
+      const lbl = document.getElementById('lblPermRatio');
+      if (lbl) lbl.textContent = Math.round(Math.pow(10, STATE.perm_ratio_log10)) + 'x';
+    }
+
+    if (STATE.operator_channels.shell_orbit) {
+      STATE.shell_cut_deg = Math.round(90 + 70 * Math.sin(theta * 0.65));
+      STATE.cam_yaw = Number((0.62 + 0.45 * Math.sin(theta * 0.4)).toFixed(3));
+      STATE.cam_pitch = Number((0.42 + 0.16 * Math.cos(theta * 0.5)).toFixed(3));
+      const sl = document.getElementById('sliderShellCut');
+      if (sl) sl.value = String(STATE.shell_cut_deg);
+      const lbl = document.getElementById('lblShellCut');
+      if (lbl) lbl.textContent = `${STATE.shell_cut_deg} deg`;
+    }
+
+    if (STATE.operator_channels.compartment) {
+      const comps = ['clay_halo', 'core', 'fracture', 'sandstone'];
+      const cIdx = Math.floor(Math.abs(k) / 8) % comps.length;
+      window.selectCompartment(comps[cIdx]);
+    } else {
+      renderAll();
+    }
+    return STATE;
+  };
+
+  let operatorTimer = null;
+  window.toggleOperatorAnimation = function(forceState) {
+    STATE.operator_animating = typeof forceState === 'boolean' ? forceState : !STATE.operator_animating;
+    const labelTxt = STATE.operator_animating ? 'Pause Operator Sweep' : 'Animate Operator Controls';
+    const b1 = document.getElementById('btnAnimateOperators');
+    const b2 = document.getElementById('btnAnimateOperatorsTop');
+    if (b1) {
+      b1.textContent = labelTxt;
+      if (b1.classList) b1.classList.toggle('active', STATE.operator_animating);
+    }
+    if (b2) {
+      b2.textContent = labelTxt;
+      if (b2.classList) b2.classList.toggle('active', STATE.operator_animating);
+    }
+    if (operatorTimer) {
+      clearInterval(operatorTimer);
+      operatorTimer = null;
+    }
+    if (STATE.operator_animating) {
+      operatorTimer = setInterval(() => {
+        window.stepOperatorSweep(1);
+      }, 220);
+    }
+    renderAll();
+    return STATE.operator_animating;
+  };
+
   window.downloadCoupledCxc = function() {
     const blob = new Blob([generateCoupledCxcScriptText()], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a');
@@ -2220,6 +2436,32 @@
     const cxcLines = cxcText.split('\n').filter(l => l.trim().startsWith('volume '));
     const cxcSyntaxValidSingleTransparency = cxcLines.length >= 4 && cxcLines.every(l => (l.match(/\btransparency\b/g) || []).length <= 1);
 
+    // 4. Verify Exact 3D Bruggeman EMA quadratic root at f_c = 1/3 and Animated Operator Sweep
+    const fc = 1.0 / 3.0;
+    const bruggeman3dExactOk =
+      Math.abs(calculateDeffExact(fc, 1.0, 10.0) - 2.5) < 1e-9 &&
+      Math.abs(calculateDeffExact(fc, 1.0, 50.0) - 5.2562462033) < 1e-6 &&
+      Math.abs(calculateDeffExact(fc, 1.0, 100.0) - 7.3254860163) < 1e-6 &&
+      calculateDeffExact(0.0, 1.0, 50.0) === 1.0 &&
+      calculateDeffExact(1.0, 1.0, 50.0) === 50.0;
+
+    const prevSlice = STATE.fence_slice_idx;
+    const prevCutoff = STATE.display_cutoff_norm;
+    const prevPerm2 = STATE.perm_ratio_log10;
+    const prevShellDeg = STATE.shell_cut_deg;
+    const prevYaw = STATE.cam_yaw;
+    const prevPitch = STATE.cam_pitch;
+    const prevStep = STATE.operator_sweep_step;
+    window.stepOperatorSweep(1);
+    const operatorSweepOk = STATE.operator_sweep_step === prevStep + 1;
+    STATE.fence_slice_idx = prevSlice;
+    STATE.display_cutoff_norm = prevCutoff;
+    STATE.perm_ratio_log10 = prevPerm2;
+    STATE.shell_cut_deg = prevShellDeg;
+    STATE.cam_yaw = prevYaw;
+    STATE.cam_pitch = prevPitch;
+    STATE.operator_sweep_step = prevStep;
+
     return {
       artifact_id: ARTIFACT_ID,
       title: STATE.title,
@@ -2239,6 +2481,8 @@
       cxc_syntax_valid_single_transparency_per_volume: cxcSyntaxValidSingleTransparency,
       surface_site_conservation_exact: siteConservationOk,
       oligomer_synthesis_vs_destruction_competition_visible: competitionVisibleOk,
+      bruggeman_3d_ema_exact_verified: bruggeman3dExactOk,
+      operator_sweep_animation_verified: operatorSweepOk,
       all_passed:
         CYCLE_SERIES.length === 60 &&
         hasAll5Phases &&
@@ -2253,7 +2497,9 @@
         extremeEdgeCasesOk &&
         cxcSyntaxValidSingleTransparency &&
         siteConservationOk &&
-        competitionVisibleOk
+        competitionVisibleOk &&
+        bruggeman3dExactOk &&
+        operatorSweepOk
     };
   };
 
@@ -2264,6 +2510,7 @@
     continuousCoupledPulse,
     continuousThermalEnvelope,
     r0DiscontinuousPulse,
+    calculateDeffExact,
     evaluateVoxelState,
     evaluatePoreAndMolecularState,
     generateCoupledCxcScriptText,
@@ -2272,6 +2519,8 @@
     selectMacroField: window.selectMacroField,
     selectCompartment: window.selectCompartment,
     setAnimationGalleryMode: window.setAnimationGalleryMode,
+    stepOperatorSweep: window.stepOperatorSweep,
+    toggleOperatorAnimation: window.toggleOperatorAnimation,
     exportCompetitionPng1080p: window.exportCompetitionPng1080p
   };
 
@@ -2289,6 +2538,9 @@
     renderAll();
     if (!STATE.playing) {
       window.togglePlayCycle();
+    }
+    if (!STATE.operator_animating) {
+      window.toggleOperatorAnimation(true);
     }
   });
 })();

@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unified Oklo &amp; Biophysical Audit Suite: 6-Term PDE, 4D Orientation Audit, 3D Bruggeman EMA &amp; Mycorrhizal EG-3 Pipeline</title>
+  <style>
+    :root {
+      --bg-0: #061018;
+      --bg-1: #0a1826;
+      --bg-2: #0f2236;
+      --border: #1d364d;
+      --text-main: #e6f0f8;
+      --text-muted: #94a3b8;
+      --green: #22c55e;
+      --cyan: #38bdf8;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --yellow: #facc15;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 16px 20px 32px;
+      background: var(--bg-0);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.45;
+    }
+    header {
+      background: linear-gradient(180deg, #0c1b29 0%, #08131e 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 15px 18px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    h1 {
+      margin: 0 0 4px 0;
+      font-size: 1.18rem;
+      color: #f8fafc;
+    }
+    .subtitle {
+      margin: 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+    .anim-master-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 34, 54, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+    .btn-op {
+      background: #13283c;
+      color: #e2e8f0;
+      border: 1px solid #2b4c6b;
+      border-radius: 6px;
+      padding: 6px 11px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-op:hover {
+      border-color: var(--cyan);
+      color: #ffffff;
+    }
+    .btn-op.active {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #7dd3fc;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+    }
+    .btn-op.emerald.active {
+      background: #059669;
+      border-color: #34d399;
+    }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .tab-btn {
+      background: var(--bg-1);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: var(--cyan);
+    }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    .controls-bar {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+      align-items: center;
+    }
+    .ctrl-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #bae6fd;
+      margin-bottom: 4px;
+    }
+    .ctrl-group input[type="range"] {
+      width: 100%;
+      accent-color: var(--cyan);
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 1100px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .card h2 {
+      margin: 0 0 8px 0;
+      font-size: 0.94rem;
+      color: #bae6fd;
+    }
+    canvas {
+      width: 100%;
+      background: #07111c;
+      border: 1px solid #162a3d;
+      border-radius: 8px;
+      display: block;
+    }
+    .readout {
+      margin-top: 8px;
+      background: #07111c;
+      border: 1px solid #162a3d;
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.76rem;
+      color: #cbd5e1;
+    }
+    .csv-links {
+      font-size: 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    .csv-links a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>Unified Oklo &amp; Biophysical Audit Suite: 6-Term PDE, 4D Orientation Audit, 3D Bruggeman EMA &amp; Mycorrhizal EG-3 Pipeline</h1>
+      <p class="subtitle">
+        Author: Hunter Kinder (Mark Hunter Kinder II) | Date: October 2026 | License: Code: MIT · Content: CC BY 4.0 | Epistemic Gates EG-1 to EG-4 &amp; [MODEL ISOMORPHISM - RUNG_4_MODEL / RUNG_6_ANALOGY]
+      </p>
+      <div class="csv-links">
+        Companion Datasets &amp; Viewers:
+        <a href="percolation_sweep_corrected_51.csv" download="percolation_sweep_corrected_51.csv">percolation_sweep_corrected_51.csv</a> |
+        <a href="percolation_sweep_corrected_101.csv" download="percolation_sweep_corrected_101.csv">percolation_sweep_corrected_101.csv</a> |
+        <a href="oklo_hydrothermal_cycle_explorer.html">oklo_hydrothermal_cycle_explorer.html</a> |
+        <a href="magnetoreception_3d_explorer.html">magnetoreception_3d_explorer.html</a> |
+        <a href="index.html">Portal Index</a>
+      </div>
+    </div>
+    <div class="anim-master-bar" role="region" aria-label="Master Operator Animation Controls">
+      <button type="button" class="btn-op emerald active" id="btnAnimateAllSuite" onclick="toggleSuiteOperatorAnimation()">Pause Operator Sweep</button>
+      <button type="button" class="btn-op" id="btnStepSuiteOp" onclick="stepSuiteOperatorAnimation(1)">Step Operators +1</button>
+      <button type="button" class="btn-op" id="btnResetSuiteOp" onclick="resetSuiteOperators()">Reset Defaults</button>
+      <span id="suiteOpStatusBadge" style="font-family:ui-monospace,monospace;font-size:0.74rem;color:#86efac;">Sweep Active (Step 0)</span>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" id="btnTab1" data-tab="tab1">1. 6-Term Polymer PDE, Thermal Envelope &amp; 3D Shells</button>
+    <button class="tab-btn" id="btnTab2" data-tab="tab2">2. Biotite, Biomagnetite &amp; Cryptochrome: 4D Orientation Audit</button>
+    <button class="tab-btn" id="btnTab3" data-tab="tab3">3. Exact 3D Bruggeman EMA &amp; Mycorrhizal Hysteresis Loops</button>
+    <button class="tab-btn" id="btnTab4" data-tab="tab4">4. Critical Scaling f_inc,crit, AC Disruption &amp; EG-3 Power</button>
+  </nav>
+
+  <!-- TAB 1 -->
+  <section id="tab1" class="tab-pane active">
+    <div class="controls-bar">
+      <div class="ctrl-group">
+        <label><span>180-Min Hydrothermal Frame (f00..f59)</span><span id="t1FrameVal">Frame 12 (36.0 min)</span></label>
+        <input type="range" id="t1FrameSlider" min="0" max="59" step="1" value="12" />
+      </div>
+      <div class="ctrl-group">
+        <label><span>3D Coordinate Shell Cut Angle (phi_cut)</span><span id="t1RotVal">35 deg</span></label>
+        <input type="range" id="t1RotSlider" min="0" max="180" step="1" value="35" />
+      </div>
+      <div class="ctrl-group">
+        <label><span>Fault / Sandstone Perm Ratio (log10)</span><span id="t1PermVal">100x</span></label>
+        <input type="range" id="t1PermSlider" min="0" max="4" step="0.1" value="2.0" />
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button type="button" class="btn-op active" id="btnAnimTab1" onclick="toggleTabChannel('tab1')">Tab 1 Sweep: ON</button>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h2>A. 6-Term Abiotic Polymer Reaction-Transport PDE &amp; C^1 Thermal Envelope (b = 0.17, 180 min)</h2>
+        <canvas id="t1PdeCanvas" width="660" height="275"></canvas>
+        <div class="readout" id="t1PdeReadout"></div>
+      </div>
+      <div class="card">
+        <h2>B. 3D Spherical Clay-Halo H_clay(r) &amp; Cylindrical Fracture Conduit F_frac(rho, z)</h2>
+        <canvas id="t1ShellCanvas" width="660" height="275"></canvas>
+        <div class="readout" id="t1ShellReadout"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2 -->
+  <section id="tab2" class="tab-pane">
+    <div class="controls-bar">
+      <div class="ctrl-group">
+        <label><span>4th Coordinate w = theta_B (Field Angle)</span><span id="t2WVal">240 deg</span></label>
+        <input type="range" id="t2WSlider" min="0" max="360" step="1" value="240" />
+      </div>
+      <div class="ctrl-group">
+        <label><span>4D Hyperplane Rot(XW)</span><span id="t2XwVal">25 deg</span></label>
+        <input type="range" id="t2XwSlider" min="-90" max="90" step="1" value="25" />
+      </div>
+      <div class="ctrl-group">
+        <label><span>4D Hyperplane Rot(YW)</span><span id="t2YwVal">15 deg</span></label>
+        <input type="range" id="t2YwSlider" min="-90" max="90" step="1" value="15" />
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button type="button" class="btn-op active" id="btnAnimTab2" onclick="toggleTabChannel('tab2')">Tab 2 Sweep: ON</button>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h2>A. 4D Tesseract Orientation-Parameter Projection (w = theta_B) &amp; 3-Tier Epistemic Separation</h2>
+        <canvas id="t2TessCanvas" width="660" height="275"></canvas>
+        <div class="readout" id="t2TessReadout"></div>
+      </div>
+      <div class="card">
+        <h2>B. Dual Observables: Restoring Torque tau(theta_B) [pN*nm] vs. Radical-Pair Yield Delta_Phi_S</h2>
+        <canvas id="t2DualCanvas" width="660" height="275"></canvas>
+        <div class="readout" id="t2DualReadout"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3 -->
+  <section id="tab3" class="tab-pane">
+    <div class="controls-bar">
+      <div class="ctrl-group">
+        <label><span>Bruggeman Inclusion Fraction f_inc</span><span id="t3FincVal">0.333 (f_c = 1/3)</span></label>
+        <input type="range" id="t3FincSlider" min="0" max="1" step="0.01" value="0.33" />
+      </div>
+      <div class="ctrl-group">
+        <label><span>Endo SD Cluster f_inc,endo</span><span id="t3EndoVal">5.00%</span></label>
+        <input type="range" id="t3EndoSlider" min="0.005" max="0.10" step="0.001" value="0.05" />
+      </div>
+      <div class="ctrl-group">
+        <label><span>Ecto MD Lattice f_inc,ecto</span><span id="t3EctoVal">1.00%</span></label>
+        <input type="range" id="t3EctoSlider" min="0.001" max="0.05" step="0.001" value="0.01" />
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button type="button" class="btn-op active" id="btnAnimTab3" onclick="toggleTabChannel('tab3')">Tab 3 Sweep: ON</button>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h2>A. Exact 3D Bruggeman EMA Quadratic Fix (D_eff / D_m) Across f_inc in [0, 1]</h2>
+        <canvas id="t3EmaCanvas" width="660" height="275"></canvas>
+        <div class="readout" id="t3EmaReadout"></div>
+      </div>
+      <div class="card">
+        <h2>B. Origin-Symmetric Mycorrhizal Hysteresis Loops [MODEL ISOMORPHISM - RUNG_4 / RUNG_6]</h2>
+        <canvas id="t3HystCanvas" width="660" height="275"></canvas>
+        <div class="readout" id="t3HystReadout"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4 -->
+  <section id="tab4" class="tab-pane">
+    <div class="controls-bar">
+      <div class="ctrl-group">
+        <label><span>Host Volume V_host (um^3)</span><span id="t4VVal">1.00 um^3</span></label>
+        <input type="range" id="t4VSlider" min="-1" max="2" step="0.05" value="0" />
+      </div>
+      <div class="ctrl-group">
+        <label><span>AC Amplitude B_AC (uT)</span><span id="t4BacVal">75 uT</span></label>
+        <input type="range" id="t4BacSlider" min="5" max="500" step="5" value="75" />
+      </div>
+      <div class="ctrl-group">
+        <label><span>Tracked Hyphae / Arm (N)</span><span id="t4NVal">37</span></label>
+        <input type="range" id="t4NSlider" min="4" max="80" step="1" value="37" />
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button type="button" class="btn-op active" id="btnAnimTab4" onclick="toggleTabChannel('tab4')">Tab 4 Sweep: ON</button>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h2>A. Critical Inclusion Scaling f_inc,crit &amp; Selective AC Domain-Wall Depinning</h2>
+        <canvas id="t4CritCanvas" width="660" height="275"></canvas>
+        <div class="readout" id="t4CritReadout"></div>
+      </div>
+      <div class="card">
+        <h2>B. EG-3 Sham-Controlled Tracked Hyphal-Tip Statistical Power (Delta_T &lt; 0.1 C Bound)</h2>
+        <canvas id="t4PowCanvas" width="660" height="275"></canvas>
+        <div class="readout" id="t4PowReadout"></div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const KBT_J = 1.380649e-23 * 300.0;
+      const M_S = 4.8e5;
+      const B_GEO = 50.0e-6;
+
+      const SUITE_STATE = {
+        artifact_id: 'OKLO-UNIFIED-PDE-4D-EMA-MYCORRHIZAL-SUITE-01',
+        active_tab: 'tab1',
+        operator_animating: true,
+        sweep_step: 0,
+        tab_channels: {
+          tab1: true,
+          tab2: true,
+          tab3: true,
+          tab4: true
+        },
+        t1_frame: 12,
+        t1_rot_deg: 35,
+        t1_perm_log10: 2.0,
+        t2_w_deg: 240,
+        t2_xw_deg: 25,
+        t2_yw_deg: 15,
+        t3_finc: 1.0 / 3.0,
+        t3_f_endo: 0.05,
+        t3_f_ecto: 0.01,
+        t3_loop_phase_idx: 60,
+        t4_v_log10: 0.0,
+        t4_b_ac_uT: 75,
+        t4_n_per_arm: 37
+      };
+
+      function setElVal(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.value = String(val);
+      }
+
+      function setElText(id, txt) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = txt;
+      }
+
+      function c1Step(x, x0, w) {
+        const t = Math.min(1.0, Math.max(0.0, (x - (x0 - w)) / (2.0 * w)));
+        return t * t * (3.0 - 2.0 * t);
+      }
+
+      function thermalEnvelope(p) {
+        const b = 0.17;
+        const rise = c1Step(p, 0.12, 0.06);
+        const boilDrop = c1Step(p, b, 0.045);
+        const cool = c1Step(p, 0.55, 0.18);
+        const tNorm = 0.15 + 0.85 * rise * (1.0 - 0.65 * cool) - 0.18 * boilDrop * (1.0 - cool);
+        return 390.0 + 185.0 * Math.min(1.0, Math.max(0.0, tNorm));
+      }
+
+      function exactBruggeman(f, dm, di) {
+        const B = (3.0 * f - 2.0) * dm + (1.0 - 3.0 * f) * di;
+        return (-B + Math.sqrt(B * B + 8.0 * dm * di)) / 4.0;
+      }
+
+      function erf(x) {
+        const sgn = x >= 0 ? 1 : -1;
+        x = Math.abs(x);
+        const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+        const t = 1.0 / (1.0 + p * x);
+        const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+        return sgn * y;
+      }
+
+      function normCdf(x) {
+        return 0.5 * (1.0 + erf(x / Math.SQRT2));
+      }
+
+      function welchPower(n, delta, sigma) {
+        const z = 1.959964;
+        const se = sigma * Math.sqrt(2.0 / n);
+        return 1.0 - normCdf(z - delta / se) + normCdf(-z - delta / se);
+      }
+
+      function runHysteresisLoop(f, isEndo) {
+        const hc = isEndo ? 3.5 * (1.0 + 2.0 * f) : 0.8 * (1.0 + f);
+        const msat = isEndo ? 5.0 * (f / 0.05) : 7.0 * (f / 0.01);
+        const rem = isEndo ? 0.78 : 0.22;
+        const steps = 240;
+        const hArr = [];
+        for (let i = 0; i < steps; i++) hArr.push(10.0 * Math.sin((2.0 * Math.PI * i) / (steps - 1)));
+        const hTwo = hArr.concat(hArr);
+        const mTwo = new Array(hTwo.length).fill(0);
+        let curr = 0;
+        for (let i = 1; i < hTwo.length; i++) {
+          const dh = hTwo[i] - hTwo[i - 1];
+          const sgn = dh >= 0 ? 1.0 : -1.0;
+          const heff = hTwo[i] - sgn * hc * rem;
+          curr += (msat * Math.tanh(heff / hc) - curr) * 0.35;
+          mTwo[i] = curr;
+        }
+        return { h: hArr, m: mTwo.slice(steps), hc, msat };
+      }
+
+      function renderTab1() {
+        const frame = SUITE_STATE.t1_frame;
+        const rotDeg = SUITE_STATE.t1_rot_deg;
+        const permLog10 = SUITE_STATE.t1_perm_log10;
+        const permMult = Math.round(Math.pow(10, permLog10));
+        const pCurr = frame / 60.0;
+        const tMin = pCurr * 180.0;
+        setElText('t1FrameVal', `Frame ${frame} (${tMin.toFixed(1)} min)`);
+        setElText('t1RotVal', `${rotDeg} deg`);
+        setElText('t1PermVal', `${permMult}x`);
+
+        const c1 = document.getElementById('t1PdeCanvas');
+        if (c1) {
+          const ctx1 = c1.getContext('2d');
+          ctx1.fillStyle = '#07111c';
+          ctx1.fillRect(0, 0, c1.width, c1.height);
+
+          const padL = 50, padR = 20, padT = 22, padB = 30;
+          const pw = c1.width - padL - padR, ph = c1.height - padT - padB;
+
+          const xb = padL + 0.17 * pw;
+          ctx1.strokeStyle = '#ef4444';
+          ctx1.setLineDash([5, 4]);
+          ctx1.beginPath(); ctx1.moveTo(xb, padT); ctx1.lineTo(xb, padT + ph); ctx1.stroke();
+
+          const xf = padL + pCurr * pw;
+          ctx1.strokeStyle = '#facc15';
+          ctx1.beginPath(); ctx1.moveTo(xf, padT); ctx1.lineTo(xf, padT + ph); ctx1.stroke();
+          ctx1.setLineDash([]);
+
+          ctx1.strokeStyle = '#f59e0b';
+          ctx1.lineWidth = 2.6;
+          ctx1.beginPath();
+          for (let i = 0; i <= 120; i++) {
+            const p = i / 120.0;
+            const T = thermalEnvelope(p);
+            const x = padL + p * pw;
+            const y = padT + ph - ((T - 380.0) / 210.0) * ph;
+            if (i === 0) ctx1.moveTo(x, y); else ctx1.lineTo(x, y);
+          }
+          ctx1.stroke();
+
+          ctx1.strokeStyle = '#22c55e';
+          ctx1.lineWidth = 2.6;
+          ctx1.beginPath();
+          let acc = 0.12;
+          let accAtFrame = 0.12;
+          const permFactor = 1.0 + 0.08 * (permLog10 - 2.0);
+          for (let i = 0; i <= 120; i++) {
+            const p = i / 120.0;
+            const rate = 0.012 * permFactor * (1.0 + 0.6 * Math.sin(2.0 * Math.PI * (p - 0.08)));
+            acc += rate * 0.45;
+            if (Math.abs(p - pCurr) < 0.006) accAtFrame = acc;
+            const x = padL + p * pw;
+            const y = padT + ph - Math.min(0.95, acc / 1.2) * ph;
+            if (i === 0) ctx1.moveTo(x, y); else ctx1.lineTo(x, y);
+          }
+          ctx1.stroke();
+
+          const tNow = thermalEnvelope(pCurr);
+          setElText(
+            't1PdeReadout',
+            `At Frame ${frame} (t = ${tMin.toFixed(1)} min, p = ${pCurr.toFixed(3)}, k_frac/k_sand = ${permMult}x): T_core = ${tNow.toFixed(1)} K | Clay-Halo Net Oligomer Index = ${accAtFrame.toFixed(3)} (C^1 transition at b = 0.17)`
+          );
+        }
+
+        const c2 = document.getElementById('t1ShellCanvas');
+        if (c2) {
+          const ctx2 = c2.getContext('2d');
+          ctx2.fillStyle = '#07111c';
+          ctx2.fillRect(0, 0, c2.width, c2.height);
+
+          const cx = c2.width * 0.5, cy = c2.height * 0.56;
+          const rad = (rotDeg * Math.PI) / 180.0;
+          const arcSpan = Math.PI * (1.35 + 0.45 * Math.cos(rad));
+
+          for (let lat = -60; lat <= 60; lat += 20) {
+            const rLat = 82 * Math.cos((lat * Math.PI) / 180);
+            const yOff = 82 * Math.sin((lat * Math.PI) / 180) * 0.85;
+            ctx2.strokeStyle = '#22c55e';
+            ctx2.lineWidth = 1.7;
+            ctx2.beginPath();
+            ctx2.ellipse(cx, cy - yOff + 18, rLat, rLat * 0.34, 0, rad * 0.5, rad * 0.5 + arcSpan);
+            ctx2.stroke();
+          }
+          for (let z = 0; z <= 90; z += 18) {
+            ctx2.strokeStyle = '#38bdf8';
+            ctx2.lineWidth = 1.8;
+            ctx2.beginPath();
+            ctx2.ellipse(cx + Math.sin(rad) * 6, cy - 25 - z, 28, 10, 0, 0, Math.PI * 2);
+            ctx2.stroke();
+          }
+          setElText(
+            't1ShellReadout',
+            `Spherical Clay-Halo Shell H_clay(r) = exp(-((r - 1.1)/0.28)^2) (Green, phi_cut = ${rotDeg} deg) coupled with Upper Cylindrical Fracture F_frac(rho, z >= z_c) (Cyan)`
+          );
+        }
+      }
+
+      function renderTab2() {
+        const wDeg = SUITE_STATE.t2_w_deg;
+        const rotXW = SUITE_STATE.t2_xw_deg;
+        const rotYW = SUITE_STATE.t2_yw_deg;
+        setElText('t2WVal', `${wDeg} deg`);
+        setElText('t2XwVal', `${rotXW} deg`);
+        setElText('t2YwVal', `${rotYW} deg`);
+
+        const c1 = document.getElementById('t2TessCanvas');
+        if (c1) {
+          const ctx1 = c1.getContext('2d');
+          ctx1.fillStyle = '#07111c';
+          ctx1.fillRect(0, 0, c1.width, c1.height);
+
+          const rxw = ((rotXW + 0.15 * wDeg) * Math.PI) / 180.0;
+          const ryw = ((rotYW + 0.10 * wDeg) * Math.PI) / 180.0;
+          const yaw = -0.55, pitch = 0.36;
+          const verts = [];
+          for (let i = 0; i < 16; i++) {
+            const x4 = (i & 1) ? 1.15 : -1.15;
+            const y4 = (i & 2) ? 1.15 : -1.15;
+            const z4 = (i & 4) ? 1.15 : -1.15;
+            const w4 = (i & 8) ? 1.15 : -1.15;
+            const x1 = x4 * Math.cos(rxw) - w4 * Math.sin(rxw);
+            const w1 = x4 * Math.sin(rxw) + w4 * Math.cos(rxw);
+            const y2 = y4 * Math.cos(ryw) - w1 * Math.sin(ryw);
+            const w2 = y4 * Math.sin(ryw) + w1 * Math.cos(ryw);
+            const persp = 3.4 / (3.4 - 0.38 * w2);
+            const p3 = [x1 * persp, y2 * persp, z4 * persp];
+            const px = c1.width * 0.48 + (p3[0] * Math.cos(yaw) - p3[2] * Math.sin(yaw)) * 74;
+            const py = c1.height * 0.52 - (p3[1] * Math.cos(pitch) + p3[2] * Math.sin(pitch) * 0.5) * 74;
+            verts.push([px, py, (i & 8) !== 0]);
+          }
+
+          for (let i = 0; i < 16; i++) {
+            for (let bit = 0; bit < 4; bit++) {
+              const j = i ^ (1 << bit);
+              if (i < j) {
+                ctx1.beginPath();
+                ctx1.moveTo(verts[i][0], verts[i][1]);
+                ctx1.lineTo(verts[j][0], verts[j][1]);
+                if (bit === 3) {
+                  ctx1.strokeStyle = '#38bdf8'; ctx1.lineWidth = 1.8; ctx1.setLineDash([3, 3]);
+                } else if ((i & 8) === 0) {
+                  ctx1.strokeStyle = '#22c55e'; ctx1.lineWidth = 2.6; ctx1.setLineDash([]);
+                } else {
+                  ctx1.strokeStyle = '#ef4444'; ctx1.lineWidth = 2.0; ctx1.setLineDash([6, 5]);
+                }
+                ctx1.stroke();
+                ctx1.setLineDash([]);
+              }
+            }
+          }
+
+          setElText(
+            't2TessReadout',
+            `Green: Established Fe3O4 Chain (5.69 k_BT, 23.6 pN*nm at V_chain=9.82e-22 m^3) | Cyan: In Vitro ErCry4 Candidate | Red: Pure Biotite (5.89e-8 at V_chain; 6.00e-5 at 1 um^3)`
+          );
+        }
+
+        const c2 = document.getElementById('t2DualCanvas');
+        if (c2) {
+          const ctx2 = c2.getContext('2d');
+          ctx2.fillStyle = '#07111c';
+          ctx2.fillRect(0, 0, c2.width, c2.height);
+
+          const padL = 48, padR = 20, padT = 20, padB = 28;
+          const pw = c2.width - padL - padR, ph = c2.height - padT - padB;
+          const midY = padT + ph / 2;
+
+          ctx2.strokeStyle = '#334155';
+          ctx2.beginPath(); ctx2.moveTo(padL, midY); ctx2.lineTo(padL + pw, midY); ctx2.stroke();
+
+          const wx = padL + (wDeg / 360.0) * pw;
+          ctx2.strokeStyle = '#facc15';
+          ctx2.setLineDash([5, 4]);
+          ctx2.beginPath(); ctx2.moveTo(wx, padT); ctx2.lineTo(wx, padT + ph); ctx2.stroke();
+          ctx2.setLineDash([]);
+
+          ctx2.strokeStyle = '#22c55e';
+          ctx2.lineWidth = 2.5;
+          ctx2.beginPath();
+          for (let d = 0; d <= 360; d += 3) {
+            const x = padL + (d / 360.0) * pw;
+            const y = midY + Math.sin((d * Math.PI) / 180.0) * (ph * 0.42);
+            if (d === 0) ctx2.moveTo(x, y); else ctx2.lineTo(x, y);
+          }
+          ctx2.stroke();
+
+          ctx2.strokeStyle = '#38bdf8';
+          ctx2.lineWidth = 2.3;
+          ctx2.beginPath();
+          for (let d = 0; d <= 360; d += 3) {
+            const x = padL + (d / 360.0) * pw;
+            const y = midY - Math.cos((2.0 * d * Math.PI) / 180.0) * (ph * 0.36);
+            if (d === 0) ctx2.moveTo(x, y); else ctx2.lineTo(x, y);
+          }
+          ctx2.stroke();
+
+          const tauNow = -23.56 * Math.sin((wDeg * Math.PI) / 180.0);
+          const yieldNow = Math.cos((2.0 * wDeg * Math.PI) / 180.0);
+          setElText(
+            't2DualReadout',
+            `At w = theta_B = ${wDeg} deg: Magnetosome Torque tau = ${tauNow >= 0 ? '+' : ''}${tauNow.toFixed(1)} pN*nm | ErCry4 In Vitro Axial Yield Shift Delta_Phi_S = ${yieldNow >= 0 ? '+' : ''}${yieldNow.toFixed(2)}`
+          );
+        }
+      }
+
+      function renderTab3() {
+        const fInc = SUITE_STATE.t3_finc;
+        const fEndo = SUITE_STATE.t3_f_endo;
+        const fEcto = SUITE_STATE.t3_f_ecto;
+        setElText('t3FincVal', `${fInc.toFixed(3)}${Math.abs(fInc - 1.0 / 3.0) < 0.015 ? ' (f_c = 1/3)' : ''}`);
+        setElText('t3EndoVal', `${(fEndo * 100).toFixed(2)}%`);
+        setElText('t3EctoVal', `${(fEcto * 100).toFixed(2)}%`);
+
+        const c1 = document.getElementById('t3EmaCanvas');
+        if (c1) {
+          const ctx1 = c1.getContext('2d');
+          ctx1.fillStyle = '#07111c';
+          ctx1.fillRect(0, 0, c1.width, c1.height);
+
+          const padL = 48, padR = 20, padT = 20, padB = 28;
+          const pw = c1.width - padL - padR, ph = c1.height - padT - padB;
+
+          const xc = padL + (1.0 / 3.0) * pw;
+          ctx1.strokeStyle = '#facc15';
+          ctx1.setLineDash([5, 4]);
+          ctx1.beginPath(); ctx1.moveTo(xc, padT); ctx1.lineTo(xc, padT + ph); ctx1.stroke();
+
+          const xCursor = padL + fInc * pw;
+          ctx1.strokeStyle = '#e2e8f0';
+          ctx1.setLineDash([2, 2]);
+          ctx1.beginPath(); ctx1.moveTo(xCursor, padT); ctx1.lineTo(xCursor, padT + ph); ctx1.stroke();
+          ctx1.setLineDash([]);
+
+          [{ r: 10, col: '#38bdf8' }, { r: 50, col: '#f59e0b' }, { r: 100, col: '#22c55e' }].forEach(({ r, col }) => {
+            ctx1.strokeStyle = col;
+            ctx1.lineWidth = 2.4;
+            ctx1.beginPath();
+            for (let i = 0; i <= 100; i++) {
+              const f = i / 100.0;
+              const val = exactBruggeman(f, 1.0, r);
+              const x = padL + f * pw;
+              const y = padT + ph - (val / 102.0) * ph;
+              if (i === 0) ctx1.moveTo(x, y); else ctx1.lineTo(x, y);
+            }
+            ctx1.stroke();
+
+            const curVal = exactBruggeman(fInc, 1.0, r);
+            const cy = padT + ph - (curVal / 102.0) * ph;
+            ctx1.fillStyle = col;
+            ctx1.beginPath();
+            ctx1.arc(xCursor, cy, 4.2, 0, Math.PI * 2);
+            ctx1.fill();
+          });
+
+          const r10 = exactBruggeman(fInc, 1.0, 10.0);
+          const r50 = exactBruggeman(fInc, 1.0, 50.0);
+          const r100 = exactBruggeman(fInc, 1.0, 100.0);
+          setElText(
+            't3EmaReadout',
+            `At f_inc = ${fInc.toFixed(2)}: D_eff/D_m (r=10, 50, 100) = ${r10.toFixed(3)}, ${r50.toFixed(3)}, ${r100.toFixed(3)} | At f_c = 1/3: 2.500, 5.256, 7.325`
+          );
+        }
+
+        const c2 = document.getElementById('t3HystCanvas');
+        if (c2) {
+          const ctx2 = c2.getContext('2d');
+          ctx2.fillStyle = '#07111c';
+          ctx2.fillRect(0, 0, c2.width, c2.height);
+
+          const padL = 48, padR = 20, padT = 20, padB = 28;
+          const pw = c2.width - padL - padR, ph = c2.height - padT - padB;
+          const midX = padL + pw / 2, midY = padT + ph / 2;
+
+          ctx2.strokeStyle = '#334155';
+          ctx2.beginPath(); ctx2.moveTo(padL, midY); ctx2.lineTo(padL + pw, midY); ctx2.stroke();
+          ctx2.beginPath(); ctx2.moveTo(midX, padT); ctx2.lineTo(midX, padT + ph); ctx2.stroke();
+
+          const endo = runHysteresisLoop(fEndo, true);
+          const ecto = runHysteresisLoop(fEcto, false);
+
+          ctx2.strokeStyle = '#f59e0b';
+          ctx2.lineWidth = 2.5;
+          ctx2.beginPath();
+          for (let i = 0; i < endo.h.length; i++) {
+            const x = midX + (endo.h[i] / 10.5) * (pw / 2);
+            const y = midY - (endo.m[i] / 10.5) * (ph / 2);
+            if (i === 0) ctx2.moveTo(x, y); else ctx2.lineTo(x, y);
+          }
+          ctx2.stroke();
+
+          ctx2.strokeStyle = '#38bdf8';
+          ctx2.lineWidth = 2.4;
+          ctx2.setLineDash([7, 4]);
+          ctx2.beginPath();
+          for (let i = 0; i < ecto.h.length; i++) {
+            const x = midX + (ecto.h[i] / 10.5) * (pw / 2);
+            const y = midY - ((ecto.m[i] * (5.0 / 7.0)) / 10.5) * (ph / 2);
+            if (i === 0) ctx2.moveTo(x, y); else ctx2.lineTo(x, y);
+          }
+          ctx2.stroke();
+          ctx2.setLineDash([]);
+
+          const pIdx = ((SUITE_STATE.t3_loop_phase_idx % endo.h.length) + endo.h.length) % endo.h.length;
+          const ex = midX + (endo.h[pIdx] / 10.5) * (pw / 2);
+          const ey = midY - (endo.m[pIdx] / 10.5) * (ph / 2);
+          ctx2.fillStyle = '#facc15';
+          ctx2.beginPath(); ctx2.arc(ex, ey, 4.5, 0, Math.PI * 2); ctx2.fill();
+
+          const ecx = midX + (ecto.h[pIdx] / 10.5) * (pw / 2);
+          const ecy = midY - ((ecto.m[pIdx] * (5.0 / 7.0)) / 10.5) * (ph / 2);
+          ctx2.fillStyle = '#38bdf8';
+          ctx2.beginPath(); ctx2.arc(ecx, ecy, 4.5, 0, Math.PI * 2); ctx2.fill();
+
+          setElText(
+            't3HystReadout',
+            `Origin-Symmetric Loops M(-H) = -M(H): Endo SD Cluster H_c = ${endo.hc.toFixed(2)} (Wide Square Loop) | Ecto MD Lattice H_c = ${ecto.hc.toFixed(2)} (Slender Fluid Loop)`
+          );
+        }
+      }
+
+      function renderTab4() {
+        const vUm3 = Math.pow(10, SUITE_STATE.t4_v_log10);
+        const bAc = SUITE_STATE.t4_b_ac_uT;
+        const nCurr = SUITE_STATE.t4_n_per_arm;
+        setElText('t4VVal', `${vUm3.toFixed(2)} um^3`);
+        setElText('t4BacVal', `${bAc} uT`);
+        setElText('t4NVal', `${nCurr}`);
+
+        const padL = 48, padR = 20, padT = 20, padB = 28;
+        const c1 = document.getElementById('t4CritCanvas');
+        if (c1) {
+          const ctx1 = c1.getContext('2d');
+          ctx1.fillStyle = '#07111c';
+          ctx1.fillRect(0, 0, c1.width, c1.height);
+          const pw = c1.width - padL - padR, ph = c1.height - padT - padB;
+
+          const xBac = padL + ((bAc - 5.0) / 495.0) * pw;
+          ctx1.strokeStyle = '#facc15';
+          ctx1.setLineDash([5, 4]);
+          ctx1.beginPath(); ctx1.moveTo(xBac, padT); ctx1.lineTo(xBac, padT + ph); ctx1.stroke();
+          ctx1.setLineDash([]);
+
+          ctx1.strokeStyle = '#f59e0b';
+          ctx1.lineWidth = 2.6;
+          ctx1.beginPath();
+          for (let i = 0; i <= 100; i++) {
+            const b = 5.0 + (i / 100.0) * 495.0;
+            const ret = 1.0 / (1.0 + Math.pow(b / 210.0, 3.2));
+            const x = padL + (i / 100.0) * pw;
+            const y = padT + ph - ret * ph;
+            if (i === 0) ctx1.moveTo(x, y); else ctx1.lineTo(x, y);
+          }
+          ctx1.stroke();
+
+          ctx1.strokeStyle = '#38bdf8';
+          ctx1.lineWidth = 2.6;
+          ctx1.beginPath();
+          for (let i = 0; i <= 100; i++) {
+            const b = 5.0 + (i / 100.0) * 495.0;
+            const ret = 1.0 / (1.0 + Math.pow(b / 28.0, 2.1));
+            const x = padL + (i / 100.0) * pw;
+            const y = padT + ph - ret * ph;
+            if (i === 0) ctx1.moveTo(x, y); else ctx1.lineTo(x, y);
+          }
+          ctx1.stroke();
+
+          const vM3 = vUm3 * 1.0e-18;
+          const fcEndo = (KBT_J / (vM3 * M_S * 0.85 * B_GEO)) * 100.0;
+          const fcEcto = (KBT_J / (vM3 * M_S * 0.02 * B_GEO)) * 100.0;
+          setElText(
+            't4CritReadout',
+            `At V_host = ${vUm3.toFixed(2)} um^3: f_crit(1 k_BT) Endo SD = ${fcEndo.toFixed(4)}% | Ecto MD = ${fcEcto.toFixed(4)}% | Selective AC Depinning at B_AC = ${bAc} uT`
+          );
+        }
+
+        const c2 = document.getElementById('t4PowCanvas');
+        if (c2) {
+          const ctx2 = c2.getContext('2d');
+          ctx2.fillStyle = '#07111c';
+          ctx2.fillRect(0, 0, c2.width, c2.height);
+          const pw = c2.width - padL - padR, ph = c2.height - padT - padB;
+
+          const y90 = padT + ph - 0.90 * ph;
+          ctx2.strokeStyle = '#22c55e';
+          ctx2.setLineDash([4, 4]);
+          ctx2.beginPath(); ctx2.moveTo(padL, y90); ctx2.lineTo(padL + pw, y90); ctx2.stroke();
+
+          const xN = padL + ((nCurr - 4) / 76.0) * pw;
+          ctx2.strokeStyle = '#facc15';
+          ctx2.beginPath(); ctx2.moveTo(xN, padT); ctx2.lineTo(xN, padT + ph); ctx2.stroke();
+          ctx2.setLineDash([]);
+
+          const sigma = 0.45, dEndo = 0.62, dEcto = 0.28;
+          [{ d: dEndo, col: '#f59e0b' }, { d: dEndo - dEcto, col: '#a855f7' }, { d: dEcto, col: '#38bdf8' }].forEach(({ d, col }) => {
+            ctx2.strokeStyle = col;
+            ctx2.lineWidth = 2.5;
+            ctx2.beginPath();
+            for (let n = 4; n <= 80; n++) {
+              const p = welchPower(n, d, sigma);
+              const x = padL + ((n - 4) / 76.0) * pw;
+              const y = padT + ph - p * ph;
+              if (n === 4) ctx2.moveTo(x, y); else ctx2.lineTo(x, y);
+            }
+            ctx2.stroke();
+          });
+
+          const pEndo = welchPower(nCurr, dEndo, sigma) * 100.0;
+          const pDiff = welchPower(nCurr, dEndo - dEcto, sigma) * 100.0;
+          const pEcto = welchPower(nCurr, dEcto, sigma) * 100.0;
+          setElText(
+            't4PowReadout',
+            `At N = ${nCurr} hyphae/arm (Delta_T < 0.1 C sham): Power Endo vs Sham = ${pEndo.toFixed(1)}% (90% at N=12) | Endo vs Ecto = ${pDiff.toFixed(1)}% (N=37) | Ecto vs Sham = ${pEcto.toFixed(1)}% (N=55)`
+          );
+        }
+      }
+
+      function renderAllTabs() {
+        renderTab1();
+        renderTab2();
+        renderTab3();
+        renderTab4();
+      }
+
+      window.stepSuiteOperatorAnimation = function(delta = 1) {
+        SUITE_STATE.sweep_step += delta;
+        const k = SUITE_STATE.sweep_step;
+        const theta = k * 0.08;
+
+        if (SUITE_STATE.tab_channels.tab1) {
+          SUITE_STATE.t1_frame = ((SUITE_STATE.t1_frame + delta) % 60 + 60) % 60;
+          SUITE_STATE.t1_rot_deg = Math.round(90 + 75 * Math.sin(theta * 0.85));
+          SUITE_STATE.t1_perm_log10 = Number((2.0 + 1.5 * Math.sin(theta * 0.55)).toFixed(1));
+          setElVal('t1FrameSlider', SUITE_STATE.t1_frame);
+          setElVal('t1RotSlider', SUITE_STATE.t1_rot_deg);
+          setElVal('t1PermSlider', SUITE_STATE.t1_perm_log10);
+        }
+
+        if (SUITE_STATE.tab_channels.tab2) {
+          SUITE_STATE.t2_w_deg = ((SUITE_STATE.t2_w_deg + 4 * delta) % 360 + 360) % 360;
+          SUITE_STATE.t2_xw_deg = Math.round(65 * Math.sin(theta * 0.7));
+          SUITE_STATE.t2_yw_deg = Math.round(55 * Math.cos(theta * 0.5));
+          setElVal('t2WSlider', SUITE_STATE.t2_w_deg);
+          setElVal('t2XwSlider', SUITE_STATE.t2_xw_deg);
+          setElVal('t2YwSlider', SUITE_STATE.t2_yw_deg);
+        }
+
+        if (SUITE_STATE.tab_channels.tab3) {
+          SUITE_STATE.t3_finc = Number((0.5 + 0.48 * Math.sin(theta * 0.65)).toFixed(2));
+          SUITE_STATE.t3_f_endo = Number((0.052 + 0.042 * Math.sin(theta * 0.5)).toFixed(3));
+          SUITE_STATE.t3_f_ecto = Number((0.025 + 0.020 * Math.cos(theta * 0.6)).toFixed(3));
+          SUITE_STATE.t3_loop_phase_idx = (SUITE_STATE.t3_loop_phase_idx + 4 * delta) % 240;
+          setElVal('t3FincSlider', SUITE_STATE.t3_finc);
+          setElVal('t3EndoSlider', SUITE_STATE.t3_f_endo);
+          setElVal('t3EctoSlider', SUITE_STATE.t3_f_ecto);
+        }
+
+        if (SUITE_STATE.tab_channels.tab4) {
+          SUITE_STATE.t4_v_log10 = Number((0.5 + 1.2 * Math.sin(theta * 0.5)).toFixed(2));
+          SUITE_STATE.t4_b_ac_uT = Math.round(250 + 235 * Math.sin(theta * 0.75));
+          SUITE_STATE.t4_n_per_arm = Math.round(42 + 34 * Math.sin(theta * 0.6));
+          setElVal('t4VSlider', SUITE_STATE.t4_v_log10);
+          setElVal('t4BacSlider', SUITE_STATE.t4_b_ac_uT);
+          setElVal('t4NSlider', SUITE_STATE.t4_n_per_arm);
+        }
+
+        setElText(
+          'suiteOpStatusBadge',
+          `${SUITE_STATE.operator_animating ? 'Sweep Active' : 'Sweep Paused'} (Step ${SUITE_STATE.sweep_step})`
+        );
+        renderAllTabs();
+        return SUITE_STATE;
+      };
+
+      let suiteTimer = null;
+      function syncSuiteTimer() {
+        if (suiteTimer) {
+          clearInterval(suiteTimer);
+          suiteTimer = null;
+        }
+        if (SUITE_STATE.operator_animating) {
+          suiteTimer = setInterval(() => {
+            window.stepSuiteOperatorAnimation(1);
+          }, 160);
+        }
+      }
+
+      window.toggleSuiteOperatorAnimation = function(forceState) {
+        SUITE_STATE.operator_animating = typeof forceState === 'boolean' ? forceState : !SUITE_STATE.operator_animating;
+        const btn = document.getElementById('btnAnimateAllSuite');
+        if (btn) {
+          btn.textContent = SUITE_STATE.operator_animating ? 'Pause Operator Sweep' : 'Animate Operator Controls';
+          btn.classList.toggle('active', SUITE_STATE.operator_animating);
+        }
+        setElText(
+          'suiteOpStatusBadge',
+          `${SUITE_STATE.operator_animating ? 'Sweep Active' : 'Sweep Paused'} (Step ${SUITE_STATE.sweep_step})`
+        );
+        syncSuiteTimer();
+        return SUITE_STATE.operator_animating;
+      };
+
+      window.toggleTabChannel = function(tabKey) {
+        if (!(tabKey in SUITE_STATE.tab_channels)) return false;
+        SUITE_STATE.tab_channels[tabKey] = !SUITE_STATE.tab_channels[tabKey];
+        const btnMap = { tab1: 'btnAnimTab1', tab2: 'btnAnimTab2', tab3: 'btnAnimTab3', tab4: 'btnAnimTab4' };
+        const btn = document.getElementById(btnMap[tabKey]);
+        if (btn) {
+          const num = tabKey.replace('tab', '');
+          btn.textContent = `Tab ${num} Sweep: ${SUITE_STATE.tab_channels[tabKey] ? 'ON' : 'OFF'}`;
+          btn.classList.toggle('active', SUITE_STATE.tab_channels[tabKey]);
+        }
+        return SUITE_STATE.tab_channels[tabKey];
+      };
+
+      window.resetSuiteOperators = function() {
+        SUITE_STATE.t1_frame = 12;
+        SUITE_STATE.t1_rot_deg = 35;
+        SUITE_STATE.t1_perm_log10 = 2.0;
+        SUITE_STATE.t2_w_deg = 240;
+        SUITE_STATE.t2_xw_deg = 25;
+        SUITE_STATE.t2_yw_deg = 15;
+        SUITE_STATE.t3_finc = 1.0 / 3.0;
+        SUITE_STATE.t3_f_endo = 0.05;
+        SUITE_STATE.t3_f_ecto = 0.01;
+        SUITE_STATE.t3_loop_phase_idx = 60;
+        SUITE_STATE.t4_v_log10 = 0.0;
+        SUITE_STATE.t4_b_ac_uT = 75;
+        SUITE_STATE.t4_n_per_arm = 37;
+        setElVal('t1FrameSlider', 12);
+        setElVal('t1RotSlider', 35);
+        setElVal('t1PermSlider', 2.0);
+        setElVal('t2WSlider', 240);
+        setElVal('t2XwSlider', 25);
+        setElVal('t2YwSlider', 15);
+        setElVal('t3FincSlider', 0.33);
+        setElVal('t3EndoSlider', 0.05);
+        setElVal('t3EctoSlider', 0.01);
+        setElVal('t4VSlider', 0);
+        setElVal('t4BacSlider', 75);
+        setElVal('t4NSlider', 37);
+        renderAllTabs();
+        return SUITE_STATE;
+      };
+
+      window.selectSuiteTab = function(tabId) {
+        SUITE_STATE.active_tab = tabId;
+        if (document.querySelectorAll) {
+          document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset && b.dataset.tab === tabId);
+          });
+          document.querySelectorAll('.tab-pane').forEach(p => {
+            p.classList.toggle('active', p.id === tabId);
+          });
+        }
+        renderAllTabs();
+        return SUITE_STATE.active_tab;
+      };
+
+      window.verifyUnifiedOkloSuiteGates = function() {
+        const fc = 1.0 / 3.0;
+        const r10_fc = exactBruggeman(fc, 1.0, 10.0);
+        const r50_fc = exactBruggeman(fc, 1.0, 50.0);
+        const r100_fc = exactBruggeman(fc, 1.0, 100.0);
+        const bruggemanExactOk =
+          Math.abs(r10_fc - 2.5) < 1e-9 &&
+          Math.abs(r50_fc - 5.2562462033) < 1e-6 &&
+          Math.abs(r100_fc - 7.3254860163) < 1e-6 &&
+          exactBruggeman(0.0, 1.0, 50.0) === 1.0 &&
+          exactBruggeman(1.0, 1.0, 50.0) === 50.0;
+
+        const endoLoop = runHysteresisLoop(0.05, true);
+        const ectoLoop = runHysteresisLoop(0.01, false);
+        const half = endoLoop.m.length / 2;
+        let maxAsym = 0.0;
+        for (let i = 1; i < half - 1; i++) {
+          maxAsym = Math.max(maxAsym, Math.abs(endoLoop.m[i] + endoLoop.m[i + half - 1]));
+        }
+        const hysteresisSymmetricOk = endoLoop.hc > ectoLoop.hc * 4.0 && maxAsym < 0.25;
+
+        const pEndo12 = welchPower(12, 0.62, 0.45);
+        const pDiff37 = welchPower(37, 0.62 - 0.28, 0.45);
+        const pEcto55 = welchPower(55, 0.28, 0.45);
+        const eg3PowerOk = pEndo12 >= 0.90 && pDiff37 >= 0.90 && pEcto55 >= 0.90;
+
+        const stepBefore = SUITE_STATE.sweep_step;
+        window.stepSuiteOperatorAnimation(1);
+        const stepAfter = SUITE_STATE.sweep_step;
+        window.resetSuiteOperators();
+        const operatorSweepOk = stepAfter === stepBefore + 1;
+
+        return {
+          artifact_id: SUITE_STATE.artifact_id,
+          bruggeman_exact_at_fc: { r10: r10_fc, r50: r50_fc, r100: r100_fc },
+          bruggeman_exact_ok: bruggemanExactOk,
+          hysteresis_symmetric_ok: hysteresisSymmetricOk,
+          eg3_power_ok: eg3PowerOk,
+          operator_sweep_ok: operatorSweepOk,
+          all_passed: bruggemanExactOk && hysteresisSymmetricOk && eg3PowerOk && operatorSweepOk
+        };
+      };
+
+      window.UNIFIED_OKLO_SUITE_STATE = SUITE_STATE;
+
+      if (document.querySelectorAll) {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            window.selectSuiteTab(btn.dataset.tab);
+          });
+        });
+      }
+
+      const sliderBindings = [
+        ['t1FrameSlider', v => { SUITE_STATE.t1_frame = Number(v); }],
+        ['t1RotSlider', v => { SUITE_STATE.t1_rot_deg = Number(v); }],
+        ['t1PermSlider', v => { SUITE_STATE.t1_perm_log10 = Number(v); }],
+        ['t2WSlider', v => { SUITE_STATE.t2_w_deg = Number(v); }],
+        ['t2XwSlider', v => { SUITE_STATE.t2_xw_deg = Number(v); }],
+        ['t2YwSlider', v => { SUITE_STATE.t2_yw_deg = Number(v); }],
+        ['t3FincSlider', v => { SUITE_STATE.t3_finc = Number(v); }],
+        ['t3EndoSlider', v => { SUITE_STATE.t3_f_endo = Number(v); }],
+        ['t3EctoSlider', v => { SUITE_STATE.t3_f_ecto = Number(v); }],
+        ['t4VSlider', v => { SUITE_STATE.t4_v_log10 = Number(v); }],
+        ['t4BacSlider', v => { SUITE_STATE.t4_b_ac_uT = Number(v); }],
+        ['t4NSlider', v => { SUITE_STATE.t4_n_per_arm = Number(v); }]
+      ];
+      sliderBindings.forEach(([id, setter]) => {
+        const el = document.getElementById(id);
+        if (el && el.addEventListener) {
+          el.addEventListener('input', () => {
+            setter(el.value);
+            renderAllTabs();
+          });
+        }
+      });
+
+      renderAllTabs();
+      syncSuiteTimer();
+    })();
+  </script>
+</body>
+</html>

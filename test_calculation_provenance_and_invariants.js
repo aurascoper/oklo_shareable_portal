@@ -1162,8 +1162,8 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       sha256: '09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694'
     },
     'oklo_hydrothermal_cycle_explorer.html': {
-      bytes: 107429,
-      sha256: '823ce4131280e21d4b520555d2362cb9fd2651c9ee899a1aeafb21cf966ccfe0'
+      bytes: 120157,
+      sha256: '28754664e91de2c9439384ca0297f8e0927143a47fd4dafa4d89a168bfc63381'
     },
     'oklo_coupled_hydrothermal_cycle.cxc': {
       bytes: 8978,
@@ -1174,8 +1174,8 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
       sha256: '2963fb4dbf511dc5cde10a0b939533cfa81fc8906fd45156268a711979ff26fb'
     },
     'index.html': {
-      bytes: 116418,
-      sha256: '1883ff77bf838dde30ccb711ecba16549d8e9312a11043d22f15264831ac36ff'
+      bytes: 120031,
+      sha256: 'db845aac86c42064672f49fc83ffaa48b34d1b632025d05a2890bede802f9f5e'
     }
   };
   assert.strictEqual(Object.keys(pinnedPrimaryGate0Artifacts).length, 10, 'Expected exactly 10 primary pre-existing Gate-0 artifacts');
@@ -1233,6 +1233,7 @@ function verifyReactorPoolBiofilmCoordinatedExplorer() {
     'index.html',
     'reactor_pool_biofilm_explorer.html',
     'oklo_hydrothermal_cycle_explorer.html',
+    'oklo_unified_pde_4d_ema_mycorrhizal_suite.html',
     'oklo_coupled_hydrothermal_cycle.cxc',
     'oklo_coupled_hydrothermal_cycle_pymol.py',
     'open_6fields_cycle.cxc',
@@ -1445,6 +1446,8 @@ function verifyOkloHydrothermalCoupledCycleExplorer() {
   assert.strictEqual(gates.cxc_syntax_valid_single_transparency_per_volume, true);
   assert.strictEqual(gates.surface_site_conservation_exact, true);
   assert.strictEqual(gates.oligomer_synthesis_vs_destruction_competition_visible, true);
+  assert.strictEqual(gates.bruggeman_3d_ema_exact_verified, true);
+  assert.strictEqual(gates.operator_sweep_animation_verified, true);
 
   const pngRes = sandbox.window.exportCompetitionPng1080p();
   assert.strictEqual(pngRes.width, 1920);

@@ -1,6 +1,6 @@
 {
   "schema": "oklo_portal_ci_verification_receipt_v1",
-  "generated_at": "2026-10-28T18:56:46.271Z",
+  "generated_at": "2026-10-29T08:39:46.231Z",
   "gate0_files_verified": 17,
   "tests": {
     "lazy_init": "PASS",
@@ -9,7 +9,7 @@
       "glHeight": 630,
       "glHidden": false,
       "slHidden": true,
-      "kval": "0.810 ± 0.105",
+      "kval": "0.972 ± 0.109",
       "ntot": "(120 neutrons)"
     },
     "split_view_layout": {
@@ -309,6 +309,8 @@
         "cxc_syntax_valid_single_transparency_per_volume": true,
         "surface_site_conservation_exact": true,
         "oligomer_synthesis_vs_destruction_competition_visible": true,
+        "bruggeman_3d_ema_exact_verified": true,
+        "operator_sweep_animation_verified": true,
         "all_passed": true
       }
     },

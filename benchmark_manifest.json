@@ -30,8 +30,8 @@
         "sha256": "09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694"
       },
       "oklo_hydrothermal_cycle_explorer.html": {
-        "bytes": 107429,
-        "sha256": "823ce4131280e21d4b520555d2362cb9fd2651c9ee899a1aeafb21cf966ccfe0"
+        "bytes": 120157,
+        "sha256": "28754664e91de2c9439384ca0297f8e0927143a47fd4dafa4d89a168bfc63381"
       },
       "oklo_coupled_hydrothermal_cycle.cxc": {
         "bytes": 8978,
@@ -42,8 +42,8 @@
         "sha256": "2963fb4dbf511dc5cde10a0b939533cfa81fc8906fd45156268a711979ff26fb"
       },
       "index.html": {
-        "bytes": 116418,
-        "sha256": "1883ff77bf838dde30ccb711ecba16549d8e9312a11043d22f15264831ac36ff"
+        "bytes": 120031,
+        "sha256": "db845aac86c42064672f49fc83ffaa48b34d1b632025d05a2890bede802f9f5e"
       }
     },
     "accounting_note": "10 primary pre-existing Gate-0 artifacts + 1 linked sidecar manifest (evidence_manifest.json) = 11 pre-existing frozen files, plus reactor_pool_biofilm_explorer.html, oklo_hydrothermal_cycle_explorer.html, oklo_coupled_hydrothermal_cycle.cxc, and companion portal/specification files."
@@ -152,8 +152,8 @@
       "evidence_manifest_bytes": 116876,
       "evidence_manifest_sha256": "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf",
       "invariant_test_relative_path": "test_calculation_provenance_and_invariants.js",
-      "invariant_test_bytes": 81455,
-      "invariant_test_sha256": "332ff7007e41b1139522bb88255b23cc22d8ce0effb071c3a3244316251252e4",
+      "invariant_test_bytes": 81645,
+      "invariant_test_sha256": "04d39c70b38a096aed55d30448cff863143579ca1e71725852974bb7dde6813e",
       "source_module": "src/track4_mineral_magnetoreception_gates.jl",
       "evidence_classification": "calculated",
       "epistemic_status": "cross_domain_epistemic_gated_4d_viewer (Internal consistency checks pass; EG-1..EG-4 enforced; 4D perspective tesseract w = t / theta_B in [0..360 deg] / D_4 hyperplane rotation; criterial separation of accepted verified candidates vs criterial-pruned candidates vs exploratory particles; uses established magnetotactic bacteria magnetosome chain U_mag / (k_B * T) = 5.69 > 1 as positive code-verification benchmark; highlights Treiber et al. 2012 Nature iron-particle warning; grounds bench follow-up in testable fungal biotite-weathering Fe/K ICP assay against sterile and killed-fungus controls; 3-regime 1 um^3 biotite Fe3O4 superparamagnetic/single-domain/multi-domain inclusion sensitivity)",
@@ -220,8 +220,8 @@
     "OKLO-HYDROTHERMAL-CYCLE-COUPLED-3D-01": {
       "relative_path": "oklo_hydrothermal_cycle_explorer.html",
       "public_url": "https://aurascoper.github.io/oklo_shareable_portal/oklo_hydrothermal_cycle_explorer.html",
-      "bytes": 107429,
-      "sha256": "823ce4131280e21d4b520555d2362cb9fd2651c9ee899a1aeafb21cf966ccfe0",
+      "bytes": 120157,
+      "sha256": "28754664e91de2c9439384ca0297f8e0927143a47fd4dafa4d89a168bfc63381",
       "companion_reference_relative_path": "oklo_coupled_hydrothermal_cycle.cxc",
       "companion_reference_bytes": 8978,
       "companion_reference_sha256": "a891f9dd5433fdd05a69ff71df95625dfd0433e8aace3ce0908b1a1186640742",

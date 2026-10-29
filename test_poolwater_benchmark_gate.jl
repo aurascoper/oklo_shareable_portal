@@ -59,11 +59,11 @@ end
             "clonal_sector_expansion_reference.jpg"              => (159146,  "67865f346f4d23835707174251eb589f72f344637ac221fbff427169fc34f115"),
             "magnetoreception_3d_explorer.html"                  => (263873,  "335039227479d9704f0e71122624e4ba21d050b7ab2f1c580509ea5cfdf04bcb"),
             "reactor_pool_biofilm_explorer.html"                 => (204031,  "09bb3d9cbca7757c3630d48b50c344f04694522d1d991f8b1f53ef38a9c8d694"),
-            "oklo_hydrothermal_cycle_explorer.html"              => (107429,  "823ce4131280e21d4b520555d2362cb9fd2651c9ee899a1aeafb21cf966ccfe0"),
+            "oklo_hydrothermal_cycle_explorer.html"              => (120157,  "28754664e91de2c9439384ca0297f8e0927143a47fd4dafa4d89a168bfc63381"),
             "oklo_coupled_hydrothermal_cycle.cxc"                => (8978,    "a891f9dd5433fdd05a69ff71df95625dfd0433e8aace3ce0908b1a1186640742"),
             "evidence_manifest.json"                             => (116876,  "4f61d995772ee055fd0df378d4884bc8b2a2be235877ffc4b4424fc519f9cacf"),
-            "test_calculation_provenance_and_invariants.js"      => (81455,   "332ff7007e41b1139522bb88255b23cc22d8ce0effb071c3a3244316251252e4"),
-            "benchmark_manifest.json"                            => (32785,   "007e97bb163b84100a659c0c8e0c30bb6e40dd3ecf3d20161675d6908c5f6217"),
+            "test_calculation_provenance_and_invariants.js"      => (81645,   "04d39c70b38a096aed55d30448cff863143579ca1e71725852974bb7dde6813e"),
+            "benchmark_manifest.json"                            => (32785,   "a9f39e0728166e2d39dc2f010baab9e4e474c6d33ef5751f443d347d7930e611"),
         )
 
         xml_info = file_sha256_and_bytes("artifact_index.xml")
@@ -159,8 +159,8 @@ end
         @test occursin("oklo_hydrothermal_cycle_explorer.html", index_info.text)
         @test occursin("oklo_coupled_hydrothermal_cycle.cxc", index_info.text)
         @test occursin("oklo_coupled_hydrothermal_cycle_pymol.py", index_info.text)
-        @test occursin("823ce4131280e21d...", index_info.text)
-        @test occursin("(107,429 bytes)", index_info.text)
+        @test occursin("28754664e91de2c9...", index_info.text)
+        @test occursin("(120,157 bytes)", index_info.text)
         @test occursin("https://github.com/aurascoper/Biofilms", index_info.text)
 
         @test !occursin("file://", xml_info.text)
